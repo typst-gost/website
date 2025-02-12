@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: theme("fontFamily.sans");
+}
+
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-mesh-gradient {
+    background-image:
+    radial-gradient(at 100% 0%, hsla(210,100%,45%,1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, hsla(250,100%,64%,1) 0px, transparent 50%);
+  }
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+h2 {
+  font-size: 40pt;
+  font-weight: bold;
+}

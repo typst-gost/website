@@ -1,0 +1,30 @@
+{
+    "name": "typst-gost",
+    "version": "0.1.0",
+    "private": true,
+    "workspaces": [
+        "apps/*"
+    ],
+    "dependencies": {
+        "@fontsource/inter": "^5.1.1",
+        "next": "^15.1.7",
+        "nextra": "^4.2.9",
+        "nextra-theme-docs": "^4.2.9",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-syntax-highlighter": "^15.6.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "eslint": "^8",
+        "eslint-config-next": "14.2.16",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5",
+        "tailwind-merge": "^3.0.1",
+        "tailwindcss-animate": "^1.0.7",
+        "postcss": "^8",
+        "@types/react-syntax-highlighter": "^15.5.13"
+    }
+}

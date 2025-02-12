@@ -1,0 +1,34 @@
+# Общие зависимости
+**/node_modules/
+/.pnp
+.pnp.js
+bun.lock
+
+# Тестирование
+/coverage
+
+# Next.js
+**/.next/
+/out/
+
+# Продакшен-билды
+/build
+
+# Мусорные файлы
+.DS_Store
+*.pem
+
+# Логи отладки
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Локальные файлы окружения
+**/.env*.local
+
+# Vercel
+.vercel
+
+# TypeScript
+**/*.tsbuildinfo
+**/next-env.d.ts
