@@ -15,6 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
+      <link rel="icon" href="/favicon.ico" />
       <body className="antialiased">
         {children}
         <Toaster />

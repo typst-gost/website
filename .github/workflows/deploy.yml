@@ -1,0 +1,46 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "${HOME}/.bun/bin" >> $GITHUB_PATH
+          bun --version
+
+      - name: Install Dependencies and Build
+        run: |
+          bun install
+          bun run build
+
+      - name: Build Docker image
+        run: docker build -t myusername/myproject:${{ github.sha }} .
+
+      - name: Push Docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          docker push myusername/myproject:${{ github.sha }}
+
+      - name: Deploy to VDS
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.VDS_HOST }}
+          username: ${{ secrets.VDS_USER }}
+          key: ${{ secrets.VDS_SSH_KEY }}
+          script: |
+            docker pull myusername/myproject:${{ github.sha }}
+            docker stop myproject || true
+            docker rm myproject || true
+            docker run -d --name myproject -p 80:3000 myusername/myproject:${{ github.sha }}

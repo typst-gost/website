@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import CodeBlock from "../code-viewer.old"
 
 export function HeroSection() {
   return (
