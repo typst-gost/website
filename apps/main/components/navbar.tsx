@@ -12,10 +12,10 @@ export function Navbar() {
             </div>
           </Link>
           <Link href="/docs" className="text-gray-300 hover:text-white transition-colors">
-            Документация
+            Документация (WIP)
           </Link>
           <Link href="/examples" className="text-gray-300 hover:text-white transition-colors">
-            Примеры
+            Примеры (WIP)
           </Link>
         </div>
         <div className="flex items-center space-x-4">

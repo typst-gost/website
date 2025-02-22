@@ -22,7 +22,7 @@ export function HeroSection() {
           <div className="flex flex-wrap justify-center gap-4">
             <Button className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-600 focus:ring-1">
               <a
-                href="https://typst.app/universe/package/bamdone-rebuttal"
+                href="https://github.com/typst-g7-32/typst-g7-32"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -30,7 +30,13 @@ export function HeroSection() {
               </a>  
             </Button>
             <Button className="py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-gray-700 hover:bg-gray-600 focus:ring-1">
+              <a
+                href="https://github.com/typst-g7-32/typst-g7-32"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
               Документация
+              </a>
             </Button>
           </div>
         </div>
