@@ -111,28 +111,33 @@ export default function ContactSection() {
     })
 
     try {
-      await emailjs.send(
-        "typst-gost",
-        "template",
-        {
-          from_name: name,
-          from_email: "forgenet@inbox.ru",
-          input_email: email,
-          subject: subject,
-          message: message,
-          to_email: "forgenet@inbox.ru",
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        "iD-msItHP5aYtOasP"
-      )
+        body: JSON.stringify({
+          name,
+          email,
+          subject: subject || 'Запрос с сайта',
+          message,
+        }),
+      });
 
-      setFormStatus({
-        type: "success",
-        message:
-          "Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.",
-      })
+      const data = await response.json();
 
-      if (formRef.current) {
-        formRef.current.reset()
+      if (response.ok && data.success) {
+        setFormStatus({
+          type: "success",
+          message:
+            "Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.",
+        })
+
+        if (formRef.current) {
+          formRef.current.reset()
+        }
+      } else {
+        throw new Error(data.message || 'Что-то пошло не так');
       }
 
       // Сброс сообщения статуса через 5 секунд
