@@ -116,7 +116,8 @@ export default function ContactSection() {
         "template",
         {
           from_name: name,
-          from_email: email,
+          from_email: "forgenet@inbox.ru",
+          input_email: email,
           subject: subject,
           message: message,
           to_email: "forgenet@inbox.ru",
