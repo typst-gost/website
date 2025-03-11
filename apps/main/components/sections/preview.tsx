@@ -14,7 +14,7 @@ export function PreviewSection() {
       setLoading(true)
       setError(null)
       try {
-        const response = await fetch("https://raw.githubusercontent.com/typst-g7-32/typst-g7-32/refs/heads/main/template/main.typ")
+        const response = await fetch("https://raw.githubusercontent.com/typst-g7-32/typst-g7-32/refs/heads/main/tests/documents/preview/test.typ")
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
