@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 body {
+  background: #111424;
   font-family: theme("fontFamily.sans");
 }
 
@@ -10,12 +11,6 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-
-  .bg-mesh-gradient {
-    background-image:
-    radial-gradient(at 100% 0%, hsla(210,100%,45%,1) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, hsla(250,100%,64%,1) 0px, transparent 50%);
   }
 }
 
