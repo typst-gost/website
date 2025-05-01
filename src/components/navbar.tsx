@@ -11,11 +11,11 @@ export function Navbar() {
               <span className="ml-2 text-2xl font-bold text-white">Typst 7.32</span>
             </div>
           </Link>
-          <Link href="/docs" className="text-gray-300 hover:text-white transition-colors">
-            Документация (WIP)
+          <Link href="/docs" className="pointer-events-none text-gray-500">
+            Документация (в работе)
           </Link>
-          <Link href="/examples" className="text-gray-300 hover:text-white transition-colors">
-            Примеры (WIP)
+          <Link href="/examples" className="pointer-events-none text-gray-500">
+            Примеры (в работе)
           </Link>
         </div>
         <div className="flex items-center space-x-4">

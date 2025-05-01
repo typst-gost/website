@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Copy, Mail, Send, Phone, ExternalLink, Check, AlertCircle } from "lucide-react"
+import { Copy, Mail, Send, ExternalLink, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function ContactSection() {
@@ -27,16 +27,11 @@ export default function ContactSection() {
 
   const contactInfo = [
     {
-      icon: <Mail className="h-5 w-5" />,
-      label: "Email",
-      value: "support@typst-gost.ru",
-      copyValue: "support@typst-gost.ru",
-    },
-    {
-      icon: <Phone className="h-5 w-5" />,
-      label: "Телефон",
-      value: "+7 (999) 808-38-15",
-      copyValue: "+79998083815",
+      icon: <Send className="h-5 w-5" />,
+      label: "Телеграм беседа",
+      value: "t.me/typst_gost",
+      copyValue: "https://t.me/typst_gost",
+      link: "https://t.me/typst_gost",
     },
     {
       icon: <Send className="h-5 w-5" />,
@@ -45,18 +40,19 @@ export default function ContactSection() {
       copyValue: "t.me/f0rgenet",
       link: "https://t.me/f0rgenet",
     },
+    {
+      icon: <Mail className="h-5 w-5" />,
+      label: "Email",
+      value: "forgenet@inbox.ru",
+      copyValue: "forgenet@inbox.ru",
+    },
   ]
 
   const additionalInfo = [
     {
-      title: "Быстрый ответ",
-      description: "Мы стараемся отвечать на все сообщения в течение 24 часов",
+      title: "Задавайте вопросы",
+      description: "Мы готовы помочь вам с любыми вопросами по Typst или шаблону modern-g7-32",
       icon: <Check className="h-5 w-5" />,
-    },
-    {
-      title: "Техническая поддержка",
-      description: "Получите помощь по любым техническим вопросам",
-      icon: <AlertCircle className="h-5 w-5" />,
     },
   ]
 
@@ -163,7 +159,7 @@ export default function ContactSection() {
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">
             Остались вопросы?{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-              Напишите нам!
+              Напишите!
             </span>
           </h2>
           <p className="text-xl text-gray-400 mb-8">
@@ -279,9 +275,9 @@ export default function ContactSection() {
           <div className="flex flex-col gap-6">
             <Card className="bg-gray-800/30 border-gray-700/20 text-white">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">Наши контакты</CardTitle>
+                <CardTitle className="text-2xl font-bold">Контакты</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Свяжитесь с нами любым удобным способом
+                  Свяжитесь любым удобным способом
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
