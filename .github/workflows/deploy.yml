@@ -42,4 +42,11 @@ jobs:
             docker pull f0rgenet/typst-gost:latest
             docker stop typst-gost || true
             docker rm typst-gost || true
-            docker run -d --restart always --name typst-gost -p 3000:3000 f0rgenet/typst-gost:latest
+            docker run -d --restart always --name typst-gost -p 3000:3000 \
+              -e EMAIL_HOST=${{ secrets.EMAIL_HOST }} \
+              -e EMAIL_PORT=${{ secrets.EMAIL_PORT }} \
+              -e EMAIL_SECURE=${{ secrets.EMAIL_SECURE }} \
+              -e EMAIL_USER=${{ secrets.EMAIL_USER }} \
+              -e EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} \
+              -e RECIPIENT_EMAIL=${{ secrets.RECIPIENT_EMAIL }} \
+              f0rgenet/typst-gost:latest
