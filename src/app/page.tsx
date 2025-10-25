@@ -1,14 +1,14 @@
 import { Navbar } from "@/components/navbar"
-import { HeroSection } from "@/components/sections/hero"
-import { PreviewSection } from "@/components/sections/preview"
-import { FeaturesSection } from "@/components/sections/features"
+import HeroSection from "@/components/sections/hero"
+import PreviewSection from "@/components/sections/preview"
+import FeaturesSection from "@/components/sections/features"
 import ContactSection from "@/components/sections/contacts"
 
 export default function Home() {
   return (
-    <div className="min-h-screen relative bg-gradient-to-b from-gray-900 to-gray-950">
+    <div className="min-h-screen relative bg-linear-to-b from-gray-900 to-gray-950">
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-background via-background/90 to-background" />
         <div
           className="absolute right-[-200px] top-[-200px] h-[1200px] w-[1200px] rounded-full blur-[250px]"
           style={{

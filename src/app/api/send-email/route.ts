@@ -3,7 +3,6 @@ import { sendContactFormEmail } from '@/lib/emailService';
 
 export async function POST(request: NextRequest) {
   try {
-    // Проверяем метод запроса
     if (request.method !== 'POST') {
       return NextResponse.json(
         { success: false, message: 'Метод не поддерживается' },
@@ -11,10 +10,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Получаем данные из запроса
     const formData = await request.json();
 
-    // Валидация данных
     if (!formData.name || !formData.email || !formData.message) {
       return NextResponse.json(
         { 
@@ -25,7 +22,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Подготавливаем данные для шаблона
     const emailData = {
       from_name: formData.name,
       input_email: formData.email,
@@ -33,7 +29,6 @@ export async function POST(request: NextRequest) {
       message: formData.message,
     };
 
-    // Отправляем письмо
     const success = await sendContactFormEmail(emailData);
 
     if (success) {
