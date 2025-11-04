@@ -1,10 +1,10 @@
-import { createMDX } from 'fumadocs-mdx/next';
-import remarkTypstPath from './src/lib/remark-typst-path.js';
+import { createMDX } from "fumadocs-mdx/next";
+import remarkTypstPath from "./src/lib/remark-typst-path.js";
 
 const withMDX = createMDX({
   mdxOptions: {
     remarkPlugins: [remarkTypstPath],
-    development: process.env.NODE_ENV === 'development',
+    development: process.env.NODE_ENV === "development",
   },
 });
 
@@ -42,6 +42,10 @@ const config = {
             } else {
             config.externals.push({
                 canvas: 'canvas',
+            });
+            config.externals.push({
+              "@myriaddreamin/typst-ts-node-compiler":
+              "@myriaddreamin/typst-ts-node-compiler",
             });
             }
         return config;
