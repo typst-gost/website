@@ -88,6 +88,33 @@ bun lint         # Проверка кода линтером
 - **[Tailwind CSS документация](https://tailwindcss.com/docs)** - справочник по стилизации
 - **[Bun документация](https://bun.sh/docs)** - руководство по использованию Bun
 
+## Обновление версии Typst
+
+При выходе новой версии Typst необходимо обновить версии в двух местах:
+
+1. **Файл конфигурации** `src/lib/config/typst.ts`:
+```typescript
+export const TYPST_CONFIG = {
+   version: '0.7.0-rc1', // ← обновить версию
+   cdn: 'https://cdn.jsdelivr.net/npm',
+} as const;
+```
+
+2. **Зависимости в** `package.json`:
+```json
+{
+   "dependencies": {
+      "@myriaddreamin/typst-ts-node-compiler": "^0.7.0-rc1",
+      "@myriaddreamin/typst.ts": "^0.7.0-rc1"
+   }
+}
+```
+
+3. **Установите обновленные зависимости:**
+```bash
+bun install
+```
+
 ## Правила контрибуции
 
 ### Как внести вклад
