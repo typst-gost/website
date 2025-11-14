@@ -44,8 +44,7 @@ const config = {
                 canvas: 'canvas',
             });
             config.externals.push({
-              "@myriaddreamin/typst-ts-node-compiler":
-              "@myriaddreamin/typst-ts-node-compiler",
+              "@myriaddreamin/typst-ts-node-compiler": "@myriaddreamin/typst-ts-node-compiler",
             });
             }
         return config;
