@@ -1,12 +1,14 @@
 "use client"
 
 import React, { useRef, useState } from "react"
+import { Copy, Mail, Send, ExternalLink, Check } from "lucide-react"
+import { cn } from "@/lib/utils"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Copy, Mail, Send, ExternalLink, Check } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Heading } from "../ui/heading"
 
 export default function ContactSection() {
   const [copied, setCopied] = useState<string | null>(null)
@@ -107,16 +109,13 @@ export default function ContactSection() {
 
   return (
     <section className="pb-14 pt-8 px-4 sm:px-6 lg:px-8">
-      <div className="container mx-auto">
-        <div className="max-w-4xl mx-auto text-center mb-4 sm:mb-6">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-3 tracking-tight leading-tight">
-            Остались вопросы?{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-blue-600">Напишите!</span>
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 px-2 sm:px-0">
-            Мы всегда открыты для сотрудничества и готовы ответить на ваши вопросы
-          </p>
-        </div>
+      <div className="container mx-auto max-w-7xl">
+        <Heading
+          title="Остались вопросы?"
+          highlight="Напишите!"
+          description="Мы всегда открыты для сотрудничества и готовы ответить на ваши вопросы"
+          centered
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card className="bg-gray-800/30 border-gray-700/20 text-white">

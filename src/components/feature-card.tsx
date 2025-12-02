@@ -7,7 +7,7 @@ export interface FeatureCardProps {
 
 export default function FeatureCard({ title, description }: FeatureCardProps): JSX.Element {
   return (
-    <div className="bg-gray-800/20 border border-gray-800/30 rounded-2xl p-5 sm:p-6 md:p-8 transition-all hover:bg-gray-800/30">
+    <div className="card p-5 sm:p-6 md:p-8 transition-all hover:bg-gray-800/30">
       {title && (
         <>
           <h3 className="text-lg sm:text-xl md:text-2xl font-semibold text-white mb-3 sm:mb-1">{title}</h3>

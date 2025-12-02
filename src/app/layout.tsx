@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { Suspense } from "react";
 
 import { YandexMetrika } from "@/components/yandex-metrics";
+
+import "./globals.css";
+import '../components/sections/comparison/styles.css'
 
 const siteUrl = "https://typst-gost.ru";
 const siteName = "Typst 7.32";

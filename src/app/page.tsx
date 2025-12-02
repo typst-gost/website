@@ -1,8 +1,9 @@
 import { Navbar } from "@/components/navbar"
 import HeroSection from "@/components/sections/hero"
-import PreviewSection from "@/components/sections/preview/preview"
+import PreviewSection from "@/components/sections/preview/section"
 import FeaturesSection from "@/components/sections/features"
 import ContactSection from "@/components/sections/contacts"
+import { ComparisonSection } from "@/components/sections/comparison/section"
 
 export default function Home() {
   return (
@@ -17,7 +18,7 @@ export default function Home() {
         />
 
         <div
-          className="absolute bottom-[600px] left-[-200px] h-[900px] w-[900px] rounded-full blur-[250px]"
+          className="absolute bottom-[50px] left-[-200px] h-[900px] w-[900px] rounded-full blur-[250px]"
           style={{
             backgroundImage: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(168,85,247,0) 90%)'
           }}
@@ -26,6 +27,7 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <PreviewSection />
+      <ComparisonSection />
       <FeaturesSection />
       <ContactSection />
     </div>
