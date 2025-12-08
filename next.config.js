@@ -17,6 +17,7 @@ module.exports = {
             }
         ],
     },
+    turbopack: {},
     webpack: (config) => {
         config.module.rules.push({
             test: /\.svg$/,
