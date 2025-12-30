@@ -18,7 +18,7 @@ export default function Home() {
         />
 
         <div
-          className="absolute bottom-[50px] left-[-200px] h-[900px] w-[900px] rounded-full blur-[250px]"
+          className="absolute -bottom-[300px] left-[-200px] h-[900px] w-[900px] rounded-full blur-[250px]"
           style={{
             backgroundImage: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(168,85,247,0) 90%)'
           }}

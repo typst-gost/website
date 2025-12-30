@@ -7,25 +7,33 @@ interface NavigationButtonProps {
   direction: "left" | "right"
   onClick: () => void
   disabled: boolean
+  stopAnimation?: boolean
 }
 
-export function NavigationButton({ direction, onClick, disabled }: NavigationButtonProps) {
+export function NavigationButton({ 
+  direction, 
+  onClick, 
+  disabled,
+  stopAnimation = false 
+}: NavigationButtonProps) {
   const [shouldPulse, setShouldPulse] = useState(false)
-  const [hasInteracted, setHasInteracted] = useState(false)
 
   useEffect(() => {
-    if (direction === "right" && !hasInteracted && !disabled) {
+    if (stopAnimation) {
+      setShouldPulse(false)
+      return
+    }
+
+    if (direction === "right" && !disabled) {
       const timer = setTimeout(() => {
         setShouldPulse(true)
       }, 1000)
       return () => clearTimeout(timer)
     }
-  }, [direction, hasInteracted, disabled])
+  }, [direction, disabled, stopAnimation])
 
   const handleClick = () => {
     if (!disabled) {
-      setHasInteracted(true)
-      setShouldPulse(false)
       onClick()
     }
   }

@@ -113,6 +113,7 @@ export function ComparisonSection() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [hasUserInteracted, setHasUserInteracted] = useState(false)
 
   const scrollToIndex = useCallback(
     (index: number) => {
@@ -131,15 +132,21 @@ export function ComparisonSection() {
   )
 
   const handleScroll = useCallback(() => {
-    if (scrollRef.current && !isScrolling) {
-      const container = scrollRef.current
-      const slideWidth = container.offsetWidth
-      const newIndex = Math.round(container.scrollLeft / slideWidth)
-      if (newIndex !== activeIndex && newIndex >= 0 && newIndex < comparisons.length) {
-        setActiveIndex(newIndex)
+    if (scrollRef.current) {
+      if (!hasUserInteracted) {
+        setHasUserInteracted(true)
+      }
+
+      if (!isScrolling) {
+        const container = scrollRef.current
+        const slideWidth = container.offsetWidth
+        const newIndex = Math.round(container.scrollLeft / slideWidth)
+        if (newIndex !== activeIndex && newIndex >= 0 && newIndex < comparisons.length) {
+          setActiveIndex(newIndex)
+        }
       }
     }
-  }, [activeIndex, isScrolling])
+  }, [activeIndex, isScrolling, hasUserInteracted])
 
   useEffect(() => {
     const container = scrollRef.current
@@ -150,6 +157,7 @@ export function ComparisonSection() {
   }, [handleScroll])
 
   const goPrev = () => {
+    setHasUserInteracted(true)
     if (activeIndex > 0) {
       const newIndex = activeIndex - 1
       setActiveIndex(newIndex)
@@ -158,6 +166,7 @@ export function ComparisonSection() {
   }
 
   const goNext = () => {
+    setHasUserInteracted(true)
     if (activeIndex < comparisons.length - 1) {
       const newIndex = activeIndex + 1
       setActiveIndex(newIndex)
@@ -185,12 +194,18 @@ export function ComparisonSection() {
         </div>
       </div>
       <div className="flex justify-center items-center gap-8 -mt-3">
-        <NavigationButton direction="left" onClick={goPrev} disabled={activeIndex === 0} />
+        <NavigationButton 
+          direction="left" 
+          onClick={goPrev} 
+          disabled={activeIndex === 0}
+          stopAnimation={hasUserInteracted}
+        />
         <div className="flex gap-2">
           {comparisons.map((_, idx) => (
             <button
               key={idx}
               onClick={() => {
+                setHasUserInteracted(true)
                 setActiveIndex(idx)
                 scrollToIndex(idx)
               }}
@@ -209,6 +224,7 @@ export function ComparisonSection() {
           direction="right"
           onClick={goNext}
           disabled={activeIndex === comparisons.length - 1}
+          stopAnimation={hasUserInteracted}
         />
       </div>
     </section>

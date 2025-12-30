@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import { ComparisonCard, type ComparisonPoint } from "./card"
 import { Sparkles } from "lucide-react"
 
+const MODERN_G7_32_URL = "http://typst.app/universe/package/modern-g7-32"
+
 export interface ComparisonData {
   id: string
   competitor: string
@@ -25,17 +27,19 @@ export function ComparisonSlide({ data, isActive }: ComparisonSlideProps) {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col items-center gap-6 mb-10">
           <div className="flex items-center gap-4">
-            <motion.div
-              initial={{ opacity: 0, x: -100 }}
-              animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
-              transition={{ duration: 0.5 }}
-              className="comparison-badge-modern flex items-center gap-2 px-4 py-2.5 rounded-full"
-            >
-              <Sparkles className="w-4 h-4 text-blue-500" />
-              <span className="text-xs sm:text-sm font-semibold text-blue-500">
-                modern-g7-32
-              </span>
-            </motion.div>
+            <a href={MODERN_G7_32_URL} target="_blank" rel="noopener noreferrer">
+              <motion.div
+                initial={{ opacity: 0, x: -100 }}
+                animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                className="comparison-badge-modern flex items-center gap-2 px-4 py-2.5 rounded-full hover:border-blue-500/50 hover:bg-blue-500/20"
+              >
+                <Sparkles className="w-4 h-4 text-blue-500" />
+                <span className="text-xs sm:text-sm font-semibold text-blue-500">
+                  modern-g7-32
+                </span>
+              </motion.div>
+            </a>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.5 }}
