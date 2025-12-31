@@ -1,11 +1,23 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import PdfViewer from "@/components/sections/preview/pdf-viewer"
+import dynamic from "next/dynamic"
 import CodeBlock from "@/components/sections/preview/code-viewer"
 import { LoadingSpinner } from "@/components/ui/spinner"
 import ExpandableContentBlock from "@/components/ui/expandable"
 import { Code, FileText } from "lucide-react"
+
+const PdfViewer = dynamic(
+  () => import("@/components/sections/preview/pdf-viewer"), 
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full w-full items-center justify-center bg-gray-900/20 rounded-xl">
+        <LoadingSpinner size={48} />
+      </div>
+    )
+  }
+)
 
 export default function PreviewSection() {
   const [typstCode, setTypstCode] = useState<string | null>(null)
@@ -42,7 +54,7 @@ export default function PreviewSection() {
           <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
           <div className="relative bg-gray-800/50 border border-gray-800/50 rounded-3xl p-4 sm:p-6 backdrop-blur-xs">
             <div className="hidden xl:flex gap-6 items-stretch">
-              <div className="w-1/2 h-[70vh] min-h-[480px]">
+              <div className="w-1/2 h-[70vh] min-h-120">
                 {loading ? (
                   <div className="flex h-full items-center justify-center">
                     <LoadingSpinner size={48} />
@@ -55,7 +67,8 @@ export default function PreviewSection() {
                   </div>
                 )}
               </div>
-              <div className="w-1/2 h-[70vh] min-h-[480px] overflow-hidden rounded-xl">
+              
+              <div className="w-1/2 h-[70vh] min-h-120 overflow-hidden rounded-xl">
                 <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-g7-32/examples/refs/heads/preview/preview/preview/preview.pdf" />
               </div>
             </div>
@@ -74,7 +87,9 @@ export default function PreviewSection() {
               </ExpandableContentBlock>
 
               <ExpandableContentBlock title="Документ" icon={<FileText size={16} />}>
-                <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-g7-32/examples/refs/heads/preview/preview/preview/preview.pdf" />
+                <div className="w-full">
+                  <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-g7-32/examples/refs/heads/preview/preview/preview/preview.pdf" />
+                </div>
               </ExpandableContentBlock>
             </div>
           </div>

@@ -14,6 +14,7 @@ interface ExpandableContentBlockProps {
   children: React.ReactElement<CustomChildProps>
   defaultExpanded?: boolean
   icon?: React.ReactNode
+  contentClassName?: string
 }
 
 export default function ExpandableContentBlock({
@@ -21,6 +22,7 @@ export default function ExpandableContentBlock({
   children,
   defaultExpanded = false,
   icon,
+  contentClassName,
 }: ExpandableContentBlockProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
 
@@ -29,7 +31,7 @@ export default function ExpandableContentBlock({
 
   return (
     <div className="w-full">
-      <div className="hidden xl:block h-[70vh] min-h-[480px] rounded-xl overflow-hidden">
+      <div className={cn("hidden xl:block h-[70vh] min-h-120 rounded-xl overflow-hidden", contentClassName)}>
         {hasCustomProps 
           ? React.cloneElement(childElement, { isScrollable: true, showControls: true })
           : children
@@ -42,7 +44,10 @@ export default function ExpandableContentBlock({
           <div
             className={cn(
               "relative w-full transition-[height] duration-300 ease-in-out will-change-[height]",
-              isExpanded ? "h-[70vh]" : "h-[200px]"
+              "overflow-hidden",
+              isExpanded ? "h-[70vh]" : "h-50",
+              !isExpanded && "pointer-events-none select-none",
+              contentClassName
             )}
           >
             {hasCustomProps
@@ -64,7 +69,7 @@ export default function ExpandableContentBlock({
           <div className="relative z-20 border-t border-gray-700/50 bg-gray-800/80 backdrop-blur-sm">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-700/30"
+              className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-700/30 active:bg-gray-700/50"
             >
               <div className="flex items-center gap-2">
                 {icon && <div className="text-blue-400">{icon}</div>}
