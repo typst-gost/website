@@ -1,13 +1,26 @@
+'use client'
+
 import { Navbar } from "@/components/navbar"
 import HeroSection from "@/components/sections/hero/section"
 import PreviewSection from "@/components/sections/preview/section"
 import FeaturesSection from "@/components/sections/features"
 import ContactSection from "@/components/sections/contacts"
 import { ComparisonSection } from "@/components/sections/comparison/section"
+import Snowfall from 'react-snowfall'
 
 export default function Home() {
   return (
     <div className="min-h-screen relative bg-linear-to-b from-gray-900 to-gray-950">
+      <Snowfall 
+        style={{
+          position: 'fixed',
+          width: '100vw',
+          height: '100vh',
+          zIndex: 50,
+        }}
+        snowflakeCount={200}
+      />
+
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-linear-to-b from-background via-background/90 to-background" />
         <div

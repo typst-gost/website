@@ -18,6 +18,7 @@
         "react-dom": "^19.2.3",
         "react-pdf": "^10.3.0",
         "react-resize-detector": "^12.3.0",
+        "react-snowfall": "^2.4.0",
         "react-virtualized-auto-sizer": "^2.0.1",
         "react-window": "^2.2.3",
       },
@@ -1314,11 +1315,15 @@
 
     "react-dom": ["react-dom@19.2.3", "", { "dependencies": { "scheduler": "^0.27.0" }, "peerDependencies": { "react": "^19.2.3" } }, "sha512-yELu4WmLPw5Mr/lmeEpox5rw3RETacE++JgHqQzd2dg+YbJuat3jH4ingc+WPZhxaoFzdv9y33G+F7Nl5O0GBg=="],
 
+    "react-fast-compare": ["react-fast-compare@3.2.2", "", {}, "sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ=="],
+
     "react-is": ["react-is@16.13.1", "", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 
     "react-pdf": ["react-pdf@10.3.0", "", { "dependencies": { "clsx": "^2.0.0", "dequal": "^2.0.3", "make-cancellable-promise": "^2.0.0", "make-event-props": "^2.0.0", "merge-refs": "^2.0.0", "pdfjs-dist": "5.4.296", "tiny-invariant": "^1.0.0", "warning": "^4.0.0" }, "peerDependencies": { "@types/react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0" }, "optionalPeers": ["@types/react"] }, "sha512-2LQzC9IgNVAX8gM+6F+1t/70a9/5RWThYxc+CWAmT2LW/BRmnj+35x1os5j/nR2oldyf8L+hCAMBmVKU8wrYFA=="],
 
     "react-resize-detector": ["react-resize-detector@12.3.0", "", { "dependencies": { "es-toolkit": "^1.39.6" }, "peerDependencies": { "react": "^18.0.0 || ^19.0.0" } }, "sha512-mIDOVrTHKGnKe6qEUWi8dFdfHM5CPyTOpqoHctdMQf89Ljm/0qqDIzkP3vTRZZJi9/raaMiRxDEOqO4you5x+A=="],
+
+    "react-snowfall": ["react-snowfall@2.4.0", "", { "dependencies": { "react-fast-compare": "^3.2.2" }, "peerDependencies": { "react": "^16.8 || 17.x || 18.x || 19.x", "react-dom": "^16.8 || 17.x || 18.x || 19.x" } }, "sha512-KAPMiGnxt11PEgC2pTVrTQsvk5jt1kLUtG+ZamiKLphTZ7GiYT1Aa5kX6jp4jKWq1kqJHchnGT9CDm4g86A5Gg=="],
 
     "react-virtualized-auto-sizer": ["react-virtualized-auto-sizer@2.0.1", "", { "peerDependencies": { "react": "^18.0.0 || ^19.0.0", "react-dom": "^18.0.0 || ^19.0.0" } }, "sha512-7xaqssJeCtXCETeRDxPUXKpUFjCrhK60o8X02BJF7zcTfjwKfdSQmb2fVDLIwaO8RmmzaGL1glJUQ+/b236Y1A=="],
 
