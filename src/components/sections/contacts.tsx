@@ -174,7 +174,7 @@ export default function ContactSection() {
                     id="message"
                     name="message"
                     placeholder="Введите ваше сообщение"
-                    className="bg-gray-900/70 border-gray-700/20 text-white placeholder:text-gray-500 min-h-[120px] focus:border-blue-500"
+                    className="bg-gray-900/70 border-gray-700/20 text-white placeholder:text-gray-500 min-h-30 focus:border-blue-500"
                     required
                   />
                 </div>

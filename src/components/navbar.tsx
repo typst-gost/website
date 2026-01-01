@@ -5,9 +5,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
 import { GitHubButton } from "@/components/ui/buttons/github-button"
-import { Heart, Menu, X } from "lucide-react"
-import { Button } from "./ui/buttons/button"
-import { cn } from "@/lib/utils"
+import { DonateButton } from "@/components/ui/buttons/donate-button"
+import { Menu, X } from "lucide-react"
 
 const NAV_LINKS = [
   { href: "/docs", label: "Документация (в работе)", disabled: true },
@@ -119,41 +118,6 @@ function MobileMenu({
     </div>
   )
 }
-
-function DonateButton({
-  className = "",
-  onClick,
-  isMobile = false,
-}: {
-  className?: string
-  onClick?: () => void
-  isMobile?: boolean
-}) {
-  return (
-    <Button
-      variant="outline"
-      size="default"
-      className={cn(
-        "border-pink-500/30 bg-pink-500/5 hover:bg-pink-500/10 hover:border-pink-500/50 text-gray-200 hover:text-pink-100",
-        isMobile && "w-full bg-pink-500/10 hover:bg-pink-500/20 text-pink-200",
-        className
-      )}
-      asChild
-    >
-      <Link
-        href="https://pay.cloudtips.ru/p/451a1d97"
-        onClick={onClick}
-      >
-        <Heart className={cn(
-          "w-4 h-4 text-pink-500 transition-colors",
-          !isMobile && "group-hover:text-pink-400 group-hover:scale-110"
-        )} />
-        Пожертвовать
-      </Link>
-    </Button>
-  )
-}
-
 
 function NavLink({
   link,

@@ -7,6 +7,7 @@ import FeaturesSection from "@/components/sections/features"
 import ContactSection from "@/components/sections/contacts"
 import { ComparisonSection } from "@/components/sections/comparison/section"
 import Snowfall from 'react-snowfall'
+import { Footer } from "@/components/footer"
 
 export default function Home() {
   return (
@@ -43,6 +44,7 @@ export default function Home() {
       <ComparisonSection />
       <FeaturesSection />
       <ContactSection />
+      <Footer />
     </div>
   )
 }
