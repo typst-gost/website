@@ -8,6 +8,7 @@ import ContactSection from "@/components/sections/contacts"
 import { ComparisonSection } from "@/components/sections/comparison/section"
 import Snowfall from 'react-snowfall'
 import { Footer } from "@/components/footer"
+import { NewYearToast } from "@/components/decoration/winter/toast"
 
 export default function Home() {
   return (
@@ -17,9 +18,9 @@ export default function Home() {
           position: 'fixed',
           width: '100vw',
           height: '100vh',
-          zIndex: 50,
+          zIndex: 0,
         }}
-        snowflakeCount={200}
+        snowflakeCount={70}
       />
 
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -45,6 +46,7 @@ export default function Home() {
       <FeaturesSection />
       <ContactSection />
       <Footer />
+      <NewYearToast />
     </div>
   )
 }

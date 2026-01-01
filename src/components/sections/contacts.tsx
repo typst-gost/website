@@ -33,7 +33,7 @@ export default function ContactSection() {
       label: "Телеграм",
       value: "t.me/ne4genet",
       copyValue: "t.me/ne4genet",
-      link: NAVIGATION_LINKS.TELEGRAM_USER,
+      link: NAVIGATION_LINKS.TELEGRAM_AUTHOR,
     },
     {
       icon: <Mail className="h-5 w-5" />,
@@ -119,8 +119,8 @@ export default function ContactSection() {
           centered
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Card className="bg-gray-800/30 border-gray-700/20 text-white">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 group">
+          <Card className="bg-gray-800/30 border-gray-700/20 text-white z-1 backdrop-blur-xs">
             <CardHeader>
               <CardTitle className="text-2xl font-bold">Свяжитесь с нами</CardTitle>
               <CardDescription className="text-gray-400">
@@ -205,7 +205,7 @@ export default function ContactSection() {
           </Card>
 
           <div className="flex flex-col gap-6">
-            <Card className="bg-gray-800/30 border-gray-700/20 text-white">
+            <Card className="bg-gray-800/30 border-gray-700/20 text-white z-1 backdrop-blur-xs">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold">Контакты</CardTitle>
                 <CardDescription className="text-gray-400">Свяжитесь любым удобным способом</CardDescription>
@@ -240,7 +240,7 @@ export default function ContactSection() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-800/30 border-gray-700/20 text-white">
+            <Card className="bg-gray-800/30 border-gray-700/20 text-white z-1 backdrop-blur-xs">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold">Дополнительная информация</CardTitle>
                 <CardDescription className="text-gray-400">Полезная информация о наших услугах</CardDescription>
