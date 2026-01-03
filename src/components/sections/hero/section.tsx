@@ -13,12 +13,21 @@ export default function HeroSection() {
             <span className="flex h-2 w-2 rounded-full bg-blue-400 mr-2"></span>
             ГОСТ 7.32-2017
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
-            Оформляйте документы{" "}
+          <h1 className="relative text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+            <span className="relative inline-block">
+              О
+              <img
+                src="/temporary/hat.svg"
+                alt="новогодняя шляпка"
+                className="absolute -top-[0.15em] md:-top-[0.19em] -left-[0.12em] w-[1.3em] -rotate-30 pointer-events-none select-none"
+              />
+            </span>
+            формляйте документы{" "}
             <span className="relative inline-block text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-blue-600 to-blue-400 bg-size-[200%_100%] animate-shine-text">
               автоматически
             </span>
           </h1>
+
           <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 sm:mb-5 px-2 sm:px-0">
             Автоматизированный{" "}
             <a
@@ -29,7 +38,7 @@ export default function HeroSection() {
             >
               Typst
             </a>
-            {" "}шаблон для оформления работ в соответствии с ГОСТ 7.32-2017.<br/>Сосредоточьтесь на содержании, не думайте о форматировании.
+            {" "}шаблон для оформления работ в соответствии с ГОСТ 7.32-2017.<br />Сосредоточьтесь на содержании, не думайте о форматировании.
           </p>
           <div className="flex justify-center gap-3 sm:gap-4 text-white">
             <Button
@@ -45,7 +54,7 @@ export default function HeroSection() {
                 Начать
               </Link>
             </Button>
-            <Button 
+            <Button
               variant="outline"
               className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
               asChild
