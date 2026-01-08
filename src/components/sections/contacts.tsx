@@ -31,8 +31,8 @@ export default function ContactSection() {
     {
       icon: <Send className="h-5 w-5" />,
       label: "Телеграм",
-      value: "t.me/ne4genet",
-      copyValue: "t.me/ne4genet",
+      value: "t.me/forgenet",
+      copyValue: "t.me/forgenet",
       link: NAVIGATION_LINKS.TELEGRAM_AUTHOR,
     },
     {
