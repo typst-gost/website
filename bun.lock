@@ -6,8 +6,8 @@
       "name": "typst-gost",
       "dependencies": {
         "@cmshiki/editor": "^0.1.0",
-        "@myriaddreamin/typst-ts-node-compiler": "^0.7.0-rc1",
-        "@myriaddreamin/typst.ts": "^0.7.0-rc1",
+        "@myriaddreamin/typst-ts-node-compiler": "^0.7.0-rc2",
+        "@myriaddreamin/typst.ts": "^0.7.0-rc2",
         "@radix-ui/react-collapsible": "^1.1.12",
         "@radix-ui/react-hover-card": "^1.1.15",
         "@radix-ui/react-slot": "^1.2.4",

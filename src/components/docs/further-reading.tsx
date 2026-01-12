@@ -3,7 +3,6 @@ import { findSiblings } from "fumadocs-core/page-tree";
 import { Card, Cards } from "fumadocs-ui/components/card";
 
 export function FurtherReading({ targetUrl }: { targetUrl: string }) {
-  console.log(findSiblings(source.getPageTree(), targetUrl));
   return (
     <Cards>
       {findSiblings(source.getPageTree(), targetUrl).map((peer) => {
