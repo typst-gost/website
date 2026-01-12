@@ -12,11 +12,12 @@ export const SnowfallDecoration = () => {
   const [snowflakeCount, setSnowflakeCount] = useState(20)
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768
-    
-    setSnowflakeCount(isMobile ? 20 : 50)
-    
-    const timer = setTimeout(() => setMounted(true), 1000)
+    const timer = setTimeout(() => {
+      const isMobile = window.innerWidth < 768
+      setSnowflakeCount(isMobile ? 20 : 40)
+      setMounted(true)
+    }, 1000)
+
     return () => clearTimeout(timer)
   }, [])
 
