@@ -1,5 +1,5 @@
 export const TYPST_CONFIG = {
-  version: '0.7.0-rc1',
+  version: '0.7.0-rc2',
   cdn: 'https://cdn.jsdelivr.net/npm',
 } as const;
 

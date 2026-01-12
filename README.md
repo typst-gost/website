@@ -95,7 +95,7 @@ bun lint         # Проверка кода линтером
 1. **Файл конфигурации** `src/lib/config/typst.ts`:
 ```typescript
 export const TYPST_CONFIG = {
-   version: '0.7.0-rc1', // ← обновить версию
+   version: '0.7.0-rc2', // ← обновить версию
    cdn: 'https://cdn.jsdelivr.net/npm',
 } as const;
 ```
@@ -104,8 +104,8 @@ export const TYPST_CONFIG = {
 ```json
 {
    "dependencies": {
-      "@myriaddreamin/typst-ts-node-compiler": "^0.7.0-rc1",
-      "@myriaddreamin/typst.ts": "^0.7.0-rc1"
+      "@myriaddreamin/typst-ts-node-compiler": "^0.7.0-rc2",
+      "@myriaddreamin/typst.ts": "^0.7.0-rc2"
    }
 }
 ```
