@@ -1,7 +1,5 @@
 'use client'
 
-import { SnowfallDecoration } from "@/components/decoration/winter/snowfall"
-
 export const PageBackground = () => {
   const isProduction = process.env.NODE_ENV === 'production'
 
@@ -35,8 +33,6 @@ export const PageBackground = () => {
           background: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(168,85,247,0) 90%)'
         }}
       />
-      
-      {isProduction && <SnowfallDecoration />}
     </div>
   )
 }

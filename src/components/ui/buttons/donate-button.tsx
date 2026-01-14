@@ -32,7 +32,7 @@ export function DonateButton({
           "w-4 h-4 text-pink-500 transition-colors",
           !isMobile && "group-hover:text-pink-400 group-hover:scale-110"
         )} />
-        Пожертвовать
+        Поддержать
       </Link>
     </Button>
   )
