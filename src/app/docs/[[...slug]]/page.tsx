@@ -19,7 +19,7 @@ export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   if (!page) notFound();
 
   const MDX = page.data.body;
-  const docPath = page.absolutePath
+  const docPath = page.absolutePath!
     .replace(/\.[^/.]+$/, '')
     .replace(/^content\/docs\//, '')
 
