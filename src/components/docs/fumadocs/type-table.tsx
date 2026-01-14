@@ -131,7 +131,7 @@ function Item({
           )}
           {defaultValue && (
             <>
-              <p className={cn(fieldVariants())}>Стандартное</p>
+              <p className={cn(fieldVariants())}>По умолчанию</p>
               <p className="my-auto not-prose">{defaultValue}</p>
             </>
           )}

@@ -1,5 +1,6 @@
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
+import { TypeTable } from './components/docs/fumadocs/type-table';
 import { ComponentPropsWithoutRef, ElementType } from 'react';
 
 import { TypstRender } from './components/docs/typst/renderer';
@@ -15,15 +16,20 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     GostQuote,
     QuoteLink,
     FurtherReading,
+    TypeTable,
     ...components,
     a: (props: ComponentPropsWithoutRef<'a'>) => {
+      const rawUrl = <a {...props} target="_blank" rel="noopener noreferrer" />;;
       if (props.href?.startsWith('#')) {
         return <QuoteLink {...props} href={props.href} />;
+      }
+      if (props.href?.startsWith('/')) {
+        return rawUrl;
       }
       if (RelativeLink) {
         return <RelativeLink {...props} />;
       }
-      return <a {...props} target="_blank" rel="noopener noreferrer" />;
+      return rawUrl;
     },
   };
 }

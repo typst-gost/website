@@ -40,7 +40,7 @@ blockquote {
 }
 
 .dark {
-  --color-fd-background: hsl(222, 40%, 13.5%);
+  --color-fd-background: hsl(222, 45%, 11%);
   --color-fd-foreground: hsl(0, 0%, 98%);
   --color-fd-muted: hsl(222, 35%, 18%);
   --color-fd-muted-foreground: hsl(215, 15%, 65%);
@@ -62,13 +62,6 @@ blockquote {
 
 @utility text-balance {
   text-wrap: balance;
-}
-
-@layer utilities {
-  body {
-    background: #111424;
-    font-family: var(--font-sans);
-  }
 }
 
 @layer base {
