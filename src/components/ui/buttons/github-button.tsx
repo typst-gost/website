@@ -11,7 +11,7 @@ export function GitHubButton() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetch("https://api.github.com/repos/typst-g7-32/modern-g7-32")
+    fetch("https://api.github.com/repos/typst-gost/modern-g7-32")
       .then((res) => res.json())
       .then((data) => {
         const starCount = data.stargazers_count

@@ -6,7 +6,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-REPO_OWNER="typst-g7-32"
+REPO_OWNER="typst-gost"
 REPO_NAME="modern-g7-32"
 GITHUB_API="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest"
 GIT_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}"

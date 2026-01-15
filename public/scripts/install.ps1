@@ -2,7 +2,7 @@
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
-$REPO_OWNER = "typst-g7-32"
+$REPO_OWNER = "typst-gost"
 $REPO_NAME = "modern-g7-32"
 $GITHUB_API = "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest"
 $GIT_URL = "https://github.com/$REPO_OWNER/$REPO_NAME"

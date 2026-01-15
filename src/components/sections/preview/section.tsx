@@ -30,7 +30,7 @@ export default function PreviewSection() {
       setError(null)
       try {
         const response = await fetch(
-          "https://raw.githubusercontent.com/typst-g7-32/examples/refs/heads/main/documents/preview/main.typ",
+          "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/main/documents/preview/main.typ",
         )
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
         setTypstCode(await response.text())
@@ -69,7 +69,7 @@ export default function PreviewSection() {
               </div>
               
               <div className="w-1/2 h-[70vh] min-h-120 overflow-hidden rounded-xl">
-                <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-g7-32/examples/refs/heads/preview/preview/preview/preview.pdf" />
+                <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.pdf" />
               </div>
             </div>
 
@@ -88,7 +88,7 @@ export default function PreviewSection() {
 
               <ExpandableContentBlock title="Документ" icon={<FileText size={16} />}>
                 <div className="w-full h-[70vh]">
-                  <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-g7-32/examples/refs/heads/preview/preview/preview/preview.pdf" />
+                  <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.pdf" />
                 </div>
               </ExpandableContentBlock>
             </div>

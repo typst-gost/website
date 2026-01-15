@@ -29,7 +29,7 @@ npm install -g bun
 
 1. **Клонируйте репозиторий:**
    ```bash
-   git clone https://github.com/typst-g7-32/website.git
+   git clone https://github.com/typst-gost/website.git
    cd website
    ```
 
@@ -172,5 +172,5 @@ bun lint         # Проверка кода линтером
 ## Связь
 
 - **Сайт:** [typst-gost.ru](https://typst-gost.ru)
-- **Репозиторий:** [github.com/typst-g7-32/website](https://github.com/typst-g7-32/website)
-- **Issues:** [github.com/typst-g7-32/website/issues](https://github.com/typst-g7-32/website/issues)
+- **Репозиторий:** [github.com/typst-gost/website](https://github.com/typst-gost/website)
+- **Issues:** [github.com/typst-gost/website/issues](https://github.com/typst-gost/website/issues)
