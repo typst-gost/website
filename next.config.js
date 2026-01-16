@@ -18,7 +18,7 @@ module.exports = {
         ],
     },
     turbopack: {},
-    webpack: (config) => {
+    webpack: (config, { isServer }) => {
         config.module.rules.push({
             test: /\.svg$/,
             use: ["@svgr/webpack"],
