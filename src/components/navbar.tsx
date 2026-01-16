@@ -47,7 +47,7 @@ export function Navbar() {
               priority
             />
             <span className="text-xl md:text-2xl font-bold text-white tracking-tight">
-              Typst 7.32
+              Typst Gost
             </span>
           </Link>
 
