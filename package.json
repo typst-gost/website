@@ -17,16 +17,15 @@
     "lucide-react": "^0.556.0",
     "next": "^16.1.1",
     "nodemailer": "^7.0.12",
-    "prismjs": "^1.30.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-pdf": "^10.3.0",
-    "react-snowfall": "^2.4.0"
+    "react-snowfall": "^2.4.0",
+    "shiki": "^3.21.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.4",
     "@types/nodemailer": "^7.0.4",
-    "@types/prismjs": "^1.26.5",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",

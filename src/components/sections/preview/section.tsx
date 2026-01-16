@@ -1,48 +1,29 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import dynamic from "next/dynamic"
-import CodeBlock from "@/components/sections/preview/code-viewer"
-import { LoadingSpinner } from "@/components/ui/spinner"
-import ExpandableContentBlock from "@/components/ui/expandable"
 import { Code, FileText } from "lucide-react"
 
-const PdfViewer = dynamic(
-  () => import("@/components/sections/preview/pdf-viewer"), 
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="flex h-full w-full items-center justify-center bg-gray-900/20 rounded-xl">
-        <LoadingSpinner size={48} />
-      </div>
+
+import CodeBlock from "@/components/sections/preview/code-viewer"
+import ExpandableContentBlock from "@/components/ui/expandable"
+import { PdfViewerWrapper } from "./pdf-client-wrapper"
+
+async function getTypstCode() {
+  try {
+    const res = await fetch(
+      "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/main/documents/preview/main.typ",
+      { next: { revalidate: 3600 } }
     )
+    if (!res.ok) throw new Error("Failed to fetch")
+    return res.text()
+  } catch (error) {
+    return "Error loading code example"
   }
-)
+}
 
-export default function PreviewSection() {
-  const [typstCode, setTypstCode] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+const PDF_URL = "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.pdf"
 
-  useEffect(() => {
-    const fetchTypstCode = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const response = await fetch(
-          "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/main/documents/preview/main.typ",
-        )
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-        setTypstCode(await response.text())
-      } catch (e: unknown) {
-        if (e instanceof Error) setError(`Failed to load Typst code: ${e.message}`)
-        else setError("Failed to load Typst code")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchTypstCode()
-  }, [])
+export default async function PreviewSection() {
+
+
+  const typstCode = await getTypstCode()
 
   return (
     <section className="py-4 container mx-auto">
@@ -53,45 +34,33 @@ export default function PreviewSection() {
         <div className="relative mx-auto max-w-7xl">
           <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
           <div className="relative bg-gray-800/50 border border-gray-800/50 rounded-3xl p-4 sm:p-6 backdrop-blur-xs">
+
+            {/* Desktop Layout */}
             <div className="hidden lg:flex gap-6 items-stretch">
               <div className="w-1/2 h-[70vh] min-h-120">
-                {loading ? (
-                  <div className="flex h-full items-center justify-center">
-                    <LoadingSpinner size={48} />
-                  </div>
-                ) : error ? (
-                  <div className="flex h-full items-center justify-center text-red-400">{error}</div>
-                ) : (
-                  <div className="h-full overflow-hidden rounded-xl">
-                    <CodeBlock codeType="typst" codeContent={typstCode || ""} />
-                  </div>
-                )}
+                <div className="h-full overflow-hidden rounded-xl">
+                  {/* Рендерим Shiki на сервере */}
+                  <CodeBlock codeType="typst" codeContent={typstCode} />
+                </div>
               </div>
-              
+
               <div className="w-1/2 h-[70vh] min-h-120 overflow-hidden rounded-xl">
-                <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.pdf" />
+                <PdfViewerWrapper url={PDF_URL} />
               </div>
             </div>
 
             <div className="lg:hidden space-y-4">
               <ExpandableContentBlock title="Код" icon={<Code size={16} />}>
-                {loading ? (
-                  <div className="flex h-full items-center justify-center">
-                    <LoadingSpinner size={48} />
-                  </div>
-                ) : error ? (
-                  <div className="flex h-full items-center justify-center text-red-400">{error}</div>
-                ) : (
-                  <CodeBlock codeType="typst" codeContent={typstCode || ""} />
-                )}
+                <CodeBlock codeType="typst" codeContent={typstCode} />
               </ExpandableContentBlock>
 
               <ExpandableContentBlock title="Документ" icon={<FileText size={16} />}>
                 <div className="w-full h-[70vh]">
-                  <PdfViewer pdfUrl="https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.pdf" />
+                  <PdfViewerWrapper url={PDF_URL} />
                 </div>
               </ExpandableContentBlock>
             </div>
+
           </div>
         </div>
       </div>
