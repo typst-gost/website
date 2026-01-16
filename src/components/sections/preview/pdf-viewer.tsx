@@ -25,10 +25,11 @@ export default function PdfViewer({
   pdfUrl,
   maxPagesApprox = 15,
   showControls = true,
-  previewImageSrc = "/preview-document.png"
+  previewImageSrc = ""
 }: PdfViewerProps) {
   const [isActive, setIsActive] = useState(false)
   const [isPdfReady, setIsPdfReady] = useState(false)
+  const [isPreviewLoaded, setIsPreviewLoaded] = useState(false)
   const [numPages, setNumPages] = useState<number | null>(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [containerWidth, setContainerWidth] = useState<number | null>(null)
@@ -214,11 +215,10 @@ export default function PdfViewer({
 
   return (
     <div className="group relative w-full h-full bg-gray-50 flex flex-col overflow-hidden">
-      
       <div 
         ref={containerRef}
         onScroll={handleScroll}
-        className={`flex-1 w-full overflow-y-auto overflow-x-hidden custom-scrollbar px-2 md:px-10 scroll-smooth overscroll-y-contain relative`}
+        className="flex-1 w-full overflow-y-auto overflow-x-hidden custom-scrollbar px-2 md:px-10 scroll-smooth overscroll-y-contain relative"
         onClick={() => !isActive && activateViewer(1)}
       >
         <div 
@@ -236,13 +236,21 @@ export default function PdfViewer({
                maxWidth: '100%'
              }}
           >
-            <Image 
-              src={previewImageSrc}
-              alt="Document Preview"
-              fill
-              className="object-contain"
-              priority
-            />
+            {!isPreviewLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                <span className="text-xs text-gray-400">Загрузка превью…</span>
+              </div>
+            )}
+            {previewImageSrc && (
+              <Image 
+                src={previewImageSrc}
+                alt="Document Preview"
+                fill
+                className="object-contain"
+                priority
+                onLoadingComplete={() => setIsPreviewLoaded(true)}
+              />
+            )}
           </div>
 
           {Array.from({ length: maxPagesApprox - 1 }).map((_, i) => (
@@ -253,8 +261,7 @@ export default function PdfViewer({
                     width: containerWidth || '100%',
                     minHeight: estimatedPageHeight, 
                 }}
-             >
-             </div>
+             />
           ))}
         </div>
 

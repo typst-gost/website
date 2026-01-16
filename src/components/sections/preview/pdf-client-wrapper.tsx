@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic"
 import { LoadingSpinner } from "@/components/ui/spinner"
 
+const previewUrl = "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.png"
+
 const PdfViewer = dynamic(
   () => import("@/components/sections/preview/pdf-viewer"), 
   { 
@@ -16,5 +18,5 @@ const PdfViewer = dynamic(
 )
 
 export function PdfViewerWrapper({ url }: { url: string }) {
-  return <PdfViewer pdfUrl={url} />
+  return <PdfViewer pdfUrl={url} previewImageSrc={previewUrl} />
 }
