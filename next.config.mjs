@@ -1,4 +1,15 @@
-module.exports = {
+import { createMDX } from "fumadocs-mdx/next";
+import remarkTypstPath from "./src/lib/remark-typst-path.js";
+
+const withMDX = createMDX({
+  mdxOptions: {
+    remarkPlugins: [remarkTypstPath],
+    development: process.env.NODE_ENV === "development",
+  },
+});
+
+/** @type {import('next').NextConfig} */
+const config = {
     images: {
         remotePatterns: [
             {
@@ -32,8 +43,14 @@ module.exports = {
             config.externals.push({
                 canvas: 'canvas',
             });
+            config.externals.push({
+              "@myriaddreamin/typst-ts-node-compiler": "@myriaddreamin/typst-ts-node-compiler",
+            });
             }
         return config;
     },
     serverExternalPackages: ['pdfjs-dist'],
-}
+    reactStrictMode: true,
+};
+
+export default withMDX(config);
