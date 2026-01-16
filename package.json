@@ -15,7 +15,6 @@
     "lint:fix": "eslint --ext .ts,.tsx . --fix"
   },
   "dependencies": {
-    "shiki": "^3.21.0",
     "@cmshiki/editor": "^0.1.0",
     "@myriaddreamin/typst-ts-node-compiler": "^0.7.0-rc2",
     "@myriaddreamin/typst.ts": "^0.7.0-rc2",
@@ -35,6 +34,7 @@
     "fumadocs-mdx": "^13.0.1",
     "fumadocs-ui": "^16.0.3",
     "glob": "^13.0.0",
+    "lru-cache": "^11.2.4",
     "lucide-react": "^0.556.0",
     "markdown-to-jsx": "^9.5.5",
     "next": "^16.1.1",
@@ -44,7 +44,8 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-pdf": "^10.3.0",
-    "react-snowfall": "^2.4.0"
+    "react-snowfall": "^2.4.0",
+    "shiki": "^3.21.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.4",
