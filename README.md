@@ -1,6 +1,12 @@
-# typst-gost Website
+# Typst Gost Website
 
-Официальный сайт проекта modern-g7-32 - шаблон для оформления документов в соответствии с ГОСТ 7.32-2017.
+<a href="https://github.com/typst-gost/website/blob/main/LICENSE"><img src="https://img.shields.io/github/license/typst-gost/website" alt="License badge"></a>
+<a href="https://github.com/typst-gost/website/actions"><img src="https://github.com/typst-gost/website/actions/workflows/deploy.yml/badge.svg" alt="Deploy badge"></a>
+<a href="https://typst-gost.ru"><img src="https://img.shields.io/website?url=https%3A%2F%2Ftypst-gost.ru" alt="Website badge"></a>
+
+Официальный сайт проекта Typst Gost - экосистема шаблонов для оформления документов в соответствии с ГОСТ.
+
+![Демонстрация лендинга](assets/preview.png)
 
 Проект создан на базе [Next.js](https://nextjs.org) с использованием [Nextra](https://nextra.site/) для генерации документации.
 
