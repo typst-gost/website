@@ -49,7 +49,6 @@ const config = {
             }
         return config;
     },
-    serverExternalPackages: ['pdfjs-dist'],
     reactStrictMode: true,
 };
 
