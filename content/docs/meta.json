@@ -1,7 +1,7 @@
 {
     "pages": [
         "index",
-        "usage",
+        "quick-start.mdx",
         "reference",
         "advanced_usage",
         "..."
