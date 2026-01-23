@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { LoadingSpinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/cn"
 
@@ -22,87 +22,93 @@ export function TypstOutput({
   onImageError,
   layout = "horizontal",
 }: TypstOutputProps) {
-  const [imageLoading, setImageLoading] = useState(true)
-  const [svgLoading, setSvgLoading] = useState(true)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [showSvg, setShowSvg] = useState(false)
 
-  useEffect(() => {
-    if (compiledSvg) {
-      const timer = setTimeout(() => {
-        setSvgLoading(false)
-      }, 0)
-      return () => clearTimeout(timer)
-    }
+  const cleanSvg = useMemo(() => {
+    if (!compiledSvg) return null
+    return compiledSvg
+      .replace(/svg\s*\{\s*fill:\s*none;?\s*\}/g, '')
+      .replace(/html\s*\{\s*font-size:\s*[^;]+;\s*\}/g, '')
   }, [compiledSvg])
 
   useEffect(() => {
-    if (imagePath) {
-      const timer = setTimeout(() => {
-        setImageLoading(false)
-      }, 0)
-      return () => clearTimeout(timer)
-    }
-  }, [imagePath])
+    const delay = cleanSvg ? 50 : 0
+    
+    const timer = setTimeout(() => {
+      setShowSvg(!!cleanSvg)
+    }, delay)
 
+    return () => clearTimeout(timer)
+  }, [cleanSvg])
 
   const outputBlockClass =
     layout === "horizontal"
       ? "w-1/2 flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-800 rounded-lg relative overflow-auto"
       : "w-full flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-800 rounded-lg relative overflow-auto"
 
-  const showSpinner = (compiledSvg && svgLoading) || (imagePath && !imageError && imageLoading)
-  const showNoOutput = !compiledSvg && (!imagePath || imageError)
+  const isLoading = (!cleanSvg && imagePath && !imageError && !imageLoaded)
+  const showNoOutput = !cleanSvg && (!imagePath || imageError)
 
   return (
     <div className={outputBlockClass}>
-      {showSpinner && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200/80 dark:bg-gray-800/80 backdrop-blur-sm z-10">
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-200/80 dark:bg-gray-800/80 backdrop-blur-sm z-30">
           <LoadingSpinner />
         </div>
       )}
 
-      {compiledSvg ? (
-        <div
-          className={cn(
-            "w-full h-full flex items-center justify-center transition-opacity duration-200",
-            svgLoading ? "opacity-0" : "opacity-100"
-          )}
-          style={{ maxWidth: '800px', maxHeight: '600px' }}
-          dangerouslySetInnerHTML={{ __html: compiledSvg }}
-        />
-      ) : imagePath && !imageError ? (
-        <Image
-          src={imagePath}
-          alt="Typst rendered output"
-          width={800}
-          height={600}
-          className={cn(
-            "w-full h-auto object mt-0 mb-0 transition-opacity duration-200",
-            imageLoading ? "opacity-0" : "opacity-100"
-          )}
-          onError={() => {
-            onImageError()
-            setImageLoading(false)
-          }}
-          onLoad={() => setImageLoading(false)}
-          unoptimized
-        />
-      ) : showNoOutput ? (
-        <div className="text-fd-muted-foreground text-sm text-center p-4">
-          <div>No output</div>
-          {imagePath && (
-            <div className="text-xs mt-2 opacity-70 break-all font-mono">
-              {imagePath}
-            </div>
-          )}
-        </div>
-      ) : null}
+      <div className="grid w-full h-full place-items-center">
+        
+        {imagePath && !imageError && (
+          <div 
+            className={cn(
+              "col-start-1 row-start-1 w-full h-full flex items-center justify-center transition-opacity duration-500",
+              showSvg ? "opacity-0" : "opacity-100"
+            )}
+          >
+            <Image
+              src={imagePath}
+              alt="Typst preview"
+              width={800}
+              height={600}
+              className="w-full h-auto object-contain mt-0 mb-0"
+              onError={onImageError}
+              onLoad={() => setImageLoaded(true)}
+              unoptimized
+            />
+          </div>
+        )}
+
+        {cleanSvg && (
+          <div
+            className={cn(
+              "col-start-1 row-start-1 w-full h-full flex items-center justify-center transition-opacity duration-500 z-10",
+              showSvg ? "opacity-100" : "opacity-0"
+            )}
+            style={{ maxWidth: '800px', maxHeight: '600px' }}
+            dangerouslySetInnerHTML={{ __html: cleanSvg }}
+          />
+        )}
+
+        {showNoOutput && (
+          <div className="col-start-1 row-start-1 text-fd-muted-foreground text-sm text-center p-4">
+            <div>No output</div>
+            {imagePath && (
+              <div className="text-xs mt-2 opacity-70 break-all font-mono">
+                {imagePath}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {compileError && (
         <div className="absolute top-4 left-4 right-4 p-3 bg-amber-50 dark:bg-amber-950/60 backdrop-blur-md border border-amber-200 dark:border-amber-800 rounded-md shadow-lg z-20">
           <div className="text-amber-700 dark:text-amber-400 text-sm font-medium mb-1">
             Ошибка компиляции
           </div>
-          <div className="text-amber-600 dark:text-amber-500 text-xs font-mono break-all">
+          <div className="text-amber-600 dark:text-amber-500 text-xs font-mono break-all whitespace-pre-wrap">
             {compileError}
           </div>
         </div>
