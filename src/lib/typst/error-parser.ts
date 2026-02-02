@@ -29,10 +29,9 @@ export function parseTypstError(error: unknown): ParsedTypstError {
 export function formatTypstError(parsed: ParsedTypstError): string {
   return parsed.diagnostics
     .map(d => {
-      const prefix = d.severity === 'error' ? '❌' : '⚠️'
       const message = d.message.charAt(0).toUpperCase() + d.message.slice(1)
       const hints = d.hints.length > 0 ? `\nHints: ${d.hints.join(', ')}` : ''
-      return `${prefix} ${message}${hints}`
+      return `${message}${hints}`
     })
     .join('\n\n')
 }
