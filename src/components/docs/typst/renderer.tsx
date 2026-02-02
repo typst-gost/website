@@ -14,6 +14,7 @@ import { LoadingSpinner } from "@/components/ui/spinner"
 interface TypstRenderProps {
   code: string
   image: string
+  alt?: string
   layout?: "horizontal" | "vertical"
   wordWrap?: boolean
   editable?: boolean
@@ -34,6 +35,7 @@ function buildFullCode(
 export function TypstRender({
   code,
   image,
+  alt = "Preview",
   layout = "horizontal",
   wordWrap = true,
   editable = true,
@@ -163,6 +165,7 @@ export function TypstRender({
           <TypstOutput
             compiledSvg={compiledSvg}
             imagePath={imagePath}
+            alt={alt}
             compileError={displayCompileError}
             imageError={imageError}
             onImageError={() => setImageError(true)}

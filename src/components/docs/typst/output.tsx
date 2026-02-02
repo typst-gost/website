@@ -4,10 +4,12 @@ import Image from "next/image"
 import { useState, useEffect, useMemo } from "react"
 import { LoadingSpinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/cn"
+import { AlertTriangle, X } from "lucide-react"
 
 interface TypstOutputProps {
   compiledSvg: string | null
   imagePath: string | null
+  alt: string
   compileError: string | null
   imageError: boolean
   onImageError: () => void
@@ -17,6 +19,7 @@ interface TypstOutputProps {
 export function TypstOutput({
   compiledSvg,
   imagePath,
+  alt,
   compileError,
   imageError,
   onImageError,
@@ -24,6 +27,7 @@ export function TypstOutput({
 }: TypstOutputProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [showSvg, setShowSvg] = useState(false)
+  const [showErrorDetails, setShowErrorDetails] = useState(false)
 
   const cleanSvg = useMemo(() => {
     if (!compiledSvg) return null
@@ -34,7 +38,6 @@ export function TypstOutput({
 
   useEffect(() => {
     const delay = cleanSvg ? 50 : 0
-    
     const timer = setTimeout(() => {
       setShowSvg(!!cleanSvg)
     }, delay)
@@ -44,8 +47,8 @@ export function TypstOutput({
 
   const outputBlockClass =
     layout === "horizontal"
-      ? "w-1/2 flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-800 rounded-lg relative overflow-auto"
-      : "w-full flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-800 rounded-lg relative overflow-auto"
+      ? "w-1/2 flex items-center justify-center p-4 bg-gray-800 rounded-lg relative overflow-hidden"
+      : "w-full flex items-center justify-center p-4 bg-gray-800 rounded-lg relative overflow-hidden"
 
   const isLoading = (!cleanSvg && imagePath && !imageError && !imageLoaded)
   const showNoOutput = !cleanSvg && (!imagePath || imageError)
@@ -53,13 +56,12 @@ export function TypstOutput({
   return (
     <div className={outputBlockClass}>
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200/80 dark:bg-gray-800/80 backdrop-blur-sm z-30">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-800/80 backdrop-blur-sm z-30">
           <LoadingSpinner />
         </div>
       )}
 
       <div className="grid w-full h-full place-items-center">
-        
         {imagePath && !imageError && (
           <div 
             className={cn(
@@ -69,7 +71,7 @@ export function TypstOutput({
           >
             <Image
               src={imagePath}
-              alt="Typst preview"
+              alt={alt}
               width={800}
               height={600}
               className="w-full h-auto object-contain mt-0 mb-0"
@@ -104,14 +106,32 @@ export function TypstOutput({
       </div>
 
       {compileError && (
-        <div className="absolute top-4 left-4 right-4 p-3 bg-amber-50 dark:bg-amber-950/60 backdrop-blur-md border border-amber-200 dark:border-amber-800 rounded-md shadow-lg z-20">
-          <div className="text-amber-700 dark:text-amber-400 text-sm font-medium mb-1">
-            Ошибка компиляции
-          </div>
-          <div className="text-amber-600 dark:text-amber-500 text-xs font-mono break-all whitespace-pre-wrap">
-            {compileError}
-          </div>
-        </div>
+        <>
+          <button
+            onClick={() => setShowErrorDetails(!showErrorDetails)}
+            onMouseDown={(e) => e.preventDefault()} 
+            className={cn(
+              "absolute top-2 right-2 z-50 p-1.5 rounded-md shadow-sm outline-none border-none",
+              showErrorDetails 
+                ? "bg-fd-card text-gray-400 hover:bg-fd-card/95" 
+                : "bg-red-900 text-red-400 hover:bg-red-700/95"
+            )}
+            title={showErrorDetails ? "Скрыть ошибку" : "Показать ошибку"}
+          >
+            {showErrorDetails ? <X className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+          </button>
+
+          {showErrorDetails && (
+            <div className="absolute top-2 left-2 right-12 p-3 bg-fd-card border rounded-md shadow-lg z-40 animate-in fade-in zoom-in-95 duration-200">
+              <div className="text-red-400 text-sm font-medium mb-1.5">
+                Ошибка компиляции 
+              </div>
+              <div className="text-xs font-mono break-all whitespace-pre-wrap max-h-50 overflow-auto text-zinc-300">
+                {compileError}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
