@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback, useEffect } from "react"
 import { useMDXPath } from "@/lib/mdx-path-context"
 import { useTypstCompiler } from "@/hooks/use-typst-compiler"
 
-import { TypstEditor } from "./editor"
+import { TypstEditor } from "./editor/editor"
 import { TypstOutput } from "./output"
 import { DynamicCodeBlock } from "@/components/docs/fumadocs/dynamic-codeblock"
 import { formatTypstError, parseTypstError } from "@/lib/typst/error-parser"
