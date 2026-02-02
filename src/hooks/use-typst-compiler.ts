@@ -1,6 +1,5 @@
 "use client"
 
-import { getTypstCompilerUrl, getTypstRendererUrl } from '@/lib/config/typst';
 import { useEffect, useRef, useState, useCallback } from "react"
 
 type TypstModule = Window['$typst']
@@ -31,8 +30,8 @@ export function useTypstCompiler() {
         }
         
         if (!typstInitialized) {
-          typst.setCompilerInitOptions({ getModule: getTypstCompilerUrl });
-          typst.setRendererInitOptions({ getModule: getTypstRendererUrl });
+          typst.setCompilerInitOptions({ getModule: () => "/wasm/typst_ts_web_compiler_bg.wasm" });
+          typst.setRendererInitOptions({ getModule: () => "/wasm/typst_ts_renderer_bg.wasm" });
           typstInitialized = true
         }
 
