@@ -1,0 +1,148 @@
+---
+title: Пользовательские титульные листы
+description: Создание и использование альтернативных шаблонов титульных страниц.
+iconLocal: Layout
+---
+
+Хотя ГОСТ 7.32-2017 задаёт строгие рамки, многие организации и учебные заведения (ВУЗы) имеют свои
+локальные стандарты оформления титульных страниц. Шаблон `modern-g7-32` позволяет полностью 
+заменить стандартный титульный лист на собственный, сохраняя при этом всю остальную логику отчёта.
+
+## Быстрый старт: Использование пресетов
+
+В шаблоне уже встроены альтернативные титульные листы. Например, для лабораторных работ МАИ. 
+Чтобы сменить шаблон, используйте параметр `title-template`.
+
+<TypstRender
+  code={`
+#import "@preview/modern-g7-32:0.2.0": gost, title-templates
+
+#show: gost.with(
+  title-template: title-templates.mai-university-lab,
+  organization: (full: "МАИ"),
+  institute: (number: 3, name: "ИТ"),
+  department: (number: 307, name: "ЦТ"),
+  subject: "Разработка ПО",
+  city: "Москва",
+)
+`}
+  image="title-mai-preset.png"
+/>
+
+## Как создать свой шаблон
+
+Пользовательский шаблон — это файл Typst, содержащий две функции: `arguments` (для обработки 
+входящих данных) и `template` (для вёрстки страницы).
+
+### Структура файла шаблона
+
+Рекомендуется использовать вспомогательные инструменты из `custom-title-template`, чтобы не 
+верстать сетку подписей с нуля.
+
+```typst
+// my-template.typ
+#import "@preview/modern-g7-32:0.2.0": custom-title-template
+
+// 1. Функция обработки аргументов
+#let arguments(..args, year: auto) = {
+  let args = args.named()
+  // Здесь можно задать значения по умолчанию или изменить структуру ключей
+  return args
+}
+
+// 2. Функция отрисовки
+#let template(..args) = {
+  let a = args.named()
+  
+  align(center)[
+    #upper(a.organization.full) \
+    #v(2fr)
+    #text(size: 16pt, weight: "bold")[#a.subject]
+    #v(1fr)
+  ]
+  
+  // Использование системных утилит для подписей
+  custom-title-template.sign-field(a.manager.name, a.manager.position)
+}
+```
+
+## Подключение шаблона
+
+Чтобы применить созданный файл к вашему отчёту, используйте функцию `from-module`.
+
+<TypstRender
+  code={`
+#import "@preview/modern-g7-32:0.2.0": gost, custom-title-template
+#import "my-template.typ" as my-tpl
+
+#show: gost.with(
+  title-template: custom-title-template.from-module(my-tpl),
+  subject: "Собственный дизайн",
+  organization: (full: "Моя компания"),
+  manager: (name: "Иванов И.И.", position: "Директор")
+)
+`}
+  image="custom-title-render.png"
+/>
+
+## Доступные утилиты (title-utils)
+
+Для упрощения вёрстки в модуле `custom-title-template` доступны следующие функции:
+
+<TypeTable
+  type={{
+    "sign-field": {
+      description: "Создаёт блок с подписью и расшифровкой (используется для авторов/руководителей)",
+      type: "function(name, position, part, details)"
+    },
+    "per-line": {
+      description: "Выводит элементы построчно с заданным выравниванием и отступами",
+      type: "function(align, indent, ..values)"
+    },
+    "detailed-sign-field": {
+      description: "Сложный блок подписи с датой и местом (для грифов УТВЕРЖДАЮ/СОГЛАСОВАНО)",
+      type: "function(title, name, position, year)"
+    },
+    "if-present": {
+      description: "Условная вёрстка: отображает блок только если переданные аргументы не равны none",
+      type: "function(..targets, body)"
+    }
+  }}
+/>
+
+## Параметры настройки в gost.with
+
+Параметр `title-template` принимает функцию, которая будет вызвана вместо стандартной страницы.
+
+<TypeTable
+  type={{
+    "title-template": {
+      description: "Функция отрисовки титульного листа",
+      type: "function",
+      default: "templates.default"
+    },
+    "hide-title": {
+      description: "Полностью скрывает титульный лист (удобно при отладке)",
+      type: "boolean",
+      default: "false"
+    }
+  }}
+/>
+
+<Tip>
+  При создании своего шаблона вы можете добавлять любые произвольные ключи в `gost.with` 
+  (например, `institute`, `group`, `variant`). Они будут переданы в ваш шаблон через 
+  аргументы функции.
+</Tip>
+
+## Требования ГОСТ 7.32-2017
+
+<GostQuote page={9} id="6.1.1">
+6.1.1 На титульном листе приводят сведения, предусмотренные [5.2](#5.2) в соответствии с формами, 
+приведенными в приложениях А и Б.
+</GostQuote>
+
+<GostQuote page={16} id="6.10.1">
+6.10.1 Титульный лист содержит реквизиты: наименование министерства... полное наименование 
+организации... грифы согласования и утверждения...
+</GostQuote>
