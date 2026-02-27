@@ -74,7 +74,6 @@ export function HeroBackground({
       className="absolute inset-0 overflow-hidden pointer-events-none z-0"
       style={maskStyle}
     >
-      {/* Grid pattern */}
       <div
         className="absolute inset-0"
         style={{
@@ -84,7 +83,6 @@ export function HeroBackground({
         }}
       />
 
-      {/* Floating particles */}
       {[...Array(particleCount)].map((_, i) => (
         <Particle key={i} color={particleColor} />
       ))}

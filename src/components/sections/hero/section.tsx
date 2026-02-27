@@ -13,7 +13,7 @@ export default function HeroSection() {
             <span className="flex h-2 w-2 rounded-full bg-blue-400 mr-2"></span>
             ГОСТ 7.32-2017
           </div>
-          <h1 className="relative text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-2 sm:mb-3 tracking-tight">
+          <h1 className="relative text-4xl sm:text-5xl/11 md:text-7xl/15 font-semibold text-white tracking-tight">
             <span className="relative inline-block">
               О
               <img
@@ -28,7 +28,7 @@ export default function HeroSection() {
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 sm:mb-5 px-2 sm:px-0">
+          <p className="text-base sm:text-lg md:text-xl text-gray-400 mt-4 mb-6 md:mt-6 md:mb-7 px-2 sm:px-0">
             Автоматизированный{" "}
             <a
               href={NAVIGATION_LINKS.TYPST_APP}
@@ -38,7 +38,7 @@ export default function HeroSection() {
             >
               Typst
             </a>
-            {" "}шаблон для оформления работ в соответствии с ГОСТ 7.32-2017.<br />Сосредоточьтесь на содержании, не думайте о форматировании.
+            {" "}шаблон для оформления работ в&nbsp;соответствии&nbsp;с&nbsp;ГОСТ&nbsp;7.32-2017.<br />Сосредоточьтесь на содержании, не думайте о форматировании.
           </p>
           <div className="flex justify-center gap-3 sm:gap-4 text-white">
             <Button
