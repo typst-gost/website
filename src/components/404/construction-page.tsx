@@ -13,7 +13,7 @@ export function Construction404Page({ section }: Construction404PageProps) {
   const sectionTitle = section === "docs" ? "документации" : "примеров"
 
   const constructionEndDate =
-    section === "docs" ? new Date(2025, 11, 10) : new Date(2025, 11, 20)
+    section === "docs" ? new Date(2026, 3, 10) : new Date(2026, 3, 20)
 
   return (
     <PageBackground section={section}>
