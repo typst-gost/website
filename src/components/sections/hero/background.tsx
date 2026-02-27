@@ -20,14 +20,16 @@ function Particle({ color }: { color: string }) {
     top: 0,
     duration: 10,
     delay: 0,
+    jump: 0,
   })
 
   useEffect(() => {
     setParams({
       left: Math.random() * 100,
       top: Math.random() * 100,
-      duration: 10 + Math.random() * 10,
-      delay: Math.random() * 5,
+      duration: 10 + Math.random() * 5,
+      delay: Math.random() * -20,
+      jump: (Math.random() - 0.5) * 150,
     })
     setMounted(true)
   }, [])
@@ -42,7 +44,10 @@ function Particle({ color }: { color: string }) {
         top: `${params.top}%`,
         backgroundColor: color,
       }}
-      animate={{ y: [0, -100, 0], opacity: [0.2, 0.5, 0.2] }}
+      animate={{
+        y: [0, params.jump, 0],
+        opacity: [0.2, 0.5, 0.2]
+      }}
       transition={{
         duration: params.duration,
         repeat: Number.POSITIVE_INFINITY,
@@ -70,7 +75,10 @@ export function HeroBackground({
     : {}
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 2, ease: "easeOut" }}
       className="absolute inset-0 overflow-hidden pointer-events-none z-0"
       style={maskStyle}
     >
@@ -84,8 +92,8 @@ export function HeroBackground({
       />
 
       {[...Array(particleCount)].map((_, i) => (
-        <Particle key={i} color={particleColor} />
+        <Particle key={i} color={particleColor || "rgba(37, 99, 232, 0.3)"} />
       ))}
-    </div>
+    </motion.div>
   )
 }
