@@ -5,7 +5,6 @@ import FeaturesSection from "@/components/sections/features"
 import ContactSection from "@/components/sections/contacts"
 import { ComparisonSection } from "@/components/sections/comparison/section"
 import { Footer } from "@/components/footer"
-import { NewYearToast } from "@/components/decoration/winter/toast"
 import { PageBackground } from "@/components/decoration/background"
 
 export default function Home() {
@@ -22,8 +21,6 @@ export default function Home() {
         <ContactSection />
         <Footer />
       </div>
-      
-      <NewYearToast />
     </div>
   )
 }

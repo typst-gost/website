@@ -14,15 +14,7 @@ export default function HeroSection() {
             ГОСТ 7.32-2017
           </div>
           <h1 className="relative text-4xl sm:text-5xl/11 md:text-7xl/15 font-semibold text-white tracking-tight">
-            <span className="relative inline-block">
-              О
-              <img
-                src="/temporary/hat.svg"
-                alt="новогодняя шляпка"
-                className="absolute -top-[0.15em] md:-top-[0.19em] -left-[0.12em] w-[1.3em] -rotate-30 pointer-events-none select-none"
-              />
-            </span>
-            формляйте документы{" "}
+            Оформляйте документы{" "}
             <span className="relative inline-block text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-blue-600 to-blue-400 bg-size-[200%_100%] animate-shine-text">
               автоматически
             </span>

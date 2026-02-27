@@ -9,7 +9,6 @@ import { DonateButton } from "@/components/ui/buttons/donate-button"
 import { Menu, X } from "lucide-react"
 
 import { NAVIGATION_LINKS } from "@/lib/navigation"
-import { Garland } from "./decoration/winter/garland"
 
 const NAV_LINKS = [
   { href: NAVIGATION_LINKS.DOCS, label: "Документация (в работе)", disabled: true },
@@ -20,8 +19,6 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const closeMenu = () => setIsOpen(false)
-
-  const isProduction = process.env.NODE_ENV === 'production'
 
   return (
     <header
@@ -75,8 +72,6 @@ export function Navbar() {
           </button>
         </div>
       </nav>
-
-      {isProduction && <Garland />}
 
       <MobileMenu isOpen={isOpen} pathname={pathname} closeMenu={closeMenu} />
     </header>

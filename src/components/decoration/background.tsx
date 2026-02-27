@@ -1,8 +1,6 @@
 'use client'
 
 export const PageBackground = () => {
-  const isProduction = process.env.NODE_ENV === 'production'
-
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
       <div className="absolute inset-0 bg-linear-to-b from-gray-900 to-gray-950" />
