@@ -171,7 +171,7 @@ export function CodeBlock({
         ref={areaRef}
         {...viewportProps}
         className={cn(
-          'text-[13px] py-3.5 overflow-auto max-h-[600px] fd-scroll-container',
+          'text-[13px] py-3.5 overflow-auto max-h-150 fd-scroll-container',
           viewportProps.className,
         )}
         style={

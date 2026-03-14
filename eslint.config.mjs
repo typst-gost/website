@@ -12,6 +12,7 @@ export default tseslint.config(
       '**/*.js',
       '.source/**',
       '.next/**',
+      'public/'
     ],
   },
   eslint.configs.recommended,
