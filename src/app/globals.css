@@ -6,6 +6,10 @@
   text-wrap: balance;
 }
 
+strong {
+  font-weight: 700;
+}
+
 blockquote {
   padding-inline-start: 0 !important
 }
