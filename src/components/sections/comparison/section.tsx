@@ -117,7 +117,7 @@ export function ComparisonSection() {
 
   const scrollToIndex = useCallback(
     (index: number) => {
-      if (scrollRef.current && !isScrolling) {
+      if (scrollRef.current) {
         setIsScrolling(true)
         const container = scrollRef.current
         const slideWidth = container.offsetWidth
@@ -160,8 +160,8 @@ export function ComparisonSection() {
     setHasUserInteracted(true)
     if (activeIndex > 0) {
       const newIndex = activeIndex - 1
-      setActiveIndex(newIndex)
       scrollToIndex(newIndex)
+      setActiveIndex(newIndex)
     }
   }
 
@@ -169,8 +169,8 @@ export function ComparisonSection() {
     setHasUserInteracted(true)
     if (activeIndex < comparisons.length - 1) {
       const newIndex = activeIndex + 1
-      setActiveIndex(newIndex)
       scrollToIndex(newIndex)
+      setActiveIndex(newIndex)
     }
   }
 
