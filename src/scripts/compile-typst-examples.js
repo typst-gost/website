@@ -8,10 +8,12 @@ import { DEFAULT_HIDDEN_PREFIX, DEFAULT_HIDDEN_SUFFIX } from '../lib/typst/const
 
 const CONTENT_DIR = path.join(process.cwd(), 'content/docs');
 const OUTPUT_BASE = path.join(process.cwd(), 'public/docs/attachments');
+const ASSETS_DIR = path.join(process.cwd(), 'public/docs/compile_assets/'); 
 
 const TYPST_RENDER_REGEX = /<TypstRender\s+([^>]+?)\/>/gs;
 
 let compiler = null;
+const loadedAssets = new Set();
 
 async function getCompiler() {
   if (compiler) {
@@ -29,9 +31,25 @@ function buildFullCode(code, hiddenPrefix, hiddenSuffix) {
   return `${prefix}${code}${suffix}`;
 }
 
-async function compileTypstToImage(typstCode, outputPath) {
+async function compileTypstToImage(typstCode, outputPath, assets) {
   try {
     const currentCompiler = await getCompiler();
+
+    if (assets && assets.length > 0) {
+      for (const assetName of assets) {
+        if (!loadedAssets.has(assetName)) {
+          const assetPath = path.join(ASSETS_DIR, assetName);
+          
+          if (fs.existsSync(assetPath)) {
+            const fileBuffer = fs.readFileSync(assetPath);
+            currentCompiler.mapShadow(`/${assetName}`, new Uint8Array(fileBuffer));
+            loadedAssets.add(assetName);
+          } else {
+            console.warn(`  ⚠️ Warning: Asset was not found ${assetPath}`);
+          }
+        }
+      }
+    }
 
     const svgOutput = await currentCompiler.svg({
       mainFileContent: typstCode,
@@ -53,7 +71,7 @@ async function compileTypstToImage(typstCode, outputPath) {
 function parseTypstRenderProps(propsString) {
   const props = {};
 
-  // Извлекаем code={`...`}
+  // Extract code={`...`}
   const codeMatch = propsString.match(/code=\{`((?:[^`\\]|\\.|`(?!}))+)`\}/s);
   if (codeMatch) {
     props.code = codeMatch[1]
@@ -62,13 +80,13 @@ function parseTypstRenderProps(propsString) {
       .replace(/\\`/g, '`');
   }
 
-  // Извлекаем image="..."
+  // Extract image="..."
   const imageMatch = propsString.match(/image=["']([^"']+)["']/);
   if (imageMatch) {
     props.image = imageMatch[1];
   }
 
-  // Извлекаем hiddenPrefix={`...`} или hiddenPrefix={null}
+  // Extract hiddenPrefix
   const prefixMatch = propsString.match(/hiddenPrefix=\{(?:`((?:[^`\\]|\\.|`(?!}))+)`|(null))\}/s);
   if (prefixMatch) {
     if (prefixMatch[2] === 'null') {
@@ -83,7 +101,7 @@ function parseTypstRenderProps(propsString) {
     props.hiddenPrefix = DEFAULT_HIDDEN_PREFIX;
   }
 
-  // Извлекаем hiddenSuffix={`...`} или hiddenSuffix={null}
+  // Extract hiddenSuffix
   const suffixMatch = propsString.match(/hiddenSuffix=\{(?:`((?:[^`\\]|\\.|`(?!}))+)`|(null))\}/s);
   if (suffixMatch) {
     if (suffixMatch[2] === 'null') {
@@ -96,6 +114,16 @@ function parseTypstRenderProps(propsString) {
     }
   } else {
     props.hiddenSuffix = DEFAULT_HIDDEN_SUFFIX;
+  }
+
+  // Extract assets={['file1.png', 'file2.jpg']}
+  const assetsMatch = propsString.match(/assets=\{\[(.*?)\]\}/s);
+  if (assetsMatch) {
+    const arrayContent = assetsMatch[1];
+    const items = [...arrayContent.matchAll(/(["'])(.*?)\1/g)].map(m => m[2]);
+    props.assets = items;
+  } else {
+    props.assets =[];
   }
 
   return props;
@@ -149,7 +177,7 @@ async function processMdxFile(filePath, relativePath) {
     
     const outputPath = path.join(outputDir, props.image);
 
-    const success = await compileTypstToImage(fullCode, outputPath);
+    const success = await compileTypstToImage(fullCode, outputPath, props.assets);
     if (!success) {
       console.warn(`  Skipping: ${props.image}`);
     }

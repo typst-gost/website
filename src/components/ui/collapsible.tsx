@@ -2,7 +2,7 @@
 
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'
 import * as React from 'react'
-import { cn } from '../../lib/cn'
+import { cn } from '../../lib/utils'
 
 export const Collapsible = CollapsiblePrimitive.Root
 export const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger

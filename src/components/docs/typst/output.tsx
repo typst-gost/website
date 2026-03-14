@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect, useMemo } from "react";
 import { LoadingSpinner } from "@/components/ui/spinner";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 import { AlertTriangle, X } from "lucide-react";
 
 interface TypstOutputProps {

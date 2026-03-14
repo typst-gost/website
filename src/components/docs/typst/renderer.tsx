@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useMDXPath } from "@/lib/mdx-path-context";
 import { useTypstCompiler } from "@/hooks/use-typst-compiler";
 
@@ -23,6 +23,7 @@ interface TypstRenderProps {
   editable?: boolean;
   hiddenPrefix?: string | null;
   hiddenSuffix?: string | null;
+  assets?: string[] | null;
 }
 
 function buildFullCode(
@@ -44,13 +45,13 @@ export function TypstRender({
   editable = true,
   hiddenPrefix = DEFAULT_HIDDEN_PREFIX,
   hiddenSuffix = DEFAULT_HIDDEN_SUFFIX,
+  assets =[],
 }: TypstRenderProps) {
   const [imageError, setImageError] = useState(false);
   const [compiledSvg, setCompiledSvg] = useState<string | null>(null);
-  const [localCompileError, setLocalCompileError] = useState<string | null>(
-    null,
-  );
-  const [initialCompileDone, setInitialCompileDone] = useState(false);
+  const[localCompileError, setLocalCompileError] = useState<string | null>(null);
+  
+  const initialCompileRef = useRef(false);
 
   const { docPath } = useMDXPath();
   const {
@@ -58,7 +59,7 @@ export function TypstRender({
     isLoading: compilerLoading,
     compilerInitError,
     compileError: hookCompileError,
-  } = useTypstCompiler();
+  } = useTypstCompiler(assets);
 
   const displayCode = useMemo(() => code.trim(), [code]);
 
@@ -67,16 +68,14 @@ export function TypstRender({
       return image;
     }
     return `/docs/attachments/${docPath}/${image}`;
-  }, [image, docPath]);
+  },[image, docPath]);
 
   const isEditable =
     editable && !compilerLoading && !compilerInitError && !!compile;
 
   const compileCode = useCallback(
     async (codeToCompile: string) => {
-      if (!compile) {
-        return;
-      }
+      if (!compile) return;
 
       setLocalCompileError(null);
 
@@ -113,18 +112,16 @@ export function TypstRender({
         const message = formatTypstError(parsedError);
         setLocalCompileError(message);
         console.log("Compilation error:", error);
-      } finally {
-        setInitialCompileDone(true);
       }
-    },
-    [compile, hiddenPrefix, hiddenSuffix],
+    },[compile, hiddenPrefix, hiddenSuffix],
   );
 
   useEffect(() => {
-    if (isEditable && typeof compile === "function" && !initialCompileDone) {
+    if (isEditable && typeof compile === "function" && !initialCompileRef.current) {
+      initialCompileRef.current = true;
       compileCode(displayCode);
     }
-  }, [isEditable, compile, displayCode, compileCode, initialCompileDone]);
+  },[isEditable, compile, displayCode, compileCode]);
 
   const handleEditorChange = useCallback(
     (newCode: string) => {
@@ -141,7 +138,6 @@ export function TypstRender({
   const codeBlockClass = layout === "horizontal" ? "w-1/2" : "w-full";
 
   const displayCompileError = localCompileError || hookCompileError;
-
   const showCompilerLoading = editable && compilerLoading;
 
   return (

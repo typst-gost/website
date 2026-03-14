@@ -1,27 +1,33 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef, useState, useCallback, useMemo } from "react"
 
 type TypstModule = Window['$typst']
 
+const TYPST_COMPILER_URL = "/wasm/typst_ts_web_compiler_bg.wasm"
+const TYPST_RENDERER_URL = "/wasm/typst_ts_renderer_bg.wasm"
 let typstInitialized = false
 
-export function useTypstCompiler() {
-  const [compiler, setCompiler] = useState<TypstModule>(undefined)
+export function useTypstCompiler(assets: string[] | null) {
+  const [compiler, setCompiler] = useState<TypstModule | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(true)
   const [compilerInitError, setCompilerInitError] = useState<string | null>(null)
   const [compileError, setCompileError] = useState<string | null>(null)
-  const loadingRef = useRef(false)
+
+  const assetsKey = useMemo(() => (assets || []).join(','), [assets])
+  const loadedAssetsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
-    if (loadingRef.current) return
-    loadingRef.current = true
+    let isMounted = true;
 
-    const initCompiler = async () => {
+    const init = async () => {
+      setIsLoading(true)
       try {
-        await import(
-          "@myriaddreamin/typst.ts/dist/esm/contrib/all-in-one-lite.bundle.js"
-        )
+        if (!window.$typst) {
+          await import(
+            "@myriaddreamin/typst.ts/dist/esm/contrib/all-in-one-lite.bundle.js"
+          )
+        }
         
         const typst = window.$typst
 
@@ -30,29 +36,52 @@ export function useTypstCompiler() {
         }
         
         if (!typstInitialized) {
-          typst.setCompilerInitOptions({ getModule: () => "/wasm/typst_ts_web_compiler_bg.wasm" });
-          typst.setRendererInitOptions({ getModule: () => "/wasm/typst_ts_renderer_bg.wasm" });
+          typst.setCompilerInitOptions({ getModule: TYPST_COMPILER_URL })
+          typst.setRendererInitOptions({ getModule: TYPST_RENDERER_URL })
           typstInitialized = true
         }
 
-        setCompiler(typst)
-        setCompilerInitError(null)
+        const assetList = assetsKey.split(',').filter(Boolean)
+        const newAssets = assetList.filter(a => !loadedAssetsRef.current.has(a))
+
+        if (newAssets.length > 0) {
+          await Promise.all(
+            newAssets.map(async (assetName) => {
+              const response = await fetch(`docs/compile_assets/${assetName}`)
+              if (!response.ok) throw new Error(`Asset ${assetName} not found`)
+              
+              const buffer = await response.arrayBuffer()
+              typst.mapShadow(`/${assetName}`, new Uint8Array(buffer))
+              
+              loadedAssetsRef.current.add(assetName)
+            })
+          )
+        }
+
+        if (isMounted) {
+          setCompiler(typst)
+          setCompilerInitError(null)
+        }
       } catch (err) {
-        setCompilerInitError(
-          err instanceof Error ? err.message : "Failed to load compiler"
-        )
-        console.error("Failed to load Typst compiler:", err)
+        if (isMounted) {
+          setCompilerInitError(
+            err instanceof Error ? err.message : "Failed to load compiler/assets"
+          )
+          console.error("Failed to init Typst compiler:", err)
+        }
       } finally {
-        setIsLoading(false)
+        if (isMounted) {
+          setIsLoading(false)
+        }
       }
     }
 
-    initCompiler()
+    init()
 
     return () => {
-      loadingRef.current = false
+      isMounted = false
     }
-  }, [])
+  }, [assetsKey])
 
   const compile = useCallback(
     async (code: string): Promise<string | null> => {
@@ -62,8 +91,10 @@ export function useTypstCompiler() {
       }
 
       try {
+        compiler.mapShadow("/main.typ", new TextEncoder().encode(code))
+
         const svg = await compiler.svg({
-          mainContent: code,
+          mainFilePath: "/main.typ",
         })
 
         if (!svg || typeof svg !== "string") {

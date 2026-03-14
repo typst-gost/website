@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '../../../lib/cn';
+import { cn } from '../../../lib/utils';
 import { buttonVariants } from './button';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import { type SyntheticEvent, useEffect, useState, useTransition, useCallback } from 'react';
