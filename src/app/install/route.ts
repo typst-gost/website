@@ -12,7 +12,8 @@ export async function GET() {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
             },
         });
-    } catch (e) {
+    } catch (error) {
+        console.error(error)
         return new Response('echo "Install script not found on the server"', {
             status: 404,
             headers: { 'Content-Type': 'text/x-shellscript' }

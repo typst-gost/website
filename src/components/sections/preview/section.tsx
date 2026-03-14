@@ -13,7 +13,7 @@ async function getTypstCode() {
     if (!res.ok) throw new Error("Failed to fetch");
     return res.text();
   } catch (error) {
-    return "Error loading code example";
+    return `Error loading code example: ${error}`;
   }
 }
 

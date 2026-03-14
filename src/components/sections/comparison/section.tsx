@@ -198,7 +198,6 @@ export function ComparisonSection() {
           direction="left" 
           onClick={goPrev} 
           disabled={activeIndex === 0}
-          stopAnimation={hasUserInteracted}
         />
         <div className="flex gap-2">
           {comparisons.map((_, idx) => (
@@ -224,7 +223,7 @@ export function ComparisonSection() {
           direction="right"
           onClick={goNext}
           disabled={activeIndex === comparisons.length - 1}
-          stopAnimation={hasUserInteracted}
+          attention={!hasUserInteracted}
         />
       </div>
     </section>
