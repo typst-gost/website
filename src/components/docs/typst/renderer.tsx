@@ -23,7 +23,7 @@ interface TypstRenderProps {
   editable?: boolean;
   hiddenPrefix?: string | null;
   hiddenSuffix?: string | null;
-  assets?: string[] | null;
+  assets?: string[] | undefined;
 }
 
 function buildFullCode(
@@ -45,11 +45,11 @@ export function TypstRender({
   editable = true,
   hiddenPrefix = DEFAULT_HIDDEN_PREFIX,
   hiddenSuffix = DEFAULT_HIDDEN_SUFFIX,
-  assets =[],
+  assets = [],
 }: TypstRenderProps) {
   const [imageError, setImageError] = useState(false);
   const [compiledSvg, setCompiledSvg] = useState<string | null>(null);
-  const[localCompileError, setLocalCompileError] = useState<string | null>(null);
+  const [localCompileError, setLocalCompileError] = useState<string | null>(null);
   
   const initialCompileRef = useRef(false);
 
@@ -113,7 +113,7 @@ export function TypstRender({
         setLocalCompileError(message);
         console.log("Compilation error:", error);
       }
-    },[compile, hiddenPrefix, hiddenSuffix],
+    },[compile, hiddenPrefix, hiddenSuffix, assets],
   );
 
   useEffect(() => {

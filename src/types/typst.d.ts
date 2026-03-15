@@ -1,22 +1,20 @@
-interface TypstCompilerOptions {
-  getModule: string;
-}
+declare module "@myriaddreamin/typst.ts/dist/esm/contrib/all-in-one-lite.bundle.js" {
+  interface TypstModule {
+    setCompilerInitOptions(options: {
+      getModule: () => string
+    }): void
+    setRendererInitOptions(options: {
+      getModule: () => string
+    }): void
+    svg(options: { mainContent: string }): Promise<string>
+    render(options: { mainContent: string }): Promise<unknown>
+  }
 
-interface TypstRendererOptions {
-  getModule: string;
-}
-
-interface TypstSvgOptions {
-  mainFilePath: string;
-}
-
-interface TypstModule {
-  setCompilerInitOptions(options: TypstCompilerOptions): void;
-  setRendererInitOptions(options: TypstRendererOptions): void;
-  mapShadow(path: string, data: Uint8Array): void;
-  svg(options: TypstSvgOptions): Promise<string>;
+  const typst: TypstModule
+  export default typst
 }
 
 interface Window {
   $typst?: TypstModule;
 }
+

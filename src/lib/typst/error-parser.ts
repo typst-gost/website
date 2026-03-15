@@ -1,4 +1,4 @@
-import { ParsedTypstError, DiagMessage } from "../types/compiler-error"
+import { ParsedTypstError, DiagMessage } from "../../types/compiler-error"
 
 export function parseTypstError(error: unknown): ParsedTypstError {
   const errorStr = typeof error === 'string' 
