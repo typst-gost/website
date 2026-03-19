@@ -11,7 +11,7 @@ import { Menu, X } from "lucide-react"
 import { NAVIGATION_LINKS } from "@/lib/navigation"
 
 const NAV_LINKS = [
-  { href: NAVIGATION_LINKS.DOCS, label: "Документация (в работе)", disabled: true },
+  { href: NAVIGATION_LINKS.DOCS, label: "Документация", disabled: false },
   { href: NAVIGATION_LINKS.EXAMPLES_INTERNAL, label: "Примеры (в работе)", disabled: true },
 ]
 
@@ -44,7 +44,7 @@ export function Navbar() {
               priority
             />
             <span className="text-xl md:text-2xl font-bold text-white tracking-tight">
-              Typst 7.32
+              Typst Gost
             </span>
           </Link>
 
