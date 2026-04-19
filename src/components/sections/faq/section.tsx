@@ -1,15 +1,14 @@
+"use client";
+
 import { useState } from "react";
-import { Plus, Minus, ArrowRight } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FAQ_ITEMS } from "./faq";
 import { Heading } from "@/components/ui/heading";
-import { Section } from "@/components/ui/section";
-// import Link from "next/link";
 
 function FaqItem({
   question,
   answer,
-  href,
   isOpen,
   onClick,
 }: {
@@ -53,28 +52,16 @@ function FaqItem({
 
       <div
         className={cn(
-          "grid transition-all duration-300 ease-in-out",
+          "grid transition-all duration-500 ease-in-out",
           isOpen
             ? "grid-rows-[1fr] opacity-100 pb-6"
             : "grid-rows-[0fr] opacity-0",
         )}
       >
         <div className="overflow-hidden flex flex-col gap-4">
-          <p className="text-gray-400 text-base md:text-lg leading-relaxed">
+          <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
             {answer}
           </p>
-
-        {/* TODO: После проработки документации раскомментировать
-          <div>
-            <Link
-              href={href}
-              className="inline-flex items-center gap-2 px-4 py-2 mt-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors text-sm font-medium"
-            >
-              Подробнее в документации
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div> 
-          */}
         </div>
       </div>
     </div>
@@ -84,24 +71,24 @@ function FaqItem({
 export default function FaqSection() {
   const [openId, setOpenId] = useState<string | null>(null);
 
-  return (
-    <Section>
-      <div className="container mx-auto">
-        <Heading as="h2" title="Часто задаваемые вопросы" />
+  const isAnyOpen = openId !== null;
 
-        <div className="flex flex-col max-w-3xl ">
-          {FAQ_ITEMS.map((item) => (
-            <FaqItem
-              key={item.id}
-              question={item.question}
-              answer={item.answer}
-              href={item.href}
-              isOpen={openId === item.id}
-              onClick={() => setOpenId(openId === item.id ? null : item.id)}
-            />
-          ))}
-        </div>
+  return (
+    <div>
+      <Heading as="h2" title="Часто задаваемые вопросы" />
+
+      <div className="flex flex-col max-w-3xl">
+        {FAQ_ITEMS.map((item) => (
+          <FaqItem
+            key={item.id}
+            question={item.question}
+            answer={item.answer}
+            href={item.href}
+            isOpen={openId === item.id}
+            onClick={() => setOpenId(openId === item.id ? null : item.id)}
+          />
+        ))}
       </div>
-    </Section>
+    </div>
   );
 }

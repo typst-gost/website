@@ -24,6 +24,7 @@ export default function Home() {
         <Section>
           <div className="container mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+              <FaqSection />
               <CommunitySection />
             </div>
           </div>
