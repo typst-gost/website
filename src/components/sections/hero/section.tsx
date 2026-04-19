@@ -1,11 +1,12 @@
-import { Button } from "@/components/ui/buttons/button"
-import Link from "next/link"
-import { HeroBackground } from "./background"
-import { NAVIGATION_LINKS } from "@/lib/navigation"
+import { Button } from "@/components/ui/buttons/button";
+import Link from "next/link";
+import { HeroBackground } from "./background";
+import { NAVIGATION_LINKS } from "@/lib/navigation";
+import { Section } from "@/components/ui/section";
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-24 sm:pt-28 md:pt-40 md:pb-14 px-4">
+    <Section isHero>
       <HeroBackground />
       <div className="container mx-auto">
         <div className="max-w-5xl mx-auto text-center mb-10 md:mb-14">
@@ -29,8 +30,11 @@ export default function HeroSection() {
               className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300/50 underline-offset-2 transition-colors"
             >
               Typst
-            </a>
-            {" "}шаблон для оформления работ в&nbsp;соответствии&nbsp;с&nbsp;ГОСТ&nbsp;7.32-2017.<br />Сосредоточьтесь на содержании, не думайте о форматировании.
+            </a>{" "}
+            шаблон для оформления работ
+            в&nbsp;соответствии&nbsp;с&nbsp;ГОСТ&nbsp;7.32-2017.
+            <br />
+            Сосредоточьтесь на содержании, не думайте о форматировании.
           </p>
           <div className="flex justify-center gap-3 sm:gap-4 text-white">
             <Button
@@ -62,6 +66,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-    </section>
-  )
+    </Section>
+  );
 }

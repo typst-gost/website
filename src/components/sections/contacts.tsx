@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Heading } from "../ui/heading"
 import { InlineLink } from "../ui/inline-link"
 import { NAVIGATION_LINKS } from "@/lib/navigation"
+import { Section } from "../ui/section"
 
 export default function ContactSection() {
   const [copied, setCopied] = useState<string | null>(null)
@@ -110,7 +111,7 @@ export default function ContactSection() {
   }
 
   return (
-    <section className="pb-14 pt-8 px-4 sm:px-6 lg:px-8">
+    <Section>
       <div className="container mx-auto max-w-7xl">
         <Heading
           title="Остались вопросы?"
@@ -262,7 +263,7 @@ export default function ContactSection() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }
 

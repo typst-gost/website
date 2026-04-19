@@ -3,6 +3,8 @@ import { Code, FileText } from "lucide-react";
 import CodeBlock from "@/components/sections/preview/code-viewer";
 import ExpandableContentBlock from "@/components/ui/expandable";
 import { PdfViewerWrapper } from "./pdf-client-wrapper";
+import { Heading } from "@/components/ui/heading";
+import { Section } from "@/components/ui/section";
 
 async function getTypstCode() {
   try {
@@ -24,10 +26,8 @@ export default async function PreviewSection() {
   const typstCode = await getTypstCode();
 
   return (
-    <section className="py-4 container mx-auto">
-      <h2 className="text-white text-3xl sm:text-4xl font-bold mb-4 text-center md:text-left md:hidden">
-        Пример
-      </h2>
+    <Section>
+      <Heading as="h2" title="Пример" centered desktopHidden />
       <div className="container mx-auto px-4">
         <div className="relative mx-auto max-w-7xl">
           <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
@@ -61,6 +61,6 @@ export default async function PreviewSection() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

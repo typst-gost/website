@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { YandexMetrika } from "@/components/yandex-metrics";
+import { YandexMetrika } from "@/components/utils/yandex-metrics";
 
 import "./globals.css";
 import '../components/sections/comparison/styles.css'

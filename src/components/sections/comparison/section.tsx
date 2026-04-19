@@ -7,6 +7,7 @@ import { ComparisonSlide, type ComparisonData } from "./slide"
 import { comparisonIcons } from "./card"
 import { NavigationButton } from "./nav-button"
 import { Heading } from "@/components/ui/heading"
+import { Section } from "@/components/ui/section"
 
 const comparisons: ComparisonData[] = [
   {
@@ -175,7 +176,7 @@ export function ComparisonSection() {
   }
 
   return (
-    <section className="relative py-8 overflow-x-clip">
+    <Section>
       <Heading as="h2" title="Сравнение" centered/>
       <div className="absolute inset-0 pointer-events-none">
         <div className="comparison-gradient-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-300 h-200" />
@@ -226,6 +227,6 @@ export function ComparisonSection() {
           attention={!hasUserInteracted}
         />
       </div>
-    </section>
+    </Section>
   )
 }
