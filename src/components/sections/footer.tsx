@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/buttons/button"
-import { DonateButton } from "./ui/buttons/donate-button"
+import { DonateButton } from "../ui/buttons/donate-button"
 import { cn } from "@/lib/utils"
 import { NAVIGATION_LINKS } from "@/lib/navigation"
 

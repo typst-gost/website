@@ -4,7 +4,7 @@ import type React from "react"
 import { useRef } from "react"
 import { ExternalLink, FileText, Github, MessageCircle, Link } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
-import { FeatureCard } from "@/components/feature-card"
+import { FeatureCard } from "@/components/ui/feature-card";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 import { Heading } from "../ui/heading"
 import { InlineLink } from "../ui/inline-link"
