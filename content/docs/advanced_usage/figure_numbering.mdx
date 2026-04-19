@@ -1,0 +1,35 @@
+---
+title: Альтернативная нумерация фигур
+description: Способы пронумеровать рисунки, таблицы и прочие фигуры другим способом.
+iconLocal: FileBox
+---
+
+Можно как-нибудь нумерацию картинок сделать как 1.1, 1.2...2.1, 2.2, 2.3..?
+
+```typst
+#set heading(numbering: "1.1")
+
+#set figure(
+  numbering: it => {
+    let sec = counter(heading).at(here()).first()
+    let fig = counter(figure).at(here()).first()
+    return numbering("1.1", sec, fig)
+  },
+  supplement: [Рис.]
+)
+
+#show heading: it => {
+  counter(figure).update(0)
+  it
+}
+```
+
+К слову оно все подряд приложения нумерует, а не картинки отдельно, таблицы отдельно
+И там похоже нет адекватного красивого способа это разделить...
+
+---
+
+```typst
+#show figure.where(kind:image): set figure(numbering: num =>
+      ((counter(heading.where(level:1)).get() + (num,)).map(str).join(".")),)
+```
