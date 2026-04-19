@@ -2,7 +2,6 @@ import { Navbar } from "@/components/sections/navbar";
 import HeroSection from "@/components/sections/hero/section";
 import PreviewSection from "@/components/sections/preview/section";
 import FeaturesSection from "@/components/sections/features";
-import ContactSection from "@/components/sections/contacts";
 import { ComparisonSection } from "@/components/sections/comparison/section";
 import { Footer } from "@/components/sections/footer";
 import { PageBackground } from "@/components/decoration/background";

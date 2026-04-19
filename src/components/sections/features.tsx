@@ -1,20 +1,36 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useRef } from "react"
-import { ExternalLink, FileText, Github, MessageCircle, Link } from "lucide-react"
-import { Button } from "@/components/ui/buttons/button"
+import type React from "react";
+import { useRef, useEffect } from "react";
+import {
+  ExternalLink,
+  FileText,
+  Github,
+  MessageCircle,
+  Link,
+} from "lucide-react";
+import { Button } from "@/components/ui/buttons/button";
 import { FeatureCard } from "@/components/ui/feature-card";
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
-import { Heading } from "../ui/heading"
-import { InlineLink } from "../ui/inline-link"
-import { NAVIGATION_LINKS } from "@/lib/navigation"
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
+import { Heading } from "../ui/heading";
+import { InlineLink } from "../ui/inline-link";
+import { NAVIGATION_LINKS } from "@/lib/navigation";
 
 function ExternalLinkItem({
   href,
   icon: Icon,
   children,
-}: { href: string; icon: React.ElementType; children: React.ReactNode }) {
+}: {
+  href: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}) {
   return (
     <a
       href={href}
@@ -26,10 +42,16 @@ function ExternalLinkItem({
       <span className="flex-1 font-medium">{children}</span>
       <ExternalLink className="h-4 w-4 text-muted-foreground group-hover/link:translate-x-1 transition-transform" />
     </a>
-  )
+  );
 }
 
-function StepItem({ step, children }: { step: number; children: React.ReactNode }) {
+function StepItem({
+  step,
+  children,
+}: {
+  step: number;
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex items-start gap-3">
       <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-500 text-sm font-bold shrink-0">
@@ -37,21 +59,21 @@ function StepItem({ step, children }: { step: number; children: React.ReactNode 
       </span>
       <div className="flex-1 text-sm font-medium">{children}</div>
     </div>
-  )
+  );
 }
 
 function CTABanner() {
-  const ref = useRef<HTMLDivElement>(null)
-  
+  const ref = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
-  })
+  });
 
-  const backgroundX = useTransform(scrollYProgress, [0, 1], ["-30%", "30%"])
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"])
-  const blob1X = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-  const blob2X = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"])
+  const backgroundX = useTransform(scrollYProgress, [0, 1], ["-30%", "30%"]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+  const blob1X = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const blob2X = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -60,48 +82,85 @@ function CTABanner() {
   const mouseXSpring = useSpring(mouseX, springConfig);
   const mouseYSpring = useSpring(mouseY, springConfig);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left - 150);
-    mouseY.set(e.clientY - rect.top - 150);
-  };
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let rafId: number;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        mouseX.set(e.clientX - rect.left - 150);
+        mouseY.set(e.clientY - rect.top - 150);
+      });
+    };
+
+    el.addEventListener("mousemove", handleMouseMove, { passive: true });
+
+    return () => {
+      el.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, [mouseX, mouseY]);
 
   return (
-    <div 
-      ref={ref} 
-      onMouseMove={handleMouseMove}
+    <div
+      ref={ref}
       className="relative overflow-hidden rounded-2xl border border-blue-500/20 group/banner"
     >
       <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-xl z-10" />
 
-      <motion.div className="absolute inset-0 z-0" style={{ x: backgroundX, y: backgroundY }}>
+      <motion.div
+        className="absolute inset-0 z-0"
+        style={{ x: backgroundX, y: backgroundY }}
+      >
         <motion.div
           className="absolute -top-1/2 -left-1/4 w-150 h-150 rounded-full blur-[120px]"
-          style={{ x: blob1X, background: "radial-gradient(circle, rgba(59,130,246,0.4) 0%, transparent 70%)" }}
+          style={{
+            x: blob1X,
+            background:
+              "radial-gradient(circle, rgba(59,130,246,0.4) 0%, transparent 70%)",
+          }}
         />
         <motion.div
           className="absolute -bottom-1/2 -right-1/4 w-125 h-125 rounded-full blur-[100px]"
-          style={{ x: blob2X, background: "radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 70%)" }}
+          style={{
+            x: blob2X,
+            background:
+              "radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 70%)",
+          }}
         />
       </motion.div>
 
       <motion.div
         className="absolute w-75 h-75 z-0 rounded-full blur-[80px] pointer-events-none opacity-0 group-hover/banner:opacity-100 transition-opacity duration-500"
-        style={{ 
-            left: mouseXSpring, 
-            top: mouseYSpring,
-            background: "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)" 
+        style={{
+          left: mouseXSpring,
+          top: mouseYSpring,
+          background:
+            "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)",
         }}
       />
 
       <div className="relative z-20 p-8 text-center">
         <h3 className="text-2xl font-bold mb-3 text-white">Готовы начать?</h3>
         <p className="text-gray-300 mb-6 max-w-3xl mx-auto text-pretty">
-          Используйте шаблон для автоматизированного оформления документов по ГОСТ 7.32-2017
+          Используйте шаблон для автоматизированного оформления документов по
+          ГОСТ 7.32-2017
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20" asChild>
-            <a href={NAVIGATION_LINKS.TYPST_UNIVERSE_PACKAGE} target="_blank" rel="noopener noreferrer">
+          <Button
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20"
+            asChild
+          >
+            <a
+              href={NAVIGATION_LINKS.TYPST_UNIVERSE_PACKAGE}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Link className="mr-2 h-5 w-5" />
               Перейти к шаблону
             </a>
@@ -112,7 +171,11 @@ function CTABanner() {
             className="border-gray-500/10 hover:bg-blue-500/10 bg-gray-900 backdrop-blur-sm text-white hover:text-blue-500 hover:border-blue-500/30"
             asChild
           >
-            <a href={NAVIGATION_LINKS.TYPST_EXAMPLE_PROJECT} target="_blank" rel="noopener noreferrer">
+            <a
+              href={NAVIGATION_LINKS.TYPST_EXAMPLE_PROJECT}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FileText className="mr-2 h-5 w-5" />
               Посмотреть пример
             </a>
@@ -120,7 +183,7 @@ function CTABanner() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function FeaturesSection() {
@@ -139,10 +202,16 @@ export default function FeaturesSection() {
             description="Документация шаблона в разработке, обратитесь за помощью напрямую"
           >
             <nav className="space-y-3">
-              <ExternalLinkItem href={NAVIGATION_LINKS.TELEGRAM_CHAT} icon={MessageCircle}>
+              <ExternalLinkItem
+                href={NAVIGATION_LINKS.TELEGRAM_CHAT}
+                icon={MessageCircle}
+              >
                 Telegram поддержка
               </ExternalLinkItem>
-              <ExternalLinkItem href={NAVIGATION_LINKS.GITHUB_EXAMPLES_REPO} icon={Github}>
+              <ExternalLinkItem
+                href={NAVIGATION_LINKS.GITHUB_EXAMPLES_REPO}
+                icon={Github}
+              >
                 Примеры документов
               </ExternalLinkItem>
             </nav>
@@ -154,11 +223,19 @@ export default function FeaturesSection() {
           >
             <div className="space-y-4">
               <StepItem step={1}>
-                Поставьте звёздочку в <InlineLink href={NAVIGATION_LINKS.GITHUB_REPO}>репозитории</InlineLink>
+                Поставьте звёздочку в{" "}
+                <InlineLink href={NAVIGATION_LINKS.GITHUB_REPO}>
+                  репозитории
+                </InlineLink>
               </StepItem>
-              <StepItem step={2}>Попробуйте шаблон и вернитесь с обратной связью</StepItem>
+              <StepItem step={2}>
+                Попробуйте шаблон и вернитесь с обратной связью
+              </StepItem>
               <StepItem step={3}>
-                Присоединяйтесь к <InlineLink href={NAVIGATION_LINKS.TELEGRAM_CHAT}>сообществу</InlineLink>
+                Присоединяйтесь к{" "}
+                <InlineLink href={NAVIGATION_LINKS.TELEGRAM_CHAT}>
+                  сообществу
+                </InlineLink>
               </StepItem>
             </div>
           </FeatureCard>
@@ -167,5 +244,5 @@ export default function FeaturesSection() {
         <CTABanner />
       </div>
     </section>
-  )
+  );
 }

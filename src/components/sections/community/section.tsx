@@ -76,6 +76,7 @@ export default function CommunitySection() {
   }
 
   useEffect(() => {
+    if (document.hidden) return;
     fetchMembers()
     const interval = setInterval(fetchMembers, 30000)
     return () => clearInterval(interval)

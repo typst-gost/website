@@ -16,7 +16,7 @@ export default function HeroSection() {
           </div>
           <h1 className="relative text-4xl sm:text-5xl/11 md:text-7xl/15 font-semibold text-white tracking-tight">
             Оформляйте документы{" "}
-            <span className="relative inline-block text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-blue-600 to-blue-400 bg-size-[200%_100%] animate-shine-text">
+            <span className="relative inline-block font-bold text-blue-500">
               автоматически
             </span>
           </h1>
