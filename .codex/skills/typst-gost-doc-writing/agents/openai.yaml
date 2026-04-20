@@ -1,0 +1,4 @@
+interface:
+  display_name: "Typst-GOST Doc Writing"
+  short_description: "Write MDX docs for modern-g7-32"
+  default_prompt: "Use $typst-gost-doc-writing to document a modern-g7-32 feature with tests and GOST references."
