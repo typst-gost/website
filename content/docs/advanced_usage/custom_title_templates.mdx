@@ -70,17 +70,39 @@ iconLocal: Layout
 
 Чтобы применить созданный файл к вашему отчёту, используйте функцию `from-module`.
 
-```typst
+<TypstRender
+  code={`
 #import "@preview/modern-g7-32:0.2.0": gost, custom-title-template
-#import "my-template.typ" as my-tpl
+#import custom-title-template: sign-field
+
+#let my-template(..args) = {
+  let a = args.named()
+
+  align(center)[
+    #upper(a.organization.full) \
+    #v(2fr)
+    #text(size: 16pt, weight: "bold")[#a.subject]
+    #v(1fr)
+  ]
+
+  sign-field(a.manager.name, a.manager.position)
+  v(1fr)
+}
 
 #show: gost.with(
-  title-template: custom-title-template.from-module(my-tpl),
-  subject: "Собственный дизайн",
+  title-template: my-template,
+  subject: "Собственный титульный лист",
   organization: (full: "Моя компания"),
-  manager: (name: "Иванов И.И.", position: "Директор")
+  manager: (name: "Иванов И.И.", position: "Директор"),
+  city: "Москва",
 )
-```
+`}
+  image="custom-title-render.png"
+  hiddenPrefix={null}
+/>
+
+В реальном проекте функцию `my-template` удобнее вынести в отдельный файл `my-template.typ` и
+подключить через `custom-title-template.from-module(...)`, как показано выше.
 
 ## Доступные утилиты (title-utils)
 
