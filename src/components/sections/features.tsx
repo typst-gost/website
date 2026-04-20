@@ -8,6 +8,8 @@ import {
   Github,
   MessageCircle,
   Link,
+  BookOpen,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { FeatureCard } from "@/components/ui/feature-card";
@@ -200,6 +202,8 @@ export default function FeaturesSection() {
           <FeatureCard
             title="Документация"
             description="Документация шаблона в разработке, обратитесь за помощью напрямую"
+            hoverEffect={true}
+            icon={<BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />}
           >
             <nav className="space-y-3">
               <ExternalLinkItem
@@ -220,6 +224,8 @@ export default function FeaturesSection() {
           <FeatureCard
             title="Поддержка проекта"
             description="Ваша помощь очень важна для развития проекта"
+            hoverEffect={true}
+            icon={<Heart className="w-5 h-5 sm:w-6 sm:h-6" />}
           >
             <div className="space-y-4">
               <StepItem step={1}>
