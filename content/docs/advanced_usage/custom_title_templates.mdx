@@ -70,8 +70,7 @@ iconLocal: Layout
 
 Чтобы применить созданный файл к вашему отчёту, используйте функцию `from-module`.
 
-<TypstRender
-  code={`
+```typst
 #import "@preview/modern-g7-32:0.2.0": gost, custom-title-template
 #import "my-template.typ" as my-tpl
 
@@ -81,9 +80,7 @@ iconLocal: Layout
   organization: (full: "Моя компания"),
   manager: (name: "Иванов И.И.", position: "Директор")
 )
-`}
-  image="custom-title-render.png"
-/>
+```
 
 ## Доступные утилиты (title-utils)
 
