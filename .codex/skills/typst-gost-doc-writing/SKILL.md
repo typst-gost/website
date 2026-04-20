@@ -41,29 +41,65 @@ Also use other local PDFs in `public/documents/` when the requested feature depe
 
 Write docs in Russian unless the surrounding page is clearly English. Preserve the existing tone: practical, explanatory, and oriented toward students and technical users who write Typst documents instead of Word documents.
 
+Every MDX documentation page must start with YAML frontmatter before any prose or imports:
+
+```mdx
+---
+title: Короткий заголовок
+description: Одно предложение о том, что объясняет страница.
+iconLocal: IconName
+---
+```
+
+Required frontmatter fields:
+
+- `title`: short Russian page title shown in navigation and page header.
+- `description`: concise Russian description of the page purpose; avoid repeating the title.
+- `iconLocal`: an existing local icon name that matches the page topic and nearby docs.
+
 Use existing site conventions:
 
 - Place docs under `content/docs/`.
-- Use frontmatter fields such as `title`, `description`, and `iconLocal` when matching nearby pages.
 - Update the nearest `meta.json` when adding a page.
 - Use `TypstRender` for examples that should render in the page.
 - Use fenced `typst` blocks for examples that should be read but not rendered.
 - Use `TypeTable` for function parameters and configuration dictionaries.
-- Use `GostQuote` for short standard excerpts with the correct `page` and `id`.
+- Use `GostQuote` for short standard excerpts with the required `page` and `id` props.
 - Use `Callout` for concise notes, warnings, or clarifications.
 - Link related docs with relative links that match the existing style.
+
+## GostQuote Requirements
+
+Any page that explains ГОСТ-driven behavior must include a `## Требования ГОСТ ...` section with at least one `GostQuote`. Do not replace standard-backed requirements with only paraphrase.
+
+Use `GostQuote` like this:
+
+```mdx
+<GostQuote page={17} id="6.12.1">
+6.12.1 Сведения об общем объеме отчета ...
+</GostQuote>
+```
+
+Rules:
+
+- `page` is mandatory and must be the PDF page number used by the browser link, not a printed page label inferred from the document footer.
+- `id` is mandatory and must be stable, unique on the page, and based on the ГОСТ clause such as `6.12.1`; for excerpts from a subpart of a clause, append a clear suffix such as `6.1.1-font` or `6.7.3-style`.
+- The quote body must be a short, relevant excerpt copied from the standard and checked against the PDF. Keep longer explanation outside the quote in your own words.
+- Introduce related quotes under short `###` headings when a section needs several clauses.
+- Link back to quote anchors from explanatory text when useful, using fragments such as `[6.12](#6.12.1)`.
+- Use `GostQuote` only for standard excerpts. Use normal prose, `Callout`, or `TypeTable` for package behavior, warnings, and API details.
 
 ## Page Shape
 
 For a new feature or reference page, usually include:
 
-1. Frontmatter with a concise title and description.
+1. Required frontmatter with `title`, `description`, and `iconLocal`.
 2. A short opening paragraph naming the user problem and the `modern-g7-32` feature.
 3. `## Быстрый старт` with a minimal working Typst example.
 4. A behavior section that explains what the package automates.
 5. A parameter or API section when the feature has public options.
 6. Advanced usage only when tests or implementation show supported variations.
-7. A GOST requirements section with `GostQuote` entries when the behavior is standard-driven.
+7. A GOST requirements section with `GostQuote` entries. This section is mandatory for ГОСТ-driven features.
 8. Cross-links to adjacent docs and source concepts.
 
 Keep examples small. Prefer one complete, copyable Typst example over several partial fragments.
