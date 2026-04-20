@@ -9,8 +9,6 @@ import '../components/sections/comparison/styles.css'
 import { defineI18nUI } from 'fumadocs-ui/i18n';
 import { i18n } from '@/lib/i18n';
 
-import "./globals.css";
-
 const siteUrl = "https://typst-gost.ru";
 const siteName = "Typst Gost";
 
@@ -71,6 +69,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href={siteUrl} />
+        <meta name="darkreader-lock" />
         
         <script
           type="application/ld+json"
@@ -106,13 +105,13 @@ export default function RootLayout({
           }}
           i18n={provider("ru")}
         >
-        {children}
+          {children}
         </RootProvider>
-      </body>
 
-      <Suspense fallback={<></>}>
-        <YandexMetrika />
-      </Suspense>
+        <Suspense fallback={<></>}>
+          <YandexMetrika />
+        </Suspense>
+      </body>
     </html>
   );
 }
