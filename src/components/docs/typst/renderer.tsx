@@ -16,7 +16,8 @@ import { LoadingSpinner } from "@/components/ui/spinner";
 
 interface TypstRenderProps {
   code: string;
-  image: string;
+  image?: string;
+  filePath?: string;
   alt?: string;
   layout?: "horizontal" | "vertical";
   wordWrap?: boolean;
@@ -39,6 +40,7 @@ function buildFullCode(
 export function TypstRender({
   code,
   image,
+  filePath,
   alt = "Preview",
   layout = "horizontal",
   wordWrap = true,
@@ -64,11 +66,24 @@ export function TypstRender({
   const displayCode = useMemo(() => code.trim(), [code]);
 
   const imagePath = useMemo(() => {
+    if (filePath) {
+      return filePath;
+    }
+
+    if (!image) {
+      return null;
+    }
+
     if (image.startsWith("/")) {
       return image;
     }
+
     return `/docs/attachments/${docPath}/${image}`;
-  },[image, docPath]);
+  },[filePath, image, docPath]);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [imagePath]);
 
   const isEditable =
     editable && !compilerLoading && !compilerInitError && !!compile;
@@ -113,7 +128,7 @@ export function TypstRender({
         setLocalCompileError(message);
         console.log("Compilation error:", error);
       }
-    },[compile, hiddenPrefix, hiddenSuffix, assets],
+    },[compile, hiddenPrefix, hiddenSuffix],
   );
 
   useEffect(() => {
