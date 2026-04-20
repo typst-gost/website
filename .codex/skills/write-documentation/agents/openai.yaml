@@ -1,4 +1,0 @@
-interface:
-  display_name: "Write Documentation"
-  short_description: "Create and revise documentation files"
-  default_prompt: "Use $write-documentation to draft clear documentation for this repository."
