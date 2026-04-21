@@ -1,0 +1,4194 @@
+Directory structure:
+└── website/
+    └── src/
+        ├── app/
+        │   ├── globals.css
+        │   ├── layout.tsx
+        │   ├── not-found.tsx
+        │   ├── page.tsx
+        │   ├── api/
+        │   │   └── telegram-members/
+        │   │       └── route.ts
+        │   ├── fonts/
+        │   │   ├── GeistMonoVF.woff
+        │   │   └── GeistVF.woff
+        │   ├── install/
+        │   │   └── route.ts
+        │   └── install.ps1/
+        │       └── route.ts
+        ├── components/
+        │   ├── 404/
+        │   │   ├── construction-gif.tsx
+        │   │   ├── construction-page.tsx
+        │   │   ├── not-found-page.tsx
+        │   │   ├── page-background.tsx
+        │   │   └── progress-bar.tsx
+        │   ├── decoration/
+        │   │   ├── background.tsx
+        │   │   └── winter/
+        │   │       ├── garland.tsx
+        │   │       ├── snowfall.tsx
+        │   │       └── toast.tsx
+        │   ├── sections/
+        │   │   ├── features.tsx
+        │   │   ├── footer.tsx
+        │   │   ├── navbar.tsx
+        │   │   ├── community/
+        │   │   │   └── section.tsx
+        │   │   ├── comparison/
+        │   │   │   ├── card.tsx
+        │   │   │   ├── nav-button.tsx
+        │   │   │   ├── section.tsx
+        │   │   │   ├── slide.tsx
+        │   │   │   └── styles.css
+        │   │   ├── faq/
+        │   │   │   ├── faq.tsx
+        │   │   │   └── section.tsx
+        │   │   ├── hero/
+        │   │   │   ├── background.tsx
+        │   │   │   └── section.tsx
+        │   │   └── preview/
+        │   │       ├── code-viewer.tsx
+        │   │       ├── pdf-client-wrapper.tsx
+        │   │       ├── pdf-viewer.tsx
+        │   │       └── section.tsx
+        │   ├── ui/
+        │   │   ├── card.tsx
+        │   │   ├── expandable.tsx
+        │   │   ├── feature-card.tsx
+        │   │   ├── heading.tsx
+        │   │   ├── inline-link.tsx
+        │   │   ├── input.tsx
+        │   │   ├── section.tsx
+        │   │   ├── spinner.tsx
+        │   │   ├── textarea.tsx
+        │   │   ├── toast.tsx
+        │   │   └── buttons/
+        │   │       ├── button.tsx
+        │   │       ├── copy-button.tsx
+        │   │       ├── donate-button.tsx
+        │   │       └── github-button.tsx
+        │   └── utils/
+        │       ├── qr-generator.tsx
+        │       └── yandex-metrics.tsx
+        ├── lib/
+        │   ├── navigation.ts
+        │   ├── quotes-registry.ts
+        │   └── utils.ts
+        └── types/
+            └── yandex-metrics.d.ts
+
+================================================
+FILE: src/app/globals.css
+================================================
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@layer utilities {
+  body {
+    background: #111424;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+
+
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.glow-modern {
+  box-shadow: 0 0 60px -12px var(--modern);
+}
+
+@keyframes gradient-shift {
+  0%, 100% { transform: translateX(-25%); }
+  50% { transform: translateX(25%); }
+}
+
+.gradient-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(90deg, var(--modern), var(--accent), var(--modern));
+  animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.card {
+  background-color: rgba(30, 41, 59, 0.2);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+  border-style: var(--tw-border-style);
+  border-width: 1px;
+  border-radius: var(--radius-2xl)
+}
+
+@custom-variant hover (&:hover);
+
+
+
+================================================
+FILE: src/app/layout.tsx
+================================================
+import type { Metadata } from "next";
+import { Suspense } from "react";
+
+import { YandexMetrika } from "@/components/utils/yandex-metrics";
+
+import "./globals.css";
+import '../components/sections/comparison/styles.css'
+
+const siteUrl = "https://typst-gost.ru";
+const siteName = "Typst Gost";
+
+export const metadata: Metadata = {
+  title: "Typst Gost — Шаблон для ГОСТ 7.32-2017",
+  description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017. Используй для курсовых, дипломных работ и лабораторных.",
+  keywords: ["ГОСТ 7.32-2017", "Typst", "шаблон", "оформление документов", "ГОСТ", "стандарты", "нормконтроль", "формат", "документы", "курсовые", "дипломные", "лабораторные"],
+
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    title: "Typst Gost — Шаблон для ГОСТ 7.32-2017",
+    description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+    siteName: siteName,
+    images: [
+      {
+        url: `${siteUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Typst Gost Preview",
+      }
+    ],
+  },
+  
+  twitter: {
+    card: "summary_large_image",
+    title: "Typst Gost — Шаблон для ГОСТ 7.32-2017",
+    description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+    images: [`${siteUrl}/og-image.png`],
+  },
+  
+  robots: "index, follow",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="ru">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="canonical" href={siteUrl} />
+        
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "Typst Gost",
+              description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+              url: siteUrl,
+              applicationCategory: "DeveloperApplication",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "RUB"
+              },
+              potentialAction: {
+                "@type": "UseAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: siteUrl
+                }
+              }
+            })
+          }}
+        />
+      </head>
+      
+      <body className="antialiased">
+        {children}
+      </body>
+
+      <Suspense fallback={<></>}>
+        <YandexMetrika />
+      </Suspense>
+    </html>
+  );
+}
+
+
+
+================================================
+FILE: src/app/not-found.tsx
+================================================
+'use client';
+
+import { usePathname } from 'next/navigation';
+
+import { NotFoundPage } from "@/components/404/not-found-page"
+import { Construction404Page } from "@/components/404/construction-page"
+
+export default function NotFound() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith('/docs')) {
+     return <Construction404Page section="docs" />;
+  }
+
+  if (pathname.startsWith('/examples')) {
+     return <Construction404Page section="examples" />;
+  }
+
+  return <NotFoundPage />;
+}
+
+
+================================================
+FILE: src/app/page.tsx
+================================================
+import { Navbar } from "@/components/sections/navbar";
+import HeroSection from "@/components/sections/hero/section";
+import PreviewSection from "@/components/sections/preview/section";
+import FeaturesSection from "@/components/sections/features";
+import { ComparisonSection } from "@/components/sections/comparison/section";
+import { Footer } from "@/components/sections/footer";
+import { PageBackground } from "@/components/decoration/background";
+import FaqSection from "@/components/sections/faq/section";
+import CommunitySection from "@/components/sections/community/section";
+import { Section } from "@/components/ui/section";
+
+export default function Home() {
+  return (
+    <div className="min-h-screen relative bg-gray-950">
+      <PageBackground />
+
+      <div className="relative z-10">
+        <Navbar />
+        <HeroSection />
+        <PreviewSection />
+        <ComparisonSection />
+        <FeaturesSection />
+
+        <Section>
+          <div className="container mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+              <FaqSection />
+              <CommunitySection />
+            </div>
+          </div>
+        </Section>
+
+        <Footer />
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================
+FILE: src/app/api/telegram-members/route.ts
+================================================
+import { NextResponse } from "next/server"
+
+export const revalidate = 60;
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const chatId = searchParams.get("chatId") || "@typst_gost"
+  const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN 
+
+  if (!BOT_TOKEN) {
+    return NextResponse.json({ error: "Config Error" }, { status: 500 })
+  }
+
+  try {
+    const res = await fetch(
+      `https://api.telegram.org/bot${BOT_TOKEN}/getChatMemberCount?chat_id=${chatId}`,
+      { next: { revalidate: 60 } }
+    )
+    const data = await res.json()
+
+    if (data.ok) {
+      return NextResponse.json({ result: data.result })
+    } else {
+      return NextResponse.json({ error: data.description }, { status: 400 })
+    }
+  } catch (error) {
+    return NextResponse.json({ error: "Fetch Error" }, { status: 500 })
+  }
+}
+
+
+================================================
+FILE: src/app/fonts/GeistMonoVF.woff
+================================================
+[Binary file]
+
+
+================================================
+FILE: src/app/fonts/GeistVF.woff
+================================================
+[Binary file]
+
+
+================================================
+FILE: src/app/install/route.ts
+================================================
+import { readFile } from 'fs/promises';
+import path from 'path';
+
+export async function GET() {
+    const filePath = path.join(process.cwd(), 'public', 'scripts', 'install.sh');
+    try {
+        const fileContent = await readFile(filePath, 'utf8');
+        return new Response(fileContent, {
+            status: 200,
+            headers: {
+                'Content-Type': 'text/x-shellscript; charset=utf-8',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+            },
+        });
+    } catch (error) {
+        console.error(error)
+        return new Response('echo "Install script not found on the server"', {
+            status: 404,
+            headers: { 'Content-Type': 'text/x-shellscript' }
+        });
+    }
+}
+
+
+================================================
+FILE: src/app/install.ps1/route.ts
+================================================
+import { readFile } from 'fs/promises';
+import path from 'path';
+
+export async function GET() {
+    const filePath = path.join(process.cwd(), 'public', 'scripts', 'install.ps1');
+    try {
+        const fileContent = await readFile(filePath, 'utf8');
+        return new Response(fileContent, {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/powershell; charset=utf-8',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+            },
+        });
+    } catch (error) {
+        console.error(error)
+        return new Response('echo "Install script not found on the server"', {
+            status: 404,
+            headers: { 'Content-Type': 'application/powershell' }
+        });
+    }
+}
+
+
+================================================
+FILE: src/components/404/construction-gif.tsx
+================================================
+export function ConstructionGif() {
+  return (
+    <div className="flex w-full justify-center items-center">
+      <img
+        src="/temporary/building.gif"
+        alt="Under construction"
+        width={360}
+        height={270}
+        className="w-full max-w-xs md:max-w-md rounded-lg object-contain"
+        style={{ pointerEvents: "none", aspectRatio: "4/3" }}
+      />
+    </div>
+  )
+}
+
+
+
+================================================
+FILE: src/components/404/construction-page.tsx
+================================================
+"use client"
+
+import { ConstructionGif } from "./construction-gif"
+import { ConstructionProgressBar } from "./progress-bar"
+import { PageBackground } from "./page-background"
+
+interface Construction404PageProps {
+  section: "docs" | "examples"
+}
+
+export function Construction404Page({ section }: Construction404PageProps) {
+  const sectionLabel = section === "docs" ? "документации" : "примеров"
+  const sectionTitle = section === "docs" ? "документации" : "примеров"
+
+  const constructionEndDate =
+    section === "docs" ? new Date(2026, 3, 10) : new Date(2026, 3, 20)
+
+  return (
+    <PageBackground section={section}>
+      <div className="w-full max-w-2xl mx-auto text-center flex flex-col min-h-screen py-18">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3 md:mb-4 text-white text-balance">
+          Раздел{" "}
+          <span className="bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+            {sectionLabel}
+          </span>
+        </h1>
+
+        <p className="text-lg sm:text-xl md:text-2xl text-slate-300 mb-4 md:mb-6 font-light text-pretty">
+          находится в разработке
+        </p>
+
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="mb-8 md:mb-12">
+            <ConstructionGif />
+          </div>
+
+          <div className="mb-4 md:mb-8 w-full">
+            <ConstructionProgressBar endDate={constructionEndDate} />
+          </div>
+
+          <a
+            href="https://t.me/typst_gost"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1 md:gap-2 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-sm px-3 md:px-4 py-2 md:py-2.5 rounded-lg md:rounded-xl mx-auto w-fit"
+          >
+            <svg className="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.68c.223-.198-.054-.308-.346-.11l-6.4 4.03-2.76-.918c-.6-.187-.612-.6.125-.89l10.782-4.156c.5-.18.943.112.78.89z" />
+            </svg>
+            <span className="text-xs md:text-sm">
+              Поучаствовать в разработке <strong>{sectionTitle}</strong>
+            </span>
+          </a>
+        </div>
+
+        <div className="text-slate-200 text-xs sm:text-sm mt-auto px-4">
+          <p className="text-slate-400 text-2xs sm:text-xs md:text-sm leading-relaxed">
+            Мы активно работаем над разделом <strong>{sectionTitle}</strong>...<br />
+            Скоро здесь будет полезная информация и примеры!
+          </p>
+          <p>Спасибо за терпение 🚀</p>
+        </div>
+      </div>
+    </PageBackground>
+  )
+}
+
+
+
+================================================
+FILE: src/components/404/not-found-page.tsx
+================================================
+"use client"
+
+import Link from "next/link"
+import { PageBackground } from "./page-background"
+
+export function NotFoundPage() {
+  return (
+    <PageBackground className="min-h-screen">
+      <div className="w-full max-w-2xl mx-auto text-center">
+        <div className="mb-4 md:mb-6">
+          <p className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent text-balance">
+            404
+          </p>
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 text-white text-balance">
+          Страница не найдена
+        </h1>
+
+        <p className="text-sm sm:text-base md:text-md lg:text-lg text-slate-300 mb-6 md:mb-8 font-light text-pretty">
+          Страница, которую вы ищете, не существует или была перемещена
+        </p>
+
+        <div className="h-px bg-linear-to-r from-transparent via-blue-500 to-transparent mb-6 md:mb-8" />
+
+        <Link
+          href="/"
+          className="inline-flex items-center justify-center px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm md:text-base font-semibold rounded-lg shadow-lg"
+        >
+          ← Вернуться на главную
+        </Link>
+      </div>
+    </PageBackground>
+  )
+}
+
+
+
+================================================
+FILE: src/components/404/page-background.tsx
+================================================
+"use client"
+
+import type React from "react"
+import Image from "next/image"
+
+interface PageBackgroundProps {
+    children: React.ReactNode
+    className?: string
+    section?: "docs" | "examples"
+}
+
+export function PageBackground({ children, className = "", section }: PageBackgroundProps) {
+    const backgroundImage = section === "docs"
+        ? "/temporary/docs.png"
+        : section === "examples"
+            ? "/temporary/examples.png"
+            : null
+    
+    const blurAmount = section === "docs" ? "blur-[8px]" : "blur-lg"
+
+
+    return (
+        <div
+            className={`dark max-h-screen flex flex-col justify-center items-center relative ${className}`}
+        >
+            {backgroundImage ? (
+                <>
+                    <div className="absolute inset-0 z-0">
+                        <Image
+                            src={backgroundImage}
+                            alt=""
+                            fill
+                            className={`object-cover ${blurAmount} brightness-60`}
+                            priority
+                        />
+                    </div>
+                    <div className="absolute inset-0 bg-linear-to-br from-slate-950/80 via-slate-900/80 to-slate-800/80 z-1" />
+                </>
+            ) : (
+                <>
+                    <div className="absolute inset-0 bg-linear-to-br from-slate-950 via-slate-900 to-slate-800" />
+
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div className="absolute top-10 md:top-20 right-10 md:right-20 w-90 md:w-120 h-90 md:h-120 bg-blue-500/2.5 rounded-full blur-3xl" />
+                        <div className="absolute bottom-10 md:bottom-20 left-10 md:left-20 w-64 md:w-80 h-64 md:h-80 bg-purple-500/2.5 rounded-full blur-3xl" />
+                    </div>
+                </>
+            )}
+
+            <div className="relative z-10 w-full">{children}</div>
+        </div>
+    )
+}
+
+
+
+================================================
+FILE: src/components/404/progress-bar.tsx
+================================================
+"use client"
+
+import { useMemo } from "react"
+
+interface ConstructionProgressBarProps {
+  startDate?: Date
+  endDate?: Date
+}
+
+export function ConstructionProgressBar({
+  startDate = new Date(2025, 9, 27),
+  endDate = new Date(2025, 11, 10),
+}: ConstructionProgressBarProps) {
+  const progress = useMemo(() => {
+    const now = new Date()
+    const total = endDate.getTime() - startDate.getTime()
+    const elapsed = Math.max(0, Math.min(now.getTime() - startDate.getTime(), total))
+    const percentage = Math.round((elapsed / total) * 100)
+    return Math.min(percentage, 100)
+  }, [startDate, endDate])
+
+  return (
+    <div className="w-full max-w-xl mx-auto px-6">
+      <div className="mb-3 md:mb-4 flex justify-between items-center">
+        <span className="text-xs md:text-sm font-medium text-slate-400">Ход работ</span>
+        <span className="text-xl md:text-2xl font-bold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+          {progress}%
+        </span>
+      </div>
+      <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden border border-slate-600">
+        <div
+          className="progress-bar h-full bg-linear-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
+
+
+================================================
+FILE: src/components/decoration/background.tsx
+================================================
+'use client'
+
+export const PageBackground = () => {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+      <div className="absolute inset-0 bg-linear-to-b from-40% from-[#0e1525] to-[#0A0C17]" />
+
+      <div
+        className="absolute -right-50 -top-50 h-300 w-300 rounded-full blur-[250px] opacity-60"
+        style={{
+          background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(59,130,246,0) 90%)'
+        }}
+      />
+
+      <div
+        className="absolute -bottom-75 -left-200 h-400 w-400 rounded-full blur-[250px] opacity-60"
+        style={{
+          background: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(168,85,247,0) 90%)'
+        }}
+      />
+    </div>
+  )
+}
+
+
+
+================================================
+FILE: src/components/decoration/winter/garland.tsx
+================================================
+"use client"
+
+import { useEffect, useState, useRef, useMemo } from "react"
+
+interface Bulb {
+  x: number
+  y: number
+  color: string
+  waveDelay: number
+  scale: number
+  isMount: boolean
+  swingDuration: number
+  swingDelay: number
+  swingAmp: number
+}
+
+const COLORS = [
+  "#60A5FA",
+  "#38BDF8",
+  "#818CF8",
+  "#A78BFA",
+  "#C084FC",
+]
+
+export function Garland() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(0)
+
+  useEffect(() => {
+    if (typeof window !== "undefined") setWidth(window.innerWidth)
+
+    if (!containerRef.current) return
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0) setWidth(entry.contentRect.width)
+      }
+    })
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const { path, bulbs, mountPoints } = useMemo(() => {
+    if (width === 0) return { path: "", bulbs: [], mountPoints: [] }
+
+    const segmentTarget = 180 
+    const segmentsCount = Math.max(Math.ceil(width / segmentTarget), 1)
+    
+    const points: {x: number, y: number}[] = [{x: 0, y: 0}]
+    const segmentWidth = width / segmentsCount
+    
+    for (let i = 1; i < segmentsCount; i++) {
+      points.push({
+        x: i * segmentWidth + (Math.sin(i * 123) * 10),
+        y: (Math.cos(i * 321) * 3)
+      })
+    }
+    points.push({x: width, y: 0})
+
+    let pathD = `M 0 0`
+    const generatedBulbs: Bulb[] = []
+    let globalBulbIndex = 0
+
+    const addBulb = (x: number, y: number, isMount: boolean) => {
+      const seed = globalBulbIndex * 137
+      
+      generatedBulbs.push({
+        x,
+        y: y + (isMount ? 6 : 0),
+        color: COLORS[globalBulbIndex % COLORS.length],
+        waveDelay: globalBulbIndex * 0.15,
+        scale: 0.85 + (Math.sin(seed) * 0.1),
+        isMount,
+        swingDuration: 3 + Math.sin(seed) * 1, 
+        swingDelay: Math.cos(seed) * 2,
+        swingAmp: 5 + Math.sin(seed * 2) * 3 
+      })
+      globalBulbIndex++
+    }
+
+    addBulb(points[0].x, points[0].y, true)
+
+    for (let i = 0; i < points.length - 1; i++) {
+      const p1 = points[i]
+      const p2 = points[i+1]
+      
+      const dist = p2.x - p1.x
+      const sag = 20 + (dist * 0.05)
+      const midX = (p1.x + p2.x) / 2
+      const cpY = Math.max(p1.y, p2.y) + 2 * sag 
+
+      pathD += ` M ${p1.x} ${p1.y} Q ${midX} ${cpY} ${p2.x} ${p2.y}`
+
+      const bulbsPerSegment = 4 
+      
+      for (let j = 1; j <= bulbsPerSegment; j++) {
+        const t = j / (bulbsPerSegment + 1)
+        
+        const bx = (1 - t) * (1 - t) * p1.x + 2 * (1 - t) * t * midX + t * t * p2.x
+        const by = (1 - t) * (1 - t) * p1.y + 2 * (1 - t) * t * cpY + t * t * p2.y
+        
+        addBulb(bx, by, false)
+      }
+
+      if (i < points.length - 2) {
+        addBulb(p2.x, p2.y, true)
+      }
+    }
+
+    return { path: pathD, bulbs: generatedBulbs, mountPoints: points }
+  }, [width])
+
+  return (
+    <div 
+      ref={containerRef} 
+      className="absolute top-full left-0 right-0 h-32 pointer-events-none z-40 overflow-hidden"
+      aria-hidden="true"
+    >
+      {width > 0 && (
+        <svg 
+          className="w-full h-full"
+          viewBox={`0 0 ${width} 128`} 
+          style={{ overflow: 'visible' }}
+        >
+          <path
+            d={path}
+            fill="none"
+            stroke="rgba(0,0,0,0.1)"
+            strokeWidth="2"
+            transform="translate(0, 3)"
+          />
+          <path
+            d={path}
+            fill="none"
+            stroke="#2c394a" 
+            strokeWidth="1.2"
+          />
+
+          {mountPoints.map((p, i) => (
+              <circle key={`m-${i}`} cx={p.x} cy={p.y} r={2} fill="#475569" />
+          ))}
+
+          {bulbs.map((bulb, i) => (
+            <g key={`b-${i}`} transform={`translate(${bulb.x}, ${bulb.y})`}>
+              <g
+                className="bulb-swing-wrapper"
+                style={{
+                    transform: `scale(${bulb.scale})`,
+                    '--swing-duration': `${bulb.swingDuration}s`,
+                    '--swing-delay': `${bulb.swingDelay}s`,
+                    '--swing-amp': `${bulb.swingAmp}deg`,
+                } as React.CSSProperties}
+              >
+                <line x1="0" y1="-2" x2="0" y2={bulb.isMount ? 0 : 3} stroke="#334155" strokeWidth="1" />
+                
+                <rect x="-2" y="3" width="4" height="5" fill="#1e293b" rx="0.5" />
+                
+                <g className="bulb-glow-group" style={{ 
+                    animationDelay: `-${bulb.waveDelay}s`,
+                  }}>
+                  
+                  <circle cx="0" cy="11" r="20" fill={bulb.color} className="opacity-[0.05] blur-xl" />
+                  <circle cx="0" cy="11" r="10" fill={bulb.color} className="opacity-10 blur-md" />
+                  <circle cx="0" cy="11" r="5" fill={bulb.color} className="opacity-30 blur-sm" />
+                  
+                  <path 
+                    d="M -3 8 L 3 8 C 3 8 4.5 15 0 16 C -4.5 15 -3 8 -3 8 Z" 
+                    fill={bulb.color}
+                    className="opacity-90"
+                  />
+                  
+                  <circle cx="-1" cy="10" r="1" fill="white" className="opacity-40" />
+                </g>
+              </g>
+            </g>
+          ))}
+        </svg>
+      )}
+
+      <style jsx>{`
+        .bulb-glow-group {
+          animation: wave 3s ease-in-out infinite; 
+        }
+        
+        .bulb-swing-wrapper {
+          transform-origin: 0 -2px;
+          animation: swing var(--swing-duration) ease-in-out infinite alternate;
+          animation-delay: var(--swing-delay);
+        }
+
+        @keyframes wave {
+          0%, 100% { opacity: 0.4; transform: scale(0.95); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes swing {
+          from { transform: scale(var(--bulb-scale, 1)) rotate(calc(var(--swing-amp) * -1)); }
+          to { transform: scale(var(--bulb-scale, 1)) rotate(var(--swing-amp)); }
+        }
+        
+        .blur-xl { filter: blur(12px); }
+        .blur-md { filter: blur(6px); }
+        .blur-sm { filter: blur(2px); }
+      `}</style>
+    </div>
+  )
+}
+
+
+
+================================================
+FILE: src/components/decoration/winter/snowfall.tsx
+================================================
+'use client'
+
+import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
+
+const Snowfall = dynamic(() => import('react-snowfall'), { 
+  ssr: false 
+})
+
+export const SnowfallDecoration = () => {
+  const [mounted, setMounted] = useState(false)
+  const [snowflakeCount, setSnowflakeCount] = useState(20)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const isMobile = window.innerWidth < 768
+      setSnowflakeCount(isMobile ? 20 : 40)
+      setMounted(true)
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (!mounted) return null
+
+  return (
+    <Snowfall 
+      style={{
+        position: 'fixed',
+        width: '100vw',
+        height: '100vh',
+        zIndex: 0,
+      }}
+      snowflakeCount={snowflakeCount}
+      radius={[0.5, 2.5]}
+      speed={[0.5, 1.5]}
+    />
+  )
+}
+
+
+
+================================================
+FILE: src/components/decoration/winter/toast.tsx
+================================================
+"use client"
+
+import { useState, useEffect } from "react"
+import { X, TreePine } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { NAVIGATION_LINKS } from "@/lib/navigation"
+
+export function NewYearToast() {
+    const [isVisible, setIsVisible] = useState(false)
+
+    useEffect(() => {
+        const hasSeen = localStorage.getItem("seen-new-year-2026")
+
+        if (!hasSeen) {
+            const timer = setTimeout(() => {
+                setIsVisible(true)
+            }, 2000)
+            return () => clearTimeout(timer)
+        }
+    }, [])
+
+    const handleClose = () => {
+        setIsVisible(false)
+        localStorage.setItem("seen-new-year-2026", "true")
+    }
+
+    return (
+        <AnimatePresence>
+            {isVisible && (
+                <motion.div
+                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] md:bottom-8 md:right-8 md:w-96"
+                >
+                    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/85 p-5 shadow-2xl backdrop-blur-xl">
+                        <span className="pointer-events-none absolute -bottom-6 -right-4 rotate-[-15deg] select-none text-8xl font-black tracking-tighter text-white/3">
+                            2026
+                        </span>
+
+                        <div className="absolute -top-10 -left-10 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
+                        <div className="absolute -bottom-10 -right-10 h-35 w-35 rounded-full bg-purple-500/10 blur-3xl" />
+
+                        <button
+                            onClick={handleClose}
+                            className="absolute right-2 top-2 z-10 rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+
+                        <div className="relative z-0 flex items-start gap-4 pr-6">
+                            <div className="shrink-0 rounded-xl p-3 bg-blue-500/20">
+                                <TreePine className="h-8 w-8 text-blue-500" />
+                            </div>
+
+                            <div className="flex-1 pt-0.5">
+                                <h3 className="text-base font-semibold text-white">
+                                    С новым годом!
+                                </h3>
+                                <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                                    Желаю вам не беспокоиться о мелочах и осуществить всё задуманное в этом году!
+                                    <br />
+                                    <span className="mt-2 block font-medium text-blue-300/90">
+                                        <a
+                                            href={NAVIGATION_LINKS.TELEGRAM_AUTHOR}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            Павел Елисеев
+                                        </a>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    )
+}
+
+
+
+================================================
+FILE: src/components/sections/features.tsx
+================================================
+"use client";
+
+import type React from "react";
+import { useRef, useEffect } from "react";
+import {
+  ExternalLink,
+  FileText,
+  Github,
+  MessageCircle,
+  Link,
+  BookOpen,
+  Heart
+} from "lucide-react";
+import { Button } from "@/components/ui/buttons/button";
+import { FeatureCard } from "@/components/ui/feature-card";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
+import { Heading } from "../ui/heading";
+import { InlineLink } from "../ui/inline-link";
+import { NAVIGATION_LINKS } from "@/lib/navigation";
+
+function ExternalLinkItem({
+  href,
+  icon: Icon,
+  children,
+}: {
+  href: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-500/10 transition-all group/link"
+    >
+      <Icon className="h-5 w-5 text-blue-500" />
+      <span className="flex-1 font-medium">{children}</span>
+      <ExternalLink className="h-4 w-4 text-muted-foreground group-hover/link:translate-x-1 transition-transform" />
+    </a>
+  );
+}
+
+function StepItem({
+  step,
+  children,
+}: {
+  step: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-500 text-sm font-bold shrink-0">
+        {step}
+      </span>
+      <div className="flex-1 text-sm font-medium">{children}</div>
+    </div>
+  );
+}
+
+function CTABanner() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const backgroundX = useTransform(scrollYProgress, [0, 1], ["-30%", "30%"]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]);
+  const blob1X = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const blob2X = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 20, stiffness: 300, mass: 0.5 };
+  const mouseXSpring = useSpring(mouseX, springConfig);
+  const mouseYSpring = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let rafId: number;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const rect = el.getBoundingClientRect();
+        mouseX.set(e.clientX - rect.left - 150);
+        mouseY.set(e.clientY - rect.top - 150);
+      });
+    };
+
+    el.addEventListener("mousemove", handleMouseMove, { passive: true });
+
+    return () => {
+      el.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, [mouseX, mouseY]);
+
+  return (
+    <div
+      ref={ref}
+      className="relative overflow-hidden rounded-2xl border border-blue-500/20 group/banner"
+    >
+      <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-xl z-10" />
+
+      <motion.div
+        className="absolute inset-0 z-0"
+        style={{ x: backgroundX, y: backgroundY }}
+      >
+        <motion.div
+          className="absolute -top-1/2 -left-1/4 w-150 h-150 rounded-full blur-[120px]"
+          style={{
+            x: blob1X,
+            background:
+              "radial-gradient(circle, rgba(59,130,246,0.4) 0%, transparent 70%)",
+          }}
+        />
+        <motion.div
+          className="absolute -bottom-1/2 -right-1/4 w-125 h-125 rounded-full blur-[100px]"
+          style={{
+            x: blob2X,
+            background:
+              "radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 70%)",
+          }}
+        />
+      </motion.div>
+
+      <motion.div
+        className="absolute w-75 h-75 z-0 rounded-full blur-[80px] pointer-events-none opacity-0 group-hover/banner:opacity-100 transition-opacity duration-500"
+        style={{
+          left: mouseXSpring,
+          top: mouseYSpring,
+          background:
+            "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative z-20 p-8 text-center">
+        <h3 className="text-2xl font-bold mb-3 text-white">Готовы начать?</h3>
+        <p className="text-gray-300 mb-6 max-w-3xl mx-auto text-pretty">
+          Используйте шаблон для автоматизированного оформления документов по
+          ГОСТ 7.32-2017
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Button
+            size="lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20"
+            asChild
+          >
+            <a
+              href={NAVIGATION_LINKS.TYPST_UNIVERSE_PACKAGE}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Link className="mr-2 h-5 w-5" />
+              Перейти к шаблону
+            </a>
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="border-gray-500/10 hover:bg-blue-500/10 bg-gray-900 backdrop-blur-sm text-white hover:text-blue-500 hover:border-blue-500/30"
+            asChild
+          >
+            <a
+              href={NAVIGATION_LINKS.TYPST_EXAMPLE_PROJECT}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FileText className="mr-2 h-5 w-5" />
+              Посмотреть пример
+            </a>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function FeaturesSection() {
+  return (
+    <section className="relative py-8 px-4 overflow-hidden text-white">
+      <div className="container relative mx-auto max-w-7xl">
+        <Heading
+          title="Важная информация"
+          description="Всё, что нужно знать для работы с проектом и его поддержки"
+          centered
+        />
+
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          <FeatureCard
+            title="Документация"
+            description="Документация шаблона в разработке, обратитесь за помощью напрямую"
+            hoverEffect={true}
+            icon={<BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />}
+          >
+            <nav className="space-y-3">
+              <ExternalLinkItem
+                href={NAVIGATION_LINKS.TELEGRAM_CHAT}
+                icon={MessageCircle}
+              >
+                Telegram поддержка
+              </ExternalLinkItem>
+              <ExternalLinkItem
+                href={NAVIGATION_LINKS.GITHUB_EXAMPLES_REPO}
+                icon={Github}
+              >
+                Примеры документов
+              </ExternalLinkItem>
+            </nav>
+          </FeatureCard>
+
+          <FeatureCard
+            title="Поддержка проекта"
+            description="Ваша помощь очень важна для развития проекта"
+            hoverEffect={true}
+            icon={<Heart className="w-5 h-5 sm:w-6 sm:h-6" />}
+          >
+            <div className="space-y-4">
+              <StepItem step={1}>
+                Поставьте звёздочку в{" "}
+                <InlineLink href={NAVIGATION_LINKS.GITHUB_REPO}>
+                  репозитории
+                </InlineLink>
+              </StepItem>
+              <StepItem step={2}>
+                Попробуйте шаблон и вернитесь с обратной связью
+              </StepItem>
+              <StepItem step={3}>
+                Присоединяйтесь к{" "}
+                <InlineLink href={NAVIGATION_LINKS.TELEGRAM_CHAT}>
+                  сообществу
+                </InlineLink>
+              </StepItem>
+            </div>
+          </FeatureCard>
+        </div>
+
+        <CTABanner />
+      </div>
+    </section>
+  );
+}
+
+
+================================================
+FILE: src/components/sections/footer.tsx
+================================================
+import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/buttons/button"
+import { DonateButton } from "../ui/buttons/donate-button"
+import { cn } from "@/lib/utils"
+import { NAVIGATION_LINKS } from "@/lib/navigation"
+
+const footerLinks = [
+  { label: "Документация", href: NAVIGATION_LINKS.DOCS, disabled: true },
+  { label: "Примеры", href: NAVIGATION_LINKS.GITHUB_EXAMPLES_REPO, disabled: true, external: true },
+]
+
+export function Footer() {
+  return (
+    <footer className="border-t border-gray-800/40 bg-gray-950/60 backdrop-blur-md">
+      <div className="container mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4 lg:gap-8">
+          <Link 
+            href="/" 
+            className="shrink-0 hover:opacity-80 transition-opacity"
+          >
+            <Image 
+              src="/logo.svg" 
+              alt="Typst GOST" 
+              width={32} 
+              height={32} 
+              className="w-8 h-8"
+            />
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-4 lg:gap-8">
+            {footerLinks.map((link) => (
+              <FooterLink key={link.label} {...link} />
+            ))}
+          </nav>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <DonateButton className="h-9 px-4 text-sm" />
+          <Button 
+            className="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium" 
+            asChild
+          >
+            <a href={NAVIGATION_LINKS.TYPST_UNIVERSE_PACKAGE} target="_blank" rel="noopener noreferrer">
+              Начать
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      <div className="md:hidden border-t border-gray-800/40 px-4 py-4">
+        <nav className="flex flex-wrap justify-center gap-x-6 gap-y-3">
+           {footerLinks.map((link) => (
+              <FooterLink key={link.label} {...link} />
+            ))}
+        </nav>
+      </div>
+    </footer>
+  )
+}
+
+function FooterLink({
+  label,
+  href,
+  disabled = false,
+  external = false,
+}: {
+  label: string
+  href: string
+  disabled?: boolean
+  external?: boolean
+}) {
+  const baseStyles = "text-sm text-gray-400 hover:text-white transition-colors duration-200"
+
+  if (disabled) {
+    return (
+      <span className={cn(baseStyles, "opacity-50 cursor-not-allowed hover:text-gray-400")}>
+        {label}
+      </span>
+    )
+  }
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={baseStyles}
+      >
+        {label}
+      </a>
+    )
+  }
+
+  return (
+    <Link href={href} className={baseStyles}>
+      {label}
+    </Link>
+  )
+}
+
+
+
+================================================
+FILE: src/components/sections/navbar.tsx
+================================================
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import Image from "next/image"
+import { GitHubButton } from "@/components/ui/buttons/github-button"
+import { DonateButton } from "@/components/ui/buttons/donate-button"
+import { Menu, X } from "lucide-react"
+
+import { NAVIGATION_LINKS } from "@/lib/navigation"
+
+const NAV_LINKS = [
+  { href: NAVIGATION_LINKS.DOCS, label: "Документация (в работе)", disabled: true },
+  { href: NAVIGATION_LINKS.EXAMPLES_INTERNAL, label: "Примеры (в работе)", disabled: true },
+]
+
+export function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const closeMenu = () => setIsOpen(false)
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-800/10 transition-all duration-300 ${
+        isOpen
+          ? "bg-gray-950/40 backdrop-blur-2xl backdrop-brightness-50"
+          : "bg-gray-950/20 backdrop-blur-md"
+      }`}
+    >
+      <nav className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-4 lg:gap-8">
+          <Link
+            href="/"
+            onClick={closeMenu}
+            className="flex items-center gap-1 md:gap-2 hover:opacity-80 transition-opacity min-w-max"
+          >
+            <Image
+              src="/logo.svg"
+              alt="Typst GOST Logo"
+              width={32}
+              height={32}
+              className="w-7 h-7 md:w-8 md:h-8"
+              priority
+            />
+            <span className="text-xl md:text-2xl font-bold text-white tracking-tight">
+              Typst Gost
+            </span>
+          </Link>
+
+          <div className="hidden lg:flex items-center space-x-6">
+            {NAV_LINKS.map((link) => (
+              <NavLink key={link.href} link={link} pathname={pathname} />
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className="hidden md:block">
+            <GitHubButton />
+          </div>
+
+          <DonateButton className="hidden md:flex" />
+
+          <button
+            type="button"
+            className="lg:hidden inline-flex items-center justify-center rounded-lg p-2 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Меню"
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </nav>
+
+      <MobileMenu isOpen={isOpen} pathname={pathname} closeMenu={closeMenu} />
+    </header>
+  )
+}
+
+function MobileMenu({
+  isOpen,
+  pathname,
+  closeMenu,
+}: {
+  isOpen: boolean
+  pathname: string
+  closeMenu: () => void
+}) {
+  return (
+    <div
+      className={`lg:hidden grid transition-[grid-template-rows] duration-300 ease-in-out ${
+        isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+      }`}
+    >
+      <div className="overflow-hidden">
+        <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            {NAV_LINKS.map((link) => (
+              <NavLink
+                key={link.href}
+                link={link}
+                pathname={pathname}
+                isMobile
+                onClick={closeMenu}
+              />
+            ))}
+          </div>
+
+          <div className="md:hidden">
+            <div className="h-px bg-white/10 my-4" />
+            
+            <div className="flex flex-col gap-4 px-4">
+              <GitHubButton />
+              <DonateButton onClick={closeMenu} isMobile />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function NavLink({
+  link,
+  pathname,
+  isMobile = false,
+  onClick,
+}: {
+  link: { href: string; label: string; disabled?: boolean }
+  pathname: string
+  isMobile?: boolean
+  onClick?: () => void
+}) {
+  const isActive = pathname === link.href
+
+  let classes = "font-medium transition-colors duration-200"
+
+  if (link.disabled) {
+    classes += " pointer-events-none text-gray-500 cursor-not-allowed"
+  } else if (isActive) {
+    classes += isMobile ? " bg-white/10 text-white" : " text-white"
+  } else {
+    classes += isMobile
+      ? " text-gray-400 hover:text-white hover:bg-white/5"
+      : " text-gray-400 hover:text-white"
+  }
+
+  if (isMobile) {
+    classes += " block px-4 py-3 rounded-lg text-base"
+  } else {
+    classes += " whitespace-nowrap"
+  }
+
+  return (
+    <Link
+      href={link.href}
+      onClick={onClick}
+      className={classes}
+      aria-disabled={link.disabled}
+    >
+      {link.label}
+    </Link>
+  )
+}
+
+
+
+================================================
+FILE: src/components/sections/community/section.tsx
+================================================
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import {
+  MessageCircle,
+  QrCode,
+  Users,
+  Sparkles,
+  ExternalLink,
+} from "lucide-react";
+import { QRCodeImage } from "@/components/utils/qr-generator";
+import { Heading } from "@/components/ui/heading";
+import { cn } from "@/lib/utils";
+
+function AnimatedNumber({ value }: { value: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const prevValueRef = useRef(value);
+
+  useEffect(() => {
+    if (isInView && displayValue === 0 && value > 0) {
+      let start = 0;
+      const duration = 1500;
+      const startTime = Date.now();
+      const animate = () => {
+        const progress = Math.min((Date.now() - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setDisplayValue(Math.floor(start + (value - start) * eased));
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      animate();
+    }
+  }, [isInView, value, displayValue]);
+
+  useEffect(() => {
+    if (prevValueRef.current !== value && displayValue > 0) {
+      const start = displayValue;
+      const duration = 1000;
+      const startTime = Date.now();
+      const animate = () => {
+        const progress = Math.min((Date.now() - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setDisplayValue(Math.floor(start + (value - start) * eased));
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      animate();
+    }
+    prevValueRef.current = value;
+  }, [value, displayValue]);
+
+  return <span ref={ref}>{displayValue}</span>;
+}
+
+export default function CommunitySection() {
+  const [activeTab, setActiveTab] = useState<"stats" | "qr">("stats");
+  const [members, setMembers] = useState<number>(0);
+  const [isCelebrating, setIsCelebrating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const telegramLink = "https://t.me/typst_gost";
+
+  const fetchMembers = async () => {
+    try {
+      const res = await fetch("/api/telegram-members?chatId=@typst_gost");
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      if (typeof data.result === "number") {
+        setMembers((prev) => {
+          if (prev > 0 && data.result > prev) {
+            setIsCelebrating(true);
+            setTimeout(() => setIsCelebrating(false), 3000);
+          }
+          return data.result;
+        });
+      }
+    } catch (err) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (document.hidden) return;
+    fetchMembers();
+    const interval = setInterval(fetchMembers, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div>
+      <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+        <div className="flex flex-col max-w-xl text-left">
+          <Heading
+            as="h2"
+            title="Сообщество Typst Gost"
+            className="mb-6 lg:mb-8 text-left"
+          />
+          <p className="text-gray-400 text-lg leading-relaxed mb-8">
+            Присоединяйтесь к нашему уютному сообществу в Telegram. Здесь мы
+            обсуждаем типографику, делимся готовыми шаблонами титульных листов
+            ваших ВУЗов и просто оперативно помогаем новичкам разобраться с
+            ошибками.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <a
+              href={telegramLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setTimeout(fetchMembers, 5000)}
+              className="group relative inline-flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-[0_0_40px_-10px_#2AABEE] hover:shadow-[0_0_60px_-15px_#2AABEE] hover:-translate-y-1 w-full sm:w-auto"
+            >
+              <MessageCircle className="w-6 h-6 fill-white/20" />
+              <span>Перейти в Telegram</span>
+              <ExternalLink className="w-4 h-4 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all" />
+            </a>
+            <div className="lg:hidden flex items-center gap-2 text-gray-400">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="font-medium text-white">
+                {isLoading ? "--" : <AnimatedNumber value={members} />}
+              </span>
+              <span>участников</span>
+            </div>
+          </div>
+        </div>
+        <div className="w-full max-w-md mx-auto lg:mx-0 lg:ml-auto">
+          <div className="bg-white/5 border border-white/10 rounded-3xl p-2 backdrop-blur-md">
+            <div className="flex bg-white/5 rounded-2xl p-1 mb-4">
+              <button
+                onClick={() => setActiveTab("stats")}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all duration-300",
+                  activeTab === "stats"
+                    ? "bg-white/10 text-white shadow-sm"
+                    : "text-gray-400 hover:text-white hover:bg-white/5",
+                )}
+              >
+                <Users className="w-4 h-4" />
+                Статистика
+              </button>
+              <button
+                onClick={() => setActiveTab("qr")}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all duration-300",
+                  activeTab === "qr"
+                    ? "bg-white/10 text-white shadow-sm"
+                    : "text-gray-400 hover:text-white hover:bg-white/5",
+                )}
+              >
+                <QrCode className="w-4 h-4" />
+                QR-код
+              </button>
+            </div>
+            <div className="relative overflow-hidden bg-white/5 border border-white/5 rounded-2xl aspect-square flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                {activeTab === "stats" && (
+                  <motion.div
+                    key="stats"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="flex flex-col items-center text-center p-8 w-full"
+                  >
+                    <motion.div
+                      animate={
+                        isCelebrating
+                          ? { scale: [1, 1.1, 1], rotate: [0, -5, 5, 0] }
+                          : {}
+                      }
+                      className="relative"
+                    >
+                      <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mb-6 ring-8 ring-blue-500/10">
+                        <Users className="w-10 h-10 text-blue-400" />
+                      </div>
+                      <AnimatePresence>
+                        {isCelebrating && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0 }}
+                            animate={{ opacity: 1, y: -20, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute -top-2 -right-4 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1"
+                          >
+                            <Sparkles className="w-3 h-3" /> +1
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                    <div className="text-5xl font-bold text-white mb-2 tabular-nums tracking-tight">
+                      {isLoading ? (
+                        <span className="opacity-50">--</span>
+                      ) : (
+                        <AnimatedNumber value={members} />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400 font-medium">
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" />
+                      Человек в чате
+                    </div>
+                  </motion.div>
+                )}
+                {activeTab === "qr" && (
+                  <motion.div
+                    key="qr"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="flex flex-col items-center p-8 w-full"
+                  >
+                    <div className="bg-white p-4 rounded-2xl shadow-xl mb-6">
+                      <QRCodeImage data={telegramLink} size={200} />
+                    </div>
+                    <p className="text-gray-400 text-sm text-center max-w-50">
+                      Отсканируйте камерой телефона
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================
+FILE: src/components/sections/comparison/card.tsx
+================================================
+"use client"
+
+import type React from "react"
+import { motion } from "framer-motion"
+import { Check, X, Code, Zap, Link, Clock, Feather, Package, Cpu, FileText } from "lucide-react"
+import { FeatureCard } from "@/components/ui/feature-card"
+
+export interface ComparisonPoint {
+  icon: React.ReactNode
+  title: string
+  description: string
+  modernAdvantage: string
+  competitorIssue?: string
+}
+
+interface ComparisonCardProps {
+  point: ComparisonPoint
+  index: number
+  isVisible: boolean
+}
+
+export function ComparisonCard({ point, index, isVisible }: ComparisonCardProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      animate={isVisible ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.95 }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.15,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      }}
+      className="comparison-card-wrapper h-full"
+    >
+      <FeatureCard
+        title={point.title}
+        description={point.description}
+        icon={point.icon}
+        hoverEffect={true}
+        className="h-full min-h-60 sm:min-h-60 lg:min-h-85"
+        contentClassName="p-4 sm:p-5 lg:p-6"
+        titleClassName="text-base sm:text-lg text-gray-200"
+        descriptionClassName="text-xs sm:text-sm"
+      >
+        <div className="pt-3 sm:pt-4 mt-1 border-t border-gray-600/50 flex flex-col gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-2 min-h-6 sm:min-h-7">
+            <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-500" />
+            </div>
+            <span className="text-xs sm:text-sm text-blue-500/90 font-medium leading-tight">
+              {point.modernAdvantage}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 min-h-6 sm:min-h-7">
+            {point.competitorIssue ? (
+              <>
+                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
+                  <X className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-500" />
+                </div>
+                <span className="text-xs sm:text-sm text-gray-400 leading-tight">
+                  {point.competitorIssue}
+                </span>
+              </>
+            ) : (
+              <div className="h-4 sm:h-5" />
+            )}
+          </div>
+        </div>
+      </FeatureCard>
+    </motion.div>
+  )
+}
+
+export const comparisonIcons = {
+  code: <Code className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+  zap: <Zap className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+  link: <Link className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+  clock: <Clock className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+  feather: <Feather className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+  package: <Package className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+  cpu: <Cpu className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+  file: <FileText className="w-5 h-5 sm:w-5.5 sm:h-5.5 lg:w-6 lg:h-6" />,
+}
+
+
+================================================
+FILE: src/components/sections/comparison/nav-button.tsx
+================================================
+"use client"
+
+import { useState, useEffect } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+
+interface NavigationButtonProps {
+  direction: "left" | "right"
+  onClick: () => void
+  disabled: boolean
+  attention?: boolean
+}
+
+export function NavigationButton({ 
+  direction, 
+  onClick, 
+  disabled,
+  attention = false,
+}: NavigationButtonProps) {
+  const [shouldPulse, setShouldPulse] = useState(attention)
+
+  useEffect(() => {
+    setShouldPulse(attention)
+  }, [attention])
+
+  const handleClick = () => {
+    if (!disabled) {
+      onClick()
+    }
+  }
+
+  const Icon = direction === "left" ? ChevronLeft : ChevronRight
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={disabled}
+      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm border ${
+        disabled
+          ? "bg-gray-800/20 text-gray-600/50 border-gray-600/50 cursor-not-allowed"
+          : "border border-border border-gray-600/50 hover:border-blue-500/50 bg-gray-800/80 text-white hover:text-blue-500"
+      } ${shouldPulse ? "animate-pulse-subtle" : ""}`}
+    >
+      <Icon className="w-6 h-6" />
+    </button>
+  )
+}
+
+
+
+================================================
+FILE: src/components/sections/comparison/section.tsx
+================================================
+"use client";
+
+import { useRef, useState, useEffect, useCallback } from "react";
+import { FileText, Code, FileCode } from "lucide-react";
+
+import { ComparisonSlide, type ComparisonData } from "./slide";
+import { comparisonIcons } from "./card";
+import { NavigationButton } from "./nav-button";
+import { Heading } from "@/components/ui/heading";
+import { Section } from "@/components/ui/section";
+
+const comparisons: ComparisonData[] = [
+  {
+    id: "word",
+    competitor: "Word",
+    competitorUrl: "https://www.microsoft.com/ru-ru/microsoft-365/word",
+    competitorIcon: <FileText className="w-4 h-4" />,
+    points: [
+      {
+        icon: comparisonIcons.code,
+        title: "Код вместо визуального редактора",
+        description:
+          "Это может пугать, но, используя код, вы получаете надёжность, качество и одинаковый результат независимо от среды исполнения.",
+        modernAdvantage: "Никаких потерянных файлов",
+        competitorIssue: "Краш программы при работе с дипломом",
+      },
+      {
+        icon: comparisonIcons.feather,
+        title: "Никакого ручного форматирования",
+        description:
+          "Для создания отличного документа не потребуется вручную настраивать шрифты и стили — за вас этим займётся шаблон.",
+        modernAdvantage: "Никакого ручного форматирования",
+        competitorIssue: "Часы на настройку стилей и отступов",
+      },
+      {
+        icon: comparisonIcons.link,
+        title: "Автоматические ссылки",
+        description:
+          "В Typst можно крайне просто описать ссылку на изображение, таблицу, листинг или источник. Поддерживается BibTeX для библиографии.",
+        modernAdvantage: "Ссылки обновляются автоматически",
+        competitorIssue: "Сломанные перекрёстные ссылки",
+      },
+    ],
+  },
+  {
+    id: "latex",
+    competitor: "latex-g7-32",
+    competitorUrl: "https://github.com/latex-g7-32/latex-g7-32",
+    competitorIcon: <Code className="w-4 h-4" />,
+    points: [
+      {
+        icon: comparisonIcons.zap,
+        title: "Мгновенная компиляция",
+        description:
+          "Больше не нужно ждать сборки по несколько минут. Ввели символ — документ мгновенно перестроился благодаря инкрементальной компиляции.",
+        modernAdvantage: "Инкрементальная сборка за миллисекунды",
+        competitorIssue: "Полная пересборка при каждом изменении",
+      },
+      {
+        icon: comparisonIcons.cpu,
+        title: "Современный синтаксис",
+        description:
+          "Не нужно учить сложные макросы TeX. Typst — понятный язык, похожий на Python. Создавайте документы без боли.",
+        modernAdvantage: "Понятный синтаксис, как в Python",
+        competitorIssue: "Закрученные макросы TeX",
+      },
+      {
+        icon: comparisonIcons.package,
+        title: "Легковесность",
+        description:
+          "Typst - это один бинарный файл весом менее 60 МБ, он сразу готов к работе. Также есть официальный веб-интерфейс typst.app (аналог Overleaf).",
+        modernAdvantage: "Работает из коробки",
+        competitorIssue: "Дистрибутив в несколько гигабайт",
+      },
+    ],
+    footnote:
+      "* Выражаю благодарность авторам и контрибьюторам latex-g7-32. Ваш труд стал вдохновением для modern-g7-32.",
+  },
+  {
+    id: "gostdown",
+    competitor: "GOSTdown",
+    competitorUrl: "https://gitlab.iaaras.ru/iaaras/gostdown",
+    competitorIcon: <FileCode className="w-4 h-4" />,
+    points: [
+      {
+        icon: comparisonIcons.package,
+        title: "Богатая экосистема",
+        description:
+          "Вокруг Typst построена обширная инфраструктура: веб-редактор, пакетный менеджер Universe, расширение для VSCode, активное сообщество.",
+        modernAdvantage: "Десятки готовых пакетов на Universe",
+        competitorIssue: "Нет экосистемы",
+      },
+      {
+        icon: comparisonIcons.cpu,
+        title: "Единая технология",
+        description:
+          "Typst — полноценный язык программирования. Не понадобятся внешние инструменты вроде Python или Lua для автоматизации.",
+        modernAdvantage: "Самодостаточная экосистема",
+        competitorIssue: "Цепочка: Python -> Markdown → Pandoc → PDF",
+      },
+      {
+        icon: comparisonIcons.file,
+        title: "Нативная генерация PDF",
+        description:
+          "Typst не полагается на промежуточные форматы — создаёт PDF напрямую. Документ всегда выглядит одинаково.",
+        modernAdvantage: "Прямой рендеринг в PDF",
+        competitorIssue: "Конвертация через несколько форматов",
+      },
+    ],
+  },
+];
+
+export function ComparisonSection() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+
+  const scrollToIndex = useCallback((index: number) => {
+    if (scrollRef.current) {
+      const container = scrollRef.current;
+      const slideWidth = container.offsetWidth;
+      container.scrollTo({
+        left: slideWidth * index,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.getAttribute("data-index"));
+            if (!isNaN(index)) {
+              setActiveIndex(index);
+
+              if (index > 0) setHasUserInteracted(true);
+            }
+          }
+        });
+      },
+      {
+        root: scrollRef.current,
+        threshold: 0.6, // Триггер срабатывает, когда слайд виден на 60%
+      },
+    );
+
+    slideRefs.current.forEach((slide) => {
+      if (slide) observer.observe(slide);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const goPrev = () => {
+    setHasUserInteracted(true);
+    if (activeIndex > 0) {
+      scrollToIndex(activeIndex - 1);
+    }
+  };
+
+  const goNext = () => {
+    setHasUserInteracted(true);
+    if (activeIndex < comparisons.length - 1) {
+      scrollToIndex(activeIndex + 1);
+    }
+  };
+
+  return (
+    <Section>
+      <Heading as="h2" title="Сравнение" centered />
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="comparison-gradient-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-300 h-200" />
+        <div className="comparison-gradient-secondary absolute bottom-[20%] left-[10%] w-125 h-125" />
+      </div>
+
+      <div className="relative">
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide [-webkit-overflow-scrolling:touch]"
+        >
+          {comparisons.map((comp, idx) => (
+            <div
+              key={comp.id}
+              data-index={idx}
+              ref={(el) => {
+                slideRefs.current[idx] = el;
+              }}
+              className="min-w-full snap-center snap-always"
+            >
+              <ComparisonSlide data={comp} isActive={activeIndex === idx} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex justify-center items-center gap-8 -mt-3">
+        <NavigationButton
+          direction="left"
+          onClick={goPrev}
+          disabled={activeIndex === 0}
+        />
+        <div className="flex gap-2">
+          {comparisons.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setHasUserInteracted(true);
+                scrollToIndex(idx);
+              }}
+              className="p-1 bg-transparent border-none cursor-pointer"
+              aria-label={`Перейти к слайду ${idx + 1}`}
+            >
+              <div
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeIndex === idx
+                    ? "w-8 bg-blue-500"
+                    : "w-1.5 bg-gray-400/30"
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+
+        <NavigationButton
+          direction="right"
+          onClick={goNext}
+          disabled={activeIndex === comparisons.length - 1}
+          attention={!hasUserInteracted}
+        />
+      </div>
+    </Section>
+  );
+}
+
+
+
+================================================
+FILE: src/components/sections/comparison/slide.tsx
+================================================
+"use client"
+
+import type React from "react"
+import { motion } from "framer-motion"
+import { ComparisonCard, type ComparisonPoint } from "./card"
+import { Sparkles } from "lucide-react"
+
+const MODERN_G7_32_URL = "http://typst.app/universe/package/modern-g7-32"
+
+export interface ComparisonData {
+  id: string
+  competitor: string
+  competitorUrl: string
+  competitorIcon: React.ReactNode
+  points: ComparisonPoint[]
+  footnote?: string
+}
+
+interface ComparisonSlideProps {
+  data: ComparisonData
+  isActive: boolean
+}
+
+export function ComparisonSlide({ data, isActive }: ComparisonSlideProps) {
+  return (
+    <div className="min-w-full px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col items-center gap-6 mb-10">
+          <div className="flex items-center gap-4">
+            <a href={MODERN_G7_32_URL} target="_blank" rel="noopener noreferrer">
+              <motion.div
+                initial={{ opacity: 0, x: -100 }}
+                animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                className="comparison-badge-modern flex items-center gap-2 px-4 py-2.5 rounded-full hover:border-blue-500/50 hover:bg-blue-500/20"
+              >
+                <Sparkles className="w-4 h-4 text-blue-500" />
+                <span className="text-xs sm:text-sm font-semibold text-blue-500">
+                  modern-g7-32
+                </span>
+              </motion.div>
+            </a>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={isActive ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.5 }}
+              transition={{ duration: 0.5, delay: isActive ? 0.15 : 0 }}
+              className="text-xl sm:text-2xl font-bold text-gray-400/50"
+            >
+              vs
+            </motion.div>
+
+            <a href={data.competitorUrl} target="_blank" rel="noopener noreferrer">
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: 100 }}
+                transition={{ duration: 0.5 }}
+                className={`comparison-badge-competitor flex items-center gap-2 px-4 py-2.5 rounded-full text-gray-400 ${data.competitorUrl ? 'hover:text-blue-500 hover:border-blue-500/50 hover:bg-blue-500/10' : ''}`}
+              >
+                {data.competitorIcon}
+                <span className="text-xs sm:text-sm font-medium">
+                  {data.competitor}
+                </span>
+              </motion.div>
+            </a>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.points.map((point, idx) => (
+              <ComparisonCard key={idx} point={point} index={idx} isVisible={isActive} />
+            ))}
+          </div>
+        </div>
+
+        {data.footnote && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={isActive ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-center text-xs text-gray-400/60 mt-2 mb-6 max-w-2xl mx-auto italic"
+          >
+            {data.footnote}
+          </motion.p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+
+
+================================================
+FILE: src/components/sections/comparison/styles.css
+================================================
+@layer components {
+  .comparison-badge-modern {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  .comparison-badge-competitor {
+    background: rgba(31, 41, 55, 0.2);
+    border: 1px solid rgba(75, 85, 99, 0.5);
+  }
+
+  .comparison-gradient-primary {
+    background: radial-gradient(
+      circle,
+      rgba(59, 130, 246, 0.08) 0%,
+      transparent 95%
+    );
+    filter: blur(80px);
+  }
+
+  .comparison-gradient-secondary {
+    background: radial-gradient(
+      circle,
+      rgba(238, 24, 181, 0.05) 0%,
+      transparent 90%
+    );
+    filter: blur(80px);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
+================================================
+FILE: src/components/sections/faq/faq.tsx
+================================================
+[Binary file]
+
+
+================================================
+FILE: src/components/sections/faq/section.tsx
+================================================
+"use client";
+
+import { useState } from "react";
+import { Plus, Minus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { FAQ_ITEMS } from "./faq";
+import { Heading } from "@/components/ui/heading";
+
+function FaqItem({
+  question,
+  answer,
+  isOpen,
+  onClick,
+}: {
+  question: string;
+  answer: string;
+  href: string;
+  isOpen: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div className="border-b border-white/10 select-none">
+      <button
+        onClick={onClick}
+        className="w-full py-6 flex items-center justify-between gap-4 text-left group transition-all"
+        aria-expanded={isOpen}
+      >
+        <span
+          className={cn(
+            "text-lg md:text-xl font-medium transition-colors duration-300",
+            isOpen ? "text-blue-400" : "text-white group-hover:text-white/80",
+          )}
+        >
+          {question}
+        </span>
+
+        <div
+          className={cn(
+            "shrink-0 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300",
+            isOpen
+              ? "bg-blue-500/20 rotate-180"
+              : "bg-white/5 group-hover:bg-white/10",
+          )}
+        >
+          {isOpen ? (
+            <Minus className="w-5 h-5 text-blue-400" />
+          ) : (
+            <Plus className="w-5 h-5 text-gray-400 group-hover:text-white" />
+          )}
+        </div>
+      </button>
+
+      <div
+        className={cn(
+          "grid transition-all duration-500 ease-in-out",
+          isOpen
+            ? "grid-rows-[1fr] opacity-100 pb-6"
+            : "grid-rows-[0fr] opacity-0",
+        )}
+      >
+        <div className="overflow-hidden flex flex-col gap-4">
+          <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-2xl">
+            {answer}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function FaqSection() {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const isAnyOpen = openId !== null;
+
+  return (
+    <div>
+      <Heading as="h2" title="Часто задаваемые вопросы" />
+
+      <div className="flex flex-col max-w-3xl">
+        {FAQ_ITEMS.map((item) => (
+          <FaqItem
+            key={item.id}
+            question={item.question}
+            answer={item.answer}
+            href={item.href}
+            isOpen={openId === item.id}
+            onClick={() => setOpenId(openId === item.id ? null : item.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
+
+================================================
+FILE: src/components/sections/hero/background.tsx
+================================================
+"use client"
+
+import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
+
+interface HeroBackgroundProps {
+  gridColor?: string
+  gridOpacity?: number
+  gridSize?: number
+  particleCount?: number
+  particleColor?: string
+  fadeBottom?: boolean
+  fadeStart?: number
+}
+
+function Particle({ color }: { color: string }) {
+  const [mounted, setMounted] = useState(false)
+  const [params, setParams] = useState({
+    left: 0,
+    top: 0,
+    duration: 10,
+    delay: 0,
+    jump: 0,
+  })
+
+  useEffect(() => {
+    setParams({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      duration: 10 + Math.random() * 5,
+      delay: Math.random() * -20,
+      jump: (Math.random() - 0.5) * 150,
+    })
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
+
+  return (
+    <motion.div
+      className="absolute w-1 h-1 rounded-full"
+      style={{
+        left: `${params.left}%`,
+        top: `${params.top}%`,
+        backgroundColor: color,
+      }}
+      animate={{
+        y: [0, params.jump, 0],
+        opacity: [0.2, 0.5, 0.2]
+      }}
+      transition={{
+        duration: params.duration,
+        repeat: Number.POSITIVE_INFINITY,
+        delay: params.delay,
+        ease: "easeInOut",
+      }}
+    />
+  )
+}
+
+export function HeroBackground({
+  gridColor = "#2563E8",
+  gridOpacity = 0.03,
+  gridSize = 100,
+  particleCount = 50,
+  particleColor = "rgba(37, 99, 232, 0.3)",
+  fadeBottom = true,
+  fadeStart = 70,
+}: HeroBackgroundProps) {
+  const maskStyle = fadeBottom
+    ? {
+        WebkitMaskImage: `linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) ${fadeStart}%, rgba(0,0,0,0) 100%)`,
+        maskImage: `linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) ${fadeStart}%, rgba(0,0,0,0) 100%)`,
+      }
+    : {}
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 2, ease: "easeOut" }}
+      className="absolute inset-0 overflow-hidden pointer-events-none z-0"
+      style={maskStyle}
+    >
+      <div
+        className="absolute inset-0"
+        style={{
+          opacity: gridOpacity,
+          backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
+          backgroundSize: `${gridSize}px ${gridSize}px`,
+        }}
+      />
+
+      {[...Array(particleCount)].map((_, i) => (
+        <Particle key={i} color={particleColor || "rgba(37, 99, 232, 0.3)"} />
+      ))}
+    </motion.div>
+  )
+}
+
+
+
+================================================
+FILE: src/components/sections/hero/section.tsx
+================================================
+import { Button } from "@/components/ui/buttons/button";
+import Link from "next/link";
+import { HeroBackground } from "./background";
+import { NAVIGATION_LINKS } from "@/lib/navigation";
+import { Section } from "@/components/ui/section";
+
+export default function HeroSection() {
+  return (
+    <Section isHero>
+      <HeroBackground />
+      <div className="container mx-auto">
+        <div className="max-w-5xl mx-auto text-center mb-10 md:mb-14">
+          <div className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs sm:text-sm text-blue-400 mb-5 sm:mb-6">
+            <span className="flex h-2 w-2 rounded-full bg-blue-400 mr-2"></span>
+            ГОСТ 7.32-2017
+          </div>
+          <h1 className="relative text-4xl sm:text-5xl/11 md:text-7xl/15 font-semibold text-white tracking-tight">
+            Оформляйте документы{" "}
+            <span className="relative inline-block font-bold text-blue-500">
+              автоматически
+            </span>
+          </h1>
+
+          <p className="text-base sm:text-lg md:text-xl text-gray-400 mt-4 mb-6 md:mt-6 md:mb-7 px-2 sm:px-0">
+            Автоматизированный{" "}
+            <a
+              href={NAVIGATION_LINKS.TYPST_APP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300/50 underline-offset-2 transition-colors"
+            >
+              Typst
+            </a>{" "}
+            шаблон для оформления работ
+            в&nbsp;соответствии&nbsp;с&nbsp;ГОСТ&nbsp;7.32-2017.
+            <br />
+            Сосредоточьтесь на содержании, не думайте о форматировании.
+          </p>
+          <div className="flex justify-center gap-3 sm:gap-4 text-white">
+            <Button
+              variant="primary"
+              className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
+              asChild
+            >
+              <Link
+                href={NAVIGATION_LINKS.TYPST_TEMPLATE_START}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Начать
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
+              asChild
+            >
+              <Link
+                href={NAVIGATION_LINKS.GITHUB_REPO}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Репозиторий
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+
+
+================================================
+FILE: src/components/sections/preview/code-viewer.tsx
+================================================
+import { codeToHtml } from "shiki";
+import { cn } from "@/lib/utils";
+import { CopyButton } from "@/components/ui/buttons/copy-button";
+
+interface CodeBlockProps {
+  codeType: string;
+  codeContent: string;
+  isScrollable?: boolean;
+  showControls?: boolean;
+}
+
+const CodeBlock = async ({
+  codeType,
+  codeContent,
+  isScrollable = true,
+  showControls = true,
+}: CodeBlockProps) => {
+  const html = await codeToHtml(codeContent, {
+    lang: codeType,
+    theme: "github-dark",
+  });
+
+  return (
+    <div className="flex flex-col h-full bg-[#282c34] rounded-lg shadow-md overflow-hidden border border-gray-700">
+      <div className="px-4 py-2 bg-gray-700/50 border-b border-gray-700 flex items-center justify-between shrink-0">
+        <span className="text-gray-300 font-semibold uppercase text-xs tracking-wider">
+          {codeType}
+        </span>
+        {showControls && <CopyButton content={codeContent} />}
+      </div>
+
+      <div
+        className={cn(
+          "flex-1 min-h-0 w-full relative",
+          isScrollable ? "overflow-auto" : "overflow-hidden",
+        )}
+      >
+        <div
+          className="text-[8px] md:text-[10px] lg:text-[12px] leading-relaxed p-4 [&>pre]:bg-transparent! [&>pre]:m-0! [&>pre]:font-mono"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default CodeBlock;
+
+
+
+================================================
+FILE: src/components/sections/preview/pdf-client-wrapper.tsx
+================================================
+"use client"
+
+import dynamic from "next/dynamic"
+import { LoadingSpinner } from "@/components/ui/spinner"
+
+const previewUrl = "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.png"
+
+const PdfViewer = dynamic(
+  () => import("@/components/sections/preview/pdf-viewer"), 
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full w-full items-center justify-center bg-gray-900/20 rounded-xl">
+        <LoadingSpinner size={48} />
+      </div>
+    )
+  }
+)
+
+export function PdfViewerWrapper({ url }: { url: string }) {
+  return <PdfViewer pdfUrl={url} previewImageSrc={previewUrl} />
+}
+
+
+================================================
+FILE: src/components/sections/preview/pdf-viewer.tsx
+================================================
+"use client";
+
+import {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useLayoutEffect,
+} from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import { Button } from "@/components/ui/buttons/button";
+import Link from "next/link";
+import Image from "next/image";
+
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
+
+interface PdfViewerProps {
+  pdfUrl: string;
+  maxPagesApprox?: number;
+  showControls?: boolean;
+  previewImageSrc?: string;
+}
+
+const PAGE_BUFFER = 1;
+
+export default function PdfViewer({
+  pdfUrl,
+  maxPagesApprox = 15,
+  showControls = true,
+  previewImageSrc = "",
+}: PdfViewerProps) {
+  const [isActive, setIsActive] = useState(false);
+  const [isPdfReady, setIsPdfReady] = useState(false);
+  const [isPreviewLoaded, setIsPreviewLoaded] = useState(false);
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [containerWidth, setContainerWidth] = useState<number | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+
+  const targetPageRef = useRef<number>(1);
+  const isProgrammaticScroll = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useLayoutEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+    if (
+      typeof window !== "undefined" &&
+      "scrollRestoration" in window.history
+    ) {
+      window.history.scrollRestoration = "manual";
+    }
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setContainerWidth((prev) => {
+          if (!prev || Math.abs(prev - width) > 15) {
+            return width;
+          }
+          return prev;
+        });
+      }
+    });
+
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const activateViewer = useCallback(
+    (targetPage: number = 1) => {
+      if (isActive) return;
+      targetPageRef.current = targetPage;
+      setIsActive(true);
+      setPageNumber(targetPage);
+    },
+    [isActive],
+  );
+
+  const onDocumentLoadSuccess = useCallback(
+    ({ numPages }: { numPages: number }) => {
+      setNumPages(numPages);
+    },
+    [],
+  );
+
+  const onPageRenderSuccess = useCallback(() => {
+    if (isPdfReady) return;
+
+    const targetPage = targetPageRef.current;
+    const element = pageRefs.current.get(targetPage);
+
+    if (element && containerRef.current) {
+      isProgrammaticScroll.current = true;
+
+      const container = containerRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+
+      const currentScrollTop = container.scrollTop;
+      const relativeTop = elementRect.top - containerRect.top;
+      const targetScrollTop = currentScrollTop + relativeTop - 16;
+
+      if (targetPage > 1) {
+        container.scrollTop = targetScrollTop;
+      }
+
+      setTimeout(() => {
+        setIsPdfReady(true);
+        setTimeout(() => {
+          isProgrammaticScroll.current = false;
+        }, 100);
+      }, 50);
+    }
+  }, [isPdfReady]);
+
+  useEffect(() => {
+    if (!isPdfReady || !numPages || !containerRef.current) return;
+
+    const options = {
+      root: containerRef.current,
+      rootMargin: "-50% 0px -50% 0px",
+      threshold: 0,
+    };
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (isProgrammaticScroll.current || !isPdfReady) return;
+
+      const visibleEntries = entries.filter((entry) => entry.isIntersecting);
+
+      if (visibleEntries.length > 0) {
+        const entry = visibleEntries[0];
+        const pageNum = Number(entry.target.getAttribute("data-page-number"));
+        if (!isNaN(pageNum)) {
+          setPageNumber(pageNum);
+        }
+      }
+    }, options);
+
+    pageRefs.current.forEach((element) => {
+      if (element) observerRef.current?.observe(element);
+    });
+
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [isPdfReady, numPages]);
+
+  const handleScroll = () => {
+    if (
+      !isActive &&
+      containerRef.current &&
+      containerRef.current.scrollTop > 50
+    ) {
+      activateViewer(1);
+      return;
+    }
+
+    if (
+      !isPdfReady ||
+      isProgrammaticScroll.current ||
+      !containerRef.current ||
+      !numPages
+    )
+      return;
+
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 5;
+
+    if (isAtBottom && pageNumber !== numPages) {
+      setPageNumber(numPages);
+    }
+  };
+
+  const scrollToPage = (targetPage: number) => {
+    if (!isActive) {
+      activateViewer(targetPage);
+      return;
+    }
+
+    const element = pageRefs.current.get(targetPage);
+    const container = containerRef.current;
+
+    if (element && container) {
+      isProgrammaticScroll.current = true;
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+
+      setPageNumber(targetPage);
+
+      const containerRect = container.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+      const relativeTop =
+        elementRect.top - containerRect.top + container.scrollTop;
+      const targetScrollTop = relativeTop - 16;
+
+      container.scrollTo({
+        top: targetScrollTop,
+        behavior: "smooth",
+      });
+
+      scrollTimeoutRef.current = setTimeout(() => {
+        isProgrammaticScroll.current = false;
+      }, 800);
+    } else {
+      setPageNumber(targetPage);
+    }
+  };
+
+  const goToPreviousPage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    scrollToPage(Math.max(pageNumber - 1, 1));
+  };
+
+  const goToNextPage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    scrollToPage(Math.min(pageNumber + 1, numPages || maxPagesApprox));
+  };
+
+  const shouldRenderPage = (index: number) => {
+    const pageIndex = index + 1;
+    if (!isPdfReady) {
+      return pageIndex === targetPageRef.current || pageIndex === 1;
+    }
+    return (
+      pageIndex >= pageNumber - PAGE_BUFFER &&
+      pageIndex <= pageNumber + PAGE_BUFFER
+    );
+  };
+
+  const estimatedPageHeight = containerWidth ? containerWidth * 1.414 : 500;
+
+  return (
+    <div className="group relative w-full h-full bg-gray-50 flex flex-col overflow-hidden">
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="flex-1 w-full overflow-y-auto overflow-x-hidden custom-scrollbar px-2 md:px-10 scroll-smooth overscroll-y-contain relative"
+        onClick={() => !isActive && activateViewer(1)}
+      >
+        <div
+          className="w-full flex flex-col items-center gap-4 py-4 absolute top-0 left-0 right-0 z-10"
+          style={{
+            display: isPdfReady ? "none" : "flex",
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            className="relative shadow-md rounded-sm bg-white overflow-hidden"
+            style={{
+              width: containerWidth || "100%",
+              minHeight: estimatedPageHeight,
+              maxWidth: "100%",
+            }}
+          >
+            {!isPreviewLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                <span className="text-xs text-gray-400">Загрузка превью…</span>
+              </div>
+            )}
+            {previewImageSrc && (
+              <Image
+                src={previewImageSrc}
+                alt="Document Preview"
+                fill
+                className="object-contain"
+                priority
+                onLoadingComplete={() => setIsPreviewLoaded(true)}
+              />
+            )}
+          </div>
+
+          {Array.from({ length: maxPagesApprox - 1 }).map((_, i) => (
+            <div
+              key={`fake-page-${i}`}
+              className="shadow-md rounded-sm bg-white relative flex items-center justify-center text-gray-300 text-sm font-medium"
+              style={{
+                width: containerWidth || "100%",
+                minHeight: estimatedPageHeight,
+              }}
+            />
+          ))}
+        </div>
+
+        {isActive && (
+          <Document
+            file={pdfUrl}
+            onLoadSuccess={onDocumentLoadSuccess}
+            loading={null}
+            className={`flex flex-col items-center gap-4 py-4 relative z-0 ${isPdfReady ? "opacity-100" : "opacity-0"}`}
+          >
+            {numPages &&
+              Array.from(new Array(numPages), (_, index) => {
+                const pageIndex = index + 1;
+                const isRendered = shouldRenderPage(index);
+
+                return (
+                  <div
+                    key={`page-wrapper-${pageIndex}`}
+                    data-page-number={pageIndex}
+                    ref={(el) => {
+                      if (el) {
+                        pageRefs.current.set(pageIndex, el);
+                        if (isPdfReady) observerRef.current?.observe(el);
+                      } else {
+                        pageRefs.current.delete(pageIndex);
+                      }
+                    }}
+                    className="shadow-md rounded-sm bg-white relative"
+                    style={{
+                      width: containerWidth || "100%",
+                      minHeight: estimatedPageHeight,
+                    }}
+                  >
+                    {isRendered ? (
+                      <Page
+                        pageNumber={pageIndex}
+                        width={containerWidth || undefined}
+                        onRenderSuccess={
+                          pageIndex === targetPageRef.current
+                            ? onPageRenderSuccess
+                            : undefined
+                        }
+                        loading={null}
+                        renderTextLayer={false}
+                        renderAnnotationLayer={false}
+                        error={null}
+                      />
+                    ) : null}
+                  </div>
+                );
+              })}
+          </Document>
+        )}
+      </div>
+
+      {showControls && (
+        <div className="pointer-events-none absolute inset-0 z-40 flex flex-col justify-between p-4">
+          <div className="flex justify-end pointer-events-auto">
+            <Link
+              href={pdfUrl}
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 w-10 rounded-full bg-gray-900/80 text-white hover:bg-gray-900/60 hover:text-white shadow-sm backdrop-blur-sm"
+              >
+                <Download className="h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="hidden md:flex justify-center w-full pointer-events-auto">
+            <div
+              className="flex items-center gap-3 rounded-full bg-gray-900/80 px-4 py-2 shadow-xl backdrop-blur-md border border-white/10 transition-opacity duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={pageNumber <= 1}
+                className="h-9 w-9 rounded-full p-0 text-white hover:bg-white/20 hover:text-white disabled:opacity-30"
+                onClick={goToPreviousPage}
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+
+              <span className="min-w-16 text-center text-sm font-medium text-gray-100 tabular-nums">
+                {pageNumber} / {numPages || maxPagesApprox}
+              </span>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={
+                  numPages !== null
+                    ? pageNumber >= numPages
+                    : pageNumber >= maxPagesApprox
+                }
+                className="h-9 w-9 rounded-full p-0 text-white hover:bg-white/20 hover:text-white disabled:opacity-30"
+                onClick={goToNextPage}
+              >
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+================================================
+FILE: src/components/sections/preview/section.tsx
+================================================
+import { Code, FileText, Loader2 } from "lucide-react";
+import { Suspense } from "react";
+
+import CodeBlock from "@/components/sections/preview/code-viewer";
+import ExpandableContentBlock from "@/components/ui/expandable";
+import { PdfViewerWrapper } from "./pdf-client-wrapper";
+import { Heading } from "@/components/ui/heading";
+import { Section } from "@/components/ui/section";
+
+async function getTypstCode() {
+  try {
+    const res = await fetch(
+      "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/main/documents/preview/main.typ",
+      { next: { revalidate: 3600 } },
+    );
+    if (!res.ok) throw new Error("Failed to fetch");
+    return res.text();
+  } catch (error) {
+    return `Error loading code example: ${error}`;
+  }
+}
+
+async function AsyncCodeBlock() {
+  const typstCode = await getTypstCode();
+  return <CodeBlock codeType="typst" codeContent={typstCode} />;
+}
+
+function CodeSkeleton() {
+  return (
+    <div className="flex flex-col h-full bg-[#282c34] rounded-lg shadow-md overflow-hidden border border-gray-700 animate-pulse">
+      <div className="px-4 py-3 bg-gray-700/50 border-b border-gray-700 flex items-center justify-between">
+        <div className="w-16 h-4 bg-gray-600 rounded"></div>
+        <div className="w-6 h-4 bg-gray-600 rounded"></div>
+      </div>
+      <div className="flex-1 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+      </div>
+    </div>
+  );
+}
+
+const PDF_URL =
+  "https://raw.githubusercontent.com/typst-gost/examples/refs/heads/preview/preview/preview/preview.pdf";
+
+export default function PreviewSection() {
+  return (
+    <Section>
+      <Heading as="h2" title="Пример" centered desktopHidden />
+      <div className="container mx-auto px-4">
+        <div className="relative mx-auto max-w-7xl">
+          <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-3xl" />
+          <div className="relative bg-gray-800/50 border border-gray-800/50 rounded-3xl p-4 sm:p-6 backdrop-blur-xs">
+            <div className="hidden lg:flex gap-6 items-stretch">
+              <div className="w-1/2 h-[70vh] min-h-120">
+                <div className="h-full overflow-hidden rounded-xl">
+                  <Suspense fallback={<CodeSkeleton />}>
+                    <AsyncCodeBlock />
+                  </Suspense>
+                </div>
+              </div>
+
+              <div className="w-1/2 h-[70vh] min-h-120 overflow-hidden rounded-xl bg-gray-900/20">
+                <PdfViewerWrapper url={PDF_URL} />
+              </div>
+            </div>
+
+            <div className="lg:hidden space-y-4">
+              <ExpandableContentBlock title="Код" icon={<Code size={16} />}>
+                <Suspense fallback={<CodeSkeleton />}>
+                  <AsyncCodeBlock />
+                </Suspense>
+              </ExpandableContentBlock>
+
+              <ExpandableContentBlock
+                title="Документ"
+                icon={<FileText size={16} />}
+              >
+                <div className="w-full h-[70vh] bg-gray-900/20 rounded-xl overflow-hidden">
+                  <PdfViewerWrapper url={PDF_URL} />
+                </div>
+              </ExpandableContentBlock>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+
+================================================
+FILE: src/components/ui/card.tsx
+================================================
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "card",
+      className
+    )}
+    {...props}
+  />
+))
+Card.displayName = "Card"
+
+const CardHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    {...props}
+  />
+))
+CardHeader.displayName = "CardHeader"
+
+const CardTitle = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "text-2xl font-semibold leading-none tracking-tight",
+      className
+    )}
+    {...props}
+  />
+))
+CardTitle.displayName = "CardTitle"
+
+const CardDescription = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("text-sm text-neutral-500 dark:text-neutral-400", className)}
+    {...props}
+  />
+))
+CardDescription.displayName = "CardDescription"
+
+const CardContent = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+))
+CardContent.displayName = "CardContent"
+
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-6 pt-0", className)}
+    {...props}
+  />
+))
+CardFooter.displayName = "CardFooter"
+
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+
+
+
+================================================
+FILE: src/components/ui/expandable.tsx
+================================================
+"use client"
+
+import React, { useState } from "react"
+import { ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+interface CustomChildProps {
+  isScrollable?: boolean
+  showControls?: boolean
+}
+
+interface ExpandableContentBlockProps {
+  title: string
+  children: React.ReactElement<CustomChildProps>
+  defaultExpanded?: boolean
+  icon?: React.ReactNode
+  contentClassName?: string
+}
+
+export default function ExpandableContentBlock({
+  title,
+  children,
+  defaultExpanded = false,
+  icon,
+  contentClassName,
+}: ExpandableContentBlockProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded)
+
+  const childElement = children
+  const hasCustomProps = childElement?.type && typeof childElement.type !== 'string'
+
+  return (
+    <div className="w-full">
+      <div className={cn("hidden xl:block h-[70vh] min-h-120 rounded-xl overflow-hidden", contentClassName)}>
+        {hasCustomProps 
+          ? React.cloneElement(childElement, { isScrollable: true, showControls: true })
+          : children
+        }
+      </div>
+
+      <div className="xl:hidden">
+        <div className="relative flex flex-col overflow-hidden rounded-xl border border-gray-700/50 bg-gray-800/30">
+          
+          <div
+            className={cn(
+              "relative w-full transition-[height] duration-300 ease-in-out will-change-[height]",
+              "overflow-hidden",
+              isExpanded ? "h-[70vh]" : "h-50",
+              !isExpanded && "pointer-events-none select-none",
+              contentClassName
+            )}
+          >
+            {hasCustomProps
+              ? React.cloneElement(childElement, { 
+                  isScrollable: isExpanded, 
+                  showControls: isExpanded 
+                })
+              : children
+            }
+          </div>
+
+          <div 
+             className={cn(
+               "absolute bottom-10 left-0 right-0 h-30 bg-linear-to-t from-gray-800 via-gray-800/60 to-transparent pointer-events-none transition-opacity duration-300 z-10",
+               isExpanded ? "opacity-0" : "opacity-100"
+             )}
+          />
+
+          <div className="relative z-20 border-t border-gray-700/50 bg-gray-800/80 backdrop-blur-sm">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-700/30 active:bg-gray-700/50"
+            >
+              <div className="flex items-center gap-2">
+                {icon && <div className="text-blue-400">{icon}</div>}
+                <span className="text-sm font-medium text-gray-200">
+                  {isExpanded ? "Свернуть" : "Развернуть"} {title}
+                </span>
+              </div>
+              <ChevronDown
+                size={18}
+                className={cn("text-gray-400 transition-transform duration-300", isExpanded && "rotate-180")}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+
+================================================
+FILE: src/components/ui/feature-card.tsx
+================================================
+import * as React from "react";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+
+export interface FeatureCardProps {
+  title: React.ReactNode;
+  description: React.ReactNode;
+  children?: React.ReactNode;
+  icon?: React.ReactNode;
+  hoverEffect?: boolean;
+  className?: string;
+  contentClassName?: string;
+  titleClassName?: string;
+  descriptionClassName?: string;
+}
+
+export function FeatureCard({
+  title,
+  description,
+  children,
+  icon,
+  hoverEffect = false,
+  className,
+  contentClassName,
+  titleClassName,
+  descriptionClassName,
+}: FeatureCardProps) {
+  return (
+    <Card
+      className={cn(
+        "relative overflow-hidden bg-slate-800/50 backdrop-blur-md border border-gray-600/50 flex flex-col transition-all duration-500",
+        hoverEffect && "group hover:bg-slate-800/80 hover:border-blue-500/50 hover:shadow-[0_10px_30px_-10px_rgba(59,130,246,0.2),0_0_20px_-5px_rgba(59,130,246,0.1)]",
+        className
+      )}
+    >
+      {hoverEffect && (
+        <>
+          {/* Градиент верхней рамки при наведении */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none z-10" />
+          
+          {/* Внутреннее свечение при наведении */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0">
+            <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 via-transparent to-amber-500/5" />
+          </div>
+        </>
+      )}
+
+      <div className={cn("relative z-10 flex flex-col flex-1 p-8", contentClassName)}>
+        {icon && (
+          <div className="mb-3 sm:mb-4">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-lg sm:rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 transition-transform duration-300 group-hover:scale-110">
+              {icon}
+            </div>
+          </div>
+        )}
+        
+        <div className="flex-1">
+          <h3
+            className={cn(
+              "font-bold mb-3 transition-colors duration-300",
+              hoverEffect && "group-hover:text-blue-500",
+              titleClassName || "text-2xl"
+            )}
+          >
+            {title}
+          </h3>
+          <p className={cn("text-gray-400 leading-relaxed", descriptionClassName)}>
+            {description}
+          </p>
+        </div>
+        
+        {children && (
+          <div className="mt-4 flex flex-col">
+            {children}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+}
+
+
+================================================
+FILE: src/components/ui/heading.tsx
+================================================
+import * as React from "react"
+import { cn } from "@/lib/utils"
+
+interface HeadingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6"
+  title: React.ReactNode
+  highlight?: string
+  description?: string
+  centered?: boolean
+  desktopHidden?: boolean
+  mobileHidden?: boolean
+}
+
+const Heading = React.forwardRef<HTMLDivElement, HeadingProps>(
+  ({ 
+    className, 
+    as: Component = "h2", 
+    title, 
+    highlight, 
+    description, 
+    centered = false,
+    desktopHidden = false,
+    mobileHidden = false,
+    ...props 
+  }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "max-w-4xl mb-4 sm:mb-6",
+        centered ? "mx-auto text-center" : "text-center md:text-left",
+        mobileHidden && "hidden md:block",
+        desktopHidden && "md:hidden",
+        className
+      )}
+      {...props}
+    >
+      <Component className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 sm:mb-3 tracking-tight leading-tight">
+        {title}{" "}
+        {highlight && (
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-blue-600">
+            {highlight}
+          </span>
+        )}
+      </Component>
+      {description && (
+        <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 px-2 sm:px-0">
+          {description}
+        </p>
+      )}
+    </div>
+  )
+)
+Heading.displayName = "Heading"
+
+export { Heading }
+
+
+================================================
+FILE: src/components/ui/inline-link.tsx
+================================================
+import { ExternalLink } from "lucide-react";
+
+export function InlineLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center text-white underline hover:text-blue-400 transition-colors"
+    >
+      {children}
+      <ExternalLink className="h-4 w-4 ml-1" />
+    </a>
+  )
+}
+
+
+================================================
+FILE: src/components/ui/input.tsx
+================================================
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-10 w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-base ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-neutral-950 placeholder:text-neutral-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:file:text-neutral-50 dark:placeholder:text-neutral-400 dark:focus-visible:ring-neutral-300",
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Input.displayName = "Input"
+
+export { Input }
+
+
+
+================================================
+FILE: src/components/ui/section.tsx
+================================================
+import { twMerge } from 'tailwind-merge';
+
+interface SectionProps {
+  children: React.ReactNode;
+  className?: string;
+  isHero?: boolean;
+}
+
+export const Section = ({ children, className, isHero = false }: SectionProps) => {
+  return (
+    <section
+      className={twMerge(
+        className,
+        'px-4 container mx-auto max-w-8xl',
+        isHero ? 'pt-24 sm:pt-32 md:pt-40 pb-12' : 'py-8 md:py-12',
+      )}
+    >
+      {children}
+    </section>
+  );
+};
+
+
+================================================
+FILE: src/components/ui/spinner.tsx
+================================================
+import { cn } from '@/lib/utils'
+
+export interface ISVGProps extends React.SVGProps<SVGSVGElement> {
+    size?: number;
+    className?: string;
+  }
+  
+  export const LoadingSpinner = ({
+    size = 24,
+    className,
+    ...props
+  }: ISVGProps) => {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        {...props}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        strokeWidth="1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={cn("animate-spin", className)}
+      >
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
+    );
+  };
+
+
+================================================
+FILE: src/components/ui/textarea.tsx
+================================================
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+const Textarea = React.forwardRef<
+  HTMLTextAreaElement,
+  React.ComponentProps<"textarea">
+>(({ className, ...props }, ref) => {
+  return (
+    <textarea
+      className={cn(
+        "flex min-h-[80px] w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-base ring-offset-white placeholder:text-neutral-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-neutral-800 dark:bg-neutral-950 dark:ring-offset-neutral-950 dark:placeholder:text-neutral-400 dark:focus-visible:ring-neutral-300",
+        className
+      )}
+      ref={ref}
+      {...props}
+    />
+  )
+})
+Textarea.displayName = "Textarea"
+
+export { Textarea }
+
+
+
+================================================
+FILE: src/components/ui/toast.tsx
+================================================
+"use client"
+
+import * as React from "react"
+import * as ToastPrimitives from "@radix-ui/react-toast"
+import { cva, type VariantProps } from "class-variance-authority"
+import { X } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+
+const ToastProvider = ToastPrimitives.Provider
+
+const ToastViewport = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Viewport>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Viewport
+    ref={ref}
+    className={cn(
+      "fixed top-0 z-100 flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      className
+    )}
+    {...props}
+  />
+))
+ToastViewport.displayName = ToastPrimitives.Viewport.displayName
+
+const toastVariants = cva(
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border border-neutral-200 p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x) data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x) data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full dark:border-neutral-800",
+  {
+    variants: {
+      variant: {
+        default: "border bg-white text-neutral-950 dark:bg-neutral-950 dark:text-neutral-50",
+        destructive:
+          "destructive group border-red-500 bg-red-500 text-neutral-50 dark:border-red-900 dark:bg-red-900 dark:text-neutral-50",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+const Toast = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
+    VariantProps<typeof toastVariants>
+>(({ className, variant, ...props }, ref) => {
+  return (
+    <ToastPrimitives.Root
+      ref={ref}
+      className={cn(toastVariants({ variant }), className)}
+      {...props}
+    />
+  )
+})
+Toast.displayName = ToastPrimitives.Root.displayName
+
+const ToastAction = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Action>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Action
+    ref={ref}
+    className={cn(
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-neutral-200 bg-transparent px-3 text-sm font-medium ring-offset-white transition-colors hover:bg-neutral-100 focus:outline-hidden focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-neutral-100/40 hover:group-[.destructive]:border-red-500/30 hover:group-[.destructive]:bg-red-500 hover:group-[.destructive]:text-neutral-50 focus:group-[.destructive]:ring-red-500 dark:border-neutral-800 dark:ring-offset-neutral-950 dark:hover:bg-neutral-800 dark:focus:ring-neutral-300 dark:group-[.destructive]:border-neutral-800/40 dark:hover:group-[.destructive]:border-red-900/30 dark:hover:group-[.destructive]:bg-red-900 dark:hover:group-[.destructive]:text-neutral-50 dark:focus:group-[.destructive]:ring-red-900",
+      className
+    )}
+    {...props}
+  />
+))
+ToastAction.displayName = ToastPrimitives.Action.displayName
+
+const ToastClose = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Close>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Close
+    ref={ref}
+    className={cn(
+      "absolute right-2 top-2 rounded-md p-1 text-neutral-950/50 opacity-0 transition-opacity hover:text-neutral-950 focus:opacity-100 focus:outline-hidden focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 hover:group-[.destructive]:text-red-50 focus:group-[.destructive]:ring-red-400 focus:group-[.destructive]:ring-offset-red-600 dark:text-neutral-50/50 dark:hover:text-neutral-50",
+      className
+    )}
+    toast-close=""
+    {...props}
+  >
+    <X className="h-4 w-4" />
+  </ToastPrimitives.Close>
+))
+ToastClose.displayName = ToastPrimitives.Close.displayName
+
+const ToastTitle = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Title>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Title
+    ref={ref}
+    className={cn("text-sm font-semibold", className)}
+    {...props}
+  />
+))
+ToastTitle.displayName = ToastPrimitives.Title.displayName
+
+const ToastDescription = React.forwardRef<
+  React.ElementRef<typeof ToastPrimitives.Description>,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitives.Description
+    ref={ref}
+    className={cn("text-sm opacity-90", className)}
+    {...props}
+  />
+))
+ToastDescription.displayName = ToastPrimitives.Description.displayName
+
+type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
+
+type ToastActionElement = React.ReactElement<typeof ToastAction>
+
+export {
+  type ToastProps,
+  type ToastActionElement,
+  ToastProvider,
+  ToastViewport,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+  ToastAction,
+}
+
+
+
+================================================
+FILE: src/components/ui/buttons/button.tsx
+================================================
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 rounded-lg whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
+  {
+    variants: {
+      variant: {
+        default: "bg-neutral-900 text-neutral-50 hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90",
+        destructive:
+          "bg-red-500 text-neutral-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-neutral-50 dark:hover:bg-red-900/90",
+        primary:
+          "bg-blue-700 hover:bg-blue-600",
+        outline:
+          "border border-blue-500/30 bg-blue-500/10 text-gray-200 hover:bg-blue-500/20",
+        secondary:
+          "bg-neutral-100 text-neutral-900 hover:bg-neutral-100/80 dark:bg-neutral-800 dark:text-neutral-50 dark:hover:bg-neutral-800/80",
+        ghost: "hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-50",
+        link: "text-neutral-900 underline-offset-4 hover:underline dark:text-neutral-50",
+      },
+      size: {
+        default: "h-10 px-4 py-2 text-sm",
+        sm: "h-9 px-3 text-xs",
+        lg: "h-11 px-8 text-base",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+
+
+
+================================================
+FILE: src/components/ui/buttons/copy-button.tsx
+================================================
+"use client"
+
+import React, { useState, useCallback, useEffect } from 'react';
+import { Copy, Check, X, Loader2 } from 'lucide-react';
+import { cn } from "@/lib/utils";
+
+interface CopyButtonProps {
+  content: string;
+}
+
+export const CopyButton: React.FC<CopyButtonProps> = ({ content }) => {
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  const handleCopyClick = useCallback(async () => {
+    setCopyStatus('loading');
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopyStatus('success');
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+      setCopyStatus('error');
+    }
+  }, [content]);
+
+  useEffect(() => {
+    if (copyStatus !== 'idle') {
+      const timer = setTimeout(() => setCopyStatus('idle'), copyStatus === 'success' ? 1000 : 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [copyStatus]);
+
+  const icon = {
+    idle: <Copy className="h-4 w-4" />,
+    loading: <Loader2 className="h-4 w-4 animate-spin" />,
+    success: <Check className="h-4 w-4" />,
+    error: <X className="h-4 w-4" />
+  }[copyStatus];
+
+  return (
+    <button
+      onClick={handleCopyClick}
+      disabled={copyStatus === 'loading'}
+      className={cn(
+        "p-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500",
+        copyStatus === 'success' && "text-green-400 bg-green-500/20",
+        copyStatus === 'error' && "text-red-400 bg-red-500/20",
+        copyStatus === 'loading' && "text-blue-400",
+        copyStatus === 'idle' && "text-gray-400 hover:text-white hover:bg-gray-600"
+      )}
+      aria-label={copyStatus === 'success' ? 'Copied!' : 'Copy code'}
+    >
+      {icon}
+    </button>
+  );
+};
+
+
+
+================================================
+FILE: src/components/ui/buttons/donate-button.tsx
+================================================
+import { cn } from "@/lib/utils"
+import { Button } from "./button"
+import { Heart } from "lucide-react"
+import Link from "next/link"
+import { NAVIGATION_LINKS } from "@/lib/navigation"
+
+export function DonateButton({
+  className = "",
+  onClick,
+  isMobile = false,
+}: {
+  className?: string
+  onClick?: () => void
+  isMobile?: boolean
+}) {
+  return (
+    <Button
+      variant="outline"
+      size="default"
+      className={cn(
+        "border-pink-500/30 bg-pink-500/5 hover:bg-pink-500/10 hover:border-pink-500/50 text-gray-200 hover:text-pink-100",
+        isMobile && "w-full bg-pink-500/10 hover:bg-pink-500/20 text-pink-200",
+        className
+      )}
+      asChild
+    >
+      <Link
+        href={NAVIGATION_LINKS.DONATE}
+        onClick={onClick}
+      >
+        <Heart className={cn(
+          "w-4 h-4 text-pink-500 transition-colors",
+          !isMobile && "group-hover:text-pink-400 group-hover:scale-110"
+        )} />
+        Поддержать
+      </Link>
+    </Button>
+  )
+}
+
+
+================================================
+FILE: src/components/ui/buttons/github-button.tsx
+================================================
+"use client"
+
+import { useEffect, useState } from "react"
+import { Star } from "lucide-react"
+import { Button } from "@/components/ui/buttons/button"
+import Link from "next/link"
+import { NAVIGATION_LINKS } from "@/lib/navigation"
+
+export function GitHubButton() {
+  const [stars, setStars] = useState<string>("0")
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    fetch("https://api.github.com/repos/typst-gost/modern-g7-32")
+      .then((res) => res.json())
+      .then((data) => {
+        const starCount = data.stargazers_count
+        setStars(starCount >= 1000 ? `${(starCount / 1000).toFixed(1)}K` : starCount.toString())
+        setIsLoading(false)
+      })
+      .catch(() => {
+        setIsLoading(false)
+      })
+  }, [])
+
+  return (
+    <Button
+      variant="outline"
+      asChild
+    >
+      <Link
+        href={NAVIGATION_LINKS.GITHUB_REPO}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2"
+      >
+        GitHub
+        <span className="flex items-center gap-0.5">
+          <Star className="h-4 w-4 text-blue-500" />
+          {!isLoading && <span className="text-gray-400">{stars}</span>}
+        </span>
+      </Link>
+    </Button>
+  )
+}
+
+
+
+================================================
+FILE: src/components/utils/qr-generator.tsx
+================================================
+"use client"
+
+import { useEffect, useState } from "react"
+import QRCode from "qrcode"
+import Image from "next/image"
+import { cn } from "@/lib/utils"
+
+interface QRCodeImageProps {
+  data: string
+  size?: number
+  className?: string
+  color?: string
+  backgroundColor?: string
+}
+
+export function QRCodeImage({ 
+  data, 
+  size = 200, 
+  className,
+  color = "#000000",
+  backgroundColor = "#ffffff"
+}: QRCodeImageProps) {
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!data) return
+    QRCode.toDataURL(data, {
+      width: size,
+      margin: 1,
+      color: { dark: color, light: backgroundColor },
+      errorCorrectionLevel: "M",
+    })
+      .then((url) => setQrDataUrl(url))
+      .catch((err) => console.error(err))
+  }, [data, size, color, backgroundColor])
+
+  if (!qrDataUrl) {
+    return <div className={cn("bg-gray-100 animate-pulse rounded-lg", className)} style={{ width: size, height: size }} />
+  }
+
+  return (
+    <Image
+      src={qrDataUrl}
+      alt="QR Code"
+      width={size}
+      height={size}
+      className={cn("rounded-lg", className)}
+      unoptimized
+    />
+  )
+}
+
+
+================================================
+FILE: src/components/utils/yandex-metrics.tsx
+================================================
+'use client';
+
+import { useEffect } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import Script from 'next/script';
+
+export function YandexMetrika() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const url = `${pathname}?${searchParams}`;
+    if (typeof window !== 'undefined' && typeof window.ym !== 'undefined') {
+      window.ym(105476873, 'hit', url);
+    }
+  }, [pathname, searchParams]);
+
+  return (
+    <Script id="yandex-metrika" strategy="afterInteractive">
+      {`
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(105476873, "init", {
+          clickmap:true,
+          trackLinks:true,
+          accurateTrackBounce:true,
+          webvisor:true,
+          ecommerce:"dataLayer"
+        });
+      `}
+    </Script>
+  );
+}
+
+
+
+================================================
+FILE: src/lib/navigation.ts
+================================================
+export const NAVIGATION_LINKS = {
+  // Внутренние ссылки
+  HOME: "/",
+  DOCS: "/docs",
+  EXAMPLES_INTERNAL: "/examples",
+
+  // Внешние ссылки
+  TYPST_APP: "https://typst.app",
+  TYPST_TEMPLATE_START: "https://typst.app/app?template=modern-g7-32&version=0.2.0",
+  GITHUB_REPO: "https://github.com/typst-gost/modern-g7-32",
+  TELEGRAM_CHAT: "https://t.me/typst_gost",
+  TELEGRAM_AUTHOR: "https://t.me/forgenet",
+  TYPST_UNIVERSE_PACKAGE: "https://typst.app/universe/package/modern-g7-32",
+  TYPST_EXAMPLE_PROJECT: "https://typst.app/project/r5iwSJ49gzKzC8iGMprKI0",
+  GITHUB_EXAMPLES_REPO: "https://github.com/typst-gost/examples",
+  DONATE: "https://pay.cloudtips.ru/p/451a1d97",
+};
+
+
+
+================================================
+FILE: src/lib/quotes-registry.ts
+================================================
+[Binary file]
+
+
+================================================
+FILE: src/lib/utils.ts
+================================================
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+
+
+================================================
+FILE: src/types/yandex-metrics.d.ts
+================================================
+export {};
+
+declare global {
+  interface Window {
+    ym?: (...args: any[]) => void;
+  }
+}
+
