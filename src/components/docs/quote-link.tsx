@@ -145,9 +145,14 @@ export function QuoteLink({ href, children }: QuoteLinkProps) {
                   </Markdown>
                 </div>
                 <footer className="text-xs text-muted-foreground flex items-center justify-between pt-2">
-                  <span className="text-primary/60 font-semibold">
+                  <a
+                    href="/documents/gost-7.32-2017.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary/60 font-semibold hover:text-primary hover:underline transition-colors"
+                  >
                     ГОСТ 7.32-2017
-                  </span>
+                  </a>
                   <span>страница {quote.page}</span>
                 </footer>
               </div>
