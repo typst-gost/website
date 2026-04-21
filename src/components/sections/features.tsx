@@ -97,7 +97,10 @@ function CTABanner() {
       <div className="relative z-20 p-8 text-center">
         <h3 className="text-2xl font-bold mb-3 text-white">Готовы начать?</h3>
         <p className="text-gray-300 mb-6 max-w-3xl mx-auto text-pretty">
-          Используйте шаблон для автоматизированного оформления документов по ГОСТ 7.32-2017
+          Используйте шаблон для автоматизированного оформления документов по{" "}
+          <a href="/documents/gost-7.32-2017.pdf" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300/50 underline-offset-2 transition-colors">
+            ГОСТ 7.32-2017
+          </a>
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20" asChild>

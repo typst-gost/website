@@ -33,7 +33,14 @@ export function GostQuote({ children, page, id }: QuoteProps) {
         </div>
 
         <footer className="text-xs text-muted-foreground mt-3 flex items-center justify-between">
-          <span className="text-primary/60 font-semibold">ГОСТ 7.32-2017</span>
+          <a
+            href={PDF_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary/60 font-semibold hover:text-primary hover:underline transition-colors"
+          >
+            ГОСТ 7.32-2017
+          </a>
           <a
             href={pdfLink}
             target="_blank"
