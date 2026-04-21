@@ -92,9 +92,10 @@ function Item({
   const [open, setOpen] = useState(false);
 
   const hasDetails = Boolean(
-    typeDescription || 
-    defaultValue || 
-    parameters.length > 0 || 
+    description ||
+    typeDescription ||
+    defaultValue ||
+    parameters.length > 0 ||
     returns
   );
 
@@ -135,7 +136,12 @@ function Item({
       </div>
 
       <div className="flex items-center justify-between gap-4 min-w-0 relative">
-        <div className="text-fd-muted-foreground text-sm prose prose-no-margin line-clamp-2 md:line-clamp-1 leading-normal flex-1">
+        <div
+          className={cn(
+            "text-fd-muted-foreground text-sm prose prose-no-margin leading-normal flex-1",
+            hasDetails && !open ? "line-clamp-2 md:line-clamp-1" : "",
+          )}
+        >
           {description}
         </div>
         
@@ -182,6 +188,15 @@ function Item({
       
       <CollapsibleContent>
         <div className="grid grid-cols-[1fr_3fr] gap-y-3 text-sm px-4 py-3 border-t bg-fd-card/50">
+          {description && (
+            <>
+              <p className={cn(fieldVariants())}>Описание</p>
+              <div className="prose prose-sm prose-no-margin text-fd-muted-foreground">
+                {description}
+              </div>
+            </>
+          )}
+
           {typeDescription && (
             <>
               <p className={cn(fieldVariants())}>Полный тип</p>
