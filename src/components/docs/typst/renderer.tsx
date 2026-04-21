@@ -12,7 +12,6 @@ import {
   DEFAULT_HIDDEN_PREFIX,
   DEFAULT_HIDDEN_SUFFIX,
 } from "@/lib/typst/constants";
-import { LoadingSpinner } from "@/components/ui/spinner";
 
 interface TypstRenderProps {
   code: string;
@@ -24,7 +23,6 @@ interface TypstRenderProps {
   editable?: boolean;
   hiddenPrefix?: string | null;
   hiddenSuffix?: string | null;
-  assets?: string[] | undefined;
 }
 
 function buildFullCode(
@@ -37,6 +35,8 @@ function buildFullCode(
   return `${prefix}${code}${suffix}`;
 }
 
+let globalCompileQueue = Promise.resolve();
+
 export function TypstRender({
   code,
   image,
@@ -47,13 +47,14 @@ export function TypstRender({
   editable = true,
   hiddenPrefix = DEFAULT_HIDDEN_PREFIX,
   hiddenSuffix = DEFAULT_HIDDEN_SUFFIX,
-  assets = [],
 }: TypstRenderProps) {
-  const [imageError, setImageError] = useState(false);
+  const [failedImage, setFailedImage] = useState<string | null>(null);
   const [compiledSvg, setCompiledSvg] = useState<string | null>(null);
   const [localCompileError, setLocalCompileError] = useState<string | null>(null);
   
+  const isMounted = useRef(true);
   const initialCompileRef = useRef(false);
+  const compileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { docPath } = useMDXPath();
   const {
@@ -61,86 +62,84 @@ export function TypstRender({
     isLoading: compilerLoading,
     compilerInitError,
     compileError: hookCompileError,
-  } = useTypstCompiler(assets);
+  } = useTypstCompiler();
 
   const displayCode = useMemo(() => code.trim(), [code]);
 
   const imagePath = useMemo(() => {
-    if (filePath) {
-      return filePath;
-    }
-
-    if (!image) {
-      return null;
-    }
-
-    if (image.startsWith("/")) {
-      return image;
-    }
-
+    if (filePath) return filePath;
+    if (!image) return null;
+    if (image.startsWith("/")) return image;
     return `/docs/attachments/${docPath}/${image}`;
-  },[filePath, image, docPath]);
+  }, [filePath, image, docPath]);
+
+  const imageError = !!imagePath && failedImage === imagePath;
 
   useEffect(() => {
-    setImageError(false);
-  }, [imagePath]);
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
-  const isEditable =
-    editable && !compilerLoading && !compilerInitError && !!compile;
+  const showEditor = editable && !compilerLoading && !compilerInitError && !!compile;
 
   const compileCode = useCallback(
-    async (codeToCompile: string) => {
+    (codeToCompile: string) => {
       if (!compile) return;
 
-      setLocalCompileError(null);
+      const fullCodeToCompile = buildFullCode(codeToCompile, hiddenPrefix, hiddenSuffix);
 
-      try {
-        const fullCodeToCompile = buildFullCode(
-          codeToCompile,
-          hiddenPrefix,
-          hiddenSuffix,
-        );
+      globalCompileQueue = globalCompileQueue
+        .then(async () => {
+          if (!isMounted.current) return;
+          
+          setLocalCompileError(null);
+          
+          const svg = await compile(fullCodeToCompile);
 
-        const svg = await compile(fullCodeToCompile);
+          if (!svg) throw new Error("Compiler returned empty result");
+          if (typeof svg !== "string") throw new Error("Compiler returned invalid type of SVG");
 
-        if (!svg) {
-          throw new Error("Compiler returned empty result");
-        }
+          const trimmedSvg = svg.trim();
+          if (!trimmedSvg.startsWith("<svg")) throw new Error("Invalid svg: does not start with <svg");
 
-        if (typeof svg !== "string") {
-          throw new Error("Compiler returned invalid type of SVG");
-        }
+          const processed = trimmedSvg
+            .replace(/width="[^"]*"/g, "")
+            .replace(/height="[^"]*"/g, "");
 
-        const trimmedSvg = svg.trim();
-        if (!trimmedSvg.startsWith("<svg")) {
-          throw new Error("Invalid svg: does not start with <svg");
-        }
-
-        const processed = trimmedSvg
-          .replace(/width="[^"]*"/g, "")
-          .replace(/height="[^"]*"/g, "");
-
-        setCompiledSvg(processed);
-        setLocalCompileError(null);
-      } catch (error: unknown) {
-        const parsedError = parseTypstError(error);
-        const message = formatTypstError(parsedError);
-        setLocalCompileError(message);
-        console.log("Compilation error:", error);
-      }
-    },[compile, hiddenPrefix, hiddenSuffix],
+          if (isMounted.current) {
+            setCompiledSvg(processed);
+          }
+        })
+        .catch((error) => {
+          if (isMounted.current) {
+            const parsedError = parseTypstError(error);
+            setLocalCompileError(formatTypstError(parsedError));
+            console.error("Compilation error:", error);
+          }
+        });
+    },
+    [compile, hiddenPrefix, hiddenSuffix],
   );
 
   useEffect(() => {
-    if (isEditable && typeof compile === "function" && !initialCompileRef.current) {
+    if (showEditor && !initialCompileRef.current) {
       initialCompileRef.current = true;
-      compileCode(displayCode);
+      setTimeout(() => {
+        compileCode(displayCode);
+      }, 0);
     }
-  },[isEditable, compile, displayCode, compileCode]);
+  }, [showEditor, displayCode, compileCode]);
 
   const handleEditorChange = useCallback(
     (newCode: string) => {
-      compileCode(newCode);
+      if (compileTimeoutRef.current) {
+        clearTimeout(compileTimeoutRef.current);
+      }
+      compileTimeoutRef.current = setTimeout(() => {
+        compileCode(newCode);
+      }, 400);
     },
     [compileCode],
   );
@@ -151,51 +150,42 @@ export function TypstRender({
       : "flex flex-col gap-8";
 
   const codeBlockClass = layout === "horizontal" ? "w-1/2" : "w-full";
-
   const displayCompileError = localCompileError || hookCompileError;
-  const showCompilerLoading = editable && compilerLoading;
 
   return (
     <div className="typst-render-container my-6">
-      {showCompilerLoading ? (
-        <div className="flex items-center justify-center p-12 bg-fd-card border rounded-lg">
-          <LoadingSpinner />
-          <span className="ml-3 text-fd-muted-foreground">
-            Загрузка компилятора...
-          </span>
+      <div className={containerClass}>
+        <div className={codeBlockClass}>
+          {showEditor ? (
+            <TypstEditor
+              code={displayCode}
+              onChange={handleEditorChange}
+              wordWrap={wordWrap}
+            />
+          ) : (
+            <DynamicCodeBlock
+              code={displayCode}
+              lang="typst"
+              wordWrap={wordWrap}
+              codeblock={{
+                className: "h-full",
+              }}
+            />
+          )}
         </div>
-      ) : (
-        <div className={containerClass}>
-          <div className={`${codeBlockClass}`}>
-            {isEditable ? (
-              <TypstEditor
-                code={displayCode}
-                onChange={handleEditorChange}
-                wordWrap={wordWrap}
-              />
-            ) : (
-              <DynamicCodeBlock
-                code={displayCode}
-                lang="typst"
-                wordWrap={wordWrap}
-                codeblock={{
-                  className: "h-full",
-                }}
-              />
-            )}
-          </div>
 
-          <TypstOutput
-            compiledSvg={compiledSvg}
-            imagePath={imagePath}
-            alt={alt}
-            compileError={displayCompileError}
-            imageError={imageError}
-            onImageError={() => setImageError(true)}
-            layout={layout}
-          />
-        </div>
-      )}
+        <TypstOutput
+          compiledSvg={compiledSvg}
+          imagePath={imagePath}
+          alt={alt}
+          compileError={displayCompileError}
+          imageError={imageError}
+          onImageError={() => {
+            if (imagePath) setFailedImage(imagePath);
+          }}
+          layout={layout}
+        />
+      </div>
     </div>
   );
 }
