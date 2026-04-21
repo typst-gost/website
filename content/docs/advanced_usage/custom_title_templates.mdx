@@ -4,14 +4,22 @@ description: Создание и использование альтернати
 iconLocal: Layout
 ---
 
-Хотя [ГОСТ 7.32-2017](/documents/gost-7.32-2017.pdf) задаёт строгие рамки, многие организации и учебные заведения (ВУЗы) имеют свои
-локальные стандарты оформления титульных страниц. Шаблон `modern-g7-32` позволяет полностью 
-заменить стандартный титульный лист на собственный, сохраняя при этом всю остальную логику отчёта.
+Хотя [ГОСТ 7.32-2017](/documents/gost-7.32-2017.pdf) задаёт общую структуру титульного листа,
+вузы и организации часто требуют собственный порядок блоков, логотип, подписи или формулировки.
+`modern-g7-32` позволяет заменить только титульный лист и оставить всю остальную логику отчёта:
+поля, содержание, структурные заголовки, список исполнителей, источники и приложения.
 
-## Быстрый старт: Использование пресетов
+<Callout type="info">
+  В текущей версии пакета встроены `title-templates.default` и
+  `title-templates.mai-university-lab`. Примеры ГУАП и МИРЭА ниже показывают минимальные
+  пользовательские шаблоны с той же сигнатурой аргументов.
+</Callout>
 
-В шаблоне уже встроены альтернативные титульные листы. Например, для лабораторных работ МАИ. 
-Чтобы сменить шаблон, используйте параметр `title-template`.
+## Готовый шаблон МАИ
+
+Встроенный пресет МАИ подключается через параметр `title-template`. Остальные аргументы остаются
+обычными аргументами `gost.with`: `subject`, `manager`, `approved-by`, `agreed-by`, `city`,
+`year` и так далее.
 
 <TypstRender
   code={`
@@ -19,129 +27,201 @@ iconLocal: Layout
 
 #show: gost.with(
   title-template: title-templates.mai-university-lab,
-  organization: (full: "МАИ"),
-  institute: (number: 3, name: "ИТ"),
-  department: (number: 307, name: "ЦТ"),
-  subject: "Разработка ПО",
+  organization: (
+    full: "Московский авиационный институт",
+    short: "Национальный исследовательский университет",
+  ),
+  institute: (number: 3, name: "Системы управления, информатика и электроэнергетика"),
+  department: (number: 307, name: "Цифровые технологии"),
+  report-type: "Отчёт",
+  about: "о лабораторной работе",
+  subject: "Разработка программного модуля",
+  manager: (name: "Иванов И.И.", position: "доцент"),
   city: "Москва",
+  year: 2024,
 )
 `}
   image="title-mai-preset.png"
 />
 
-## Как создать свой шаблон
+## Одинаковые аргументы
 
-Пользовательский шаблон — это файл Typst, содержащий две функции: `arguments` (для обработки 
-входящих данных) и `template` (для вёрстки страницы).
+Пользовательский титульный шаблон обычно состоит из двух функций:
 
-### Структура файла шаблона
+- `arguments(..args, year: auto)` нормализует данные, задаёт значения по умолчанию и проверяет
+  вложенные словари.
+- `template(..args)` получает уже подготовленные аргументы и верстает страницу.
 
-Рекомендуется использовать вспомогательные инструменты из `custom-title-template`, чтобы не 
-верстать сетку подписей с нуля.
+Эта схема работает как наследование: можно взять аргументы базового шаблона, добавить несколько
+полей для конкретного вуза и оставить общие поля прежними. Благодаря этому в `gost.with` не нужно
+менять названия стандартных аргументов при переходе между титульниками.
 
 ```typst
-// my-template.typ
+// local-title.typ
 #import "@preview/modern-g7-32:0.2.0": custom-title-template
+#import custom-title-template: *
 
-// 1. Функция обработки аргументов
 #let arguments(..args, year: auto) = {
   let args = args.named()
-  // Здесь можно задать значения по умолчанию или изменить структуру ключей
+  args.organization = fetch-field(
+    args.at("organization", default: none),
+    ("*full", "short"),
+    hint: "организации",
+  )
+  args.manager = fetch-field(
+    args.at("manager", default: none),
+    ("position*", "name*"),
+    hint: "руководителя",
+  )
   return args
 }
 
-// 2. Функция отрисовки
-#let template(..args) = {
-  let a = args.named()
-  
+#let template(
+  organization: (full: none, short: none),
+  department: none,
+  group: none,
+  subject: none,
+  manager: (position: none, name: none),
+  city: none,
+  year: auto,
+  ..rest,
+) = {
   align(center)[
-    #upper(a.organization.full) \
-    #v(2fr)
-    #text(size: 16pt, weight: "bold")[#a.subject]
+    #upper(organization.full) \
+    #if organization.short != none { upper(organization.short) }
+    #v(1fr)
+    #strong[ОТЧЁТ]
+    #v(0.4fr)
+    #subject
     #v(1fr)
   ]
-  
-  // Использование системных утилит для подписей
-  custom-title-template.sign-field(a.manager.name, a.manager.position)
+  sign-field(manager.name, manager.position)
+  v(0.5fr)
 }
 ```
 
-## Подключение шаблона
+Подключается такой файл через `custom-title-template.from-module(...)`:
 
-Чтобы применить созданный файл к вашему отчёту, используйте функцию `from-module`.
-
-<TypstRender
-  code={`
+```typst
 #import "@preview/modern-g7-32:0.2.0": gost, custom-title-template
-#import custom-title-template: sign-field
-
-#let my-template(..args) = {
-  let a = args.named()
-
-  align(center)[
-    #upper(a.organization.full) \
-    #v(2fr)
-    #text(size: 16pt, weight: "bold")[#a.subject]
-    #v(1fr)
-  ]
-
-  sign-field(a.manager.name, a.manager.position)
-  v(1fr)
-}
+#import "local-title.typ" as local-title
 
 #show: gost.with(
-  title-template: my-template,
+  title-template: custom-title-template.from-module(local-title),
   subject: "Собственный титульный лист",
-  organization: (full: "Моя компания"),
-  manager: (name: "Иванов И.И.", position: "Директор"),
+  organization: (full: "Моя организация"),
+  manager: (name: "Иванов И.И.", position: "Руководитель"),
   city: "Москва",
 )
-`}
-  image="custom-title-render.png"
-  hiddenPrefix={null}
-/>
+```
 
-В реальном проекте функцию `my-template` удобнее вынести в отдельный файл `my-template.typ` и
-подключить через `custom-title-template.from-module(...)`, как показано выше.
+## Минимальные примеры
 
-## Доступные утилиты (title-utils)
+### ГУАП
 
-Для упрощения вёрстки в модуле `custom-title-template` доступны следующие функции:
+```typst
+#let template(
+  organization: (full: "Санкт-Петербургский государственный университет аэрокосмического приборостроения"),
+  faculty: none,
+  department: none,
+  group: none,
+  subject: none,
+  manager: (position: none, name: none),
+  city: "Санкт-Петербург",
+  year: auto,
+  ..rest,
+) = [
+  #align(center)[
+    #upper(organization.full) \
+    #if faculty != none [Факультет #faculty \]
+    #if department != none [Кафедра #department \]
+    #v(1fr)
+    #strong[ОТЧЁТ] \
+    #subject
+  ]
+  #v(1fr)
+  #if group != none [Группа: #group \]
+  #sign-field(manager.name, manager.position)
+]
+```
+
+### МИРЭА
+
+```typst
+#let template(
+  organization: (full: "МИРЭА -- Российский технологический университет"),
+  institute: none,
+  department: none,
+  subject: none,
+  manager: (position: none, name: none),
+  city: "Москва",
+  year: auto,
+  ..rest,
+) = [
+  #align(center)[
+    #upper(organization.full) \
+    #if institute != none [Институт #institute \]
+    #if department != none [Кафедра #department \]
+    #v(1fr)
+    #strong[ОТЧЁТ ПО ПРАКТИЧЕСКОЙ РАБОТЕ] \
+    #subject
+  ]
+  #v(1fr)
+  #sign-field(manager.name, manager.position)
+]
+```
+
+### Скрыть стандартный титульник
+
+Если титульный лист верстается отдельно или вставляется из PDF, отключите его в `gost.with`.
+
+```typst
+#show: gost.with(
+  hide-title: true,
+)
+```
+
+## Доступные утилиты
+
+Для упрощения вёрстки в модуле `custom-title-template` доступны те же утилиты, которые использует
+встроенный титульный лист.
 
 <TypeTable
   type={{
     "sign-field": {
-      description: "Создаёт блок с подписью и расшифровкой (используется для авторов/руководителей)",
+      description: "Создаёт блок с подписью и расшифровкой; принимает имя, должность, необязательную часть работы и текст поля подписи",
       type: "function(name, position, part, details)"
     },
     "per-line": {
-      description: "Выводит элементы построчно с заданным выравниванием и отступами",
+      description: "Выводит элементы построчно с заданным выравниванием, отступами и условиями отображения",
       type: "function(align, indent, ..values)"
     },
     "detailed-sign-field": {
-      description: "Сложный блок подписи с датой и местом (для грифов УТВЕРЖДАЮ/СОГЛАСОВАНО)",
+      description: "Создаёт расширенный блок подписи с заголовком, именем, должностью и годом",
       type: "function(title, name, position, year)"
     },
     "if-present": {
-      description: "Условная вёрстка: отображает блок только если переданные аргументы не равны none",
+      description: "Отображает блок только если переданные аргументы присутствуют",
       type: "function(..targets, body)"
+    },
+    "fetch-field": {
+      description: "Нормализует словарь аргументов, задаёт значения по умолчанию и помогает ловить пропущенные обязательные поля",
+      type: "function(value, fields, default, hint)"
     }
   }}
 />
 
-## Параметры настройки в gost.with
-
-Параметр `title-template` принимает функцию, которая будет вызвана вместо стандартной страницы.
+## Параметры настройки
 
 <TypeTable
   type={{
     "title-template": {
-      description: "Функция отрисовки титульного листа",
+      description: "Функция отрисовки титульного листа. Её можно взять из title-templates или собрать через custom-title-template.from-module",
       type: "function",
-      default: "templates.default"
+      default: "title-templates.default"
     },
     "hide-title": {
-      description: "Полностью скрывает титульный лист (удобно при отладке)",
+      description: "Полностью скрывает титульный лист. Полезно для внешнего PDF-титульника или отладки основной части",
       type: "boolean",
       default: "false"
     }
@@ -149,19 +229,19 @@ iconLocal: Layout
 />
 
 <Callout type="tip">
-  При создании своего шаблона вы можете добавлять любые произвольные ключи в `gost.with` 
-  (например, `institute`, `group`, `variant`). Они будут переданы в ваш шаблон через 
-  аргументы функции.
+  Пользовательский шаблон получает все именованные аргументы `gost.with`, поэтому можно добавлять
+  локальные поля вроде `faculty`, `group`, `variant`, `teacher` или `practice-kind`. Общие поля
+  лучше оставлять с теми же именами, что и у стандартного титульника.
 </Callout>
 
 ## Требования ГОСТ 7.32-2017
 
 <GostQuote page={9} id="6.1.1">
-6.1.1 На титульном листе приводят сведения, предусмотренные [5.2](#5.2) в соответствии с формами, 
+6.1.1 На титульном листе приводят сведения, предусмотренные [5.2](#5.2) в соответствии с формами,
 приведенными в приложениях А и Б.
 </GostQuote>
 
 <GostQuote page={16} id="6.10.1">
-6.10.1 Титульный лист содержит реквизиты: наименование министерства... полное наименование 
+6.10.1 Титульный лист содержит реквизиты: наименование министерства... полное наименование
 организации... грифы согласования и утверждения...
 </GostQuote>
