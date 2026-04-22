@@ -6,6 +6,7 @@ import ContactSection from "@/components/sections/contacts"
 import { ComparisonSection } from "@/components/sections/comparison/section"
 import { Footer } from "@/components/footer"
 import { PageBackground } from "@/components/decoration/background"
+import BentoFeaturesSection from "@/components/sections/bento-features"
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <Navbar />
         <HeroSection />
         <PreviewSection />
+        <BentoFeaturesSection />
         <ComparisonSection />
         <FeaturesSection />
         <ContactSection />
