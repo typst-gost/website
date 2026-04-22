@@ -9,6 +9,7 @@ import { PageBackground } from "@/components/decoration/background";
 import FaqSection from "@/components/sections/faq/section";
 import CommunitySection from "@/components/sections/community/section";
 import { Section } from "@/components/ui/section";
+import BentoFeaturesSection from "@/components/sections/bento-features";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <Navbar />
         <HeroSection />
         <PreviewSection />
+        <BentoFeaturesSection />
         <ComparisonSection />
         <UsageSection />
         {/* <Docs Section /> с <Telegram Section /> */}
