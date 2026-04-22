@@ -8,7 +8,7 @@ import { Footer } from "@/components/sections/footer";
 import { PageBackground } from "@/components/decoration/background";
 import FaqSection from "@/components/sections/faq/section";
 import { Section } from "@/components/ui/section";
-import BentoFeaturesSection from "@/components/sections/bento-features";
+import BentoFeaturesSection from "@/components/sections/bento-features/section";
 
 export default function Home() {
   return (

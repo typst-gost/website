@@ -62,7 +62,7 @@ export function ScreenshotWindow({
             {imagePath}
           </div>
         </div>
-
+        {/* TODO: Сделать поддержку фонов для отдельных шагов */}
         <div
           className={cn("flex-1 relative overflow-hidden cursor-zoom-in group", activeTool === "typst" ? "bg-[#e3e3e3]" : "bg-[#181818]")}
           onClick={() => setIsModalOpen(true)}
