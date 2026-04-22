@@ -11,10 +11,10 @@ export function GitHubButton() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetch("https://api.github.com/repos/typst-gost/modern-g7-32")
+    fetch("/api/github-stars")
       .then((res) => res.json())
       .then((data) => {
-        const starCount = data.stargazers_count
+        const starCount = data.stars
         setStars(starCount >= 1000 ? `${(starCount / 1000).toFixed(1)}K` : starCount.toString())
         setIsLoading(false)
       })
