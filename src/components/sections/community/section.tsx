@@ -81,10 +81,7 @@ export default function CommunitySection() {
   };
 
   useEffect(() => {
-    if (document.hidden) return;
     fetchMembers();
-    const interval = setInterval(fetchMembers, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -108,7 +105,6 @@ export default function CommunitySection() {
               href={telegramLink}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setTimeout(fetchMembers, 5000)}
               className="group relative inline-flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-[0_0_40px_-10px_#2AABEE] hover:shadow-[0_0_60px_-15px_#2AABEE] hover:-translate-y-1 w-full sm:w-auto"
             >
               <MessageCircle className="w-6 h-6 fill-white/20" />

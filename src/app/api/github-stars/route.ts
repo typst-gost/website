@@ -17,15 +17,12 @@ export async function GET() {
     })
 
     if (!res.ok) {
-      return NextResponse.json(
-        { error: "Failed to fetch from GitHub" }, 
-        { status: res.status }
-      )
+      return NextResponse.json({ stars: 150 })
     }
 
     const data = await res.json()
     return NextResponse.json({ stars: data.stargazers_count })
-  } catch (error) {
-    return NextResponse.json({ error: "Fetch Error" }, { status: 500 })
+  } catch {
+    return NextResponse.json({ stars: 150 })
   }
 }
