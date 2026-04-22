@@ -1,3 +1,4 @@
+import { NAVIGATION_LINKS } from "@/lib/navigation";
 import { 
   Cloud, 
   Laptop, 
@@ -6,20 +7,19 @@ import {
   Play, 
   FileCheck2,
   PlusCircle,
-  Search,
+  StickyNote,
   Edit3,
   DownloadCloud
 } from "lucide-react"
 
-export type ToolType = "tinymist" | "typst"
+export type ToolType = "typst" | "tinymist"
 
 export const toolsMeta: Record<ToolType, { name: string; Icon: React.ElementType; color: string; url: string }> = {
-  // TODO: Такое уже есть, найти и обновить
   typst: {
     name: "Typst Web App",
     Icon: Cloud,
     color: "text-blue-400",
-    url: "https://typst.app"
+    url: NAVIGATION_LINKS.TYPST_TEMPLATE_START
   },
   tinymist: {
     name: "VS Code + Tinymist",
@@ -35,6 +35,8 @@ export interface GuideStep {
   icon: React.ReactNode
   color: string
   href?: string
+  download?: string
+  image: string
 }
 
 export const tableColumns =[
@@ -79,59 +81,71 @@ export const guides: Record<ToolType, GuideStep[]> = {
       description: "Для работы потребуется редактор кода Visual Studio Code. Установите его, если он ещё не установлен.",
       icon: <Laptop className="w-5 h-5" />,
       color: "text-blue-400",
-      href: "https://code.visualstudio.com/download"
+      href: "https://code.visualstudio.com/download",
+      image: "/screenshots/vscode-install.png"
     },
     {
       title: "Установите Tinymist",
       description: "Установите расширение Tinymist. Оно даёт мощное автодополнение, проверку ошибок и мгновенный предпросмотр.",
       icon: <Code2 className="w-5 h-5" />,
       color: "text-purple-400",
-      href: toolsMeta.tinymist.url
+      href: toolsMeta.tinymist.url,
+      image: "/screenshots/tinymist-ext.png"
     },
+    // TODO: Чтобы само подтягивалось при сборке
     {
       title: "Загрузите проект",
-      description: "Скачайте архив с шаблоном modern-g7-32 из репозитория GitHub или склонируйте его с помощью Git. Распакуйте в удобную рабочую директорию.",
+      description: "Скачайте архив с шаблоном modern-g7-32. Распакуйте в удобную рабочую директорию. Для предпросмотра нажмите кнопку «Preview» над первой строкой файла.",
       icon: <Download className="w-5 h-5" />,
-      color: "text-indigo-400"
+      color: "text-indigo-400",
+      download: "preview.zip",
+      image: "/screenshots/github-download.png"
     },
     {
       title: "Редактируйте",
       description: "Откройте папку в VS Code. Главный файл проекта — main.typ. Вы можете использовать кнопку Tinymist Preview (в правом верхнем углу) для панели просмотра.",
       icon: <Play className="w-5 h-5" />,
-      color: "text-green-400"
+      color: "text-green-400",
+      image: "/screenshots/vscode-edit.png"
     },
     {
       title: "Компилируйте",
       description: "При каждом сохранении файла (Ctrl+S / Cmd+S), Tinymist автоматически и за миллисекунды компилирует ваш документ в финальный PDF-файл.",
       icon: <FileCheck2 className="w-5 h-5" />,
-      color: "text-amber-400"
+      color: "text-amber-400",
+      image: "/screenshots/vscode-pdf.png"
     }
   ],
   typst:[
     {
       title: "Создайте проект",
-      description: "Перейдите на сайт typst.app, авторизуйтесь и нажмите «Start from template», чтобы создать новый проект на основе шаблона.",
+      description: "Перейдите на сайт typst.app, авторизуйтесь и введите название работы, чтобы создать новый проект на основе шаблона.",
       icon: <PlusCircle className="w-5 h-5" />,
       color: "text-blue-400",
-      href: toolsMeta.typst.url
+      href: toolsMeta.typst.url,
+      image: "/screenshots/typst-app-start.png"
     },
     {
-      title: "Найдите шаблон",
-      description: "В поиске Typst Universe введите «modern-g7-32» и выберите его. Веб-приложение мгновенно развернёт всю нужную структуру документа.",
-      icon: <Search className="w-5 h-5" />,
-      color: "text-purple-400"
-    },
-    {
-      title: "Пишите код",
+      title: "Попробуйте написать код",
       description: "Пишите код в левой панели браузера, а справа сразу же наблюдайте за результатом. Не нужно ничего устанавливать на свой компьютер.",
       icon: <Edit3 className="w-5 h-5" />,
-      color: "text-green-400"
+      color: "text-green-400",
+      image: "/screenshots/typst-editor.png"
+    },
+    {
+      title: "Изучайте документацию",
+      description: "Перейдите в раздел документации этого сайта, чтобы узнать больше о том, как оформлять работы без проблем.",
+      icon: <StickyNote className="w-5 h-5" />,
+      color: "text-amber-400",
+      href: NAVIGATION_LINKS.DOCS,
+      image: "/screenshots/typst-docs.png"
     },
     {
       title: "Экспортируйте в PDF",
       description: "Когда документ готов, нажмите кнопку скачивания в правом верхнем углу интерфейса, чтобы получить идеально оформленный PDF-файл.",
       icon: <DownloadCloud className="w-5 h-5" />,
-      color: "text-amber-400"
-    }
+      color: "text-amber-400",
+      image: "/screenshots/typst-export.png"
+    },
   ]
 }
