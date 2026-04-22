@@ -3,6 +3,32 @@ import Link from "next/link";
 import { HeroBackground } from "./background";
 import { NAVIGATION_LINKS } from "@/lib/navigation";
 import { Section } from "@/components/ui/section";
+import { cn } from "@/lib/utils";
+
+interface HeroButtonProps {
+  text: string;
+  href: string;
+  className?: string;
+  isMain?: boolean;
+}
+
+const HeroButton = ({ text, href, className, isMain }: HeroButtonProps) => {
+  return (
+    <Button
+      variant={isMain ? "primary" : "outline"}
+      className={cn("w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5", className)}
+      asChild
+    >
+      <Link
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {text}
+      </Link>
+    </Button>
+  );
+};
 
 export default function HeroSection() {
   return (
@@ -37,32 +63,11 @@ export default function HeroSection() {
             Сосредоточьтесь на содержании, не думайте о форматировании.
           </p>
           <div className="flex justify-center gap-3 sm:gap-4 text-white">
-            <Button
-              variant="primary"
-              className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
-              asChild
-            >
-              <Link
-                href={NAVIGATION_LINKS.TYPST_TEMPLATE_START}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Начать
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
-              asChild
-            >
-              <Link
-                href={NAVIGATION_LINKS.GITHUB_REPO}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Репозиторий
-              </Link>
-            </Button>
+            <HeroButton text="Начать" href={NAVIGATION_LINKS.TYPST_TEMPLATE_START} isMain />
+            <HeroButton text="Сообщество" href={NAVIGATION_LINKS.TELEGRAM_CHAT} />
+            <div className="hidden md:block">
+              <HeroButton text="Репозиторий" href={NAVIGATION_LINKS.GITHUB_REPO} />
+            </div>
           </div>
         </div>
       </div>

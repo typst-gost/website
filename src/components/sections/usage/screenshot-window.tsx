@@ -12,7 +12,7 @@ interface ScreenshotWindowProps {
 
 export function ScreenshotWindow({ activeTool, activeIndex, stepTitle }: ScreenshotWindowProps) {
   return (
-    <div className="w-full flex flex-col min-h-[400px] lg:min-h-0 bg-gray-900/80 rounded-2xl border border-gray-700/50 shadow-2xl overflow-hidden backdrop-blur-xs relative">
+    <div className="w-full flex flex-col min-h-100 lg:min-h-0 bg-gray-900/80 rounded-2xl border border-gray-700/50 shadow-2xl overflow-hidden backdrop-blur-xs relative">
       <div className="h-10 shrink-0 bg-gray-800/80 border-b border-gray-700/50 flex items-center px-4 z-20">
         <div className="flex gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500/80" />
