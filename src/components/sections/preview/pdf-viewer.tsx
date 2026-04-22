@@ -352,6 +352,7 @@ export default function PdfViewer({
             <Link
               href={pdfUrl}
               target="_blank"
+              rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
             >
               <Button
