@@ -19,8 +19,9 @@ export default function Home() {
         <Navbar />
         <HeroSection />
         <PreviewSection />
-        <UsageSection />
         <ComparisonSection />
+        <UsageSection />
+        {/* <Docs Section /> с <Telegram Section /> */}
         <FeaturesSection />
 
         <Section>
