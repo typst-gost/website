@@ -66,7 +66,7 @@ export default function HeroSection() {
             <HeroButton text="Начать" href={NAVIGATION_LINKS.TYPST_TEMPLATE_START} isMain />
             <HeroButton text="Сообщество" href={NAVIGATION_LINKS.TELEGRAM_CHAT} />
             <div className="hidden md:block">
-              <HeroButton text="Репозиторий" href={NAVIGATION_LINKS.GITHUB_REPO} />
+              <HeroButton text="Документация" href={NAVIGATION_LINKS.DOCS} />
             </div>
           </div>
         </div>

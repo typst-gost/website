@@ -5,6 +5,7 @@ import { Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FAQ_ITEMS } from "./faq";
 import { Heading } from "@/components/ui/heading";
+import { Section } from "@/components/ui/section";
 
 function FaqItem({
   question,
@@ -74,7 +75,7 @@ export default function FaqSection() {
   const isAnyOpen = openId !== null;
 
   return (
-    <div>
+    <Section>
       <Heading as="h2" title="Часто задаваемые вопросы" />
 
       <div className="flex flex-col max-w-3xl">
@@ -89,6 +90,6 @@ export default function FaqSection() {
           />
         ))}
       </div>
-    </div>
+    </Section>
   );
 }

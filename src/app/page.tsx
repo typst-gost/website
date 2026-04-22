@@ -7,7 +7,6 @@ import { ComparisonSection } from "@/components/sections/comparison/section";
 import { Footer } from "@/components/sections/footer";
 import { PageBackground } from "@/components/decoration/background";
 import FaqSection from "@/components/sections/faq/section";
-import CommunitySection from "@/components/sections/community/section";
 import { Section } from "@/components/ui/section";
 import BentoFeaturesSection from "@/components/sections/bento-features";
 
@@ -24,17 +23,9 @@ export default function Home() {
         <ComparisonSection />
         <UsageSection />
         {/* <Docs Section /> с <Telegram Section /> */}
-        <FeaturesSection />
-
-        <Section>
-          <div className="container mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-              <FaqSection />
-              <CommunitySection />
-            </div>
-          </div>
-        </Section>
-
+        {/* <FeaturesSection /> TODO: Выпилить */}
+        {/* <CommunitySection /> TODO: Добавить */}
+        <FaqSection />
         <Footer />
       </div>
     </div>
