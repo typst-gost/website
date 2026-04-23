@@ -6,12 +6,12 @@ import { useState, useCallback, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Markdown from "markdown-to-jsx";
 
-interface QuoteLinkProps {
+interface QuoteLinkProps extends React.ComponentPropsWithoutRef<"a"> {
   href: string;
   children?: React.ReactNode;
 }
 
-function CustomLink({ href, children }: QuoteLinkProps) {
+function CustomLink({ href, children, ...props }: QuoteLinkProps) {
   const { getQuote } = useQuotes();
   if (href?.startsWith("#")) {
     const quoteId = href.slice(1).split(",")[0];
@@ -21,13 +21,17 @@ function CustomLink({ href, children }: QuoteLinkProps) {
     }
   }
   return (
-    <a href={href} className="text-primary hover:underline">
+    <a
+      {...props}
+      href={href}
+      className={props.className || "text-primary hover:underline"}
+    >
       {children}
     </a>
   );
 }
 
-export function QuoteLink({ href, children }: QuoteLinkProps) {
+export function QuoteLink({ href, children, ...props }: QuoteLinkProps) {
   const { getQuote } = useQuotes();
   const router = useRouter();
   const pathname = usePathname();
@@ -63,10 +67,12 @@ export function QuoteLink({ href, children }: QuoteLinkProps) {
         setBoundary(container);
       }
     }
-  }, []);
+  },[]);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
       if (quoteIds.length > 0) {
         e.preventDefault();
         const firstId = quoteIds[0];
@@ -76,7 +82,17 @@ export function QuoteLink({ href, children }: QuoteLinkProps) {
           if (quote.pagePath !== pathname) {
             router.push(`${quote.pagePath}#${firstId}`);
           } else {
-            const element = document.getElementById(firstId);
+            let decodedId = firstId;
+            try {
+              decodedId = decodeURIComponent(firstId);
+            } catch {
+              // Ignore malformed URI component
+            }
+
+            const element =
+              document.getElementById(decodedId) ||
+              document.getElementById(firstId);
+
             if (element) {
               element.scrollIntoView({
                 behavior: "smooth",
@@ -91,9 +107,47 @@ export function QuoteLink({ href, children }: QuoteLinkProps) {
     [quoteIds, getQuote, router, pathname],
   );
 
+  const handleRegularClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const targetId = href.startsWith("#") ? href.slice(1) : "";
+      if (!targetId) return;
+
+      let decodedId = targetId;
+      try {
+        decodedId = decodeURIComponent(targetId);
+      } catch {
+        // Ignore malformed URI component
+      }
+
+      const element =
+        document.getElementById(decodedId) || document.getElementById(targetId);
+
+      if (element) {
+        e.preventDefault();
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+        window.history.pushState(null, "", href);
+      }
+    },
+    [href],
+  );
+
   if (quotes.length === 0) {
     return (
-      <a ref={linkRef} href={href} className="text-primary hover:underline">
+      <a
+        {...props}
+        ref={linkRef}
+        href={href}
+        onClick={(e) => {
+          handleRegularClick(e);
+          props.onClick?.(e);
+        }}
+        className={props.className || "text-primary hover:underline"}
+      >
         {children}
       </a>
     );
@@ -103,10 +157,16 @@ export function QuoteLink({ href, children }: QuoteLinkProps) {
     <HoverCard.Root openDelay={300} closeDelay={100}>
       <HoverCard.Trigger asChild>
         <a
+          {...props}
           ref={linkRef}
           href={actualHref}
-          onClick={handleClick}
-          className="text-primary hover:underline cursor-pointer"
+          onClick={(e) => {
+            handleClick(e);
+            props.onClick?.(e);
+          }}
+          className={
+            props.className || "text-primary hover:underline cursor-pointer"
+          }
         >
           {children}
         </a>
