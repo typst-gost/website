@@ -21,7 +21,7 @@ jobs:
         language: [javascript-typescript]
 
     steps:
-      - uses: actions/checkout@v4.3.1
+      - uses: actions/checkout@v6.0.2
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@codeql-bundle-v2.25.2
