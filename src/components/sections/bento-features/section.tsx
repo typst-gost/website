@@ -105,7 +105,7 @@ const Mockups: Record<string, React.FC> = {
 
 export default async function BentoFeaturesSection() {
   return (
-    <section className="py-16 px-4 overflow-hidden">
+    <section className="py-8 md:py-16 px-4 overflow-hidden">
       <div className="container mx-auto max-w-7xl">
         <Heading
           title="Простота использования"
