@@ -8,6 +8,8 @@ interface GuideStepsProps {
   onChange: (index: number) => void
 }
 
+// TODO: UX мобильный с удалением описаний
+
 export function GuideSteps({ steps, activeIndex, onChange }: GuideStepsProps) {
   return (
     <div className="flex flex-col gap-3">
