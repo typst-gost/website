@@ -23,6 +23,12 @@ export const TAGS = {
   infrastructure: { label: "Инфраструктура", className: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
 } as const
 
+export const EXCLUDED_CONTRIBUTOR_LOGINS = [
+  "dependabot",
+  "actions-user",
+  "claude",
+] as const
+
 export const authors: Author[] = [
   {
     name: "Forgenet",
@@ -37,7 +43,7 @@ export const authors: Author[] = [
     name: "benzlokzik",
     role: "Разработчик",
     github: "https://github.com/benzlokzik",
-    telegram: "https://t.me/anri4ok",
+    telegram: "https://t.me/benzlokzik",
     avatarPath: "https://github.com/benzlokzik.png",
     tags: [TAGS.website, TAGS.infrastructure, TAGS.template],
   },
