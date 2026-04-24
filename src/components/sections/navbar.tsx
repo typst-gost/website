@@ -13,6 +13,7 @@ import { NAVIGATION_LINKS } from "@/lib/navigation"
 const NAV_LINKS = [
   { href: NAVIGATION_LINKS.DOCS, label: "Документация (в работе)", disabled: true },
   { href: NAVIGATION_LINKS.EXAMPLES_INTERNAL, label: "Примеры (в работе)", disabled: true },
+  { href: NAVIGATION_LINKS.ABOUT, label: "Об авторах" },
 ]
 
 export function Navbar() {
