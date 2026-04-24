@@ -4,9 +4,10 @@ import { Github, User, ExternalLink } from "lucide-react"
 import { Navbar } from "@/components/sections/navbar"
 import { Footer } from "@/components/sections/footer"
 import { PageBackground } from "@/components/decoration/background"
+import { Button } from "@/components/ui/buttons/button"
 import { NAVIGATION_LINKS } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
-import { authors } from "./data"
+import { EXCLUDED_CONTRIBUTOR_LOGINS, authors } from "./data"
 
 export const metadata: Metadata = {
   title: "Об авторах — Typst Gost",
@@ -54,17 +55,23 @@ export default async function AuthorsPage() {
 
   const authorLogins = authors.map((a) => a.github.split("/").pop()?.toLowerCase())
 
-  const contributors = allContributors.filter(
-    (c) => c.login && !authorLogins.includes(c.login.toLowerCase()) && !c.login.startsWith("dependabot") && !c.login.startsWith("actions-user")
-  )
+  const contributors = allContributors.filter((c) => {
+    const login = c.login?.toLowerCase()
+
+    return (
+      login &&
+      !authorLogins.includes(login) &&
+      !EXCLUDED_CONTRIBUTOR_LOGINS.some((excluded) => login === excluded)
+    )
+  })
 
   return (
     <div className="min-h-screen flex flex-col relative bg-gray-950">
       <PageBackground />
       <div className="relative z-10 flex flex-col flex-1">
         <Navbar />
-        <main className="container mx-auto px-4 md:px-8 pt-32 pb-16 flex-1 flex flex-col max-w-5xl">
-          <div className="max-w-2xl mb-12">
+        <main className="container mx-auto px-4 md:px-8 pt-32 pb-10 flex-1 flex flex-col max-w-7xl">
+          <div className="max-w-4xl mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Об авторах</h1>
             <p className="text-gray-400 text-lg leading-relaxed">
               Экосистема <strong className="text-white font-semibold">Typst Gost</strong> и шаблон{" "}
@@ -73,7 +80,7 @@ export default async function AuthorsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch mb-12">
             {authors.map((author) => (
               <div
                 key={author.name}
@@ -136,7 +143,7 @@ export default async function AuthorsPage() {
           </div>
 
           {contributors.length > 0 && (
-            <div className="mt-8 border-t border-gray-800/40 pt-12">
+            <div className="border-t border-gray-800/40 pt-10">
               <div className="flex items-center gap-4 mb-8">
                 <h2 className="text-2xl font-bold text-white tracking-tight">Контрибьюторы</h2>
                 <span className="flex items-center justify-center bg-gray-800 text-gray-300 text-sm font-bold px-3.5 py-1 rounded-full border border-gray-700/50">
@@ -144,30 +151,44 @@ export default async function AuthorsPage() {
                 </span>
               </div>
 
-              <div className="flex flex-wrap gap-3 sm:gap-4">
-                {contributors.map((c) => (
-                  <a
-                    key={c.login}
-                    href={c.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={`${c.login} (${c.contributions} contributions)`}
-                    className="group relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-gray-800 hover:border-gray-500 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 z-0 hover:z-10 bg-gray-800"
-                  >
-                    <Image
-                      src={c.avatar_url}
-                      alt={c.login}
-                      fill
-                      sizes="56px"
-                      className="object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <Button
+                  asChild
+                  variant="primary"
+                  className="w-fit bg-blue-600/90 hover:bg-blue-500/90 text-white shadow-[0_0_24px_rgba(37,99,235,0.18)]"
+                >
+                  <a href="https://github.com/typst-gost/modern-g7-32" target="_blank" rel="noopener noreferrer">
+                    <Github className="w-4 h-4" />
+                    Стать контрибьютором
+                    <ExternalLink className="w-3 h-3 opacity-60" />
                   </a>
-                ))}
+                </Button>
+
+                <div className="flex flex-wrap gap-3 sm:gap-4">
+                  {contributors.map((c) => (
+                    <a
+                      key={c.login}
+                      href={c.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={`${c.login} (${c.contributions} contributions)`}
+                      className="group relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-gray-800 hover:border-gray-500 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all duration-300 z-0 hover:z-10 bg-gray-800"
+                    >
+                      <Image
+                        src={c.avatar_url}
+                        alt={c.login}
+                        fill
+                        sizes="56px"
+                        className="object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           )}
 
-          <div className="mt-auto pt-16">
+          <div className="mt-auto pt-12">
             <div className="p-6 rounded-2xl bg-gray-900/30 border border-gray-800/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <p className="text-gray-400 text-sm leading-relaxed max-w-xl">
                 Исходный код шаблона распространяется свободно. Вы можете изучить его, предложить улучшения или использовать в своих проектах на{' '}
