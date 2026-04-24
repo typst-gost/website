@@ -3,6 +3,7 @@ export const NAVIGATION_LINKS = {
   HOME: "/",
   DOCS: "/docs",
   EXAMPLES_INTERNAL: "/examples",
+  ABOUT: "/authors",
 
   // Внешние ссылки
   TYPST_APP: "https://typst.app",

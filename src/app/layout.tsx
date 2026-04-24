@@ -54,26 +54,30 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "Typst Gost",
-              description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
-              url: siteUrl,
-              applicationCategory: "DeveloperApplication",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "RUB"
-              },
-              potentialAction: {
-                "@type": "UseAction",
-                target: {
-                  "@type": "EntryPoint",
-                  urlTemplate: siteUrl
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                url: siteUrl,
+                name: "Typst Gost",
+                description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: `${siteUrl}/docs?q={search_term_string}`,
+                  "query-input": "required name=search_term_string"
                 }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: "Typst Gost",
+                url: siteUrl,
+                sameAs: [
+                  "https://github.com/typst-gost",
+                  "https://t.me/typst_gost"
+                ]
               }
-            })
+            ])
           }}
         />
       </head>

@@ -16,6 +16,20 @@ module.exports = {
         pathname: "/typst-gost/examples/**",
         search: "",
       },
+      // Для аватарок authors
+      {
+        protocol: "https",
+        hostname: "github.com",
+        port: "",
+        pathname: "/*.png",
+        search: "",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+        port: "",
+        pathname: "/u/*",
+      }
     ],
   },
   turbopack: {},
