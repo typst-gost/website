@@ -4,6 +4,7 @@ import { Heading } from "@/components/ui/heading"
 import CodeBlock from "@/components/sections/preview/code-viewer"
 import { cn } from "@/lib/utils"
 import { featuresData, FeatureColor } from "./data"
+import { Section } from "@/components/ui/section"
 
 function DocumentMockup({ className, children }: { className?: string, children?: React.ReactNode }) {
   return (
@@ -105,7 +106,7 @@ const Mockups: Record<string, React.FC> = {
 
 export default async function BentoFeaturesSection() {
   return (
-    <section className="py-16 px-4 overflow-hidden">
+    <Section>
       <div className="container mx-auto max-w-7xl">
         <Heading
           title="Простота использования"
@@ -157,6 +158,6 @@ export default async function BentoFeaturesSection() {
           })}
         </div>
       </div>
-    </section>
+    </Section>
   )
 }
