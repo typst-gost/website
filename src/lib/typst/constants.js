@@ -4,13 +4,11 @@
  */
 export const DEFAULT_HIDDEN_PREFIX = `#import "@preview/modern-g7-32:0.2.0": gost, abstract
 
-#set page(width: 500pt, height: auto, fill: color.white)
+#set page(width: 500pt, height: auto, footer: none, margin: 30pt, fill: color.white)
 
 #show: gost.with(
   hide-title: true,
 )
-
-#set page(footer: none, margin: 30pt)
 
 `
 
