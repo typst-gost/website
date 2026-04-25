@@ -50,8 +50,10 @@ export function TypstRender({
 }: TypstRenderProps) {
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const [compiledSvg, setCompiledSvg] = useState<string | null>(null);
-  const [localCompileError, setLocalCompileError] = useState<string | null>(null);
-  
+  const [localCompileError, setLocalCompileError] = useState<string | null>(
+    null,
+  );
+
   const isMounted = useRef(true);
   const initialCompileRef = useRef(false);
   const compileTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -82,27 +84,34 @@ export function TypstRender({
     };
   }, []);
 
-  const showEditor = editable && !compilerLoading && !compilerInitError && !!compile;
+  const showEditor =
+    editable && !compilerLoading && !compilerInitError && !!compile;
 
   const compileCode = useCallback(
     (codeToCompile: string) => {
       if (!compile) return;
 
-      const fullCodeToCompile = buildFullCode(codeToCompile, hiddenPrefix, hiddenSuffix);
+      const fullCodeToCompile = buildFullCode(
+        codeToCompile,
+        hiddenPrefix,
+        hiddenSuffix,
+      );
 
       globalCompileQueue = globalCompileQueue
         .then(async () => {
           if (!isMounted.current) return;
-          
+
           setLocalCompileError(null);
-          
-          const svg = await compile(fullCodeToCompile);
+
+          const svg = await compile(fullCodeToCompile, ["title.pdf"]);
 
           if (!svg) throw new Error("Compiler returned empty result");
-          if (typeof svg !== "string") throw new Error("Compiler returned invalid type of SVG");
+          if (typeof svg !== "string")
+            throw new Error("Compiler returned invalid type of SVG");
 
           const trimmedSvg = svg.trim();
-          if (!trimmedSvg.startsWith("<svg")) throw new Error("Invalid svg: does not start with <svg");
+          if (!trimmedSvg.startsWith("<svg"))
+            throw new Error("Invalid svg: does not start with <svg");
 
           const processed = trimmedSvg
             .replace(/width="[^"]*"/g, "")

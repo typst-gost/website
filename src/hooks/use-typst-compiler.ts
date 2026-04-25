@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 const TYPST_COMPILER_URL = "/wasm/typst_ts_web_compiler_bg.wasm";
 const TYPST_RENDERER_URL = "/wasm/typst_ts_renderer_bg.wasm";
+const loadedAssets = new Set();
 
 type TypstModule = Window["$typst"];
 
@@ -58,13 +59,40 @@ export function useTypstCompiler() {
   }, []);
 
   const compile = useCallback(
-    async (code: string): Promise<string | null> => {
+    async (code: string, assets?: string[]): Promise<string | null> => {
       if (!compiler) {
         setCompilerInitError("Compiler not initialized");
         return null;
       }
 
       try {
+        if (assets && assets.length > 0) {
+          for (const assetName of assets) {
+            if (!loadedAssets.has(assetName)) {
+              try {
+                const response = await fetch(
+                  `/docs/compile_assets/${assetName}`,
+                );
+                if (response.ok) {
+                  const fileBuffer = await response.arrayBuffer();
+                  compiler.mapShadow(
+                    `/${assetName}`,
+                    new Uint8Array(fileBuffer),
+                  );
+                  loadedAssets.add(assetName);
+                  console.log(`✓ Loaded asset: ${assetName}`);
+                } else {
+                  console.warn(
+                    `⚠️ Asset not found: /docs/compile_assets/${assetName}`,
+                  );
+                }
+              } catch (err) {
+                console.warn(`⚠️ Failed to load asset ${assetName}:`, err);
+              }
+            }
+          }
+        }
+
         if (compiler) {
           compiler.mapShadow("/main.typ", new TextEncoder().encode(code));
         }
