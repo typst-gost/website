@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Maximize2 } from "lucide-react";
-import { ToolType } from "./data";
+import { ToolType, guides } from "./data";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
 
 interface ScreenshotWindowProps {
   activeTool: ToolType;
@@ -19,7 +18,9 @@ export function ScreenshotWindow({
   activeIndex,
   stepTitle,
 }: ScreenshotWindowProps) {
-  const imagePath = `/screenshots/${activeTool}-step-${activeIndex + 1}.png`;
+  const step = guides[activeTool]?.[activeIndex];
+  const imagePath = step?.image || `/screenshots/${activeTool}-step-${activeIndex + 1}.png`;
+  const bgColor = step?.bg || (activeTool === "typst" ? "#e3e3e3" : "#181818");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -62,9 +63,10 @@ export function ScreenshotWindow({
             {imagePath}
           </div>
         </div>
-        {/* TODO: Сделать поддержку фонов для отдельных шагов */}
+        
         <div
-          className={cn("flex-1 relative overflow-hidden cursor-zoom-in group", activeTool === "typst" ? "bg-[#e3e3e3]" : "bg-[#181818]")}
+          className="flex-1 relative overflow-hidden cursor-zoom-in group transition-colors duration-500"
+          style={{ backgroundColor: bgColor }}
           onClick={() => setIsModalOpen(true)}
         >
           <AnimatePresence mode="wait">

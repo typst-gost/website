@@ -8,14 +8,14 @@ interface GuideStepsProps {
   onChange: (index: number) => void
 }
 
-// TODO: UX мобильный с удалением описаний
-
 export function GuideSteps({ steps, activeIndex, onChange }: GuideStepsProps) {
   return (
     <div className="flex flex-col gap-3">
       {steps.map((step, index) => {
         const isDownload = !!step.download
-        const actionUrl = isDownload ? `/downloads/${step.download}` : step.href
+        const actionUrl = isDownload 
+          ? (step.download?.startsWith('http') ? step.download : `/downloads/${step.download}`) 
+          : step.href
 
         return (
           <div
@@ -39,16 +39,25 @@ export function GuideSteps({ steps, activeIndex, onChange }: GuideStepsProps) {
                 )}>
                   {step.icon}
                 </div>
-                <div>
+                <div className="w-full">
                   <h4 className={cn(
-                    "text-lg font-bold mb-2 transition-colors",
+                    "text-lg font-bold transition-colors",
                     activeIndex === index ? "text-white" : "text-gray-300 group-hover:text-white"
                   )}>
                     {step.title}
                   </h4>
-                  <p className="text-sm text-gray-400 leading-relaxed text-pretty">
-                    {step.description}
-                  </p>
+                  <div className={cn(
+                    "grid transition-all duration-300 ease-in-out",
+                    activeIndex === index 
+                      ? "grid-rows-[1fr] opacity-100 mt-2" 
+                      : "grid-rows-[0fr] opacity-0 md:grid-rows-[1fr] md:opacity-100 md:mt-2"
+                  )}>
+                    <div className="overflow-hidden">
+                      <p className="text-sm text-gray-400 leading-relaxed text-pretty">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </button>

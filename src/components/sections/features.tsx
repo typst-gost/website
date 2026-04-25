@@ -174,12 +174,10 @@ function CTABanner() {
             asChild
           >
             <a
-              href={NAVIGATION_LINKS.TYPST_EXAMPLE_PROJECT}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={NAVIGATION_LINKS.DOCS}
             >
               <FileText className="mr-2 h-5 w-5" />
-              Посмотреть пример
+              Открыть документацию
             </a>
           </Button>
         </div>
@@ -193,27 +191,27 @@ export default function FeaturesSection() {
     <section className="relative py-8 px-4 overflow-hidden text-white">
       <div className="container relative mx-auto max-w-7xl">
         <Heading
-          title="Важная информация"
-          description="Всё, что нужно знать для работы с проектом и его поддержки"
+          title="Что дальше?"
+          description="Всё, что нужно знать для работы с использованием шаблона"
           centered
         />
 
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           <FeatureCard
             title="Документация"
-            description="Документация шаблона в разработке, обратитесь за помощью напрямую"
+            description="Руководство по использованию шаблона"
             hoverEffect={true}
             icon={<BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />}
           >
             <nav className="space-y-3">
               <ExternalLinkItem
-                href={NAVIGATION_LINKS.TELEGRAM_CHAT}
+                href={NAVIGATION_LINKS.DOCS}
                 icon={MessageCircle}
               >
-                Telegram поддержка
+                Документация
               </ExternalLinkItem>
               <ExternalLinkItem
-                href={NAVIGATION_LINKS.GITHUB_EXAMPLES_REPO}
+                href={NAVIGATION_LINKS.EXAMPLES_INTERNAL}
                 icon={Github}
               >
                 Примеры документов
@@ -238,9 +236,8 @@ export default function FeaturesSection() {
                 Попробуйте шаблон и вернитесь с обратной связью
               </StepItem>
               <StepItem step={3}>
-                Присоединяйтесь к{" "}
-                <InlineLink href={NAVIGATION_LINKS.TELEGRAM_CHAT}>
-                  сообществу
+                Поддержите проект финансово <InlineLink href={NAVIGATION_LINKS.DONATE}>
+                  здесь
                 </InlineLink>
               </StepItem>
             </div>

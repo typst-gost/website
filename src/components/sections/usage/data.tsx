@@ -37,6 +37,7 @@ export interface GuideStep {
   href?: string
   download?: string
   image: string
+  bg?: string
 }
 
 export const tableColumns =[
@@ -92,13 +93,12 @@ export const guides: Record<ToolType, GuideStep[]> = {
       href: toolsMeta.tinymist.url,
       image: "/screenshots/tinymist-ext.png"
     },
-    // TODO: Чтобы само подтягивалось при сборке
     {
       title: "Загрузите проект",
       description: "Скачайте архив с шаблоном modern-g7-32. Распакуйте в удобную рабочую директорию. Для предпросмотра нажмите кнопку «Preview» над первой строкой файла.",
       icon: <Download className="w-5 h-5" />,
       color: "text-indigo-400",
-      download: "preview.zip",
+      download: process.env.NEXT_PUBLIC_TEMPLATE_DOWNLOAD_URL || "preview.zip",
       image: "/screenshots/github-download.png"
     },
     {
@@ -107,6 +107,15 @@ export const guides: Record<ToolType, GuideStep[]> = {
       icon: <Play className="w-5 h-5" />,
       color: "text-green-400",
       image: "/screenshots/vscode-edit.png"
+    },
+    {
+      title: "Изучайте документацию",
+      description: "Перейдите в раздел документации этого сайта, чтобы узнать больше о том, как оформлять работы без проблем.",
+      icon: <StickyNote className="w-5 h-5" />,
+      color: "text-amber-400",
+      href: NAVIGATION_LINKS.DOCS,
+      image: "/screenshots/docs.png",
+      bg: "#131a2c"
     },
     {
       title: "Компилируйте",
@@ -138,7 +147,8 @@ export const guides: Record<ToolType, GuideStep[]> = {
       icon: <StickyNote className="w-5 h-5" />,
       color: "text-amber-400",
       href: NAVIGATION_LINKS.DOCS,
-      image: "/screenshots/typst-docs.png"
+      image: "/screenshots/docs.png",
+      bg: "#131a2c"
     },
     {
       title: "Экспортируйте в PDF",

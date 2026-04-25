@@ -6,8 +6,6 @@ import UsageSection from "@/components/sections/usage/section";
 import { ComparisonSection } from "@/components/sections/comparison/section";
 import { Footer } from "@/components/sections/footer";
 import { PageBackground } from "@/components/decoration/background";
-import FaqSection from "@/components/sections/faq/section";
-import { Section } from "@/components/ui/section";
 import BentoFeaturesSection from "@/components/sections/bento-features/section";
 
 export default function Home() {
@@ -22,10 +20,9 @@ export default function Home() {
         <BentoFeaturesSection />
         <ComparisonSection />
         <UsageSection />
-        {/* <Docs Section /> с <Telegram Section /> */}
-        {/* <FeaturesSection /> TODO: Выпилить */}
         {/* <CommunitySection /> TODO: Добавить */}
-        <FaqSection />
+        <FeaturesSection />
+        {/* <FaqSection /> TODO: Добавить */}
         <Footer />
       </div>
     </div>
