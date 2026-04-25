@@ -7,7 +7,8 @@ export interface Author {
   name: string
   role: string
   github: string
-  telegram: string | null
+  telegram?: string
+  website?: string
   avatarPath?: string
   isInactive?: boolean
   tags: AuthorTag[]
@@ -43,7 +44,7 @@ export const authors: Author[] = [
     name: "benzlokzik",
     role: "Разработчик",
     github: "https://github.com/benzlokzik",
-    telegram: "https://t.me/benzlokzik",
+    website: "https://epops.space",
     avatarPath: "https://github.com/benzlokzik.png",
     tags: [TAGS.website, TAGS.infrastructure, TAGS.template],
   },

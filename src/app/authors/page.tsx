@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 import Image from "next/image"
-import { Github, User, ExternalLink } from "lucide-react"
+import { Github, User, ExternalLink, Globe } from "lucide-react" // Добавили Globe
 import { Navbar } from "@/components/sections/navbar"
 import { Footer } from "@/components/sections/footer"
 import { PageBackground } from "@/components/decoration/background"
@@ -32,13 +32,13 @@ async function getContributors(): Promise<GitHubContributor[]> {
 
     if (!res.ok) {
       console.error("Failed to fetch contributors:", res.statusText)
-      return[]
+      return []
     }
 
     return await res.json()
   } catch (error) {
     console.error("Error fetching contributors:", error)
-    return[]
+    return []
   }
 }
 
@@ -71,7 +71,7 @@ export default async function AuthorsPage() {
       <div className="relative z-10 flex flex-col flex-1">
         <Navbar />
         <main className="container mx-auto px-4 md:px-8 pt-32 pb-10 flex-1 flex flex-col max-w-7xl">
-          <div className="max-w-4xl mb-12">
+          <div className="mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Об авторах</h1>
             <p className="text-gray-400 text-lg leading-relaxed">
               Экосистема <strong className="text-white font-semibold">Typst Gost</strong> и шаблон{" "}
@@ -116,7 +116,7 @@ export default async function AuthorsPage() {
                   {author.tags && author.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-8">
                       {author.tags.map((tag) => (
-                        <span key={tag.label} className={cn("px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider border", tag.className)}>
+                        <span key={tag.label} className={cn("px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider border", tag.className)}>
                           {tag.label}
                         </span>
                       ))}
@@ -129,10 +129,20 @@ export default async function AuthorsPage() {
                       <span className="font-medium">GitHub</span>
                       <ExternalLink className="w-3 h-3 opacity-50" />
                     </a>
+                    
                     {author.telegram && (
                       <a href={author.telegram} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2AABEE]/10 text-sm text-[#2AABEE] border border-transparent hover:border-[#2AABEE]/30 hover:bg-[#2AABEE]/20 transition-all">
                         <TelegramIcon className="w-4 h-4" /> 
                         <span className="font-medium">Telegram</span>
+                        <ExternalLink className="w-3 h-3 opacity-50" />
+                      </a>
+                    )}
+
+                    {/* Добавлена кнопка для сайта */}
+                    {author.website && (
+                      <a href={author.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/10 text-sm text-emerald-400 border border-transparent hover:border-emerald-500/30 hover:bg-emerald-500/20 transition-all">
+                        <Globe className="w-4 h-4" /> 
+                        <span className="font-medium">Сайт</span>
                         <ExternalLink className="w-3 h-3 opacity-50" />
                       </a>
                     )}
@@ -151,19 +161,7 @@ export default async function AuthorsPage() {
                 </span>
               </div>
 
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <Button
-                  asChild
-                  variant="primary"
-                  className="w-fit bg-blue-600/90 hover:bg-blue-500/90 text-white shadow-[0_0_24px_rgba(37,99,235,0.18)]"
-                >
-                  <a href="https://github.com/typst-gost/modern-g7-32" target="_blank" rel="noopener noreferrer">
-                    <Github className="w-4 h-4" />
-                    Стать контрибьютором
-                    <ExternalLink className="w-3 h-3 opacity-60" />
-                  </a>
-                </Button>
-
+              <div className="flex justify-between">
                 <div className="flex flex-wrap gap-3 sm:gap-4">
                   {contributors.map((c) => (
                     <a
@@ -184,6 +182,16 @@ export default async function AuthorsPage() {
                     </a>
                   ))}
                 </div>
+                <Button
+                  asChild
+                  variant="outline"
+                >
+                  <a href="https://github.com/typst-gost/modern-g7-32" target="_blank" rel="noopener noreferrer">
+                    <Github className="w-4 h-4" />
+                    Стать контрибьютором
+                    <ExternalLink className="w-3 h-3 opacity-60" />
+                  </a>
+                </Button>
               </div>
             </div>
           )}
