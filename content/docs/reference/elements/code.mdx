@@ -46,14 +46,18 @@ iconLocal: Code
 
 Для больших проектов удобнее хранить код в отдельных файлах и подключать их в отчёт автоматически. 
 Это гарантирует, что в документе всегда будет актуальная версия кода.
+Дополнительно сделаем так, чтобы длинный код переносился на следующую страницу.
 
 <TypstRender
   code={`
+#show figure.where(kind: raw): set block(breakable: true)
+
 #figure(
-  raw(read("src/main.py"), lang: "python", block: true),
-  caption: [Исходный код модуля main.py]
+  raw(read("snake.py"), lang: "python", block: true),
+  caption: [Исходный код змейки на Python],
 ) <listing-file>
 `}
+  assets={["snake.py"]}
   image="code-example-read.png"
 />
 
@@ -92,17 +96,21 @@ Typst поддерживает подсветку для сотен языков
   `gost.with` строку `#set raw(theme: none)` или не указывайте язык у конкретного блока кода.
 </Callout>
 
-```typst
+<TypstRender
+  code={`
 #set raw(theme: none)
 
 #figure(
-  raw(
-    "fn main() {\n    println!(\"plain code\");\n}",
-    block: true,
-  ),
-  caption: [Листинг без подсветки синтаксиса],
-)
-```
+  \`\`\`rust
+  fn main() {
+      println!("Hello, World!");
+  }
+  \`\`\`,
+  caption: [Листинг программы на языке Rust]
+) <listing-example>
+`}
+  image="code-example-simple.png"
+/>
 
 ### Перенос длинных листингов
 Листинги в `modern-g7-32` настроены как разбиваемые блоки, но итоговый перенос всё равно зависит
