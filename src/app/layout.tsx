@@ -1,23 +1,26 @@
 import type { Metadata } from "next";
+import { RootProvider } from 'fumadocs-ui/provider/next';
 import { Suspense } from "react";
 
-import { YandexMetrika } from "@/components/yandex-metrics";
+import { YandexMetrika } from "@/components/utils/yandex-metrics";
 
 import "./globals.css";
 import '../components/sections/comparison/styles.css'
+import { defineI18nUI } from 'fumadocs-ui/i18n';
+import { i18n } from '@/lib/i18n';
 
 const siteUrl = "https://typst-gost.ru";
-const siteName = "Typst 7.32";
+const siteName = "Typst Gost";
 
 export const metadata: Metadata = {
-  title: "Typst 7.32 — Шаблон для ГОСТ 7.32-2017",
+  title: "Typst Gost — Шаблон для ГОСТ 7.32-2017",
   description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017. Используй для курсовых, дипломных работ и лабораторных.",
-  keywords: ["ГОСТ 7.32-2017", "Typst", "шаблон", "оформление документов"],
+  keywords: ["ГОСТ 7.32-2017", "Typst", "шаблон", "оформление документов", "ГОСТ", "стандарты", "нормконтроль", "формат", "документы", "курсовые", "дипломные", "лабораторные"],
 
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "Typst 7.32 — Шаблон для ГОСТ 7.32-2017",
+    title: "Typst Gost — Шаблон для ГОСТ 7.32-2017",
     description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
     siteName: siteName,
     images: [
@@ -25,14 +28,14 @@ export const metadata: Metadata = {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "Typst 7.32 Preview",
+        alt: "Typst Gost Preview",
       }
     ],
   },
   
   twitter: {
     card: "summary_large_image",
-    title: "Typst 7.32 — Шаблон для ГОСТ 7.32-2017",
+    title: "Typst Gost — Шаблон для ГОСТ 7.32-2017",
     description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
     images: [`${siteUrl}/og-image.png`],
   },
@@ -40,51 +43,99 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
+const { provider } = defineI18nUI(i18n, {
+  translations: {
+    ru: {
+      displayName: 'Русский',
+      search: 'Поиск',
+      searchNoResult: 'Ничего не найдено',
+      toc: 'На этой странице',
+      lastUpdate: 'Последнее обновление',
+      chooseLanguage: 'Выбрать язык',
+      chooseTheme: 'Выбрать тему',
+      nextPage: "Следующая страница",
+      previousPage: "Предыдущая страница",
+    },
+  },
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href={siteUrl} />
+        <meta name="darkreader-lock" />
         
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "Typst 7.32",
-              description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
-              url: siteUrl,
-              applicationCategory: "DeveloperApplication",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "RUB"
-              },
-              potentialAction: {
-                "@type": "UseAction",
-                target: {
-                  "@type": "EntryPoint",
-                  urlTemplate: siteUrl
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                name: "Typst Gost",
+                description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+                url: siteUrl,
+                applicationCategory: "DeveloperApplication",
+                offers: {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "RUB"
+                },
+                potentialAction: {
+                  "@type": "UseAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate: siteUrl
+                  }
                 }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                url: siteUrl,
+                name: "Typst Gost",
+                description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: `${siteUrl}/docs?q={search_term_string}`,
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: "Typst Gost",
+                url: siteUrl,
+                sameAs: [
+                  "https://github.com/typst-gost",
+                  "https://t.me/typst_gost"
+                ]
               }
-            })
+            ])
           }}
         />
       </head>
       
       <body className="antialiased">
-        {children}
-      </body>
+        <RootProvider
+          theme={{
+            defaultTheme: 'dark',
+          }}
+          i18n={provider("ru")}
+        >
+          {children}
+        </RootProvider>
 
-      <Suspense fallback={<></>}>
-        <YandexMetrika />
-      </Suspense>
+        <Suspense fallback={<></>}>
+          <YandexMetrika />
+        </Suspense>
+      </body>
     </html>
   );
 }

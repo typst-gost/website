@@ -65,7 +65,7 @@ export function NewYearToast() {
                                         <a
                                             href={NAVIGATION_LINKS.TELEGRAM_AUTHOR}
                                             target="_blank"
-                                            rel="noreferrer"
+                                            rel="noopener noreferrer"
                                         >
                                             Павел Елисеев
                                         </a>

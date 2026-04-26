@@ -1,0 +1,46 @@
+---
+title: Альтернативная нумерация фигур
+description: Способы пронумеровать рисунки, таблицы и прочие фигуры другим способом.
+iconLocal: FileBox
+---
+
+По умолчанию `modern-g7-32` нумерует рисунки и таблицы сквозным счётчиком, а в приложениях
+переключается на формат `А.1`, `А.2`. Если методичка требует нумерацию внутри раздела
+(`Рисунок 1.1`, `Рисунок 1.2`, `Рисунок 2.1`), это можно сделать локальным переопределением Typst.
+
+```typst
+#show: gost.with(...)
+
+#show figure.where(kind: image): set figure(
+  numbering: n => {
+    let section = counter(heading).get().first()
+    numbering("1.1", section, n)
+  }
+)
+
+#show heading.where(level: 1): it => {
+  counter(figure.where(kind: image)).update(0)
+  it
+}
+```
+
+Для таблиц используйте отдельный селектор, чтобы не смешивать счётчики рисунков и таблиц:
+
+```typst
+#show figure.where(kind: table): set figure(
+  numbering: n => {
+    let section = counter(heading).get().first()
+    numbering("1.1", section, n)
+  }
+)
+
+#show heading.where(level: 1): it => {
+  counter(figure.where(kind: table)).update(0)
+  it
+}
+```
+
+<Callout type="warning">
+  Это переопределение меняет стандартное поведение пакета. Если вы используете
+  `#show: appendixes`, сначала проверьте нумерацию рисунков и таблиц в приложениях на финальном PDF.
+</Callout>

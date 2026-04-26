@@ -11,7 +11,7 @@ export default function HeroSection() {
         <div className="max-w-5xl mx-auto text-center mb-10 md:mb-14">
           <div className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs sm:text-sm text-blue-400 mb-5 sm:mb-6">
             <span className="flex h-2 w-2 rounded-full bg-blue-400 mr-2"></span>
-            ГОСТ 7.32-2017
+            <a href="/documents/gost-7.32-2017.pdf">ГОСТ 7.32-2017</a>
           </div>
           <h1 className="relative text-4xl sm:text-5xl/11 md:text-7xl/15 font-semibold text-white tracking-tight">
             Оформляйте документы{" "}
@@ -30,7 +30,7 @@ export default function HeroSection() {
             >
               Typst
             </a>
-            {" "}шаблон для оформления работ в&nbsp;соответствии&nbsp;с&nbsp;ГОСТ&nbsp;7.32-2017.<br />Сосредоточьтесь на содержании, не думайте о форматировании.
+            {" "}шаблон для оформления работ в&nbsp;соответствии&nbsp;с&nbsp;<a href="/documents/gost-7.32-2017.pdf" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300/50 underline-offset-2 transition-colors">ГОСТ&nbsp;7.32-2017</a>.<br />Сосредоточьтесь на содержании, не думайте о форматировании.
           </p>
           <div className="flex justify-center gap-3 sm:gap-4 text-white">
             <Button
@@ -52,11 +52,11 @@ export default function HeroSection() {
               asChild
             >
               <Link
-                href={NAVIGATION_LINKS.GITHUB_REPO}
+                href={NAVIGATION_LINKS.TELEGRAM_CHAT}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Репозиторий
+                Сообщество
               </Link>
             </Button>
           </div>

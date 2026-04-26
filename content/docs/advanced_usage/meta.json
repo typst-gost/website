@@ -1,0 +1,12 @@
+{
+    "title": "Настройка и экспорт",
+    "defaultOpen": true,
+    "order": 2,
+    "pages": [
+        "index",
+        "customization",
+        "custom_title_templates",
+        "figure_numbering",
+        "export"
+    ]
+}
