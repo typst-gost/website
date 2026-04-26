@@ -10,9 +10,9 @@ import { Menu, X } from "lucide-react"
 
 import { NAVIGATION_LINKS } from "@/lib/navigation"
 
-const NAV_LINKS = [
+const NAV_LINKS =[
   { href: NAVIGATION_LINKS.DOCS, label: "Документация (в работе)", disabled: true },
-  { href: NAVIGATION_LINKS.EXAMPLES_INTERNAL, label: "Примеры (в работе)", disabled: true },
+  { href: NAVIGATION_LINKS.EXAMPLES_INTERNAL, label: "Примеры" },
   { href: NAVIGATION_LINKS.ABOUT, label: "Об авторах" },
 ]
 
@@ -133,7 +133,7 @@ function NavLink({
   isMobile?: boolean
   onClick?: () => void
 }) {
-  const isActive = pathname === link.href
+  const isActive = pathname.startsWith(link.href) && link.href !== '/'
 
   let classes = "font-medium transition-colors duration-200"
 

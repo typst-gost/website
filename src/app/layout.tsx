@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { YandexMetrika } from "@/components/utils/yandex-metrics";
 
@@ -83,7 +84,9 @@ export default function RootLayout({
       </head>
       
       <body className="antialiased">
-        {children}
+        <NuqsAdapter>
+          {children}
+        </NuqsAdapter>
       </body>
 
       <Suspense fallback={<></>}>
