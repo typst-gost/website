@@ -11,7 +11,7 @@ import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { Feedback } from '@/components/docs/fumadocs/feedback';
-import { onRateAction } from '@/lib/actions/feedback';
+import { onRateAction } from '@/lib/fumadocs/feedback';
 
 type DocsPageProps = { params: Promise<{ slug?: string[] }>; searchParams?: Promise<Record<string, string | string[] | undefined>> };
 

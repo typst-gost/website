@@ -2,15 +2,15 @@ import { App, Octokit } from 'octokit';
 import type { ActionResponse, Feedback } from '@/components/docs/fumadocs/feedback';
 
 export const repo = 'website';
-export const owner = 'typst-g7-32';
+export const owner = 'typst-gost';
 export const DocsCategory = 'Документация';
 
 let instance: Octokit | undefined;
 
 async function getOctokit(): Promise<Octokit> {
   if (instance) return instance;
-  const appId = process.env.GITHUB_APP_ID;
-  const privateKey = process.env.GITHUB_APP_PRIVATE_KEY;
+  const appId = process.env.FEEDBACK_GITHUB_APP_ID;
+  const privateKey = process.env.FEEDBACK_GITHUB_APP_PRIVATE_KEY;
 
   if (!appId || !privateKey) {
     throw new Error(
@@ -89,8 +89,8 @@ export async function onRateAction(
       `Please create a "${DocsCategory}" category in GitHub Discussion`,
     );
 
-  const title = `Feedback for ${url}`;
-  const body = `[${feedback.opinion}] ${feedback.message}\n\n> Forwarded from user feedback.`;
+  const title = `Обратная связь для ${url}`;
+  const body = `[${feedback.opinion}] ${feedback.message}\n\n> Перенесённый отзыв со страницы документации.`;
 
   let {
     search: {

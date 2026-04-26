@@ -24,7 +24,7 @@ const rateButtonVariants = cva(
 );
 
 export interface Feedback {
-  opinion: 'good' | 'bad';
+  opinion: 'устраивает' | 'не устраивает';
   url?: string;
   message: string;
 }
@@ -51,7 +51,7 @@ export function Feedback({
       return null;
     }
   });
-  const [opinion, setOpinion] = useState<'good' | 'bad' | null>(null);
+  const [opinion, setOpinion] = useState<'устраивает' | 'не устраивает' | null>(null);
   const [message, setMessage] = useState('');
   const [isPending, startTransition] = useTransition();
 
@@ -108,18 +108,18 @@ export function Feedback({
   };
 
   const openBadFeedback = () => {
-    if (opinion === 'bad') {
+    if (opinion === 'не устраивает') {
       setOpinion(null);
     } else {
-      setOpinion('bad');
+      setOpinion('не устраивает');
     }
   };
 
   const openGoodFeedback = () => {
-    if (opinion === 'good') {
+    if (opinion === 'устраивает') {
       setOpinion(null);
     } else {
-      setOpinion('good');
+      setOpinion('устраивает');
     }
   };
 
@@ -142,7 +142,7 @@ export function Feedback({
           disabled={isSubmitted}
           className={cn(
             rateButtonVariants({
-              active: activeOpinion === 'good',
+              active: activeOpinion === 'устраивает',
             }),
           )}
           onClick={openGoodFeedback}
@@ -156,7 +156,7 @@ export function Feedback({
           disabled={isSubmitted}
           className={cn(
             rateButtonVariants({
-              active: activeOpinion === 'bad',
+              active: activeOpinion === 'не устраивает',
             }),
           )}
           onClick={openBadFeedback}
