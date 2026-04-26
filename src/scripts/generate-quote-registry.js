@@ -1,8 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { glob } from 'glob';
-
-const globSync = glob.sync;
 
 console.log('📚 Generating quotes registry...\n');
 
@@ -14,7 +11,19 @@ if (!fs.existsSync(contentDir)) {
   process.exit(0);
 }
 
-const mdxFiles = globSync(`${contentDir}/**/*.mdx`);
+function findMdxFiles(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
+    const entryPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      return findMdxFiles(entryPath);
+    }
+
+    return entry.isFile() && entry.name.endsWith('.mdx') ? [entryPath] : [];
+  });
+}
+
+const mdxFiles = findMdxFiles(contentDir);
 
 console.log(`✨ Found ${mdxFiles.length} MDX files\n`);
 
