@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useRef } from "react"
-import { ExternalLink, FileText, Github, MessageCircle, Link } from "lucide-react"
+import { ExternalLink, Github, MessageCircle, Link } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
 import { FeatureCard } from "@/components/ui/feature-card"
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
@@ -103,7 +103,7 @@ function CTABanner() {
           </a>
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20" asChild>
+          <Button size="lg" variant="outline" className="text-white bg-gray-900/60 backdrop-blur-sm border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-400/50" asChild>
             <a href={NAVIGATION_LINKS.TYPST_UNIVERSE_PACKAGE} target="_blank" rel="noopener noreferrer">
               <Link className="mr-2 h-5 w-5" />
               Перейти к шаблону
@@ -112,12 +112,12 @@ function CTABanner() {
           <Button
             size="lg"
             variant="outline"
-            className="border-gray-500/10 hover:bg-blue-500/10 bg-gray-900 backdrop-blur-sm text-white hover:text-blue-500 hover:border-blue-500/30"
+            className="text-white bg-gray-900/60 backdrop-blur-sm border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-400/50"
             asChild
           >
-            <a href={NAVIGATION_LINKS.TYPST_EXAMPLE_PROJECT} target="_blank" rel="noopener noreferrer">
-              <FileText className="mr-2 h-5 w-5" />
-              Посмотреть пример
+            <a href={NAVIGATION_LINKS.TELEGRAM_CHAT} target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Перейти к сообществу
             </a>
           </Button>
         </div>

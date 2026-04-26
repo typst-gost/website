@@ -96,19 +96,17 @@ image="advanced-usage-minimal.png"
 Используйте параметр `add-pagebreaks: false`, чтобы заголовки первого уровня (`=`) следовали сразу
 за предыдущим текстом.
 
-<TypstRender
-  code={`
+```typst
 #show: gost.with(add-pagebreaks: false)
 
 = Раздел 1
 Текст...
 = Раздел 2
 Этот раздел начнется сразу под текстом Раздела 1.
-`}
-hiddenPrefix={`#import "@preview/modern-g7-32:0.2.0": gost\n
-#set page(fill: color.white, width: 500pt)\n\n`}
-image="advanced-usage-add-pagebreaks.png"
-/>
+```
+
+В текущей версии опубликованного пакета этот параметр уже описан в справке, но живой
+пример здесь не рендерится автоматически, чтобы не ломать сборку документации.
 
 ## Кастомные правила (Overrides)
 

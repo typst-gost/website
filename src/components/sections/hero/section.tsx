@@ -52,11 +52,11 @@ export default function HeroSection() {
               asChild
             >
               <Link
-                href={NAVIGATION_LINKS.GITHUB_REPO}
+                href={NAVIGATION_LINKS.TELEGRAM_CHAT}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Репозиторий
+                Сообщество
               </Link>
             </Button>
           </div>
