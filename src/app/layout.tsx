@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { RootProvider } from 'fumadocs-ui/provider/next';
 import { Suspense } from "react";
 
 import { YandexMetrika } from "@/components/utils/yandex-metrics";
 
 import "./globals.css";
 import '../components/sections/comparison/styles.css'
+import { defineI18nUI } from 'fumadocs-ui/i18n';
+import { i18n } from '@/lib/i18n';
 
 const siteUrl = "https://typst-gost.ru";
 const siteName = "Typst Gost";
@@ -40,21 +43,58 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
+const { provider } = defineI18nUI(i18n, {
+  translations: {
+    ru: {
+      displayName: 'Русский',
+      search: 'Поиск',
+      searchNoResult: 'Ничего не найдено',
+      toc: 'На этой странице',
+      lastUpdate: 'Последнее обновление',
+      chooseLanguage: 'Выбрать язык',
+      chooseTheme: 'Выбрать тему',
+      nextPage: "Следующая страница",
+      previousPage: "Предыдущая страница",
+    },
+  },
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href={siteUrl} />
+        <meta name="darkreader-lock" />
         
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                name: "Typst Gost",
+                description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+                url: siteUrl,
+                applicationCategory: "DeveloperApplication",
+                offers: {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "RUB"
+                },
+                potentialAction: {
+                  "@type": "UseAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate: siteUrl
+                  }
+                }
+              },
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
@@ -83,12 +123,19 @@ export default function RootLayout({
       </head>
       
       <body className="antialiased">
-        {children}
-      </body>
+        <RootProvider
+          theme={{
+            defaultTheme: 'dark',
+          }}
+          i18n={provider("ru")}
+        >
+          {children}
+        </RootProvider>
 
-      <Suspense fallback={<></>}>
-        <YandexMetrika />
-      </Suspense>
+        <Suspense fallback={<></>}>
+          <YandexMetrika />
+        </Suspense>
+      </body>
     </html>
   );
 }

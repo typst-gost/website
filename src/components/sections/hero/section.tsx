@@ -1,48 +1,21 @@
-import { Button } from "@/components/ui/buttons/button";
-import Link from "next/link";
-import { HeroBackground } from "./background";
-import { NAVIGATION_LINKS } from "@/lib/navigation";
-import { Section } from "@/components/ui/section";
-import { cn } from "@/lib/utils";
-
-interface HeroButtonProps {
-  text: string;
-  href: string;
-  className?: string;
-  isMain?: boolean;
-}
-
-const HeroButton = ({ text, href, className, isMain }: HeroButtonProps) => {
-  return (
-    <Button
-      variant={isMain ? "primary" : "outline"}
-      className={cn("w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5", className)}
-      asChild
-    >
-      <Link
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {text}
-      </Link>
-    </Button>
-  );
-};
+import { Button } from "@/components/ui/buttons/button"
+import Link from "next/link"
+import { HeroBackground } from "./background"
+import { NAVIGATION_LINKS } from "@/lib/navigation"
 
 export default function HeroSection() {
   return (
-    <Section isHero>
+    <section className="relative pt-24 sm:pt-28 md:pt-40 md:pb-14 px-4">
       <HeroBackground />
       <div className="container mx-auto">
         <div className="max-w-5xl mx-auto text-center mb-10 md:mb-14">
           <div className="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs sm:text-sm text-blue-400 mb-5 sm:mb-6">
             <span className="flex h-2 w-2 rounded-full bg-blue-400 mr-2"></span>
-            ГОСТ 7.32-2017
+            <a href="/documents/gost-7.32-2017.pdf">ГОСТ 7.32-2017</a>
           </div>
           <h1 className="relative text-4xl sm:text-5xl/11 md:text-7xl/15 font-semibold text-white tracking-tight">
             Оформляйте документы{" "}
-            <span className="relative inline-block font-bold text-blue-500">
+            <span className="relative inline-block text-transparent bg-clip-text bg-linear-to-r from-blue-400 via-blue-600 to-blue-400 bg-size-[200%_100%] animate-shine-text">
               автоматически
             </span>
           </h1>
@@ -56,21 +29,39 @@ export default function HeroSection() {
               className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300/50 underline-offset-2 transition-colors"
             >
               Typst
-            </a>{" "}
-            шаблон для оформления работ
-            в&nbsp;соответствии&nbsp;с&nbsp;ГОСТ&nbsp;7.32-2017.
-            <br />
-            Сосредоточьтесь на содержании, не думайте о форматировании.
+            </a>
+            {" "}шаблон для оформления работ в&nbsp;соответствии&nbsp;с&nbsp;<a href="/documents/gost-7.32-2017.pdf" className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 hover:decoration-blue-300/50 underline-offset-2 transition-colors">ГОСТ&nbsp;7.32-2017</a>.<br />Сосредоточьтесь на содержании, не думайте о форматировании.
           </p>
           <div className="flex justify-center gap-3 sm:gap-4 text-white">
-            <HeroButton text="Начать" href={NAVIGATION_LINKS.TYPST_TEMPLATE_START} isMain />
-            <HeroButton text="Сообщество" href={NAVIGATION_LINKS.TELEGRAM_CHAT} />
-            <div className="hidden md:block">
-              <HeroButton text="Документация" href={NAVIGATION_LINKS.DOCS} />
-            </div>
+            <Button
+              variant="primary"
+              className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
+              asChild
+            >
+              <Link
+                href={NAVIGATION_LINKS.TYPST_TEMPLATE_START}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Начать
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
+              asChild
+            >
+              <Link
+                href={NAVIGATION_LINKS.GITHUB_REPO}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Репозиторий
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
-    </Section>
-  );
+    </section>
+  )
 }

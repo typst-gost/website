@@ -33,5 +33,15 @@ yarn-error.log*
 **/*.tsbuildinfo
 **/next-env.d.ts
 
+# Typst
+.typst/
+public/docs/attachments/**/*
+
+# Файлы сборки
+src/lib/quotes-registry.ts
+
+# Fumadocs
+.source/
+
 # Gitingest
 digest.txt

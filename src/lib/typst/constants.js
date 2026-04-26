@@ -1,0 +1,19 @@
+/**
+ * Стандартный префикс для Typst кода.
+ * Добавляется перед пользовательским кодом при компиляции.
+ */
+export const DEFAULT_HIDDEN_PREFIX = `#import "@preview/modern-g7-32:0.2.0": gost, abstract, appendixes, title-templates
+
+#set page(width: 500pt, height: auto, footer: none, margin: 30pt, fill: color.white)
+
+#show: gost.with(
+  hide-title: true,
+)
+
+`
+
+/**
+ * Стандартный суффикс для Typst кода.
+ * Добавляется после пользовательского кода при компиляции.
+ */
+export const DEFAULT_HIDDEN_SUFFIX = null
