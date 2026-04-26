@@ -5,9 +5,9 @@ import { DonateButton } from "../ui/buttons/donate-button"
 import { cn } from "@/lib/utils"
 import { NAVIGATION_LINKS } from "@/lib/navigation"
 
-const footerLinks = [
+const footerLinks =[
   { label: "Документация", href: NAVIGATION_LINKS.DOCS, disabled: true },
-  { label: "Примеры", href: NAVIGATION_LINKS.GITHUB_EXAMPLES_REPO, disabled: true, external: true },
+  { label: "Примеры", href: NAVIGATION_LINKS.EXAMPLES_INTERNAL },
   { label: "Об авторах", href: NAVIGATION_LINKS.ABOUT },
 ]
 
