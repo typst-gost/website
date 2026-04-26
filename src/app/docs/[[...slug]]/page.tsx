@@ -13,7 +13,9 @@ import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { Feedback } from '@/components/docs/fumadocs/feedback';
 import { onRateAction } from '@/lib/actions/feedback';
 
-export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
+type DocsPageProps = { params: Promise<{ slug?: string[] }>; searchParams?: Promise<Record<string, string | string[] | undefined>> };
+
+export default async function Page(props: DocsPageProps) {
   const params = await props.params;
   const page = source.getPage(params.slug);
   if (!page) notFound();
@@ -48,7 +50,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  props: PageProps<'/docs/[[...slug]]'>,
+  props: DocsPageProps,
 ): Promise<Metadata> {
   const params = await props.params;
   const page = source.getPage(params.slug);

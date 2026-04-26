@@ -1,10 +1,6 @@
 'use client';
 import { CodeBlock, type CodeBlockProps, Pre } from '@/components/docs/fumadocs/codeblock';
-import type {
-  HighlightOptions,
-  HighlightOptionsCommon,
-  HighlightOptionsThemes,
-} from 'fumadocs-core/highlight';
+import type { HighlightOptions } from 'fumadocs-core/highlight';
 import { useShiki } from 'fumadocs-core/highlight/client';
 import { cn } from '@/lib/utils';
 import {
@@ -34,7 +30,7 @@ export interface DynamicCodeblockProps {
    */
   wrapInSuspense?: boolean;
   wordWrap?: boolean;
-  options?: Omit<HighlightOptionsCommon, 'lang'> & HighlightOptionsThemes;
+  options?: Omit<HighlightOptions, 'lang'>;
 }
 
 const PropsContext = createContext<CodeBlockProps | undefined>(undefined);

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { source } from '@/lib/source';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 
@@ -6,7 +7,7 @@ import { QuoteProvider } from '@/contexts/quote-context';
 
 import '@/styles/typst-render.css';
 
-export default function Layout({ children }: LayoutProps<'/docs'>) {
+export default function Layout({ children }: { children: ReactNode }) {
   return (
     <DocsLayout
       tree={source.pageTree}
