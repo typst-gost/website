@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { useQueryState } from "nuqs"
-import { FileCode2, FileJson, FileText, Image as ImageIcon, FolderOpen, Folder } from "lucide-react"
+import { FileCode2, FileJson, FileText, Image as ImageIcon, FolderOpen } from "lucide-react"
 import { ExampleFile } from "@/lib/github-examples"
 import { cn } from "@/lib/utils"
 import { fileParam } from "@/app/examples/search-params"
+import { DownloadButton } from "./download-button"
 
 interface TreeNode {
   name: string
@@ -64,7 +65,17 @@ function getFileIcon(filename: string) {
   return <FileText className="w-4 h-4 text-gray-400" />
 }
 
-export function FileTree({ files, activePath, slug }: { files: ExampleFile[], activePath: string, slug: string }) {
+export function FileTree({ 
+  files, 
+  activePath, 
+  slug, 
+  onFileSelect 
+}: { 
+  files: ExampleFile[], 
+  activePath: string, 
+  slug: string, 
+  onFileSelect?: () => void 
+}) {
   const tree = buildTree(files)
   const [, setFile] = useQueryState("file", fileParam)
 
@@ -73,7 +84,7 @@ export function FileTree({ files, activePath, slug }: { files: ExampleFile[], ac
       return (
         <div key={node.path} className="flex flex-col">
           <div 
-            className="flex items-center gap-1.5 py-1 px-2 hover:bg-white/5 cursor-pointer text-gray-300"
+            className="flex items-center gap-1.5 py-1.5 px-2 hover:bg-white/5 cursor-pointer text-gray-300 transition-colors"
             style={{ paddingLeft: `${depth * 12 + 8}px` }}
           >
             <FolderOpen className="w-4 h-4 text-gray-400 shrink-0" />
@@ -93,8 +104,9 @@ export function FileTree({ files, activePath, slug }: { files: ExampleFile[], ac
         key={node.path}
         href={`?file=${encodeURIComponent(node.path)}`}
         scroll={false}
+        onClick={onFileSelect}
         className={cn(
-          "flex items-center gap-1.5 py-1 px-2 cursor-pointer transition-colors",
+          "flex items-center gap-1.5 py-1.5 px-2 cursor-pointer transition-colors",
           isActive ? "bg-blue-500/20 text-white" : "hover:bg-white/5 text-gray-400 hover:text-gray-200"
         )}
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
@@ -106,11 +118,16 @@ export function FileTree({ files, activePath, slug }: { files: ExampleFile[], ac
   }
 
   return (
-    <div className="py-2 flex flex-col gap-0.5">
-      <div className="px-4 py-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-        Файлы проекта
+    <div className="flex flex-col h-full">
+      <div className="flex-1 py-2 flex flex-col gap-0.5 overflow-y-auto custom-scrollbar">
+        <div className="px-4 py-2 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Файлы проекта
+        </div>
+        {tree.map((node) => renderNode(node, 0))}
       </div>
-      {tree.map((node) => renderNode(node, 0))}
+      <div className="p-4 border-t border-gray-800/50 shrink-0 bg-gray-900/30">
+        <DownloadButton files={files} slug={slug} />
+      </div>
     </div>
   )
 }

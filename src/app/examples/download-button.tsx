@@ -12,7 +12,7 @@ interface DownloadButtonProps {
 }
 
 export function DownloadButton({ files, slug }: DownloadButtonProps) {
-  const [isDownloading, setIsDownloading] = useState(false)
+  const[isDownloading, setIsDownloading] = useState(false)
 
   const handleDownload = async () => {
     try {
@@ -52,7 +52,7 @@ export function DownloadButton({ files, slug }: DownloadButtonProps) {
       onClick={handleDownload} 
       disabled={isDownloading}
       size="sm"
-      className="bg-blue-600 hover:bg-blue-700 text-white"
+      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
     >
       {isDownloading ? (
         <Loader2 className="w-4 h-4 mr-2 animate-spin" />

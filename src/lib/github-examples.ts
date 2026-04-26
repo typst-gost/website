@@ -12,6 +12,7 @@ export interface ExampleFile {
 export interface Example {
   slug: string
   title: string
+  order: number
   previewUrl: string
   pdfUrl: string
   files: ExampleFile[]
@@ -20,6 +21,11 @@ export interface Example {
 interface GitHubTreeItem {
   path: string
   type: "blob" | "tree"
+}
+
+interface MetaData {
+  title: string
+  order?: number
 }
 
 export const getExamples = unstable_cache(
@@ -42,7 +48,7 @@ export const getExamples = unstable_cache(
         (item) => item.path.startsWith("documents/") && item.type === "blob"
       )
 
-      let meta: Record<string, string> = {}
+      let meta: Record<string, MetaData> = {}
       const metaFile = documents.find((f) => f.path === "documents/_meta.json")
       
       if (metaFile) {
@@ -75,24 +81,27 @@ export const getExamples = unstable_cache(
         })
       }
 
-      const examples: Example[] =[]
+      const examples: Example[] = []
       let counter = 1
 
       for (const [slug, files] of examplesMap.entries()) {
+        const metaData = meta[slug] || { title: `Пример №${counter++}`, order: 999 }
+        
         examples.push({
           slug,
-          title: meta[slug] || `Пример №${counter++}`,
+          title: metaData.title || `Пример №${counter++}`,
+          order: metaData.order ?? 999,
           previewUrl: `https://raw.githubusercontent.com/${REPO}/refs/heads/${PREVIEW_BRANCH}/preview/${slug}/${slug}.png`,
           pdfUrl: `https://raw.githubusercontent.com/${REPO}/refs/heads/${PREVIEW_BRANCH}/preview/${slug}/${slug}.pdf`,
           files,
         })
       }
 
-      return examples
+      return examples.sort((a, b) => a.order - b.order)
     } catch {
       return []
     }
-  },["github-examples-cache"],
+  }, ["github-examples-cache"],
   { revalidate: 3600 }
 )
 
