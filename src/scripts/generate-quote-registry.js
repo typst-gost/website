@@ -23,6 +23,86 @@ function findMdxFiles(dir) {
   });
 }
 
+function stripHtmlFromQuote(innerContent) {
+  const rawBlockTags = new Set(['script', 'style', 'textarea', 'title', 'iframe', 'noscript']);
+  let output = '';
+  let i = 0;
+  let rawBlockTag = null;
+
+  while (i < innerContent.length) {
+    if (rawBlockTag) {
+      const closingTag = `</${rawBlockTag}`;
+      const closeIndex = innerContent.toLowerCase().indexOf(closingTag, i);
+
+      if (closeIndex === -1) {
+        break;
+      }
+
+      i = closeIndex;
+      rawBlockTag = null;
+      continue;
+    }
+
+    const char = innerContent[i];
+
+    if (char !== '<') {
+      output += char;
+      i++;
+      continue;
+    }
+
+    if (innerContent.startsWith('<!--', i)) {
+      const endIndex = innerContent.indexOf('-->', i + 4);
+      i = endIndex === -1 ? innerContent.length : endIndex + 3;
+      continue;
+    }
+
+    if (/^<\s*(?:https?:\/\/|mailto:|tel:)/i.test(innerContent.slice(i))) {
+      output += char;
+      i++;
+      continue;
+    }
+
+    const tagMatch = innerContent.slice(i).match(/^<\/?\s*([A-Za-z][A-Za-z0-9:-]*)\b/);
+    if (!tagMatch) {
+      output += char;
+      i++;
+      continue;
+    }
+
+    const tagName = tagMatch[1].toLowerCase();
+    let j = i + tagMatch[0].length;
+    let quote = null;
+
+    while (j < innerContent.length) {
+      const current = innerContent[j];
+
+      if (quote) {
+        if (current === quote) {
+          quote = null;
+        } else if (current === '\\') {
+          j++;
+        }
+      } else if (current === '"' || current === "'") {
+        quote = current;
+      } else if (current === '>') {
+        j++;
+        break;
+      }
+
+      j++;
+    }
+
+    if (!innerContent.startsWith('</', i) && rawBlockTags.has(tagName)) {
+      rawBlockTag = tagName;
+    }
+
+    i = j;
+  }
+
+  return output;
+}
+
 const mdxFiles = findMdxFiles(contentDir);
 
 console.log(`✨ Found ${mdxFiles.length} MDX files\n`);
@@ -64,8 +144,7 @@ mdxFiles.forEach(filePath => {
     const id = idMatch ? (idMatch[1] || idMatch[2]) : null;
     const page = parseInt(pageMatch[1]);
     
-    const text = innerContent
-      .replace(/<[^>]+>/g, '')
+    const text = stripHtmlFromQuote(innerContent)
       .replace(/\n\s+/g, ' ')
       .trim();
 
