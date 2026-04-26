@@ -5,8 +5,8 @@
     "pages": [
         "image",
         "table",
-        "footnotes",
-        "equations",
+        "footnote",
+        "equation",
         "code",
         "enum"
     ]
