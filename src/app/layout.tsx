@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import { Suspense } from "react";
 
-import { YandexMetrika } from "@/components/yandex-metrics";
+import { YandexMetrika } from "@/components/utils/yandex-metrics";
 
 import "./globals.css";
 import '../components/sections/comparison/styles.css'
@@ -15,7 +15,7 @@ const siteName = "Typst Gost";
 export const metadata: Metadata = {
   title: "Typst Gost — Шаблон для ГОСТ 7.32-2017",
   description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017. Используй для курсовых, дипломных работ и лабораторных.",
-  keywords: ["ГОСТ 7.32-2017", "Typst", "шаблон", "оформление документов"],
+  keywords: ["ГОСТ 7.32-2017", "Typst", "шаблон", "оформление документов", "ГОСТ", "стандарты", "нормконтроль", "формат", "документы", "курсовые", "дипломные", "лабораторные"],
 
   openGraph: {
     type: "website",
@@ -74,26 +74,50 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "Typst Gost",
-              description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
-              url: siteUrl,
-              applicationCategory: "DeveloperApplication",
-              offers: {
-                "@type": "Offer",
-                price: "0",
-                priceCurrency: "RUB"
-              },
-              potentialAction: {
-                "@type": "UseAction",
-                target: {
-                  "@type": "EntryPoint",
-                  urlTemplate: siteUrl
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                name: "Typst Gost",
+                description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+                url: siteUrl,
+                applicationCategory: "DeveloperApplication",
+                offers: {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "RUB"
+                },
+                potentialAction: {
+                  "@type": "UseAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate: siteUrl
+                  }
                 }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                url: siteUrl,
+                name: "Typst Gost",
+                description: "Шаблон для автоматического оформления документов по ГОСТ 7.32-2017",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: `${siteUrl}/docs?q={search_term_string}`,
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: "Typst Gost",
+                url: siteUrl,
+                sameAs: [
+                  "https://github.com/typst-gost",
+                  "https://t.me/typst_gost"
+                ]
               }
-            })
+            ])
           }}
         />
       </head>

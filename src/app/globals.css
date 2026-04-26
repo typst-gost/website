@@ -74,18 +74,6 @@ blockquote {
   }
 }
 
-@keyframes shine-text {
-  0% {
-    background-position: 100% center;
-  }
-  100% {
-    background-position: -100% center;
-  }
-}
-
-.animate-shine-text {
-  animation: shine-text 10s linear infinite;
-}
 
 
 .snap-x-mandatory {
@@ -110,18 +98,20 @@ blockquote {
 }
 
 @keyframes gradient-shift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  0%, 100% { transform: translateX(-25%); }
+  50% { transform: translateX(25%); }
 }
 
 .gradient-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
   background: linear-gradient(90deg, var(--modern), var(--accent), var(--modern));
-  background-size: 200% 200%;
   animation: gradient-shift 3s ease infinite;
 }
 

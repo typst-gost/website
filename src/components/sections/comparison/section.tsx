@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
-import { useRef, useState, useEffect, useCallback } from "react"
-import { FileText, Code, FileCode } from "lucide-react"
+import { useRef, useState, useEffect, useCallback } from "react";
+import { FileText, Code, FileCode } from "lucide-react";
 
-import { ComparisonSlide, type ComparisonData } from "./slide"
-import { comparisonIcons } from "./card"
-import { NavigationButton } from "./nav-button"
-import { Heading } from "@/components/ui/heading"
+import { ComparisonSlide, type ComparisonData } from "./slide";
+import { comparisonIcons } from "./card";
+import { NavigationButton } from "./nav-button";
+import { Heading } from "@/components/ui/heading";
+import { Section } from "@/components/ui/section";
 
 const comparisons: ComparisonData[] = [
   {
@@ -107,96 +108,98 @@ const comparisons: ComparisonData[] = [
       },
     ],
   },
-]
+];
 
 export function ComparisonSection() {
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [isScrolling, setIsScrolling] = useState(false)
-  const [hasUserInteracted, setHasUserInteracted] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
-  const scrollToIndex = useCallback(
-    (index: number) => {
-      if (scrollRef.current) {
-        setIsScrolling(true)
-        const container = scrollRef.current
-        const slideWidth = container.offsetWidth
-        container.scrollTo({
-          left: slideWidth * index,
-          behavior: "smooth",
-        })
-        setTimeout(() => setIsScrolling(false), 500)
-      }
-    },
-    [isScrolling],
-  )
-
-  const handleScroll = useCallback(() => {
+  const scrollToIndex = useCallback((index: number) => {
     if (scrollRef.current) {
-      if (!hasUserInteracted) {
-        setHasUserInteracted(true)
-      }
-
-      if (!isScrolling) {
-        const container = scrollRef.current
-        const slideWidth = container.offsetWidth
-        const newIndex = Math.round(container.scrollLeft / slideWidth)
-        if (newIndex !== activeIndex && newIndex >= 0 && newIndex < comparisons.length) {
-          setActiveIndex(newIndex)
-        }
-      }
+      const container = scrollRef.current;
+      const slideWidth = container.offsetWidth;
+      container.scrollTo({
+        left: slideWidth * index,
+        behavior: "smooth",
+      });
     }
-  }, [activeIndex, isScrolling, hasUserInteracted])
+  }, []);
 
   useEffect(() => {
-    const container = scrollRef.current
-    if (container) {
-      container.addEventListener("scroll", handleScroll)
-      return () => container.removeEventListener("scroll", handleScroll)
-    }
-  }, [handleScroll])
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.getAttribute("data-index"));
+            if (!isNaN(index)) {
+              setActiveIndex(index);
+
+              if (index > 0) setHasUserInteracted(true);
+            }
+          }
+        });
+      },
+      {
+        root: scrollRef.current,
+        threshold: 0.6, // Триггер срабатывает, когда слайд виден на 60%
+      },
+    );
+
+    slideRefs.current.forEach((slide) => {
+      if (slide) observer.observe(slide);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const goPrev = () => {
-    setHasUserInteracted(true)
+    setHasUserInteracted(true);
     if (activeIndex > 0) {
-      const newIndex = activeIndex - 1
-      scrollToIndex(newIndex)
-      setActiveIndex(newIndex)
+      scrollToIndex(activeIndex - 1);
     }
-  }
+  };
 
   const goNext = () => {
-    setHasUserInteracted(true)
+    setHasUserInteracted(true);
     if (activeIndex < comparisons.length - 1) {
-      const newIndex = activeIndex + 1
-      scrollToIndex(newIndex)
-      setActiveIndex(newIndex)
+      scrollToIndex(activeIndex + 1);
     }
-  }
+  };
 
   return (
-    <section className="relative py-8 overflow-x-clip">
-      <Heading as="h2" title="Сравнение" centered/>
+    <Section>
+      <Heading as="h2" title="Сравнение" centered />
       <div className="absolute inset-0 pointer-events-none">
         <div className="comparison-gradient-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-300 h-200" />
         <div className="comparison-gradient-secondary absolute bottom-[20%] left-[10%] w-125 h-125" />
       </div>
+
       <div className="relative">
         <div
           ref={scrollRef}
           className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide [-webkit-overflow-scrolling:touch]"
         >
           {comparisons.map((comp, idx) => (
-            <div key={comp.id} className="min-w-full snap-center snap-always">
+            <div
+              key={comp.id}
+              data-index={idx}
+              ref={(el) => {
+                slideRefs.current[idx] = el;
+              }}
+              className="min-w-full snap-center snap-always"
+            >
               <ComparisonSlide data={comp} isActive={activeIndex === idx} />
             </div>
           ))}
         </div>
       </div>
+
       <div className="flex justify-center items-center gap-8 -mt-3">
-        <NavigationButton 
-          direction="left" 
-          onClick={goPrev} 
+        <NavigationButton
+          direction="left"
+          onClick={goPrev}
           disabled={activeIndex === 0}
         />
         <div className="flex gap-2">
@@ -204,16 +207,18 @@ export function ComparisonSection() {
             <button
               key={idx}
               onClick={() => {
-                setHasUserInteracted(true)
-                setActiveIndex(idx)
-                scrollToIndex(idx)
+                setHasUserInteracted(true);
+                scrollToIndex(idx);
               }}
               className="p-1 bg-transparent border-none cursor-pointer"
               aria-label={`Перейти к слайду ${idx + 1}`}
             >
               <div
-                className={`h-1.5 rounded-full transition-all duration-300 ${activeIndex === idx ? "w-8 bg-blue-500" : "w-1.5 bg-gray-400/30"
-                  }`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeIndex === idx
+                    ? "w-8 bg-blue-500"
+                    : "w-1.5 bg-gray-400/30"
+                }`}
               />
             </button>
           ))}
@@ -226,6 +231,6 @@ export function ComparisonSection() {
           attention={!hasUserInteracted}
         />
       </div>
-    </section>
-  )
+    </Section>
+  );
 }

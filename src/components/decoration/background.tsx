@@ -3,7 +3,7 @@
 export const PageBackground = () => {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-      <div className="absolute inset-0 bg-linear-to-b from-gray-900 to-gray-950" />
+      <div className="absolute inset-0 bg-linear-to-b from-40% from-[#0e1525] to-[#0A0C17]" />
 
       <div
         className="absolute -right-50 -top-50 h-300 w-300 rounded-full blur-[250px] opacity-60"
@@ -13,7 +13,7 @@ export const PageBackground = () => {
       />
 
       <div
-        className="absolute -bottom-75 -left-50 h-225 w-225 rounded-full blur-[250px] opacity-60"
+        className="absolute -bottom-75 -left-200 h-400 w-400 rounded-full blur-[250px] opacity-60"
         style={{
           background: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(168,85,247,0) 90%)'
         }}

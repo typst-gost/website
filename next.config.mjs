@@ -10,6 +10,7 @@ const withMDX = createMDX({
 
 /** @type {import('next').NextConfig} */
 const config = {
+    output: "standalone",
     images: {
         remotePatterns: [
             {
@@ -25,6 +26,19 @@ const config = {
                 port: '',
                 pathname: '/typst-gost/examples/**',
                 search: '',
+            },
+            {
+                protocol: 'https',
+                hostname: 'github.com',
+                port: '',
+                pathname: '/*.png',
+                search: '',
+            },
+            {
+                protocol: 'https',
+                hostname: 'avatars.githubusercontent.com',
+                port: '',
+                pathname: '/u/*',
             }
         ],
     },
@@ -39,16 +53,17 @@ const config = {
                 ...config.resolve.fallback,
                 canvas: false,
             };
-            } else {
+        } else {
             config.externals.push({
                 canvas: 'canvas',
             });
             config.externals.push({
               "@myriaddreamin/typst-ts-node-compiler": "@myriaddreamin/typst-ts-node-compiler",
             });
-            }
+        }
         return config;
     },
+    serverExternalPackages: ["pdfjs-dist"],
     reactStrictMode: true,
 };
 

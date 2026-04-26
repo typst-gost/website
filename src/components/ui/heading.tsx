@@ -7,15 +7,29 @@ interface HeadingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title
   highlight?: string
   description?: string
   centered?: boolean
+  desktopHidden?: boolean
+  mobileHidden?: boolean
 }
 
 const Heading = React.forwardRef<HTMLDivElement, HeadingProps>(
-  ({ className, as: Component = "h2", title, highlight, description, centered = false, ...props }, ref) => (
+  ({ 
+    className, 
+    as: Component = "h2", 
+    title, 
+    highlight, 
+    description, 
+    centered = false,
+    desktopHidden = false,
+    mobileHidden = false,
+    ...props 
+  }, ref) => (
     <div
       ref={ref}
       className={cn(
         "max-w-4xl mb-4 sm:mb-6",
         centered ? "mx-auto text-center" : "text-center md:text-left",
+        mobileHidden && "hidden md:block",
+        desktopHidden && "md:hidden",
         className
       )}
       {...props}

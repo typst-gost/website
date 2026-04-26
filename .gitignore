@@ -43,5 +43,5 @@ src/lib/quotes-registry.ts
 # Fumadocs
 .source/
 
-# Env
-.env
+# Gitingest
+digest.txt
