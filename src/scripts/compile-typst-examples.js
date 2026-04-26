@@ -42,8 +42,14 @@ async function compileTypstToImage(typstCode, outputPath, assets) {
           
           if (fs.existsSync(assetPath)) {
             const fileBuffer = fs.readFileSync(assetPath);
-            currentCompiler.mapShadow(`/${assetName}`, new Uint8Array(fileBuffer));
+            
+            const virtualPath = path.resolve(process.cwd(), assetName);
+            
+            currentCompiler.mapShadow(virtualPath, new Uint8Array(fileBuffer));
             loadedAssets.add(assetName);
+            
+            currentCompiler.mapShadow(`/${assetName}`, new Uint8Array(fileBuffer));
+            
           } else {
             console.warn(`  ⚠️ Warning: Asset was not found ${assetPath}`);
           }
@@ -63,6 +69,7 @@ async function compileTypstToImage(typstCode, outputPath, assets) {
     return true;
   } catch (error) {
     console.error(`✗ Failed to compile ${outputPath}:`);
+    // Оставляем вывод ошибки для отладки
     console.log(error);
     return false;
   }

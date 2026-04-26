@@ -23,6 +23,7 @@ interface TypstRenderProps {
   editable?: boolean;
   hiddenPrefix?: string | null;
   hiddenSuffix?: string | null;
+  assets?: string[];
 }
 
 function buildFullCode(
@@ -47,6 +48,7 @@ export function TypstRender({
   editable = true,
   hiddenPrefix = DEFAULT_HIDDEN_PREFIX,
   hiddenSuffix = DEFAULT_HIDDEN_SUFFIX,
+  assets = [],
 }: TypstRenderProps) {
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const [compiledSvg, setCompiledSvg] = useState<string | null>(null);
@@ -102,8 +104,8 @@ export function TypstRender({
           if (!isMounted.current) return;
 
           setLocalCompileError(null);
-
-          const svg = await compile(fullCodeToCompile, ["title.pdf"]);
+          // TODO: Добавить поддежку передачи ассетов через аргумент
+          const svg = await compile(fullCodeToCompile, assets);
 
           if (!svg) throw new Error("Compiler returned empty result");
           if (typeof svg !== "string")
@@ -113,9 +115,13 @@ export function TypstRender({
           if (!trimmedSvg.startsWith("<svg"))
             throw new Error("Invalid svg: does not start with <svg");
 
-          const processed = trimmedSvg
-            .replace(/width="[^"]*"/g, "")
-            .replace(/height="[^"]*"/g, "");
+          const processed = trimmedSvg.replace(/^<svg[^>]+>/i, (svgTag) => {
+            // Удаляем width и height только внутри открывающего тега <svg ...>
+            // Используем \s+, чтобы удалять именно ` width=`, а не `data-width=`
+            return svgTag
+              .replace(/\s+width="[^"]*"/gi, "")
+              .replace(/\s+height="[^"]*"/gi, "");
+          });
 
           if (isMounted.current) {
             setCompiledSvg(processed);
@@ -129,7 +135,7 @@ export function TypstRender({
           }
         });
     },
-    [compile, hiddenPrefix, hiddenSuffix],
+    [compile, hiddenPrefix, hiddenSuffix, assets],
   );
 
   useEffect(() => {
