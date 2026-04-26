@@ -20,6 +20,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Generate sources
+        run: bun run generate:quotes && bunx fumadocs-mdx
+
       - name: Type check
         run: bunx tsc --noEmit
 
