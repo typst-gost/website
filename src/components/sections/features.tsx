@@ -103,7 +103,7 @@ function CTABanner() {
           </a>
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Button size="lg" variant="outline" className="text-white bg-gray-900/60 backdrop-blur-sm border-blue-500/30 hover:bg-blue-500/10 hover:border-blue-400/50" asChild>
+          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20" asChild>
             <a href={NAVIGATION_LINKS.TYPST_UNIVERSE_PACKAGE} target="_blank" rel="noopener noreferrer">
               <Link className="mr-2 h-5 w-5" />
               Перейти к шаблону
@@ -139,7 +139,7 @@ export default function FeaturesSection() {
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           <FeatureCard
             title="Документация"
-            description="Документация шаблона в разработке, обратитесь за помощью напрямую"
+            description="Не нашли ответ на свой вопрос? Вы можете попробовать альтернативные варианты"
           >
             <nav className="space-y-3">
               <ExternalLinkItem href={NAVIGATION_LINKS.TELEGRAM_CHAT} icon={MessageCircle}>
@@ -161,7 +161,7 @@ export default function FeaturesSection() {
               </StepItem>
               <StepItem step={2}>Попробуйте шаблон и вернитесь с обратной связью</StepItem>
               <StepItem step={3}>
-                Присоединяйтесь к <InlineLink href={NAVIGATION_LINKS.TELEGRAM_CHAT}>сообществу</InlineLink>
+                Поддержите проект <InlineLink href={NAVIGATION_LINKS.DONATE}>финансово</InlineLink>
               </StepItem>
             </div>
           </FeatureCard>
