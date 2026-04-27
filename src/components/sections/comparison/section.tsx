@@ -171,7 +171,7 @@ export function ComparisonSection() {
   return (
     <Section>
       <Heading as="h2" title="Сравнение" centered />
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="comparison-gradient-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-300 h-200" />
         <div className="comparison-gradient-secondary absolute bottom-[20%] left-[10%] w-125 h-125" />
       </div>

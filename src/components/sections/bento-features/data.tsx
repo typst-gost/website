@@ -50,7 +50,7 @@ export const featuresData: FeatureCardData[] =[
   },
   {
     id: "appendixes",
-    title: "ГОСТ-приложения",
+    title: "Приложения",
     description: "Нумерация кириллицей с пропуском запрещенных литер, независимые счетчики для рисунков и автоматическое попадание в оглавление.",
     code: `#show: appendixes\n\n= Листинги кода\n#figure(\n  \`\`\`python\n  print("Hello, GOST!")\n  \`\`\`,\n  caption: [Скрипт инициализации]\n)`,
     href: "/docs/reference/appendixes",
