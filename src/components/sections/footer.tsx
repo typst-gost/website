@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { NAVIGATION_LINKS } from "@/lib/navigation"
 
 const footerLinks = [
-  { label: "Документация", href: NAVIGATION_LINKS.DOCS, disabled: true },
+  { label: "Документация", href: NAVIGATION_LINKS.DOCS },
   { label: "Примеры", href: NAVIGATION_LINKS.GITHUB_EXAMPLES_REPO, disabled: true, external: true },
   { label: "Об авторах", href: NAVIGATION_LINKS.ABOUT },
 ]

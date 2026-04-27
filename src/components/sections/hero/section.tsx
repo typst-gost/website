@@ -52,6 +52,17 @@ export default function HeroSection() {
               asChild
             >
               <Link
+                href={NAVIGATION_LINKS.DOCS}
+              >
+                Документация
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto text-sm sm:text-base font-medium py-3 px-5"
+              asChild
+            >
+              <Link
                 href={NAVIGATION_LINKS.TELEGRAM_CHAT}
                 target="_blank"
                 rel="noopener noreferrer"
