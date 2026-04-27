@@ -47,8 +47,8 @@ export function TypstOutput({
 
   const outputBlockClass =
     layout === "horizontal"
-      ? "w-1/2 flex items-center justify-center p-4 bg-gray-800 rounded-lg relative overflow-hidden"
-      : "w-full flex items-center justify-center p-4 bg-gray-800 rounded-lg relative overflow-hidden";
+      ? "w-1/2 flex items-center justify-center p-4 bg-gray-800 rounded-lg relative overflow-hidden z-[-10]"
+      : "w-full flex items-center justify-center p-4 bg-gray-800 rounded-lg relative overflow-hidden z-[-10]";
 
   const isLoading = !cleanSvg && imagePath && !imageError && !imageLoaded;
   const showNoOutput = !cleanSvg && (!imagePath || imageError);
