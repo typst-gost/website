@@ -4,11 +4,13 @@ interface SectionProps {
   children: React.ReactNode;
   className?: string;
   isHero?: boolean;
+  id?: string;
 }
 
-export const Section = ({ children, className, isHero = false }: SectionProps) => {
+export const Section = ({ children, className, isHero = false, id }: SectionProps) => {
   return (
     <section
+      id={id}
       className={cn(
         className,
         'px-4 container mx-auto max-w-8xl',

@@ -1,10 +1,11 @@
 import React from "react"
-import Link from "next/link"
 import { Heading } from "@/components/ui/heading"
 import CodeBlock from "@/components/sections/preview/code-viewer"
 import { cn } from "@/lib/utils"
 import { featuresData, FeatureColor } from "./data"
 import { Section } from "@/components/ui/section"
+import { BentoLink } from "./bento-link"
+
 
 function DocumentMockup({ className, children }: { className?: string, children?: React.ReactNode }) {
   return (
@@ -106,7 +107,7 @@ const Mockups: Record<string, React.FC> = {
 
 export default async function BentoFeaturesSection() {
   return (
-    <Section>
+    <Section id="bento-features">
       <div className="container mx-auto max-w-7xl">
         <Heading
           title="Простота использования"
@@ -147,9 +148,9 @@ export default async function BentoFeaturesSection() {
             )
 
             return feature.href ? (
-              <Link href={feature.href} key={feature.id} className={cardClasses}>
+              <BentoLink href={feature.href} key={feature.id} className={cardClasses}>
                 {CardContent}
-              </Link>
+              </BentoLink>
             ) : (
               <div key={feature.id} className={cardClasses}>
                 {CardContent}

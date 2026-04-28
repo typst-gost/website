@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/buttons/button"
 import Link from "next/link"
 import { HeroBackground } from "./background"
 import { NAVIGATION_LINKS } from "@/lib/navigation"
+import { Section } from "@/components/ui/section"
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-24 sm:pt-28 md:pt-40 md:pb-14 px-4">
+    <Section id="hero" isHero={true}>
       <HeroBackground />
       <div className="container mx-auto">
         <div className="max-w-5xl mx-auto text-center mb-10 md:mb-14">
@@ -73,6 +74,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

@@ -44,7 +44,7 @@ const PDF_URL =
 
 export default function PreviewSection() {
   return (
-    <Section>
+    <Section id="preview">
       <Heading as="h2" title="Пример" centered desktopHidden />
       <div className="container mx-auto px-4">
         <div className="relative mx-auto max-w-7xl">

@@ -7,6 +7,7 @@ import { ComparisonTable } from "./comparison-table"
 import { ToolSwitcher } from "./tool-switcher"
 import { GuideSteps } from "./guide-steps"
 import { ScreenshotWindow } from "./screenshot-window"
+import { Section } from "@/components/ui/section"
 
 export default function UsageSection() {
   const[activeTool, setActiveTool] = useState<ToolType>("typst")
@@ -20,7 +21,7 @@ export default function UsageSection() {
   }
 
   return (
-    <section className="relative py-12 md:py-20 px-4 overflow-hidden">
+    <Section id="usage">
       <div className="container relative mx-auto max-w-7xl">
         <Heading
           title="Как использовать?"
@@ -48,6 +49,6 @@ export default function UsageSection() {
           />
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

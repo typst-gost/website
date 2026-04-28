@@ -75,7 +75,7 @@ export default function FaqSection() {
   const isAnyOpen = openId !== null;
 
   return (
-    <Section>
+    <Section id="faq">
       <Heading as="h2" title="Часто задаваемые вопросы" />
 
       <div className="flex flex-col max-w-3xl">
