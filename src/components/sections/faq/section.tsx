@@ -72,8 +72,6 @@ function FaqItem({
 export default function FaqSection() {
   const [openId, setOpenId] = useState<string | null>(null);
 
-  const isAnyOpen = openId !== null;
-
   return (
     <Section id="faq">
       <Heading as="h2" title="Часто задаваемые вопросы" />

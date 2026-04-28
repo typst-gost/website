@@ -75,6 +75,7 @@ export default function CommunitySection() {
         });
       }
     } catch (err) {
+      console.error(err);
     } finally {
       setIsLoading(false);
     }

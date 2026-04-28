@@ -277,7 +277,7 @@ export default function PdfViewer({
                 fill
                 className="object-contain"
                 priority
-                onLoadingComplete={() => setIsPreviewLoaded(true)}
+                onLoad={() => setIsPreviewLoaded(true)}
               />
             )}
           </div>
