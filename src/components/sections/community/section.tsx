@@ -21,7 +21,7 @@ function AnimatedNumber({ value }: { value: number }) {
 
   useEffect(() => {
     if (isInView && displayValue === 0 && value > 0) {
-      let start = 0;
+      const start = 0;
       const duration = 1500;
       const startTime = Date.now();
       const animate = () => {
