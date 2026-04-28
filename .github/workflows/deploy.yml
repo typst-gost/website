@@ -39,8 +39,12 @@ jobs:
           key: ${{ secrets.VDS_SSH_KEY }}
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker run --pull always -d --restart always ...
             docker stop typst-gost || true
             docker rm typst-gost || true
-            docker run -d --restart always --name typst-gost -p 3000:3000 \
+            docker run -d \
+              --restart always \
+              --name typst-gost \
+              -p 3000:3000 \
+              -e FEEDBACK_GITHUB_APP_ID="${{ secrets.FEEDBACK_GITHUB_APP_ID }}" \
+              -e FEEDBACK_GITHUB_APP_PRIVATE_KEY="${{ secrets.FEEDBACK_GITHUB_APP_PRIVATE_KEY }}" \
               f0rgenet/typst-gost:${{ github.sha }}
