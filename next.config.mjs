@@ -12,6 +12,7 @@ const withMDX = createMDX({
 const config = {
     output: "standalone",
     images: {
+        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',
@@ -65,6 +66,18 @@ const config = {
     },
     serverExternalPackages: ["pdfjs-dist"],
     reactStrictMode: true,
+    async headers() {
+        return[
+            {
+                source: '/wasm/:path*',
+                headers:[{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+            },
+            {
+                source: '/pdfjs/:path*',
+                headers:[{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+            },
+        ];
+    },
 };
 
 export default withMDX(config);

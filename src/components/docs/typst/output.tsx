@@ -77,7 +77,6 @@ export function TypstOutput({
               className="w-full h-auto object-contain mt-0 mb-0"
               onError={onImageError}
               onLoad={() => setImageLoaded(true)}
-              unoptimized
             />
           </div>
         )}

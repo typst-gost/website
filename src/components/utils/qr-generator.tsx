@@ -45,7 +45,6 @@ export function QRCodeImage({
       width={size}
       height={size}
       className={cn("rounded-lg", className)}
-      unoptimized
     />
   )
 }
