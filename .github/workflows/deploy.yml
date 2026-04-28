@@ -39,12 +39,23 @@ jobs:
           key: ${{ secrets.VDS_SSH_KEY }}
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker stop typst-gost || true
-            docker rm typst-gost || true
+            docker stop typst-gost typst-gost-2 || true
+            docker rm typst-gost typst-gost-2 || true
+            
+            # Первый контейнер (порт 3000)
             docker run -d \
               --restart always \
               --name typst-gost \
               -p 3000:3000 \
+              -e FEEDBACK_GITHUB_APP_ID="${{ secrets.FEEDBACK_GITHUB_APP_ID }}" \
+              -e FEEDBACK_GITHUB_APP_PRIVATE_KEY="${{ secrets.FEEDBACK_GITHUB_APP_PRIVATE_KEY }}" \
+              f0rgenet/typst-gost:${{ github.sha }}
+              
+            # Второй контейнер (порт 3002)
+            docker run -d \
+              --restart always \
+              --name typst-gost-2 \
+              -p 3002:3000 \
               -e FEEDBACK_GITHUB_APP_ID="${{ secrets.FEEDBACK_GITHUB_APP_ID }}" \
               -e FEEDBACK_GITHUB_APP_PRIVATE_KEY="${{ secrets.FEEDBACK_GITHUB_APP_PRIVATE_KEY }}" \
               f0rgenet/typst-gost:${{ github.sha }}
