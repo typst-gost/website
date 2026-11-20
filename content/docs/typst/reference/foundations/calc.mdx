@@ -1,0 +1,1652 @@
+---
+title: "Вычисления"
+description: "Документация для модуля `calc`, содержащего определения для математических вычислений."
+---
+
+
+Модуль для вычислений и обработки числовых значений.
+
+Эти определения являются частью модуля `calc` и не импортируются по умолчанию.
+
+## Константы [#constants]
+
+### `inf` [#constants-inf]
+
+*Since: forever* · **Тип:** [float](/docs/typst/reference/foundations/float)
+
+Бесконечность ($+ \infty$) как значение.
+
+Это то же значение, что и [`float.inf`](/docs/typst/reference/foundations/float#definitions-inf). Подробности см. в соответствующей документации.
+
+### `pi` [#constants-pi]
+
+*Since: forever* · **Тип:** [float](/docs/typst/reference/foundations/float)
+
+Константа Архимеда ($\pi$).
+
+Это отношение длины окружности к её диаметру.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.pi
+`}
+  image="/typst_docs_assets/images/zEOwZ_5ZQC8HaJijcxtFxg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `tau` [#constants-tau]
+
+*Since: 0.8.0* · **Тип:** [float](/docs/typst/reference/foundations/float)
+
+Длина окружности единичного круга ($\tau$).
+
+Константа $\tau$ определяется соотношением $\tau = 2 \pi$.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.tau \\
+  #(2 * calc.pi)
+`}
+  image="/typst_docs_assets/images/JKs5ZuQO5hnXPIJomFfnLA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `e` [#constants-e]
+
+*Since: forever* · **Тип:** [float](/docs/typst/reference/foundations/float)
+
+Число Эйлера ($e$).
+
+Это основание натурального логарифма и экспоненциальной функции.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.e
+`}
+  image="/typst_docs_assets/images/t0YlmoQwRo1I7EntoovNkA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `abs` [#functions-abs]
+
+*Since: forever*
+
+Вычисляет абсолютное значение числового значения.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.abs(-5) \\
+  #calc.abs(5pt - 2cm) \\
+  #calc.abs(2fr) \\
+  #calc.abs(decimal("-342.440"))
+`}
+  image="/typst_docs_assets/images/LATRmUQWmWS0yL5DhjldGw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.abs(int | float | length | angle | ratio | fraction | decimal) -> any
+```
+
+#### `value` [#functions-abs-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [length](/docs/typst/reference/layout/length) или [angle](/docs/typst/reference/layout/angle) или [ratio](/docs/typst/reference/layout/ratio) или [fraction](/docs/typst/reference/layout/fraction) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Значение, абсолютное значение которого нужно вычислить.
+
+### `pow` [#functions-pow]
+
+*Since: forever*
+
+Возводит значение в некоторую степень.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.pow(2, 3) \\
+  #calc.pow(decimal("2.5"), 2)
+`}
+  image="/typst_docs_assets/images/6ClOU9g3doLs4-gWJUuwfA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.pow(
+  int | float | decimal,
+  int | float,
+)
+```
+
+#### `base` [#functions-pow-base]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Основание степени.
+
+Если это [`decimal`](/docs/typst/reference/foundations/decimal), показатель степени может быть только [целым числом](/docs/typst/reference/foundations/int).
+
+#### `exponent` [#functions-pow-exponent]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Показатель степени.
+
+### `exp` [#functions-exp]
+
+*Since: 0.5.0*
+
+Возводит значение в некоторую степень числа $e$.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.exp(1)
+`}
+  image="/typst_docs_assets/images/fbp9wPSekvyqPStk5uB2Ag.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.exp(int | float)
+```
+
+#### `exponent` [#functions-exp-exponent]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Показатель степени.
+
+### `sqrt` [#functions-sqrt]
+
+*Since: forever*
+
+Вычисляет квадратный корень числа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.sqrt(16) \\
+  #calc.sqrt(2.5)
+`}
+  image="/typst_docs_assets/images/chyx4pSh6FJcKWssjI_uZQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.sqrt(int | float)
+```
+
+#### `value` [#functions-sqrt-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, квадратный корень которого нужно вычислить. Должно быть неотрицательным.
+
+### `root` [#functions-root]
+
+*Since: 0.11.0*
+
+Вычисляет вещественный корень $n$-й степени из числа.
+
+Если число отрицательное, то $n$ должно быть нечётным.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.root(16.0, 4) \\
+  #calc.root(27.0, 3)
+`}
+  image="/typst_docs_assets/images/d5iHXYYuM7lf8JrDgclwTQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.root(
+  float,
+  int,
+)
+```
+
+#### `radicand` [#functions-root-radicand]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Выражение, из которого извлекается корень.
+
+#### `index` [#functions-root-index]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Значение $n$.
+
+### `sin` [#functions-sin]
+
+*Since: forever*
+
+Вычисляет синус угла.
+
+При вызове с целым числом или числом с плавающей точкой они интерпретируются как радианы.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.sin(1.5) \\
+  #calc.sin(90deg)
+`}
+  image="/typst_docs_assets/images/qXQUn6tpwUCitCK3alceXQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.sin(int | float | angle)
+```
+
+#### `angle` [#functions-sin-angle]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Угол, синус которого нужно вычислить.
+
+### `cos` [#functions-cos]
+
+*Since: forever*
+
+Вычисляет косинус угла.
+
+При вызове с целым числом или числом с плавающей точкой они интерпретируются как радианы.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.cos(1.5) \\
+  #calc.cos(90deg)
+`}
+  image="/typst_docs_assets/images/HWwVMezl8yWCs2nVz0RJ_A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.cos(int | float | angle)
+```
+
+#### `angle` [#functions-cos-angle]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Угол, косинус которого нужно вычислить.
+
+### `tan` [#functions-tan]
+
+*Since: forever*
+
+Вычисляет тангенс угла.
+
+При вызове с целым числом или числом с плавающей точкой они интерпретируются как радианы.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.tan(1.5) \\
+  #calc.tan(90deg)
+`}
+  image="/typst_docs_assets/images/FvuvoHJmAV_iIyEjqk0ZuA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.tan(int | float | angle)
+```
+
+#### `angle` [#functions-tan-angle]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Угол, тангенс которого нужно вычислить.
+
+### `asin` [#functions-asin]
+
+*Since: forever*
+
+Вычисляет арксинус числа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.asin(0) \\
+  #calc.asin(1)
+`}
+  image="/typst_docs_assets/images/xrddqJjVKsEkObrg-9F6vw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.asin(int | float) -> angle
+```
+
+#### `value` [#functions-asin-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, арксинус которого нужно вычислить. Должно быть между $- 1$ и $1$.
+
+### `acos` [#functions-acos]
+
+*Since: forever*
+
+Вычисляет арккосинус числа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.acos(0) \\
+  #calc.acos(1)
+`}
+  image="/typst_docs_assets/images/p3_MUMXLxm3b7vanAAcUiw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.acos(int | float) -> angle
+```
+
+#### `value` [#functions-acos-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, арккосинус которого нужно вычислить. Должно быть между $- 1$ и $1$.
+
+### `atan` [#functions-atan]
+
+*Since: forever*
+
+Вычисляет арктангенс числа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.atan(0) \\
+  #calc.atan(1)
+`}
+  image="/typst_docs_assets/images/MgrF28XCAf6ITRLQ8bEEjg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.atan(int | float) -> angle
+```
+
+#### `value` [#functions-atan-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, арктангенс которого нужно вычислить.
+
+### `atan2` [#functions-atan2]
+
+*Since: 0.3.0*
+
+Вычисляет четырёхквадрантный арктангенс координаты.
+
+Четырёхквадрантный арктангенс $(x, y)$ определяется как аргумент комплексного числа $x + i y$.
+
+Возвращает [`angle`](/docs/typst/reference/layout/angle) между `-180deg` и `180deg`.
+
+Обратите внимание, что эта функция принимает $(x, y)$, а не $(y, x)$.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.atan2(1, 1) \\
+  #calc.atan2(-2, -3)
+`}
+  image="/typst_docs_assets/images/N4JdYN1t1pcjs-s9rosh5A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.atan2(
+  int | float,
+  int | float,
+) -> angle
+```
+
+#### `x` [#functions-atan2-x]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Координата $x$.
+
+#### `y` [#functions-atan2-y]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Координата $y$.
+
+### `sinh` [#functions-sinh]
+
+*Since: forever*
+
+Вычисляет гиперболический синус гиперболического угла.
+
+Гиперболический синус $x$ определяется следующим образом:
+
+$$
+\frac{e^{x} - e^{-x}}{2}
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.sinh(0) \\
+  #calc.sinh(1.5)
+`}
+  image="/typst_docs_assets/images/ezTv5j9dqaFcTEtdRg0Jxg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.sinh(float)
+```
+
+#### `value` [#functions-sinh-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Гиперболический угол, гиперболический синус которого нужно вычислить.
+
+### `cosh` [#functions-cosh]
+
+*Since: forever*
+
+Вычисляет гиперболический косинус гиперболического угла.
+
+Гиперболический косинус $x$ определяется следующим образом:
+
+$$
+\frac{e^{x} + e^{-x}}{2}
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.cosh(0) \\
+  #calc.cosh(1.5)
+`}
+  image="/typst_docs_assets/images/hc3jamF-zVjtJku-8JBEag.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.cosh(float)
+```
+
+#### `value` [#functions-cosh-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Гиперболический угол, гиперболический косинус которого нужно вычислить.
+
+### `tanh` [#functions-tanh]
+
+*Since: forever*
+
+Вычисляет гиперболический тангенс гиперболического угла.
+
+Гиперболический тангенс $x$ определяется следующим образом:
+
+$$
+\frac{e^{x} - e^{-x}}{e^{x} + e^{-x}}
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.tanh(0) \\
+  #calc.tanh(1.5)
+`}
+  image="/typst_docs_assets/images/Og76SsKpvHvw4WBCx3LoRg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.tanh(float)
+```
+
+#### `value` [#functions-tanh-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Гиперболический угол, гиперболический тангенс которого нужно вычислить.
+
+### `asinh` [#functions-asinh]
+
+*Since: 0.15.0*
+
+Вычисляет обратный гиперболический синус числа.
+
+Обратный гиперболический синус $x$ определяется следующим образом:
+
+$$
+\ln (x + \sqrt{x^{2} + 1})
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.asinh(0) \\
+  #calc.asinh(1)
+`}
+  image="/typst_docs_assets/images/_3ouUSCuY4pluyVXnODk-A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.asinh(float)
+```
+
+#### `value` [#functions-asinh-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, обратный гиперболический синус которого нужно вычислить.
+
+### `acosh` [#functions-acosh]
+
+*Since: 0.15.0*
+
+Вычисляет обратный гиперболический косинус числа.
+
+Обратный гиперболический косинус $x$ определяется следующим образом:
+
+$$
+\ln (x + \sqrt{x^{2} - 1})
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.acosh(1) \\
+  #calc.acosh(2.5)
+`}
+  image="/typst_docs_assets/images/-vzkygHxwNotXYgh31qtAQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.acosh(float)
+```
+
+#### `value` [#functions-acosh-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, обратный гиперболический косинус которого нужно вычислить. Должно быть больше или равно $1$.
+
+### `atanh` [#functions-atanh]
+
+*Since: 0.15.0*
+
+Вычисляет обратный гиперболический тангенс числа.
+
+Обратный гиперболический тангенс $x$ определяется следующим образом:
+
+$$
+\frac{1}{2} \ln (\frac{1 + x}{1 - x})
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.atanh(0) \\
+  #calc.atanh(0.5)
+`}
+  image="/typst_docs_assets/images/1wVuA9Dei4gxZwrmgNzkrQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.atanh(float)
+```
+
+#### `value` [#functions-atanh-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, обратный гиперболический тангенс которого нужно вычислить. Должно быть между $- 1$ и $1$ (не включая границы).
+
+### `log` [#functions-log]
+
+*Since: forever*
+
+Вычисляет логарифм числа.
+
+Если основание не указано, логарифм вычисляется по основанию десять.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.log(100)
+`}
+  image="/typst_docs_assets/images/A6TvQ09nBF5WZL60vL9z4w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.log(
+  int | float,
+  base: float,
+)
+```
+
+#### `value` [#functions-log-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, логарифм которого нужно вычислить. Должно быть строго положительным.
+
+#### `base` [#functions-log-base]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **По умолчанию:** `10.0`
+
+Основание логарифма. Не может быть нулём.
+
+### `ln` [#functions-ln]
+
+*Since: 0.5.0*
+
+Вычисляет натуральный логарифм числа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.ln(calc.e)
+`}
+  image="/typst_docs_assets/images/44uNPO5EUTWtyo8mKeF9ZQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.ln(int | float)
+```
+
+#### `value` [#functions-ln-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, логарифм которого нужно вычислить. Должно быть строго положительным.
+
+### `erf` [#functions-erf]
+
+*Since: 0.15.0*
+
+Применяет функцию ошибок к числу.
+
+Значение функции ошибок в точке $x$ определяется следующим образом:
+
+$$
+\frac{2}{\sqrt{\pi}} \int_{0}^{x} e^{-t^{2}} \, \mathrm{d} t
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.erf(0.2)
+`}
+  image="/typst_docs_assets/images/fW-HmELtgauJl1cyBU96gw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.erf(float)
+```
+
+#### `value` [#functions-erf-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный
+
+Число, в котором нужно вычислить функцию ошибок.
+
+### `fact` [#functions-fact]
+
+*Since: 0.3.0*
+
+Вычисляет факториал числа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.fact(5)
+`}
+  image="/typst_docs_assets/images/ByRKmkoVKpxfpsD_o-jzHA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.fact(int)
+```
+
+#### `number` [#functions-fact-number]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Число, факториал которого нужно вычислить. Должно быть неотрицательным.
+
+### `perm` [#functions-perm]
+
+*Since: 0.3.0*
+
+Вычисляет перестановку.
+
+Возвращает $k$-перестановку из $n$, или число способов выбрать $k$ элементов из множества $n$ с учётом порядка, определяемое следующим образом:
+
+$$
+\begin{cases} 0 \quad & \text{if} \, k > n \\ \frac{n!}{(n - k)!} \quad & \text{if} \, k \le n \end{cases}
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.perm(5, 3)
+`}
+  image="/typst_docs_assets/images/iTmFS7pX2M-OHp3cRwmZXw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.perm(
+  int,
+  int,
+)
+```
+
+#### `base` [#functions-perm-base]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Значение $n$: количество элементов для выбора. Должно быть неотрицательным.
+
+#### `numbers` [#functions-perm-numbers]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Значение $k$: количество выбираемых элементов. Должно быть неотрицательным.
+
+### `binom` [#functions-binom]
+
+*Since: 0.3.0*
+
+Вычисляет биномиальный коэффициент.
+
+Возвращает $k$-сочетание из $n$, или число способов выбрать $k$ элементов из множества $n$ без учёта порядка, определяемое следующим образом:
+
+$$
+\begin{cases} \frac{n!}{k! (n - k)!} \quad & \text{if} \, 0 \le k \le n \\ 0 \quad & \text{otherwise} \end{cases}
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.binom(10, 5)
+`}
+  image="/typst_docs_assets/images/rId3d7gLTOeHTPAdmXD29g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.binom(
+  int,
+  int,
+)
+```
+
+#### `n` [#functions-binom-n]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Значение $n$: количество элементов для выбора. Должно быть неотрицательным.
+
+#### `k` [#functions-binom-k]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Значение $k$: количество выбираемых элементов. Должно быть неотрицательным.
+
+### `gcd` [#functions-gcd]
+
+*Since: 0.3.0*
+
+Вычисляет наибольший общий делитель двух целых чисел.
+
+Возникнет ошибка, если результат целочисленного деления окажется больше максимального 64-битного знакового целого.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.gcd(7, 42)
+`}
+  image="/typst_docs_assets/images/_YjQgeShLKp62zhn21D2Aw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.gcd(
+  int,
+  int,
+)
+```
+
+#### `a` [#functions-gcd-a]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Первое целое число.
+
+#### `b` [#functions-gcd-b]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Второе целое число.
+
+### `lcm` [#functions-lcm]
+
+*Since: 0.3.0*
+
+Вычисляет наименьшее общее кратное двух целых чисел.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.lcm(96, 13)
+`}
+  image="/typst_docs_assets/images/PFhfEsbjSgazK-OUl9cK_w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.lcm(
+  int,
+  int,
+)
+```
+
+#### `a` [#functions-lcm-a]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Первое целое число.
+
+#### `b` [#functions-lcm-b]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Второе целое число.
+
+### `floor` [#functions-floor]
+
+*Since: forever*
+
+Округляет число вниз до ближайшего целого.
+
+Если число уже является целым, оно возвращается без изменений.
+
+Обратите внимание, что эта функция всегда возвращает [целое число](/docs/typst/reference/foundations/int) и выдаст ошибку, если результирующий [`float`](/docs/typst/reference/foundations/float) или [`decimal`](/docs/typst/reference/foundations/decimal) окажется больше максимального 64-битного знакового целого или меньше минимального значения для этого типа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.floor(500.1)
+  #assert(calc.floor(3) == 3)
+  #assert(calc.floor(3.14) == 3)
+  #assert(calc.floor(decimal("-3.14")) == -4)
+`}
+  image="/typst_docs_assets/images/AGZdGO7n7X89MidDWyyofg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.floor(int | float | decimal)
+```
+
+#### `value` [#functions-floor-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Число для округления вниз.
+
+### `ceil` [#functions-ceil]
+
+*Since: forever*
+
+Округляет число вверх до ближайшего целого.
+
+Если число уже является целым, оно возвращается без изменений.
+
+Обратите внимание, что эта функция всегда возвращает [целое число](/docs/typst/reference/foundations/int) и выдаст ошибку, если результирующий [`float`](/docs/typst/reference/foundations/float) или [`decimal`](/docs/typst/reference/foundations/decimal) окажется больше максимального 64-битного знакового целого или меньше минимального значения для этого типа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.ceil(500.1)
+  #assert(calc.ceil(3) == 3)
+  #assert(calc.ceil(3.14) == 4)
+  #assert(calc.ceil(decimal("-3.14")) == -3)
+`}
+  image="/typst_docs_assets/images/PmrfH7dCO_AoCiJ36x52bw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.ceil(int | float | decimal)
+```
+
+#### `value` [#functions-ceil-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Число для округления вверх.
+
+### `trunc` [#functions-trunc]
+
+*Since: 0.3.0*
+
+Возвращает целую часть числа.
+
+Если число уже является целым, оно возвращается без изменений.
+
+Обратите внимание, что эта функция всегда возвращает [целое число](/docs/typst/reference/foundations/int) и выдаст ошибку, если результирующий [`float`](/docs/typst/reference/foundations/float) или [`decimal`](/docs/typst/reference/foundations/decimal) окажется больше максимального 64-битного знакового целого или меньше минимального значения для этого типа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.trunc(15.9)
+  #assert(calc.trunc(3) == 3)
+  #assert(calc.trunc(-3.7) == -3)
+  #assert(calc.trunc(decimal("8493.12949582390")) == 8493)
+`}
+  image="/typst_docs_assets/images/khYoppTz0sy2thh1SdS_Lg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.trunc(int | float | decimal)
+```
+
+#### `value` [#functions-trunc-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Число для усечения.
+
+### `fract` [#functions-fract]
+
+*Since: 0.3.0*
+
+Возвращает дробную часть числа.
+
+Если число является целым, возвращает `0`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.fract(-3.1)
+  #assert(calc.fract(3) == 0)
+  #assert(calc.fract(decimal("234.23949211")) == decimal("0.23949211"))
+`}
+  image="/typst_docs_assets/images/SQGZ_zNvpWFYpHl79oqYXQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.fract(int | float | decimal)
+```
+
+#### `value` [#functions-fract-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Число для усечения.
+
+### `round` [#functions-round]
+
+*Since: forever*
+
+Округляет число до ближайшего целого.
+
+Полуцелые числа округляются от нуля.
+
+При необходимости можно указать количество десятичных знаков. Если оно отрицательное, его абсолютное значение указывает количество значащих целых разрядов, которые нужно удалить перед десятичной точкой.
+
+Обратите внимание, что эта функция возвращает тот же тип, что и операнд. То есть применение `round` к [`float`](/docs/typst/reference/foundations/float) вернёт `float`, а к [`decimal`](/docs/typst/reference/foundations/decimal) — другой `decimal`. Вы можете явно преобразовать результат этой функции в целое число с помощью [`int`](/docs/typst/reference/foundations/int), но учтите, что такое преобразование выдаст ошибку, если `float` или `decimal` окажется больше максимального 64-битного знакового целого или меньше минимального целого.
+
+Кроме того, эта функция может выдать ошибку при попытке округления за пределы максимального или минимального целого или `decimal`. Если число является `float`, такая попытка приведёт к возврату [`calc.inf`](#constants-inf) или `-calc.inf` для максимума и минимума соответственно.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.round(3.1415, digits: 2)
+  #assert(calc.round(3) == 3)
+  #assert(calc.round(3.14) == 3)
+  #assert(calc.round(3.5) == 4.0)
+  #assert(calc.round(3333.45, digits: -2) == 3300.0)
+  #assert(calc.round(-48953.45, digits: -3) == -49000.0)
+  #assert(calc.round(3333, digits: -2) == 3300)
+  #assert(calc.round(-48953, digits: -3) == -49000)
+  #assert(calc.round(decimal("-6.5")) == decimal("-7"))
+  #assert(calc.round(decimal("7.123456789"), digits: 6) == decimal("7.123457"))
+  #assert(calc.round(decimal("3333.45"), digits: -2) == decimal("3300"))
+  #assert(calc.round(decimal("-48953.45"), digits: -3) == decimal("-49000"))
+`}
+  image="/typst_docs_assets/images/CrNjN2GoVlUh3LGQet0Sgw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.round(
+  int | float | decimal,
+  digits: int,
+)
+```
+
+#### `value` [#functions-round-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Число для округления.
+
+#### `digits` [#functions-round-digits]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `0`
+
+Если положительное — количество десятичных знаков.
+
+Если отрицательное — количество значащих целых разрядов, которые следует удалить перед десятичной точкой.
+
+### `clamp` [#functions-clamp]
+
+*Since: forever*
+
+Ограничивает число значениями минимума и максимума.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.clamp(5, 0, 4)
+  #assert(calc.clamp(5, 0, 10) == 5)
+  #assert(calc.clamp(5, 6, 10) == 6)
+  #assert(calc.clamp(decimal("5.45"), 2, decimal("45.9")) == decimal("5.45"))
+  #assert(calc.clamp(decimal("5.45"), decimal("6.75"), 12) == decimal("6.75"))
+`}
+  image="/typst_docs_assets/images/L5nGrxmiyb0LqWF4IjiBAg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.clamp(
+  int | float | decimal,
+  int | float | decimal,
+  int | float | decimal,
+)
+```
+
+#### `value` [#functions-clamp-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Число для ограничения.
+
+#### `min` [#functions-clamp-min]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Включающее минимальное значение.
+
+#### `max` [#functions-clamp-max]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Включающее максимальное значение.
+
+### `min` [#functions-min]
+
+*Since: forever*
+
+Определяет минимум последовательности значений.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.min(1, -3, -5, 20, 3, 6) \\
+  #calc.min("typst", "is", "cool")
+`}
+  image="/typst_docs_assets/images/PlxRwqnwB3nPVbss6B0Uqw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.min(..any)
+```
+
+#### `values` [#functions-min-values]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Последовательность значений, из которой нужно извлечь минимум. Не должна быть пустой.
+
+### `max` [#functions-max]
+
+*Since: forever*
+
+Определяет максимум последовательности значений.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.max(1, -3, -5, 20, 3, 6) \\
+  #calc.max("typst", "is", "cool")
+`}
+  image="/typst_docs_assets/images/Ex1Ld0AmgfkDlj7o-0l8_Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.max(..any)
+```
+
+#### `values` [#functions-max-values]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Последовательность значений, из которой нужно извлечь максимум. Не должна быть пустой.
+
+### `even` [#functions-even]
+
+*Since: forever*
+
+Определяет, является ли целое число чётным.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.even(4) \\
+  #calc.even(5) \\
+  #range(10).filter(calc.even)
+`}
+  image="/typst_docs_assets/images/JPYbyT-RyDM5CqUSVKd7Uw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.even(int) -> bool
+```
+
+#### `value` [#functions-even-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Число для проверки на чётность.
+
+### `odd` [#functions-odd]
+
+*Since: forever*
+
+Определяет, является ли целое число нечётным.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.odd(4) \\
+  #calc.odd(5) \\
+  #range(10).filter(calc.odd)
+`}
+  image="/typst_docs_assets/images/xuBXtPBC7pQOr9DBhR8iPw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.odd(int) -> bool
+```
+
+#### `value` [#functions-odd-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Число для проверки на нечётность.
+
+### `rem` [#functions-rem]
+
+*Since: 0.3.0*
+
+Вычисляет остаток от деления двух чисел (знаковый остаток).
+
+Значение `calc.rem(x, y)` всегда имеет тот же знак, что и `x`, и меньше `y` по модулю.
+
+Может выдать ошибку при передаче [`decimal`](/docs/typst/reference/foundations/decimal), если делимое слишком мало по модулю по сравнению с делителем.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.rem(7, 3) \\
+  #calc.rem(7, -3) \\
+  #calc.rem(-7, 3) \\
+  #calc.rem(-7, -3) \\
+  #calc.rem(1.75, 0.5)
+`}
+  image="/typst_docs_assets/images/maKivoy3DF2yjTVAP4DoXQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.rem(
+  int | float | decimal,
+  int | float | decimal,
+)
+```
+
+#### `dividend` [#functions-rem-dividend]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делимое остатка.
+
+#### `divisor` [#functions-rem-divisor]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делитель остатка.
+
+### `div-euclid` [#functions-div-euclid]
+
+*Since: 0.10.0*
+
+Выполняет евклидово деление двух чисел.
+
+Результатом этого вычисления является результат деления, округлённый до целого `n` так, что делимое больше или равно `n`, умноженному на делитель.
+
+Может выдать ошибку, если результирующее число окажется больше максимального значения или меньше минимального значения для своего типа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.div-euclid(7, 3) \\
+  #calc.div-euclid(7, -3) \\
+  #calc.div-euclid(-7, 3) \\
+  #calc.div-euclid(-7, -3) \\
+  #calc.div-euclid(1.75, 0.5) \\
+  #calc.div-euclid(decimal("1.75"), decimal("0.5"))
+`}
+  image="/typst_docs_assets/images/A5nYDjhatDFesssM3Q1l6g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.div-euclid(
+  int | float | decimal,
+  int | float | decimal,
+)
+```
+
+#### `dividend` [#functions-div-euclid-dividend]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делимое деления.
+
+#### `divisor` [#functions-div-euclid-divisor]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делитель деления.
+
+### `rem-euclid` [#functions-rem-euclid]
+
+*Since: 0.10.0*
+
+Вычисляет наименьший неотрицательный остаток от деления (неотрицательный остаток по модулю).
+
+Предупреждение: из-за ошибки округления с плавающей точкой остаток может оказаться равным абсолютному значению делителя, если делимое значительно меньше делителя по модулю и делимое отрицательное. Это относится только к входным данным с плавающей точкой.
+
+Кроме того, может выдать ошибку при передаче [`decimal`](/docs/typst/reference/foundations/decimal), если делимое слишком мало по модулю по сравнению с делителем.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.rem-euclid(7, 3) \\
+  #calc.rem-euclid(7, -3) \\
+  #calc.rem-euclid(-7, 3) \\
+  #calc.rem-euclid(-7, -3) \\
+  #calc.rem-euclid(1.75, 0.5) \\
+  #calc.rem-euclid(decimal("1.75"), decimal("0.5"))
+`}
+  image="/typst_docs_assets/images/j7is7re52c3mtzUONkrDVw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.rem-euclid(
+  int | float | decimal,
+  int | float | decimal,
+)
+```
+
+#### `dividend` [#functions-rem-euclid-dividend]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делимое остатка.
+
+#### `divisor` [#functions-rem-euclid-divisor]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делитель остатка.
+
+### `quo` [#functions-quo]
+
+*Since: 0.3.0*
+
+Вычисляет частное (деление с округлением вниз) двух чисел.
+
+Обратите внимание, что эта функция всегда возвращает [целое число](/docs/typst/reference/foundations/int) и выдаст ошибку, если результирующее число окажется больше максимального 64-битного знакового целого или меньше минимального значения для этого типа.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ "quo"(a, b) &= floor(a/b) \\
+  "quo"(14, 5) &= #calc.quo(14, 5) \\
+  "quo"(3.46, 0.5) &= #calc.quo(3.46, 0.5) $
+`}
+  image="/typst_docs_assets/images/dZd-fpTZC4jMAflOvAw1eg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.quo(
+  int | float | decimal,
+  int | float | decimal,
+)
+```
+
+#### `dividend` [#functions-quo-dividend]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делимое частного.
+
+#### `divisor` [#functions-quo-divisor]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) · **Модификаторы:** Обязательный, Позиционный
+
+Делитель частного.
+
+### `norm` [#functions-norm]
+
+*Since: 0.13.0*
+
+Вычисляет $p$-норму последовательности значений.
+
+$p$-норма $x_{1}, \dots, x_{n}$ определяется следующим образом:
+
+$$
+\begin{cases} (\sum_{i = 1}^{n} | x_{i} |^{p})^{1 / p} \quad & \text{if} \, 0 < p < + \infty \\ \max_{i = 1}^{n} | x_{i} | \quad & \text{if} \, p = + \infty \end{cases}
+$$
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #calc.norm(1, 2, -3, 0.5) \\
+  #calc.norm(p: 3, 1, 2)
+`}
+  image="/typst_docs_assets/images/Un6QsL9qSLENkhUMNaKYvg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+calc.norm(
+  p: float,
+  ..float,
+)
+```
+
+#### `p` [#functions-norm-p]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **По умолчанию:** `2.0`
+
+Значение $p$. Должно быть больше нуля.
+
+Значение по умолчанию `2.0` соответствует евклидовой норме:
+
+$$
+\sqrt{\sum_{i = 1}^{n} x_{i}^{2}}
+$$
+
+#### `values` [#functions-norm-values]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Последовательность значений, для которой нужно вычислить $p$-норму. Возвращает `0.0`, если пуста.

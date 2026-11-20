@@ -1,0 +1,289 @@
+---
+title: "Выравнивание"
+description: "Документация для типа `alignment`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Где выравнивать что-либо вдоль оси.
+
+Возможные значения:
+
+- Горизонтальные выравнивания: [`start`](#definitions-start), [`end`](#definitions-end), [`left`](#definitions-left), [`center`](#definitions-center) и [`right`](#definitions-right).
+- Вертикальные выравнивания: [`top`](#definitions-top), [`horizon`](#definitions-horizon) и [`bottom`](#definitions-bottom).
+- [2D-выравнивания](#loc-1), например `center + horizon`.
+
+Эти значения доступны глобально, а также в области видимости типа alignment, поэтому вы можете написать любой из следующих двух вариантов:
+
+<TypstRender
+  code={`
+  #align(center)[Hi]
+  #align(alignment.center)[Hi]
+`}
+  image="/typst_docs_assets/images/jB_l01kNOnHHM9RqWf9Lqg.png"
+  alt=""
+  editable={true}
+/>
+
+## 2D-выравнивания [#loc-1]
+
+Чтобы выровнять одновременно по обеим осям, сложите два выравнивания с помощью оператора `+`. Например, `top + right` выравнивает содержимое по правому верхнему углу.
+
+<TypstRender
+  code={`
+  #set page(height: 3cm)
+  #align(center + bottom)[Hi]
+`}
+  image="/typst_docs_assets/images/FbFJ0yqgUHxxCrbEOHsxVw.png"
+  alt=""
+  editable={true}
+/>
+
+## Поля [#fields]
+
+Поля `x` и `y` содержат горизонтальную и вертикальную составляющие выравнивания соответственно (как ещё один `alignment`). Они могут быть `none`.
+
+<TypstRender
+  code={`
+  #(top + right).x \\
+  #left.x \\
+  #left.y (none)
+`}
+  image="/typst_docs_assets/images/3kebbaoygcYRZHgnCD_KxQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Константы [#constants]
+
+### `start` [#definitions-start]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Горизонтальное выравнивание к [началу](/docs/typst/reference/layout/direction#definitions-start) [направления текста](/docs/typst/reference/text/text#parameters-dir).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(dir: ltr)
+  #align(start, emoji.arrow.r)
+
+  #set text(dir: rtl)
+  #align(start, emoji.arrow.l)
+`}
+  image="/typst_docs_assets/images/ZSl-Kj2mp5jjRESJUb-w7g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `end` [#definitions-end]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Горизонтальное выравнивание к [концу](/docs/typst/reference/layout/direction#definitions-end) [направления текста](/docs/typst/reference/text/text#parameters-dir).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(dir: ltr)
+  #align(end, emoji.arrow.r)
+
+  #set text(dir: rtl)
+  #align(end, emoji.arrow.l)
+`}
+  image="/typst_docs_assets/images/7dpdAExEFy1kuBh471CPmA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `left` [#definitions-left]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Горизонтальное выравнивание по левому краю.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #align(left)[Left]
+`}
+  image="/typst_docs_assets/images/EN4y7WtjQ0jgc7ITeafu-Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `center` [#definitions-center]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Горизонтальное выравнивание по центру.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #align(center)[Center]
+`}
+  image="/typst_docs_assets/images/W_LQUzSZrsr9h13zDsqW2w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `right` [#definitions-right]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Горизонтальное выравнивание по правому краю.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #align(right)[Right]
+`}
+  image="/typst_docs_assets/images/jB1IVqCiMzjva-VEn5mWdA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `top` [#definitions-top]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Вертикальное выравнивание по верхнему краю.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 3cm)
+  #align(top)[Top]
+`}
+  image="/typst_docs_assets/images/GsEtIgnJ0juvTJKbuW-l7Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `horizon` [#definitions-horizon]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Вертикальное выравнивание по середине.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 3cm)
+  #align(horizon)[Horizon]
+`}
+  image="/typst_docs_assets/images/fqmPJbJzGzJ1bxTwH65B9w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `bottom` [#definitions-bottom]
+
+*Since: forever* · **Тип:** [alignment](/docs/typst/reference/layout/alignment)
+
+Вертикальное выравнивание по нижнему краю.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 3cm)
+  #align(bottom)[Bottom]
+`}
+  image="/typst_docs_assets/images/pBnHg4gc0Vn8gvvPIOkf2Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `axis` [#definitions-axis]
+
+*Since: 0.7.0*
+
+Ось, к которой относится это выравнивание.
+
+- `"horizontal"` для `start`, `left`, `center`, `right` и `end`
+- `"vertical"` для `top`, `horizon` и `bottom`
+- `none` для двумерных выравниваний
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #left.axis() \\
+  #bottom.axis()
+`}
+  image="/typst_docs_assets/images/SKgAG0Uup_6qLdpZEMqKQQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.axis() -> none | str
+```
+
+### `inv` [#definitions-inv]
+
+*Since: 0.7.0*
+
+Обратное выравнивание.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #top.inv() \\
+  #left.inv() \\
+  #center.inv() \\
+  #(left + bottom).inv()
+`}
+  image="/typst_docs_assets/images/R45HUagjY_-QYh-Lt_rTYg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.inv() -> alignment
+```

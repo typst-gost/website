@@ -1,0 +1,97 @@
+---
+title: "Вычислить"
+description: "Документация для функции `eval`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Вычисляет строку как код Typst.
+
+Эту функцию следует использовать только в крайнем случае.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #eval("1 + 1") \\
+  #eval("(1, 2, 3, 4)").len() \\
+  #eval("*Markup!*", mode: "markup") \\
+`}
+  image="/typst_docs_assets/images/aa0iuWxsiA0nNtRlcOx8mw.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+eval(
+  str,
+  mode: str,
+  scope: dictionary,
+) -> any
+```
+
+### `source` [#parameters-source]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Строка кода Typst для вычисления.
+
+### `mode` [#parameters-mode]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"code"`
+
+[Синтаксический режим](/docs/typst/reference/syntax#modes), в котором разбирается строка.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #eval("= Heading", mode: "markup")
+  #eval("1_2^3", mode: "math")
+`}
+  image="/typst_docs_assets/images/KeVDyW9p09XpD6G99qVhog.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"markup"` | Вычислить как разметку, как в файле Typst. |
+| `"math"` | Вычислить как математику, как в уравнении. |
+| `"code"` | Вычислить как код, как после решётки. |
+
+### `scope` [#parameters-scope]
+
+**Тип:** [dictionary](/docs/typst/reference/foundations/dictionary) · **По умолчанию:** `(:)`
+
+Область видимости определений, которые становятся доступны.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #eval("x + 1", scope: (x: 2)) \\
+  #eval(
+    "abc/xyz",
+    mode: "math",
+    scope: (
+      abc: $a + b + c$,
+      xyz: $x + y + z$,
+    ),
+  )
+`}
+  image="/typst_docs_assets/images/LNo7yvCo17syVjO6Xpx9cw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

@@ -1,0 +1,111 @@
+---
+title: "Cases"
+description: "Документация для функции `cases`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Различение случаев.
+
+Содержимое в разных ветвях можно выровнять с помощью символа `&`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ f(x, y) := cases(
+    1 "if" (x dot y)/2 <= 0,
+    2 "if" x "is even",
+    3 "if" x in NN,
+    4 "else",
+  ) $
+`}
+  image="/typst_docs_assets/images/j0d52poyQmlD1JrF8kSfgg.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+math.cases(
+  delim: none | str | symbol | array,
+  reverse: bool,
+  gap: relative,
+  ..content,
+)
+```
+
+### `delim` [#parameters-delim]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [symbol](/docs/typst/reference/foundations/symbol) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `("{", "}")`
+
+Разделитель, который нужно использовать.
+
+Может быть одиночным символом, задающим левый разделитель, и тогда правый разделитель выводится автоматически. В противном случае может быть массивом, содержащим левый и правый разделители.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.cases(delim: "[")
+  $ x = cases(1, 2) $
+`}
+  image="/typst_docs_assets/images/d7HFbPZw4ul0dUaJWyeDCg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `reverse` [#parameters-reverse]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Следует ли изменить направление случаев на противоположное.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.cases(reverse: true)
+  $ cases(1, 2) = x $
+`}
+  image="/typst_docs_assets/images/Y9fgDxqX_cG84N3MTNpxsg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `gap` [#parameters-gap]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0.2em`
+
+Промежуток между ветвями.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.cases(gap: 1em)
+  $ x = cases(1, 2) $
+`}
+  image="/typst_docs_assets/images/ysFWU7F1P0AsEKIWeRR9AA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `children` [#parameters-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Ветви различения случаев.

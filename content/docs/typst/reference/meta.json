@@ -1,0 +1,22 @@
+{
+  "title": "Справочник",
+  "description": "Справочник Typst — это систематическое и всеобъемлющее руководство по языку вёрстки Typst.",
+  "pages": [
+    "---Language---",
+    "syntax",
+    "styling",
+    "scripting",
+    "context",
+    "---Library---",
+    "foundations",
+    "model",
+    "text",
+    "math",
+    "symbols",
+    "layout",
+    "visualize",
+    "introspection",
+    "data-loading",
+    "format"
+  ]
+}

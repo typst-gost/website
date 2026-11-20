@@ -1,0 +1,48 @@
+---
+title: "Locate"
+description: "Документация для функции `locate`."
+---
+
+
+<span id="summary" />
+
+*Контекстная* · *Доступна всегда*
+
+Определяет местоположение элемента в документе.
+
+Принимает селектор, который должен соответствовать ровно одному элементу, и возвращает [`location`](/docs/typst/reference/introspection/location) этого элемента. Это местоположение можно, в частности, использовать для получения физического номера [`page`](/docs/typst/reference/introspection/location#definitions-page) и [`position`](/docs/typst/reference/introspection/location#definitions-position) (страница, x, y) для этого элемента.
+
+## Примеры [#examples]
+
+Определение местоположения конкретного элемента:
+
+<TypstRender
+  code={`
+  #context [
+    Introduction is at: \\
+  #locate(<intro>).position()
+  ]
+
+  = Introduction <intro>
+`}
+  image="/typst_docs_assets/images/0bjFQ0ALY3Kt85Kcp4fE7A.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+locate(label | selector | location | function)
+```
+
+### `selector` [#parameters-selector]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Селектор, который должен соответствовать ровно одному элементу. Этот элемент будет найден.
+
+Особенно полезен в сочетании с
+
+- [`here`](/docs/typst/reference/introspection/here) для определения текущего контекста,
+- [`location`](/docs/typst/reference/introspection/location), полученным из некоторого запрошенного элемента через метод [`location()`](/docs/typst/reference/foundations/content#definitions-location) на содержимом.

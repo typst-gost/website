@@ -1,0 +1,88 @@
+---
+title: "Нижний индекс"
+description: "Документация для функции `sub`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Отображает текст в нижнем индексе.
+
+Текст отображается меньшим размером, а его базовая линия опускается.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Revenue#sub[yearly]
+`}
+  image="/typst_docs_assets/images/jLlTeySSZHS4Kpa-4yHdRA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+sub(
+  typographic: bool,
+  baseline: auto | length,
+  size: auto | length,
+  content,
+)
+```
+
+### `typographic` [#parameters-typographic]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Использовать ли глифы нижнего индекса из шрифта, если они доступны.
+
+В идеале глифы нижнего индекса предоставляются шрифтом (с помощью функции OpenType `subs`). В противном случае Typst может синтезировать нижние индексы, опуская и уменьшая обычные глифы.
+
+Если для этого параметра задано значение `false`, синтезированные глифы будут использоваться независимо от того, предоставляет ли шрифт специальные глифы нижнего индекса. Если задано `true`, синтезированные глифы всё равно могут использоваться, если шрифт не предоставляет необходимые глифы нижнего индекса.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  N#sub(typographic: true)[1]
+  N#sub(typographic: false)[1]
+`}
+  image="/typst_docs_assets/images/hL03tP8FOtTOcG_SzRry0g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `baseline` [#parameters-baseline]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Смещение базовой линии вниз для синтезированных нижних индексов.
+
+Это применяется только к синтезированным нижним индексам. Иными словами, это не оказывает эффекта, если `typographic` имеет значение `true` и шрифт предоставляет необходимые глифы нижнего индекса.
+
+Если задано `auto`, базовая линия смещается в соответствии с метриками, предоставляемыми шрифтом, с запасным значением `0.2em` на случай, если шрифт не определяет необходимые метрики.
+
+При использовании нескольких шрифтов может потребоваться явно задать `baseline` и [`size`](#parameters-size). Пример см. в разделе [`super`](/docs/typst/reference/text/super#parameters-baseline).
+
+### `size` [#parameters-size]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Размер шрифта для синтезированных нижних индексов.
+
+Это применяется только к синтезированным нижним индексам. Иными словами, это не оказывает эффекта, если `typographic` имеет значение `true` и шрифт предоставляет необходимые глифы нижнего индекса.
+
+Если задано `auto`, размер масштабируется в соответствии с метриками, предоставляемыми шрифтом, с запасным значением `0.6em` на случай, если шрифт не определяет необходимые метрики.
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Текст для отображения в нижнем индексе.

@@ -1,0 +1,26 @@
+---
+title: "Fraction"
+description: "Документация для типа `fraction`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Определяет, как распределяется оставшееся пространство в макете.
+
+Каждый элемент с дробным размером получает пространство на основе отношения его доли к сумме всех долей. Если некоторые доли отрицательны, применяется та же логика, поэтому элементы со знаком, противоположным общей сумме, будут иметь отрицательную ширину.
+
+Подробнее см. также функции [`h`](/docs/typst/reference/layout/h) и [`v`](/docs/typst/reference/layout/v), а также [функцию `grid`](/docs/typst/reference/layout/grid).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Left #h(1fr) Left-ish #h(2fr) Right
+`}
+  image="/typst_docs_assets/images/MOkRaVHjztDfslgswyymug.png"
+  alt=""
+  editable={true}
+/>

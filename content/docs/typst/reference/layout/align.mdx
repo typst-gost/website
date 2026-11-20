@@ -1,0 +1,140 @@
+---
+title: "Align"
+description: "Документация для функции `align`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Выравнивает содержимое по горизонтали и вертикали.
+
+## Пример [#example]
+
+Начнём с центрирования содержимого по горизонтали:
+
+<TypstRender
+  code={`
+  #set page(height: 120pt)
+  #set align(center)
+
+  Centered text, a sight to see \\
+  In perfect balance, visually \\
+  Not left nor right, it stands alone \\
+  A work of art, a visual throne
+`}
+  image="/typst_docs_assets/images/s-bCQaRGkFDdPB0_3qY1YA.png"
+  alt=""
+  editable={true}
+/>
+
+Чтобы выровнять что-либо по вертикали, используйте выравнивание _horizon_:
+
+<TypstRender
+  code={`
+  #set page(height: 120pt)
+  #set align(horizon)
+
+  Vertically centered, \\
+  the stage had entered, \\
+  a new paragraph.
+`}
+  image="/typst_docs_assets/images/wnnRiCqvX2oyZ4hjBpb2wA.png"
+  alt=""
+  editable={true}
+/>
+
+## Комбинирование выравниваний [#combining-alignments]
+
+Вы можете комбинировать два выравнивания с помощью оператора `+`. Давайте также применим это только к одному фрагменту содержимого, используя функциональную форму вместо правила set:
+
+<TypstRender
+  code={`
+  #set page(height: 120pt)
+  Though left in the beginning ...
+  #align(right + bottom)[
+    ... they were right in the end, \\
+    and with addition had gotten, \\
+    the paragraph to the bottom!
+  ]
+`}
+  image="/typst_docs_assets/images/Dkx77I217MP1JwKXr0oaOA.png"
+  alt=""
+  editable={true}
+/>
+
+## Вложенные выравнивания [#nested-alignment]
+
+Вы можете использовать различные выравнивания для контейнеров компоновки и элементов внутри них. Так можно создавать замысловатые компоновки:
+
+<TypstRender
+  code={`
+  #align(center, block[
+    #set align(left)
+    Though centered together \\
+    alone \\
+    we \\
+    are \\
+    left.
+  ])
+`}
+  image="/typst_docs_assets/images/kO4kSJsuhafyr5SmkMWNRw.png"
+  alt=""
+  editable={true}
+/>
+
+## Выравнивание в пределах одной строки [#alignment-within-the-same-line]
+
+Функция `align` выполняет блочное выравнивание и потому всегда прерывает текущий абзац. Чтобы задать разное выравнивание для частей одной строки, следует использовать [дробные отступы](/docs/typst/reference/layout/h):
+
+<TypstRender
+  code={`
+  Start #h(1fr) End
+`}
+  image="/typst_docs_assets/images/N4Mo7j9y_kWOj0ydSWSxwQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+align(
+  alignment,
+  content,
+)
+```
+
+### `alignment` [#parameters-alignment]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** позиционный, settable · **По умолчанию:** `start + top`
+
+[Выравнивание](/docs/typst/reference/layout/alignment) по обеим осям.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 6cm)
+  #set text(lang: "ar")
+
+  مثال
+  #align(
+    end + horizon,
+    rect(inset: 12pt)[ركن]
+  )
+`}
+  image="/typst_docs_assets/images/nTQMdTh8qJ8ctCnc-jvmng.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** обязательный, позиционный
+
+Содержимое для выравнивания.

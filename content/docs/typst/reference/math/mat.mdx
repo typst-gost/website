@@ -1,0 +1,219 @@
+---
+title: "Матрица"
+description: "Документация для функции `mat`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *С версии: forever*
+
+Матрица.
+
+Элементы строки должны быть разделены запятыми, а сами строки — точками с запятой. Синтаксис с точкой с запятой объединяет предшествующие аргументы, разделённые запятыми, в массив. Вы также можете использовать этот специальный синтаксис вызовов математических функций для определения пользовательских функций, принимающих двумерные данные.
+
+Содержимое ячеек можно выровнять с помощью параметра [`align`](#parameters-align), а содержимое ячеек, находящихся в одной строке, можно выровнять с помощью символа `&`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ mat(
+    1, 2, ..., 10;
+    2, 2, ..., 10;
+    dots.v, dots.v, dots.down, dots.v;
+    10, 10, ..., 10;
+  ) $
+`}
+  image="/typst_docs_assets/images/VjIchxGulFS9YVYM0b4sJA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+math.mat(
+  delim: none | str | symbol | array,
+  align: alignment,
+  augment: none | int | dictionary,
+  gap: relative,
+  row-gap: relative,
+  column-gap: relative,
+  ..array,
+) -> content
+```
+
+### `delim` [#parameters-delim]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [symbol](/docs/typst/reference/foundations/symbol) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `("(", ")")`
+
+Разделитель, который следует использовать.
+
+Может быть одиночным символом, задающим левый разделитель, и тогда правый разделитель выводится автоматически. В противном случае может быть массивом, содержащим левый и правый разделители.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.mat(delim: "[")
+  $ mat(1, 2; 3, 4) $
+`}
+  image="/typst_docs_assets/images/2UBP-vCNrjP8_PyXXCsl0g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `align` [#parameters-align]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `center`
+
+Горизонтальное выравнивание, которое должна иметь каждая ячейка.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.mat(align: right)
+  $ mat(-1, 1, 1; 1, -1, 1; 1, 1, -1) $
+`}
+  image="/typst_docs_assets/images/MnldzMVNRiM17hWXd9__xA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `augment` [#parameters-augment]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Рисует линии расширения в матрице.
+
+- `none`: линии не рисуются.
+- Одно число: вертикальная линия расширения рисуется после указанного номера столбца. Отрицательные числа отсчитываются с конца.
+- Словарь: с помощью словаря можно нарисовать несколько линий расширения как по горизонтали, так и по вертикали. Кроме того, можно задать стиль линий. Словарь может содержать следующие ключи:
+  - `hline`: смещения, на которых следует рисовать горизонтальные линии. Например, при смещении `2` горизонтальная линия будет нарисована после второй строки матрицы. Принимает либо целое число для одной линии, либо массив целых чисел для нескольких линий. Как и для одного числа, отрицательные числа отсчитываются с конца.
+  - `vline`: смещения, на которых следует рисовать вертикальные линии. Например, при смещении `2` вертикальная линия будет нарисована после второго столбца матрицы. Принимает либо целое число для одной линии, либо массив целых чисел для нескольких линий. Как и для одного числа, отрицательные числа отсчитываются с конца.
+  - `stroke`: как [обводить](/docs/typst/reference/visualize/stroke) линию. Если задано значение `auto`, используется толщина 0.05 em и квадратные окончания линий.
+
+<details>
+<summary>Посмотреть пример: базовое использование</summary>
+
+<TypstRender
+  code={`
+  $ mat(1, 0, 1; 0, 1, 2; augment: #2) $
+  // Equivalent to:
+  $ mat(1, 0, 1; 0, 1, 2; augment: #(-1)) $
+`}
+  image="/typst_docs_assets/images/t43P2qUAl8653FtKTrK_8w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: настройка линии расширения</summary>
+
+<TypstRender
+  code={`
+  $ mat(0, 0, 0; 1, 1, 1; augment: #(hline: 1, stroke: 2pt + green)) $
+`}
+  image="/typst_docs_assets/images/wjqZA6-mILbar4FMtYmxlw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `gap` [#parameters-gap]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **По умолчанию:** `0% + 0pt`
+
+Промежуток между строками и столбцами.
+
+Это сокращение для установки `row-gap` и `column-gap` в одно и то же значение.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.mat(gap: 1em)
+  $ mat(1, 2; 3, 4) $
+`}
+  image="/typst_docs_assets/images/iPpp1M1OHA05Jya6BtkeWg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `row-gap` [#parameters-row-gap]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0.2em`
+
+Промежуток между строками.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.mat(row-gap: 1em)
+  $ mat(1, 2; 3, 4) $
+`}
+  image="/typst_docs_assets/images/Wl3ffBzhfP9Nho4I_1LQqQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `column-gap` [#parameters-column-gap]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0.5em`
+
+Промежуток между столбцами.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.mat(column-gap: 1em)
+  $ mat(1, 2; 3, 4) $
+`}
+  image="/typst_docs_assets/images/whsQYjsxbyhxos44ZA7Kxg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `rows` [#parameters-rows]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional, Variadic
+
+Массив массивов со строками матрицы.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let data = ((1, 2, 3), (4, 5, 6))
+  #let matrix = math.mat(..data)
+  $ v := matrix $
+`}
+  image="/typst_docs_assets/images/ZDrVss0gQKmHGNzfcW7KTQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

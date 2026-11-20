@@ -1,0 +1,318 @@
+---
+title: "Обводка"
+description: "Документация для типа `stroke`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Определяет, как рисовать линию.
+
+Обводка имеет _краску_ (сплошной цвет или градиент), _толщину,_ _окончание_ линии, _соединение_ линий, _предел скоса_ и _шаблон штриховки_. Все эти значения необязательны и имеют разумные значения по умолчанию.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set line(length: 100%)
+  #stack(
+    spacing: 1em,
+    line(stroke: 2pt + red),
+    line(stroke: (paint: blue, thickness: 4pt, cap: "round")),
+    line(stroke: (paint: blue, thickness: 1pt, dash: "dashed")),
+    line(stroke: 2pt + gradient.linear(..color.map.rainbow)),
+  )
+`}
+  image="/typst_docs_assets/images/bFdE8A4UGtXz1SzoOwpT_w.png"
+  alt=""
+  editable={true}
+/>
+
+## Простые обводки [#simple-strokes]
+
+Вы можете создать простую сплошную обводку из цвета, толщины или их комбинации. В частности, везде, где ожидается обводка, вы можете передать любое из следующих значений:
+
+- [`length`](/docs/typst/reference/layout/length), задающий толщину обводки. Цвет наследуется, по умолчанию — чёрный.
+- [`color`](/docs/typst/reference/visualize/color), используемый для обводки. Толщина наследуется, по умолчанию — `1pt`.
+- Обводку, составленную из цвета и толщины с помощью оператора `+`, как в `2pt + red`.
+
+Для полного контроля вы также можете передать [`dictionary`](/docs/typst/reference/foundations/dictionary) или объект `stroke` в любую функцию, ожидающую обводку. Ключи словаря могут включать любые параметры функции-конструктора, показанной ниже.
+
+## Поля [#fields]
+
+В объекте обводки вы можете получить доступ к любому из полей, перечисленных в функции-конструкторе. Например, `(2pt + blue).thickness` равно `2pt`. При этом `stroke(red).cap` равно `auto`, поскольку оно не задано. Поля, установленные в `auto`, наследуются.
+
+## Конструктор [#constructor]
+
+Преобразует значение в обводку или создаёт обводку с заданными параметрами.
+
+Обратите внимание, что в большинстве случаев вам не нужно преобразовывать значения в обводки, чтобы использовать их, поскольку они преобразуются автоматически. Однако этот конструктор может быть полезен, чтобы гарантировать, что значение имеет все поля обводки.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let my-func(x) = {
+    // Convert \`x\` to a stroke.
+    x = stroke(x)
+    [Thickness is #x.thickness.]
+  }
+  #my-func(3pt) \\
+  #my-func(red) \\
+  #my-func(stroke(
+    cap: "round",
+    thickness: 1pt,
+  ))
+`}
+  image="/typst_docs_assets/images/HY4Bs6CSdzUmNtKkCneXyw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+stroke(
+  paint: auto | color | gradient | tiling,
+  thickness: auto | length,
+  cap: auto | str,
+  join: auto | str,
+  dash: none | auto | str | array | dictionary,
+  miter-limit: auto | float,
+) -> stroke
+```
+
+### `paint` [#constructor-paint]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **По умолчанию:** `auto`
+
+Цвет или градиент, используемый для обводки.
+
+Если установлено в `auto`, значение наследуется, по умолчанию — `black`.
+
+### `thickness` [#constructor-thickness]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **По умолчанию:** `auto`
+
+Толщина обводки.
+
+Если установлено в `auto`, значение наследуется, по умолчанию — `1pt`.
+
+### `cap` [#constructor-cap]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `auto`
+
+Как отрисовываются окончания обводки.
+
+Если установлено в `auto`, значение наследуется, по умолчанию — `"butt"`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set line(length: 100%, stroke: 10pt)
+  #stack(
+    spacing: 20pt,
+    line(stroke: (cap: "butt")),
+    line(stroke: (cap: "round")),
+    line(stroke: (cap: "square")),
+  )
+`}
+  image="/typst_docs_assets/images/KXHBdT53yYNs8iHFWj5L1A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"butt"` | Квадратное окончание обводки с краем в конечной точке обводки. |
+| `"round"` | Круглое окончание обводки с центром в конечной точке обводки. |
+| `"square"` | Квадратное окончание обводки с центром в конечной точке обводки. |
+
+### `join` [#constructor-join]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `auto`
+
+Как отрисовываются резкие повороты.
+
+Если установлено в `auto`, значение наследуется, по умолчанию — `"miter"`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set align(center)
+  #set curve(stroke: (
+    paint: blue,
+    thickness: 8pt,
+    miter-limit: 10,
+  ))
+
+  #let example(s) = curve(
+    stroke: s,
+    curve.move((30pt, 0pt)),
+    curve.line((0pt, 60pt)),
+    curve.line((60pt, 60pt)),
+    curve.line((20pt, 40pt)),
+  )
+
+  #stack(
+    spacing: 10pt,
+    example((join: "miter")),
+    example((join: "round")),
+    example((join: "bevel")),
+  )
+`}
+  image="/typst_docs_assets/images/zk9DK3gZIzxliLt-zKaSRA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"miter"` | Сегменты соединяются острыми краями. Резкие изломы, превышающие предел скоса, вместо этого скошены. |
+| `"round"` | Сегменты соединяются круглыми углами. |
+| `"bevel"` | Сегменты соединяются скосом (прямой край, соединяющий торцы соединённых сегментов). |
+
+### `dash` [#constructor-dash]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) · **По умолчанию:** `auto`
+
+Используемый шаблон штриховки. Это может быть:
+
+- Один из предопределённых шаблонов, перечисленных ниже.
+- `none`, как эквивалент предопределённого шаблона `"solid"`.
+- [array](/docs/typst/reference/foundations/array) с чередующимися длинами штрихов и промежутков. Вы также можете использовать строку `"dot"` для длины, равной толщине линии.
+- [dictionary](/docs/typst/reference/foundations/dictionary) с ключами `array` (то же, что и массив выше) и `phase` (типа [length](/docs/typst/reference/layout/length)), который определяет, где в шаблоне начинать рисование.
+
+Если установлено в `auto`, значение наследуется, по умолчанию — `none`.
+
+<details>
+<summary>Посмотреть пример: Использование</summary>
+
+<TypstRender
+  code={`
+  #set line(length: 100%, stroke: 2pt)
+  #stack(
+    spacing: 1em,
+    line(stroke: (dash: "dashed")),
+    line(stroke: (dash: (10pt, 5pt, "dot", 5pt))),
+    line(stroke: (dash: (array: (10pt, 5pt, "dot", 5pt), phase: 10pt))),
+  )
+`}
+  image="/typst_docs_assets/images/HPRf7YHPoLq4dZ47_R92tA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: Предопределённые шаблоны</summary>
+
+<TypstRender
+  code={`
+  #set page(width: auto, height: auto)
+
+  #let patterns = (
+    ("dotted", "dashed", "dash-dotted").map(d => (
+      "loosely-" + d,
+      d,
+      "densely-" + d,
+    ))
+  ).flatten()
+
+
+  #let display(dash) = {
+    set par(spacing: 0.3em)
+
+    show "loosely": set text(eastern.darken(17%))
+    show "densely": set text(purple)
+
+    let derived = dash.starts-with("loosely-") or dash.starts-with("densely-")
+    if derived { dash } else { strong(dash) }
+
+    rect(
+      line(stroke: (dash: dash), length: 100%),
+      stroke: none,
+      fill: yellow.transparentize(80%),
+    )
+  }
+
+  #table(
+    columns: 3,
+    stroke: none,
+    align: (left, center, left),
+
+    table.cell(colspan: 3, align: center, display("solid")),
+    ..patterns.map(display),
+  )
+`}
+  image="/typst_docs_assets/images/LbNZaNpPAgEl6FaGWtc9mQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"solid"` | `()` |
+| `"dotted"` | `("dot", 2pt)` |
+| `"densely-dotted"` | `("dot", 1pt)` |
+| `"loosely-dotted"` | `("dot", 4pt)` |
+| `"dashed"` | `(3pt, 3pt)` |
+| `"densely-dashed"` | `(3pt, 2pt)` |
+| `"loosely-dashed"` | `(3pt, 6pt)` |
+| `"dash-dotted"` | `(3pt, 2pt, "dot", 2pt)` |
+| `"densely-dash-dotted"` | `(3pt, 1pt, "dot", 1pt)` |
+| `"loosely-dash-dotted"` | `(3pt, 4pt, "dot", 4pt)` |
+
+### `miter-limit` [#constructor-miter-limit]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [float](/docs/typst/reference/foundations/float) · **По умолчанию:** `auto`
+
+Число, при котором выступающие острые изломы отрисовываются со скосом вместо соединения скосом. Чем выше число, тем более острым может быть угол, прежде чем он будет скошен. Применимо только если `join` равен `"miter"`.
+
+В частности, предел скоса — это максимальное отношение длины выступа угла к толщине обводки.
+
+Если установлено в `auto`, значение наследуется, по умолчанию — `4.0`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set align(center)
+  #set curve(stroke: 8pt + blue)
+
+  #let example(s) = curve(
+    stroke: s,
+    curve.move((30pt, 0pt)),
+    curve.line((0pt, 60pt)),
+    curve.line((60pt, 60pt)),
+    curve.line((20pt, 40pt)),
+  )
+
+  #stack(
+    spacing: 10pt,
+    example((miter-limit: 1)),
+    example((miter-limit: 4)),
+    example((miter-limit: 5)),
+  )
+`}
+  image="/typst_docs_assets/images/VAfTBi2vB0bbCuLXLtuKxQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

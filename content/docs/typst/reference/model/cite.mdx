@@ -1,0 +1,247 @@
+---
+title: "Cite"
+description: "Документация для функции `cite`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Начиная с: всегда*
+
+Ссылка на работу из библиографии.
+
+Прежде чем начать цитировать, вам нужно добавить [библиографию](/docs/typst/reference/model/bibliography) где-нибудь в вашем документе.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  This was already noted by
+  pirates long ago. @arrgh
+
+  Multiple sources say ...
+  @arrgh @netwok.
+
+  You can also call \`cite\`
+  explicitly. #cite(<arrgh>)
+
+  #bibliography("works.bib")
+`}
+  image="/typst_docs_assets/images/J9C2F3uO8t-JTBZDrAgTow.png"
+  alt=""
+  editable={true}
+/>
+
+Если имя вашего источника содержит определённые символы, такие как слэши, которые не распознаются синтаксисом `<>`, вы можете явно вызвать `label` вместо этого.
+
+```typst
+Computer Modern is an example of a modernist serif typeface.
+#cite(label("DBLP:books/lib/Knuth86a")).
+```
+
+## Синтаксис [#syntax]
+
+Эта функция косвенно имеет выделенный синтаксис. [Ссылки](/docs/typst/reference/model/ref) можно использовать для цитирования работ из библиографии. Метка при этом соответствует ключу цитирования.
+
+## Параметры [#parameters]
+
+```typst
+cite(
+  label,
+  supplement: none | content,
+  form: none | str,
+  style: auto | str | path | bytes,
+)
+```
+
+### `key` [#parameters-key]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) · **Модификаторы:** Обязательный, Позиционный
+
+Ключ цитирования, который идентифицирует запись в библиографии, на которую следует сослаться, в виде метки.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // All the same
+  @netwok \\
+  #cite(<netwok>) \\
+  #cite(label("netwok"))
+`}
+  image="/typst_docs_assets/images/J3TVDAD3M7DQrSNHEoCF-g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `supplement` [#parameters-supplement]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Дополнение к цитате, такое как номер страницы или главы.
+
+В синтаксисе ссылок дополнение можно добавить в квадратных скобках:
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  This has been proven. @distress[p.~7]
+  #bibliography("works.bib")
+`}
+  image="/typst_docs_assets/images/c4SKkIwQ2cEnsKXlKYAmbg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `form` [#parameters-form]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `"normal"`
+
+Вид создаваемой цитаты. Разные формы полезны в разных сценариях: обычная цитата полезна как источник в конце предложения, тогда как «прозаическая» цитата больше подходит для включения в поток текста.
+
+Если установлено значение `none`, цитируемая работа включается в библиографию, но ничего не отображается.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #cite(<netwok>, form: "prose")
+  show the outsized effects of
+  pirate life on the human psyche.
+`}
+  image="/typst_docs_assets/images/eMjy1Lb8wzYgEx8hCt6wrQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"normal"` | Отображается стандартным способом для активного стиля. |
+| `"prose"` | Создаёт цитату, подходящую для включения в предложение. |
+| `"full"` | Имитирует запись в библиографии с полной информацией о цитируемой работе. |
+| `"author"` | Показывает только автора (авторов) цитируемой работы. |
+| `"year"` | Показывает только год цитируемой работы. |
+
+### `style` [#parameters-style]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+Стиль цитирования.
+
+Это может быть:
+
+- `auto` для автоматического использования [стиля библиографии](/docs/typst/reference/model/bibliography#parameters-style) для цитат.
+- Строка с именем одного из встроенных стилей (см. ниже). Некоторые из перечисленных ниже стилей встречаются дважды: один раз с полным именем и один раз с коротким псевдонимом.
+- Строка пути или [`path`](/docs/typst/reference/foundations/path) к [файлу CSL](https://citationstyles.org/).
+- Необработанные байты, из которых следует декодировать стиль CSL.
+
+<details>
+<summary>Посмотреть варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"alphanumeric"` | Alphanumeric |
+| `"american-anthropological-association"` | American Anthropological Association |
+| `"american-chemical-society"` | ACS Guide 2022 revision |
+| `"american-geophysical-union"` | American Geophysical Union |
+| `"american-institute-of-aeronautics-and-astronautics"` | American Institute of Aeronautics and Astronautics |
+| `"american-institute-of-physics"` | AIP Style Manual 4th edition |
+| `"american-medical-association"` | AMA Manual of Style 11th edition |
+| `"american-meteorological-society"` | American Meteorological Society |
+| `"american-physics-society"` | American Physical Society |
+| `"american-physiological-society"` | American Physiological Society |
+| `"american-political-science-association"` | APSA Style Manual revised 2018 edition |
+| `"american-psychological-association"` | APA Style 7th edition |
+| `"apa"` | Короткий псевдоним `american-psychological-association` |
+| `"american-society-for-microbiology"` | American Society for Microbiology |
+| `"american-society-of-civil-engineers"` | American Society of Civil Engineers |
+| `"american-society-of-mechanical-engineers"` | American Society of Mechanical Engineers |
+| `"american-sociological-association"` | ASA Style Guide 6th/7th edition |
+| `"angewandte-chemie"` | Angewandte Chemie International Edition |
+| `"annual-reviews"` | Annual Reviews (сортировка по порядку появления) |
+| `"annual-reviews-author-date"` | Annual Reviews (автор-дата) |
+| `"associacao-brasileira-de-normas-tecnicas"` | Associação Brasileira de Normas Técnicas (Português - Brasil) |
+| `"association-for-computing-machinery"` | Association for Computing Machinery |
+| `"biomed-central"` | BioMed Central |
+| `"bristol-university-press"` | Bristol University Press |
+| `"british-medical-journal"` | BMJ |
+| `"bmj"` | Короткий псевдоним `british-medical-journal` |
+| `"cell"` | Cell |
+| `"chicago-author-date"` | Chicago Manual of Style 18th edition (автор-дата) |
+| `"chicago-notes"` | Chicago Manual of Style 18th edition (примечания и библиография) |
+| `"chicago-fullnotes"` | Короткий псевдоним `chicago-notes` |
+| `"chicago-shortened-notes"` | Chicago Manual of Style 18th edition (сокращённые примечания и библиография) |
+| `"copernicus"` | Copernicus Publications |
+| `"cse-citation-sequence-brackets-8th-edition"` | CSE Manual: Scientific Style and Format 8th edition (порядок цитирования, скобки) |
+| `"council-of-science-editors"` | Короткий псевдоним `cse-citation-sequence-brackets-8th-edition` |
+| `"cse-name-year"` | CSE Manual: Scientific Style and Format 9th edition (имя-год) |
+| `"council-of-science-editors-author-date"` | Короткий псевдоним `cse-name-year` |
+| `"current-opinion"` | Current Opinion journals |
+| `"deutsche-gesellschaft-für-psychologie"` | Deutsche Gesellschaft für Psychologie 5. Auflage (Deutsch) |
+| `"deutsche-sprache"` | Deutsche Sprache (Deutsch) |
+| `"elsevier-harvard"` | Elsevier (автор-дата/Harvard, с названиями) |
+| `"elsevier-vancouver"` | Elsevier - NLM/Vancouver (порядок цитирования) |
+| `"elsevier-with-titles"` | Elsevier (числовой, с названиями) |
+| `"frontiers"` | Frontiers journals |
+| `"future-medicine"` | Future Medicine journals |
+| `"future-science"` | Future Science Group |
+| `"gb-7714-2005-numeric"` | China National Standard GB/T 7714-2005 (числовой, 中文) |
+| `"gb-7714-2015-author-date"` | China National Standard GB/T 7714-2015 (автор-дата, 中文) |
+| `"gb-7714-2015-note"` | China National Standard GB/T 7714-2015 (примечание, 中文) |
+| `"gb-7714-2015-numeric"` | China National Standard GB/T 7714-2015 (числовой, 中文) |
+| `"gost-r-705-2008-numeric"` | Russian GOST R 7.0.5-2008 (числовой) |
+| `"harvard-cite-them-right"` | Cite Them Right 12th edition (автор-дата/Harvard) |
+| `"institute-of-electrical-and-electronics-engineers"` | IEEE Reference Guide version 11.29.2023 |
+| `"ieee"` | Короткий псевдоним `institute-of-electrical-and-electronics-engineers` |
+| `"institute-of-physics-numeric"` | Institute of Physics (числовой) |
+| `"iso-690-author-date"` | ISO-690 (автор-дата, английский) |
+| `"iso-690-numeric"` | ISO-690 (числовой, английский) |
+| `"karger"` | Karger journals |
+| `"mary-ann-liebert-vancouver"` | Mary Ann Liebert - NLM/Vancouver |
+| `"modern-humanities-research-association-notes"` | MHRA Style Guide 4th edition (примечания) |
+| `"modern-humanities-research-association"` | Короткий псевдоним `modern-humanities-research-association-notes` |
+| `"modern-language-association"` | MLA Handbook 9th edition (внутритекстовые цитаты) |
+| `"mla"` | Короткий псевдоним `modern-language-association` |
+| `"modern-language-association-8"` | Короткий псевдоним `modern-language-association` |
+| `"mla-8"` | Короткий псевдоним `modern-language-association` |
+| `"multidisciplinary-digital-publishing-institute"` | Multidisciplinary Digital Publishing Institute |
+| `"nature"` | Nature |
+| `"nlm-citation-sequence"` | NLM/Vancouver: Citing Medicine 2nd edition (порядок цитирования) |
+| `"vancouver"` | Короткий псевдоним `nlm-citation-sequence` |
+| `"nlm-citation-sequence-superscript"` | NLM/Vancouver: Citing Medicine 2nd edition (порядок цитирования, надстрочный) |
+| `"vancouver-superscript"` | Короткий псевдоним `nlm-citation-sequence-superscript` |
+| `"pensoft"` | Pensoft Journals |
+| `"public-library-of-science"` | Public Library of Science |
+| `"plos"` | Короткий псевдоним `public-library-of-science` |
+| `"royal-society-of-chemistry"` | Royal Society of Chemistry |
+| `"sage-vancouver"` | SAGE - NLM/Vancouver |
+| `"sist02"` | SIST02 (日本語) |
+| `"spie"` | SPIE journals |
+| `"springer-basic"` | Springer - Basic (числовой, скобки) |
+| `"springer-basic-author-date"` | Springer - Basic (автор-дата) |
+| `"springer-fachzeitschriften-medizin-psychologie"` | Springer - Fachzeitschriften Medizin Psychologie (Deutsch) |
+| `"springer-humanities-author-date"` | Springer - Humanities (автор-дата) |
+| `"springer-lecture-notes-in-computer-science"` | Springer - Lecture Notes in Computer Science |
+| `"springer-mathphys"` | Springer - MathPhys (числовой, скобки) |
+| `"springer-socpsych-author-date"` | Springer - SocPsych (автор-дата) |
+| `"springer-vancouver"` | Springer - NLM/Vancouver (порядок цитирования, скобки) |
+| `"taylor-and-francis-chicago-author-date"` | Taylor & Francis Journals Standard Reference Style Guide: Chicago author-date version 2.0 |
+| `"taylor-and-francis-national-library-of-medicine"` | Taylor & Francis - NLM/Vancouver (порядок цитирования, скобки) |
+| `"the-institution-of-engineering-and-technology"` | The Institution of Engineering and Technology |
+| `"the-lancet"` | The Lancet |
+| `"thieme"` | Thieme-German (Deutsch) |
+| `"trends"` | Trends journals |
+| `"turabian-author-date"` | Chicago Manual of Style 17th edition (автор-дата) |
+| `"turabian-fullnote-8"` | Chicago Manual of Style 17th edition (примечания и библиография, последующий автор-название) |
+
+</details>

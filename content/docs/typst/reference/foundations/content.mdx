@@ -1,0 +1,129 @@
+---
+title: "Content"
+description: "Документация для типа `content`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Фрагмент содержимого документа.
+
+Этот тип лежит в основе Typst. Вся разметка, которую вы пишете, и большинство [функций](/docs/typst/reference/foundations/function), которые вы вызываете, порождают значения content. Вы можете создать значение content, заключив разметку в квадратные скобки. Так же вы передаёте содержимое в функции.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Type of *Hello!* is
+  #type([*Hello!*])
+`}
+  image="/typst_docs_assets/images/1BYpwyf_zQHyaEwwLQyx-Q.png"
+  alt=""
+  editable={true}
+/>
+
+Содержимое можно добавлять с помощью оператора `+`, [объединять вместе](/docs/typst/reference/scripting#blocks) и умножать на целые числа. Везде, где ожидается содержимое, вы также можете передать [строку](/docs/typst/reference/foundations/str) или `none`.
+
+## Представление [#representation]
+
+Содержимое состоит из элементов с полями. При создании элемента с помощью его _элементной функции_ вы передаёте эти поля в качестве аргументов, а когда у вас есть значение content, вы можете получить доступ к его полям с помощью [синтаксиса доступа к полям](/docs/typst/reference/scripting#fields).
+
+Некоторые поля являются обязательными: их необходимо передавать при создании элемента, и, как следствие, они всегда доступны через доступ к полям у содержимого этого типа. Обязательные поля отмечены как таковые в документации.
+
+Большинство полей являются необязательными: как и обязательные поля, их можно передать в элементную функцию, чтобы настроить их для отдельного элемента. Однако их также можно настроить с помощью [правил set](/docs/typst/reference/styling#set-rules), чтобы применить их ко всем элементам в области видимости. Необязательные поля доступны через синтаксис доступа к полям только тогда, когда они были явно переданы в элементную функцию, а не когда они являются результатом правила set.
+
+Каждый элемент имеет внешний вид по умолчанию. Однако вы также можете полностью настроить его внешний вид с помощью [правила show](/docs/typst/reference/styling#show-rules). В правило show передаётся элемент. Оно может получить доступ к полям элемента и создать из них произвольное содержимое.
+
+В веб-приложении вы можете навести курсор на переменную content, чтобы увидеть, из каких именно элементов состоит содержимое и какие у них поля. Кроме того, вы можете изучить вывод функции [`repr`](/docs/typst/reference/foundations/repr).
+
+## Функции [#functions]
+
+### `func` [#definitions-func]
+
+*Since: forever*
+
+Элементная функция содержимого. Эту функцию можно использовать для создания элемента, содержащегося в этом содержимом. Её можно использовать в правилах set и show для элемента. Её можно сравнивать с глобальными функциями, чтобы проверить, имеете ли вы дело с определённым видом элемента.
+
+```typst
+self.func() -> function
+```
+
+### `has` [#definitions-has]
+
+*Since: forever*
+
+Есть ли у содержимого указанное поле.
+
+```typst
+self.has(str) -> bool
+```
+
+#### `field` [#definitions-has-field]
+
+**Type:** [str](/docs/typst/reference/foundations/str) · **Modifiers:** Required, Positional
+
+Поле, которое нужно найти.
+
+### `at` [#definitions-at]
+
+*Since: forever*
+
+Получить доступ к указанному полю содержимого. Возвращает значение по умолчанию, если поле не существует, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.at(
+  str,
+  default: any,
+)
+```
+
+#### `field` [#definitions-at-field]
+
+**Type:** [str](/docs/typst/reference/foundations/str) · **Modifiers:** Required, Positional
+
+Поле, к которому нужно получить доступ.
+
+#### `default` [#definitions-at-default]
+
+**Type:** `any`
+
+Значение по умолчанию, возвращаемое, если поле не существует.
+
+### `fields` [#definitions-fields]
+
+*Since: 0.5.0*
+
+Возвращает поля этого содержимого.
+
+<details open>
+<summary>View example</summary>
+
+<TypstRender
+  code={`
+  #rect(
+    width: 10cm,
+    height: 10cm,
+  ).fields()
+`}
+  image="/typst_docs_assets/images/o01nmDV6MVQ7vxmqyyGENA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.fields() -> dictionary
+```
+
+### `location` [#definitions-location]
+
+*Since: forever*
+
+Местоположение содержимого. Оно доступно только для содержимого, возвращённого функцией [query](/docs/typst/reference/introspection/query), или предоставленного [правилом show](/docs/typst/reference/styling#show-rules); для другого содержимого оно будет `none`. Полученное местоположение можно использовать с [счётчиками](/docs/typst/reference/introspection/counter), [состоянием](/docs/typst/reference/introspection/state) и [запросами](/docs/typst/reference/introspection/query).
+
+```typst
+self.location() -> none | location
+```

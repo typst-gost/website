@@ -1,0 +1,385 @@
+---
+title: "Над/Под"
+description: "Документация для функций, добавляющих разделители над или под частями уравнения."
+---
+
+
+Разделители над или под частями уравнения.
+
+Фигурные скобки и квадратные скобки дополнительно позволяют добавить необязательную аннотацию под или над ними.
+
+Эти функции предназначены специально для добавления разделителей. Если вы хотите разместить две произвольные части уравнения одну над другой или одну под другой без разделителей, используйте вместо этого функцию [`attach`](/docs/typst/reference/math/attach#functions-attach).
+
+## Функции [#functions]
+
+### `underline` [#functions-underline]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная линия под содержимым.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ underline(1 + 2 + ... + 5) $
+`}
+  image="/typst_docs_assets/images/GahT6_HcZMXizaRknxq-_Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.underline(content)
+```
+
+#### `body` [#functions-underline-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое над линией.
+
+### `overline` [#functions-overline]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная линия над содержимым.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ overline(1 + 2 + ... + 5) $
+`}
+  image="/typst_docs_assets/images/p_XJh2okE4E2KzjWYdbrmg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.overline(content)
+```
+
+#### `body` [#functions-overline-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое под линией.
+
+### `underbrace` [#functions-underbrace]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная фигурная скобка под содержимым с необязательной аннотацией снизу.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ underbrace(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/o7dVydJAnzP687YzQRONWg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.underbrace(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-underbrace-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое над фигурной скобкой.
+
+#### `annotation` [#functions-underbrace-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое под фигурной скобкой.
+
+### `overbrace` [#functions-overbrace]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная фигурная скобка над содержимым с необязательной аннотацией сверху.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ overbrace(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/mFCQH0FRcLHjQ6sIKA-LYA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.overbrace(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-overbrace-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое под фигурной скобкой.
+
+#### `annotation` [#functions-overbrace-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое над фигурной скобкой.
+
+### `underbracket` [#functions-underbracket]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная квадратная скобка под содержимым с необязательной аннотацией снизу.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ underbracket(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/ftfh_fHG-VoI2XUHPgpB_w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.underbracket(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-underbracket-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое над квадратной скобкой.
+
+#### `annotation` [#functions-underbracket-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое под квадратной скобкой.
+
+### `overbracket` [#functions-overbracket]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная квадратная скобка над содержимым с необязательной аннотацией сверху.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ overbracket(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/wUGzxa-KDyYNptH_kKVf8Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.overbracket(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-overbracket-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое под квадратной скобкой.
+
+#### `annotation` [#functions-overbracket-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое над квадратной скобкой.
+
+### `underparen` [#functions-underparen]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная круглая скобка под содержимым с необязательной аннотацией снизу.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ underparen(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/wEC7o09lEjIFQpGUbagDNw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.underparen(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-underparen-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое над круглой скобкой.
+
+#### `annotation` [#functions-underparen-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое под круглой скобкой.
+
+### `overparen` [#functions-overparen]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная круглая скобка над содержимым с необязательной аннотацией сверху.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ overparen(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/K15Q4ZzZ2z7JEr0Gy_pubQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.overparen(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-overparen-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое под круглой скобкой.
+
+#### `annotation` [#functions-overparen-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое над круглой скобкой.
+
+### `undershell` [#functions-undershell]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная скобка-черепашка под содержимым с необязательной аннотацией снизу.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ undershell(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/w9ZlRJgSkOncra2VvdkAcQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.undershell(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-undershell-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое над скобкой-черепашкой.
+
+#### `annotation` [#functions-undershell-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое под скобкой-черепашкой.
+
+### `overshell` [#functions-overshell]
+
+*Элемент* · *Доступно: всегда*
+
+Горизонтальная скобка-черепашка над содержимым с необязательной аннотацией сверху.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ overshell(0 + 1 + dots.c + n, n + 1 "numbers") $
+`}
+  image="/typst_docs_assets/images/M_2rrJzTbup3HPtMuTUd7A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.overshell(
+  content,
+  none | content,
+)
+```
+
+#### `body` [#functions-overshell-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое под скобкой-черепашкой.
+
+#### `annotation` [#functions-overshell-annotation]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Необязательное содержимое над скобкой-черепашкой.

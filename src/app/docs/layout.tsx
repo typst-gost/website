@@ -6,6 +6,7 @@ import { baseOptions } from '@/lib/layout.shared';
 import { QuoteProvider } from '@/contexts/quote-context';
 
 import '@/styles/typst-render.css';
+import 'katex/dist/katex.css';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (

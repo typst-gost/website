@@ -1,0 +1,10 @@
+{
+  "title": "Руководства",
+  "description": "Руководства по Typst.",
+  "pages": [
+    "for-latex-users",
+    "page-setup",
+    "tables",
+    "accessibility"
+  ]
+}

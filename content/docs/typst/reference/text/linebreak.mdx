@@ -1,0 +1,63 @@
+---
+title: "Разрыв строки"
+description: "Документация для функции `linebreak`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Появился: всегда*
+
+Вставляет разрыв строки.
+
+Переводит абзац на следующую строку. Одиночный разрыв строки в конце абзаца игнорируется, но более одного создаёт дополнительные пустые строки.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  *Date:* 26.12.2022 \\
+  *Topic:* Infrastructure Test \\
+  *Severity:* High \\
+`}
+  image="/typst_docs_assets/images/1v571s2VASwsDmryWMBBmw.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+У этой функции также есть специальный синтаксис: чтобы вставить разрыв строки, просто напишите обратную косую черту, за которой следует пробельный символ. Это всегда создаёт невыключенный разрыв.
+
+## Параметры [#parameters]
+
+```typst
+linebreak(justify: bool) -> content
+```
+
+### `justify` [#parameters-justify]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Выравнивать ли строку перед разрывом.
+
+Это полезно, если вы нашли более удачное место для разрыва строки в выключенном тексте, чем Typst.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par(justify: true)
+  #let jb = linebreak(justify: true)
+
+  I have manually tuned the #jb
+  line breaks in this paragraph #jb
+  for an _interesting_ result. #jb
+`}
+  image="/typst_docs_assets/images/TyKhzO2tvbZbWTVcjngNIw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

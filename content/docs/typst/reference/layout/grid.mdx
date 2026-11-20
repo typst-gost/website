@@ -1,0 +1,785 @@
+---
+title: "Grid"
+description: "Документация для функции `grid`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступен: всегда*
+
+Располагает содержимое в сетке.
+
+Элемент grid позволяет располагать содержимое в сетке. Вы можете задать количество строк и столбцов, а также размер промежутков между ними. Существует несколько режимов определения размеров столбцов и строк, которые можно использовать для создания сложных макетов.
+
+Хотя элементы grid и table работают очень похоже, они предназначены для разных случаев использования и имеют разную семантику. Элемент grid предназначен для оформительских и компоновочных целей, тогда как элемент [`table`](/docs/typst/reference/model/table) предназначен, в широком смысле, для представления множества связанных точек данных. Правила set и show для одного из этих элементов не влияют на другой. Обратитесь к [разделу о доступности](#accessibility), чтобы узнать, как сетки и таблицы представляются пользователям вспомогательных технологий (AT), например экранных дикторов.
+
+## Определение размеров дорожек [#track-size]
+
+Размеры сетки определяются размерами дорожек, указанными в аргументах. Существует несколько параметров размеров: [`columns`](#parameters-columns), [`rows`](#parameters-rows) и [`gutter`](#parameters-gutter). Поскольку каждый из параметров размеров принимает одни и те же значения, мы объясним их только один раз, здесь. Каждый аргумент размеров принимает массив отдельных размеров дорожек. Размер дорожки может быть:
+
+- `auto`: дорожка будет иметь размер, достаточный для размещения её содержимого. Она будет не больше оставшегося пространства. Если имеется более одной дорожки `auto` и вместе они занимают больше доступного пространства, дорожки `auto` справедливо распределят доступное пространство между собой.
+- Фиксированная или относительная длина (например, `10pt` или `20% - 1cm`): дорожка будет ровно такого размера.
+- Дробная длина (например, `1fr`): после того как все остальные дорожки получат размеры, оставшееся пространство будет разделено между дробными дорожками в соответствии с их долями. Например, если есть две дробные дорожки, каждая с долей `1fr`, каждая займёт половину оставшегося пространства.
+
+Чтобы задать одну дорожку, массив можно опустить в пользу одного значения. Чтобы задать несколько дорожек `auto`, укажите количество дорожек вместо массива. Например, `columns:` `3` эквивалентно `columns:` `(auto, auto, auto)`.
+
+## Примеры [#examples]
+
+Пример ниже демонстрирует различные варианты определения размеров дорожек. Он также показывает, как можно использовать [`grid.cell`](#definitions-cell), чтобы отдельная ячейка занимала две дорожки сетки.
+
+<TypstRender
+  code={`
+  // We use \`rect\` to emphasize the
+  // area of cells.
+  #set rect(
+    inset: 8pt,
+    fill: rgb("e4e5ea"),
+    width: 100%,
+  )
+
+  #grid(
+    columns: (60pt, 1fr, 2fr),
+    rows: (auto, 60pt),
+    gutter: 3pt,
+    rect[Fixed width, auto height],
+    rect[1/3 of the remains],
+    rect[2/3 of the remains],
+    rect(height: 100%)[Fixed height],
+    grid.cell(
+      colspan: 2,
+      image("tiger.jpg", width: 100%),
+    ),
+  )
+`}
+  image="/typst_docs_assets/images/vzllZ-Kkv4lu4us6LJZDqA.png"
+  alt=""
+  editable={true}
+/>
+
+Вы также можете [распаковать](/docs/typst/reference/foundations/arguments#spreading) массив строк или содержимого в сетку, чтобы заполнить её ячейки.
+
+<TypstRender
+  code={`
+  #grid(
+    columns: 5,
+    gutter: 5pt,
+    ..range(25).map(str)
+  )
+`}
+  image="/typst_docs_assets/images/bw6bium4VweeX2lhSAlkDQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Оформление сетки [#styling]
+
+Элементы grid и table работают похоже. Для практического объяснения обратитесь к [руководству по таблицам](/docs/typst/guides/tables#fills); для краткого обзора продолжайте чтение.
+
+Внешний вид сетки можно настроить с помощью различных параметров. Вот наиболее важные из них:
+
+- [`align`](#parameters-align) — изменяет выравнивание ячеек
+- [`inset`](#parameters-inset) — при необходимости добавляет внутренние отступы в ячейки
+- [`fill`](#parameters-fill) — задаёт фон ячеек
+- [`stroke`](#parameters-stroke) — при необходимости включает линии сетки с определённым штрихом
+
+Для удовлетворения различных потребностей существует несколько способов их задания.
+
+Если вам нужно переопределить вышеуказанные параметры для отдельных ячеек, вы можете использовать элемент [`grid.cell`](#definitions-cell). Аналогично, вы можете переопределить отдельные линии сетки с помощью элементов [`grid.hline`](#definitions-hline) и [`grid.vline`](#definitions-vline).
+
+Чтобы настроить общий стиль сетки, вы можете вместо этого указать параметр любым из следующих способов:
+
+- Как одно значение, применяемое ко всем ячейкам.
+- Как массив значений, соответствующих каждому столбцу. Массив будет циклически повторяться, если столбцов больше, чем элементов в массиве.
+- Как функцию в форме `(x, y) => value`. Она получает индексы столбца и строки ячейки (оба начинаются с нуля) и должна возвращать значение, применяемое к этой ячейке.
+
+<TypstRender
+  code={`
+  #grid(
+    columns: 5,
+
+    // By a single value
+    align: center,
+    // By a single but more complicated value
+    inset: (x: 2pt, y: 3pt),
+    // By an array of values (cycling)
+    fill: (rgb("#239dad50"), none),
+    // By a function that returns a value
+    stroke: (x, y) => if calc.rem(x + y, 3) == 0 { 0.5pt },
+
+    ..range(5 * 3).map(n => numbering("A", n + 1))
+  )
+`}
+  image="/typst_docs_assets/images/v7PQwSz7yAZP694nO7ULJw.png"
+  alt=""
+  editable={true}
+/>
+
+Кроме того, вы можете [применять правила оформления](/docs/typst/reference/styling) к [`grid`](/docs/typst/reference/layout/grid) и [`grid.cell`](#definitions-cell). В частности, поля [`x`](#definitions-cell-x) и [`y`](#definitions-cell-y) элемента `grid.cell` можно использовать в селекторе [`where`](/docs/typst/reference/foundations/function#definitions-where), что позволяет оформлять ячейки в определённых столбцах или строках либо в отдельных позициях.
+
+### Приоритет оформления штрихов [#stroke-styling-precedence]
+
+Как объяснено выше, существует три способа задать штрих ячейки сетки: через [поле `stroke` элемента `grid.cell`](#definitions-cell-stroke), с помощью [`grid.hline`](#definitions-hline) и [`grid.vline`](#definitions-vline) либо через [поле `stroke` элемента `grid`](#parameters-stroke). Когда присутствуют несколько из этих настроек и они конфликтуют, настройки `hline` и `vline` имеют наивысший приоритет, за ними следуют настройки `cell` и, наконец, настройки `grid`.
+
+Кроме того, штрихи повторяющегося заголовка или нижнего колонтитула сетки имеют приоритет над обычными штрихами ячеек.
+
+## Доступность [#accessibility]
+
+Сетки не несут никакой особой семантики. Вспомогательные технологии (AT) не предоставляют возможности двумерной навигации по ячейкам в сетках. Если вы хотите представить табличные данные, используйте вместо этого элемент [`table`](/docs/typst/reference/model/table).
+
+AT будет читать ячейки сетки в их семантическом порядке. Обычно это порядок, в котором вы передали их в сетку. Однако если вы вручную разместили их с помощью [аргументов `x` и `y` элемента `grid.cell`](#definitions-cell-x), ячейки будут читаться построчно, слева направо (в документах с письмом слева направо). Ячейка будет прочитана, когда её позиция будет достигнута впервые.
+
+## Параметры [#parameters]
+
+```typst
+grid(
+  columns: auto | int | relative | fraction | array,
+  rows: auto | int | relative | fraction | array,
+  gutter: auto | int | relative | fraction | array,
+  column-gutter: auto | int | relative | fraction | array,
+  row-gutter: auto | int | relative | fraction | array,
+  inset: relative | array | dictionary | function,
+  align: auto | array | function | alignment,
+  fill: none | color | gradient | tiling | array | function,
+  stroke: none | length | color | gradient | stroke | tiling | array | dictionary | function,
+  ..content,
+)
+```
+
+### `columns` [#parameters-columns]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Размеры столбцов.
+
+Укажите либо массив размеров дорожек, либо целое число, чтобы создать сетку с таким количеством столбцов размера `auto`. Обратите внимание, что в отличие от строк и промежутков, указание одного размера дорожки всегда создаёт только один столбец.
+
+Дополнительные сведения см. в [разделе о размерах дорожек](#track-size) выше.
+
+### `rows` [#parameters-rows]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Размеры строк.
+
+Если ячеек больше, чем помещается в заданные строки, последняя строка повторяется, пока не закончатся ячейки.
+
+Дополнительные сведения см. в [разделе о размерах дорожек](#track-size) выше.
+
+### `gutter` [#parameters-gutter]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `()`
+
+Промежутки между строками и столбцами. Это сокращение для установки [`column-gutter`](#parameters-column-gutter) и [`row-gutter`](#parameters-row-gutter) в одно и то же значение.
+
+Если промежутков больше, чем заданных размеров, последний промежуток повторяется.
+
+Дополнительные сведения см. в [разделе о размерах дорожек](#track-size) выше.
+
+### `column-gutter` [#parameters-column-gutter]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Промежутки между столбцами.
+
+### `row-gutter` [#parameters-row-gutter]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Промежутки между строками.
+
+### `inset` [#parameters-inset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько дополнить отступами содержимое ячеек.
+
+Чтобы задать одинаковый inset для всех ячеек, вы можете использовать одну длину для всех сторон или словарь длин для отдельных сторон. Дополнительные сведения см. в [документации box](/docs/typst/reference/layout/box#parameters-inset).
+
+Чтобы задать различные inset для разных ячеек, вы можете:
+
+- использовать один inset для всех ячеек
+- использовать массив inset, соответствующих каждому столбцу
+- использовать функцию, которая сопоставляет позицию ячейки её inset
+
+Дополнительные сведения см. в [разделе об оформлении](#styling) выше.
+
+Кроме того, вы можете найти пример в параметре [`table.inset`](/docs/typst/reference/model/table#parameters-inset).
+
+### `align` [#parameters-align]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [array](/docs/typst/reference/foundations/array) или [function](/docs/typst/reference/foundations/function) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как выравнивать содержимое ячеек.
+
+Если установлено значение `auto`, используется внешнее выравнивание.
+
+Вы можете задать выравнивание любым из следующих способов:
+
+- использовать одно выравнивание для всех ячеек
+- использовать массив выравниваний, соответствующих каждому столбцу
+- использовать функцию, которая сопоставляет позицию ячейки её выравниванию
+
+Дополнительные сведения см. в [разделе об оформлении](#styling) выше.
+
+Кроме того, вы можете найти пример в параметре [`table.align`](/docs/typst/reference/model/table#parameters-align).
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) или [array](/docs/typst/reference/foundations/array) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как заполнять ячейки.
+
+Это может быть:
+
+- один цвет для всех ячеек
+- массив цветов, соответствующих каждому столбцу
+- функция, которая сопоставляет позицию ячейки её цвету
+
+В частности, массивы и функции полезны для создания полосатых сеток. Дополнительные сведения см. в [разделе об оформлении](#styling) выше.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #grid(
+    fill: (x, y) =>
+  if calc.even(x + y) { luma(230) }
+      else { white },
+    align: center + horizon,
+    columns: 4,
+    inset: 2pt,
+    [X], [O], [X], [O],
+    [O], [X], [O], [X],
+    [X], [O], [X], [O],
+    [O], [X], [O], [X],
+  )
+`}
+  image="/typst_docs_assets/images/-iFAJRkKMPUUvchilSusbw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Как [обводить](/docs/typst/reference/visualize/stroke) ячейки.
+
+По умолчанию сетки не имеют штрихов, что можно изменить, установив этот параметр в желаемый штрих.
+
+Если необходимо разместить линии, которые могут пересекать промежутки между ячейками, созданные параметром [`gutter`](#parameters-gutter), или переопределить штрих между несколькими конкретными ячейками, рассмотрите возможность указать один или несколько элементов [`grid.hline`](#definitions-hline) и [`grid.vline`](#definitions-vline) вместе с ячейками сетки.
+
+Чтобы задать одинаковый штрих для всех ячеек, вы можете использовать один [штрих](/docs/typst/reference/visualize/stroke) для всех сторон или словарь [штрихов](/docs/typst/reference/visualize/stroke) для отдельных сторон. Дополнительные сведения см. в [документации rectangle](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+Чтобы задать различные штрихи для разных ячеек, вы можете:
+
+- использовать один штрих для всех ячеек
+- использовать массив штрихов, соответствующих каждому столбцу
+- использовать функцию, которая сопоставляет позицию ячейки её штриху
+
+Дополнительные сведения см. в [разделе об оформлении](#styling) выше.
+
+<details>
+<summary>Посмотреть пример: передача функции для установки штриха в зависимости от позиции</summary>
+
+<TypstRender
+  code={`
+  #set page(width: 420pt)
+  #set text(number-type: "old-style")
+  #show grid.cell.where(y: 0): set text(size: 1.3em)
+
+  #grid(
+    columns: (1fr, 2fr, 2fr),
+    row-gutter: 1.5em,
+    inset: (left: 0.5em),
+    stroke: (x, y) => if x > 0 { (left: 0.5pt + gray) },
+    align: horizon,
+
+    [Winter \\ 2007 \\ Season],
+    [Aaron Copland \\ *The Tender Land* \\ January 2007],
+    [Eric Satie \\ *Gymnopedie 1, 2* \\ February 2007],
+
+    [],
+    [Jan 12 \\ *Middlebury College \\ Center for the Arts* \\ 20:00],
+    [Feb 2 \\ *Johnson State College Dibden Center for the Arts* \\ 19:30],
+
+    [],
+    [Skip a week \\ #text(0.8em)[_Prepare your exams!_]],
+    [Feb 9 \\ *Castleton State College \\ Fine Arts Center* \\ 19:30],
+
+    [],
+    [Jan 26, 27 \\ *Lyndon State College Alexander Twilight Theater* \\ 20:00],
+    [
+      Feb 17 --- #smallcaps[Anniversary] \\
+  *Middlebury College \\ Center for the Arts* \\
+      19:00 #text(0.7em)[(for a special guest)]
+    ],
+  )
+`}
+  image="/typst_docs_assets/images/jRm1nAhSdhu6U0VU_tH2VQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: свёртывание словаря штрихов</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 13em, width: 26em)
+
+  #let cv(..jobs) = grid(
+    columns: 2,
+    inset: 5pt,
+    stroke: (x, y) => if x == 0 and y > 0 {
+      (right: (
+        paint: luma(180),
+        thickness: 1.5pt,
+        dash: "dotted",
+      ))
+    },
+    grid.header(grid.cell(colspan: 2)[
+      *Professional Experience*
+  #box(width: 1fr, line(length: 100%, stroke: luma(180)))
+    ]),
+    ..{
+      let last = none
+  for job in jobs.pos() {
+        (
+          if job.year != last [*#job.year*],
+          [
+            *#job.company* - #job.role _(#job.timeframe)_ \\
+  #job.details
+          ]
+        )
+        last = job.year
+      }
+    }
+  )
+
+  #cv(
+    (
+      year: 2012,
+      company: [Pear Seed & Co.],
+      role: [Lead Engineer],
+      timeframe: [Jul - Dec],
+      details: [
+        - Raised engineers from 3x to 10x
+        - Did a great job
+      ],
+    ),
+    (
+      year: 2012,
+      company: [Mega Corp.],
+      role: [VP of Sales],
+      timeframe: [Mar - Jun],
+      details: [- Closed tons of customers],
+    ),
+    (
+      year: 2013,
+      company: [Tiny Co.],
+      role: [CEO],
+      timeframe: [Jan - Dec],
+      details: [- Delivered 4x more shareholder value],
+    ),
+    (
+      year: 2014,
+      company: [Glorbocorp Ltd],
+      role: [CTO],
+      timeframe: [Jan - Mar],
+      details: [- Drove containerization forward],
+    ),
+  )
+`}
+  image="/typst_docs_assets/images/gyB8sv8sbVoMn_DtLsk2bQ.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/b7Y8txCJiKsdRhgelc8OwA.png" alt="" width="572" height="286" />
+
+</details>
+
+### `children` [#parameters-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Содержимое ячеек сетки, а также любые дополнительные линии сетки, указанные с помощью элементов [`grid.hline`](#definitions-hline) и [`grid.vline`](#definitions-vline).
+
+Ячейки заполняются в порядке построчного заполнения.
+
+## Функции [#functions]
+
+### `cell` [#definitions-cell]
+
+*Элемент* · *Доступен: 0.11.0*
+
+Ячейка в сетке. Вы можете использовать эту функцию в списке аргументов сетки, чтобы переопределить свойства стиля сетки для отдельной ячейки или вручную разместить её в сетке. Вы также можете использовать эту функцию в правилах show, чтобы применять определённые стили к нескольким ячейкам одновременно.
+
+Например, вы можете переопределить позицию и штрих для одной ячейки:
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(15pt, font: "Noto Sans Symbols 2")
+  #show regex("[♚-♟︎]"): set text(fill: rgb("21212A"))
+  #show regex("[♔-♙]"): set text(fill: rgb("111015"))
+
+  #grid(
+    fill: (x, y) => rgb(
+      if calc.odd(x + y) { "7F8396" }
+      else { "EFF0F3" }
+    ),
+    columns: (1em,) * 8,
+    rows: 1em,
+    align: center + horizon,
+
+    [♖], [♘], [♗], [♕], [♔], [♗], [♘], [♖],
+    [♙], [♙], [♙], [♙], [],  [♙], [♙], [♙],
+    grid.cell(
+      x: 4, y: 3,
+      stroke: blue.transparentize(60%)
+    )[♙],
+
+    ..(grid.cell(y: 6)[♟],) * 8,
+    ..([♜], [♞], [♝], [♛], [♚], [♝], [♞], [♜])
+      .map(grid.cell.with(y: 7)),
+  )
+`}
+  image="/typst_docs_assets/images/dgLPM4zrTIG2d6EnrKafMw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Вы также можете применить правило show к `grid.cell`, чтобы оформить все ячейки сразу, что позволяет, например, применять стили в зависимости от позиции ячейки. Обратитесь к примерам элемента [`table.cell`](/docs/typst/reference/model/table#definitions-cell), чтобы узнать больше об этом.
+
+```typst
+grid.cell(
+  content,
+  x: auto | int,
+  y: auto | int,
+  colspan: int,
+  rowspan: int,
+  inset: auto | relative | dictionary,
+  align: auto | alignment,
+  fill: none | auto | color | gradient | tiling,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  breakable: auto | bool,
+)
+```
+
+#### `body` [#definitions-cell-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое ячейки.
+
+#### `x` [#definitions-cell-x]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Столбец ячейки (с нулевым индексом). Это поле может использоваться в правилах show для оформления ячейки в зависимости от её столбца.
+
+Вы можете переопределить это поле, чтобы выбрать, в каком столбце должна быть размещена ячейка. Если строка (`y`) не выбрана, ячейка будет размещена в первой строке (начиная со строки 0), где доступен этот столбец (или в новой строке, если такой нет). Однако если выбраны и `x`, и `y`, ячейка будет размещена в точно указанной позиции. Если эта позиция недоступна, возникает ошибка (поэтому обычно разумно указывать ячейки с пользовательской позицией перед ячейками с автоматическими позициями).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let circ(c) = circle(
+    fill: c,
+    width: 5mm,
+  )
+
+  #grid(
+    columns: 4,
+    rows: 7mm,
+    stroke: .5pt + blue,
+    align: center + horizon,
+    inset: 1mm,
+
+    grid.cell(x: 2, y: 2, circ(aqua)),
+    circ(yellow),
+    grid.cell(x: 3, circ(green)),
+    circ(black),
+  )
+`}
+  image="/typst_docs_assets/images/b9gsSNIk2CD7dmRX9BWEDg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `y` [#definitions-cell-y]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Строка ячейки (с нулевым индексом). Это поле может использоваться в правилах show для оформления ячейки в зависимости от её строки.
+
+Вы можете переопределить это поле, чтобы выбрать, в какой строке должна быть размещена ячейка. Если столбец (`x`) не выбран, ячейка будет размещена в первом столбце (начиная со столбца 0), доступном в выбранной строке. Если все столбцы в выбранной строке уже заняты, возникает ошибка.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let tri(c) = polygon.regular(
+    fill: c,
+    size: 5mm,
+    vertices: 3,
+  )
+
+  #grid(
+    columns: 2,
+    stroke: blue,
+    inset: 1mm,
+
+    tri(black),
+    grid.cell(y: 1, tri(teal)),
+    grid.cell(y: 1, tri(red)),
+    grid.cell(y: 2, tri(orange))
+  )
+`}
+  image="/typst_docs_assets/images/kqGlg-hT5HggHnmP-_TznQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `colspan` [#definitions-cell-colspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Количество столбцов, охватываемых этой ячейкой.
+
+#### `rowspan` [#definitions-cell-rowspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Количество строк, охватываемых этой ячейкой.
+
+#### `inset` [#definitions-cell-inset]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Переопределение [inset](#parameters-inset) ячейки.
+
+#### `align` [#definitions-cell-align]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Переопределение [выравнивания](#parameters-align) ячейки.
+
+#### `fill` [#definitions-cell-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Переопределение [заливки](#parameters-fill) ячейки.
+
+#### `stroke` [#definitions-cell-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Переопределение [штриха](#parameters-stroke) ячейки.
+
+#### `breakable` [#definitions-cell-breakable]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Можно ли размещать строки, охватываемые этой ячейкой, на разных страницах. Если равно `auto`, ячейка, охватывающая только строки фиксированного размера, является неразрывной, тогда как ячейка, охватывающая хотя бы одну строку размера `auto`, является разрывной.
+
+### `hline` [#definitions-hline]
+
+*Элемент* · *Доступен: 0.11.0*
+
+Горизонтальная линия в сетке.
+
+Переопределяет любой штрих отдельной ячейки, включая штрих, указанный через поле `stroke` сетки. Может пересекать промежутки между ячейками, созданные параметром `column-gutter` сетки.
+
+Пример для этой функции можно найти в элементе [`table.hline`](/docs/typst/reference/model/table#definitions-hline).
+
+```typst
+grid.hline(
+  y: auto | int,
+  start: int,
+  end: none | int,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  position: alignment,
+) -> content
+```
+
+#### `y` [#definitions-hline-y]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Строка, над которой размещается горизонтальная линия (с нулевым индексом). Если поле `position` установлено в `bottom`, линия вместо этого размещается под строкой с заданным индексом (подробности см. в [`grid.hline.position`](#definitions-hline-position)).
+
+Указание `auto` приводит к тому, что линия размещается в строке под последней автоматически позиционированной ячейкой (то есть ячейкой без переопределений координат) перед линией среди дочерних элементов сетки. Если такой ячейки перед линией нет, она размещается в верхней части сетки (строка 0). Обратите внимание, что указание для этого параметра ровно общего количества строк в сетке приводит к тому, что эта горизонтальная линия переопределяет нижнюю границу сетки, тогда как значение 0 переопределяет верхнюю границу.
+
+#### `start` [#definitions-hline-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `0`
+
+Столбец, в котором начинается горизонтальная линия (с нулевым индексом, включительно).
+
+#### `end` [#definitions-hline-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Столбец, перед которым заканчивается горизонтальная линия (с нулевым индексом, исключительно). Следовательно, горизонтальная линия будет проведена до столбца `end - 1` включительно и через него.
+
+Значение, равное `none` или количеству столбцов, приводит к тому, что она простирается до самого конца сетки.
+
+#### `stroke` [#definitions-hline-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `stroke()`
+
+Штрих линии.
+
+Указание `none` удаляет любые линии, ранее размещённые в диапазоне этой линии, включая hline или штрихи отдельных ячеек под ней.
+
+#### `position` [#definitions-hline-position]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `top`
+
+Позиция, в которой размещается линия, относительно её строки (`y`): либо `top`, чтобы нарисовать над ней, либо `bottom`, чтобы нарисовать под ней.
+
+Эта настройка актуальна только при включённом промежутке между строками (и не должна использоваться в противном случае — предпочтительнее просто увеличить поле `y` на единицу), поскольку тогда позиция под строкой становится отличной от позиции над следующей строкой из-за промежутка между ними.
+
+### `vline` [#definitions-vline]
+
+*Элемент* · *Доступен: 0.11.0*
+
+Вертикальная линия в сетке.
+
+Переопределяет любой штрих отдельной ячейки, включая штрих, указанный через поле `stroke` сетки. Может пересекать промежутки между ячейками, созданные параметром `row-gutter` сетки.
+
+```typst
+grid.vline(
+  x: auto | int,
+  start: int,
+  end: none | int,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  position: alignment,
+) -> content
+```
+
+#### `x` [#definitions-vline-x]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Столбец, перед которым размещается вертикальная линия (с нулевым индексом). Если поле `position` установлено в `end`, линия вместо этого размещается после столбца с заданным индексом (подробности см. в [`grid.vline.position`](#definitions-vline-position)).
+
+Указание `auto` приводит к тому, что линия размещается в столбце после последней автоматически позиционированной ячейки (то есть ячейки без переопределений координат) перед линией среди дочерних элементов сетки. Если такой ячейки перед линией нет, она размещается перед первым столбцом сетки (столбец 0). Обратите внимание, что указание для этого параметра ровно общего количества столбцов в сетке приводит к тому, что эта вертикальная линия переопределяет конечную границу сетки (правую в LTR, левую в RTL), тогда как значение 0 переопределяет начальную границу (левую в LTR, правую в RTL).
+
+#### `start` [#definitions-vline-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `0`
+
+Строка, в которой начинается вертикальная линия (с нулевым индексом, включительно).
+
+#### `end` [#definitions-vline-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Строка, над которой заканчивается вертикальная линия (с нулевым индексом, исключительно). Следовательно, вертикальная линия будет проведена до строки `end - 1` включительно и через неё.
+
+Значение, равное `none` или количеству строк, приводит к тому, что она простирается до самого низа сетки.
+
+#### `stroke` [#definitions-vline-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `stroke()`
+
+Штрих линии.
+
+Указание `none` удаляет любые линии, ранее размещённые в диапазоне этой линии, включая vline или штрихи отдельных ячеек под ней.
+
+#### `position` [#definitions-vline-position]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `start`
+
+Позиция, в которой размещается линия, относительно её столбца (`x`): либо `start`, чтобы нарисовать перед ним, либо `end`, чтобы нарисовать после него.
+
+Значения `left` и `right` также принимаются, но не рекомендуются, поскольку они делают вашу сетку несогласованной между документами с письмом слева направо и справа налево.
+
+Эта настройка актуальна только при включённом промежутке между столбцами (и не должна использоваться в противном случае — предпочтительнее просто увеличить поле `x` на единицу), поскольку тогда позиция после столбца становится отличной от позиции перед следующим столбцом из-за промежутка между ними.
+
+### `header` [#definitions-header]
+
+*Элемент* · *Доступен: 0.11.0*
+
+Повторяемый заголовок сетки.
+
+Если `repeat` установлено в `true`, заголовок будет повторяться на страницах. Пример см. в элементе [`table.header`](/docs/typst/reference/model/table#definitions-header) и параметре [`grid.stroke`](#parameters-stroke).
+
+```typst
+grid.header(
+  repeat: bool,
+  level: int,
+  ..content,
+)
+```
+
+#### `repeat` [#definitions-header-repeat]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Следует ли повторять этот заголовок на страницах.
+
+#### `level` [#definitions-header-level]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Уровень заголовка. Не должен быть нулевым.
+
+Это позволяет повторять несколько заголовков одновременно. Заголовки с разными уровнями могут повторяться вместе, если их уровни возрастают.
+
+В частности, когда заголовок с более низким уровнем начинает повторяться, все заголовки с более высоким или равным уровнем перестают повторяться (они «заменяются» новым заголовком).
+
+#### `children` [#definitions-header-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Ячейки и линии внутри заголовка.
+
+### `footer` [#definitions-footer]
+
+*Элемент* · *Доступен: 0.11.0*
+
+Повторяемый нижний колонтитул сетки.
+
+Как и элемент [`grid.header`](#definitions-header), нижний колонтитул может повторяться на каждой странице сетки.
+
+После нижнего колонтитула не может быть размещено никаких других ячеек сетки.
+
+```typst
+grid.footer(
+  repeat: bool,
+  ..content,
+)
+```
+
+#### `repeat` [#definitions-footer-repeat]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Следует ли повторять этот нижний колонтитул на страницах.
+
+#### `children` [#definitions-footer-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Ячейки и линии внутри нижнего колонтитула.

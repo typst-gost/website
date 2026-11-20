@@ -1,0 +1,47 @@
+---
+title: "Модуль"
+description: "Документация для типа `module`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Набор переменных и функций, обычно связанных с одной темой.
+
+Модуль может
+
+- быть встроенным
+- происходить из [импорта файла](/docs/typst/reference/scripting#modules)
+- происходить из [импорта пакета](/docs/typst/reference/scripting#packages) (и, следовательно, косвенно из его файла точки входа)
+- быть результатом вызова функции [plugin](/docs/typst/reference/foundations/plugin)
+
+Вы можете обращаться к определениям из модуля, используя [нотацию доступа к полям](/docs/typst/reference/scripting#fields), и взаимодействовать с ним с помощью [синтаксиса import и include](/docs/typst/reference/scripting#modules).
+
+<TypstRender
+  code={`
+  #import "utils.typ"
+  #utils.add(2, 5)
+
+  #import utils: sub
+  #sub(1, 4)
+`}
+  image="/typst_docs_assets/images/MaOQJMp7njA0HS8a4MgU5Q.png"
+  alt=""
+  editable={true}
+/>
+
+Вы можете проверить, присутствует ли определение в модуле, используя оператор `in` со строкой в левой части. Это может быть полезно для [условного доступа](/docs/typst/reference/foundations/std#conditional-access) к определениям в модуле.
+
+<TypstRender
+  code={`
+  #("table" in std) \\
+  #("nope" in std)
+`}
+  image="/typst_docs_assets/images/x_6SLAv00sc-GpWIVxaF1w.png"
+  alt=""
+  editable={true}
+/>
+
+Кроме того, можно преобразовать модуль в словарь и, следовательно, динамически обращаться к его содержимому, используя [конструктор словаря](/docs/typst/reference/foundations/dictionary#constructor).

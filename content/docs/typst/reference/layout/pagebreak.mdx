@@ -1,0 +1,83 @@
+---
+title: "Разрыв страницы"
+description: "Документация для функции `pagebreak`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Начиная с: forever*
+
+Ручной разрыв страницы.
+
+Не должен использоваться внутри каких-либо контейнеров.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  The next page contains
+  more details on compound theory.
+  #pagebreak()
+
+  == Compound Theory
+  In 1984, the first ...
+`}
+  image="/typst_docs_assets/images/sBOYQYMphpQX5KfkH0BhGQ.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/2AbjjeZedj8JW7VUbOwuLQ.png" alt="" width="480" height="108" />
+
+Даже без ручных разрывов страниц содержимое автоматически разбивается на страницы в соответствии с заданным размером страницы. Вы можете установить [высоту страницы](/docs/typst/reference/layout/page#parameters-height) в значение `auto`, чтобы страница динамически увеличивалась до тех пор, пока не произойдёт ручной разрыв страницы.
+
+При разбиении на страницы система старается избегать одиночных строк текста вверху или внизу страницы (они называются _висячими_ и _одиночными_ строками). Вы можете настроить параметр [`text.costs`](/docs/typst/reference/text/text#parameters-costs), чтобы отключить это поведение.
+
+## Параметры [#parameters]
+
+```typst
+pagebreak(
+  weak: bool,
+  to: none | str,
+) -> content
+```
+
+### `weak` [#parameters-weak]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Если `true`, разрыв страницы пропускается, если текущая страница уже пуста.
+
+### `to` [#parameters-to]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Если указано, гарантирует, что следующая страница будет чётной или нечётной, при необходимости с пустой страницей между ними.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 30pt)
+
+  First.
+  #pagebreak(to: "odd")
+  Third.
+`}
+  image="/typst_docs_assets/images/1KZuuDe3LAVW6GPb2I_aOQ.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/zzwekDad5kDwvA97gD0DQA.png" alt="" width="480" height="60" />
+
+<img src="/typst_docs_assets/images/XPQmAt3C5VGkKvXfbEM0lA.png" alt="" width="480" height="60" />
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"even"` | Следующая страница будет чётной. |
+| `"odd"` | Следующая страница будет нечётной. |

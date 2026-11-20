@@ -1,0 +1,346 @@
+---
+title: "Direction"
+description: "Документация для типа `direction`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Четыре направления, в которых может быть расположен контент.
+
+Возможные значения: [`ltr`](#definitions-ltr), [`rtl`](#definitions-rtl), [`ttb`](#definitions-ttb) и [`btt`](#definitions-btt).
+
+Эти значения доступны глобально, а также в области видимости типа direction, поэтому можно записать любой из следующих двух вариантов:
+
+<TypstRender
+  code={`
+  #stack(dir: rtl)[A][B][C]
+  #stack(dir: direction.rtl)[A][B][C]
+`}
+  image="/typst_docs_assets/images/fg4R3Nt5_KG3XlYfjQBi1Q.png"
+  alt=""
+  editable={true}
+/>
+
+## Константы [#constants]
+
+### `ltr` [#definitions-ltr]
+
+*Since: forever* · **Type:** [direction](/docs/typst/reference/layout/direction)
+
+Слева направо.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 0.2cm,
+    circle(),
+    line(),
+    square(),
+  )
+`}
+  image="/typst_docs_assets/images/ApgP7InbjLuSraamG2Q_Dw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `rtl` [#definitions-rtl]
+
+*Since: forever* · **Type:** [direction](/docs/typst/reference/layout/direction)
+
+Справа налево.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: rtl,
+    spacing: 0.2cm,
+    circle(),
+    line(),
+    square(),
+  )
+`}
+  image="/typst_docs_assets/images/T3sClQaDiT6X2ZWp4OCxkw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `ttb` [#definitions-ttb]
+
+*Since: forever* · **Type:** [direction](/docs/typst/reference/layout/direction)
+
+Сверху вниз.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ttb,
+    spacing: 0.2cm,
+    circle(),
+    line(),
+    square(),
+  )
+`}
+  image="/typst_docs_assets/images/ss_-O1BY-FW2fE-xf_5ljA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `btt` [#definitions-btt]
+
+*Since: forever* · **Type:** [direction](/docs/typst/reference/layout/direction)
+
+Снизу вверх.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: btt,
+    spacing: 0.2cm,
+    circle(),
+    line(),
+    square(),
+  )
+`}
+  image="/typst_docs_assets/images/yhpXcqbCjkOt8prN3qGwMg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `from` [#definitions-from]
+
+*Since: 0.14.0*
+
+Возвращает направление по начальной точке.
+
+Эта функция выполняет действие, противоположное [`direction.start`](#definitions-start).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #direction.from(left) \\
+  #direction.from(right) \\
+  #direction.from(top) \\
+  #direction.from(bottom)
+`}
+  image="/typst_docs_assets/images/eyT011TwBAgTbM4UOPCkAQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+direction.from(alignment) -> direction
+```
+
+#### `side` [#definitions-from-side]
+
+**Type:** [alignment](/docs/typst/reference/layout/alignment) · **Modifiers:** Required, Positional
+
+Начальная точка для направления.
+
+Не может быть `start` или `end`.
+
+### `to` [#definitions-to]
+
+*Since: 0.14.0*
+
+Возвращает направление по конечной точке.
+
+Эта функция выполняет действие, противоположное [`direction.end`](#definitions-end).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #direction.to(left) \\
+  #direction.to(right) \\
+  #direction.to(top) \\
+  #direction.to(bottom)
+`}
+  image="/typst_docs_assets/images/mosx3XJR9GAo7TW4PgbtgA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+direction.to(alignment) -> direction
+```
+
+#### `side` [#definitions-to-side]
+
+**Type:** [alignment](/docs/typst/reference/layout/alignment) · **Modifiers:** Required, Positional
+
+Конечная точка для направления.
+
+Не может быть `start` или `end`.
+
+### `axis` [#definitions-axis]
+
+*Since: 0.7.0*
+
+Ось, к которой относится это направление: `"horizontal"` или `"vertical"`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #ltr.axis() \\
+  #ttb.axis()
+`}
+  image="/typst_docs_assets/images/SKgAG0Uup_6qLdpZEMqKQQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.axis() -> str
+```
+
+### `sign` [#definitions-sign]
+
+*Since: 0.14.0*
+
+Соответствующий знак для использования в вычислениях.
+
+Это знак вектора, направленного в эту сторону вдоль соответствующей оси.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #ltr.sign() \\
+  #rtl.sign() \\
+  #ttb.sign() \\
+  #btt.sign()
+`}
+  image="/typst_docs_assets/images/xSbmzR4KLE4zf15YneHPEw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.sign() -> int
+```
+
+### `start` [#definitions-start]
+
+*Since: 0.7.0*
+
+Начальная точка этого направления.
+
+Эта функция выполняет действие, противоположное [`direction.from`](#definitions-from).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #ltr.start() \\
+  #rtl.start() \\
+  #ttb.start() \\
+  #btt.start()
+`}
+  image="/typst_docs_assets/images/pIuosLjt4Kugs4vjFFEcIQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.start() -> alignment
+```
+
+### `end` [#definitions-end]
+
+*Since: 0.7.0*
+
+Конечная точка этого направления.
+
+Эта функция выполняет действие, противоположное [`direction.to`](#definitions-to).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #ltr.end() \\
+  #rtl.end() \\
+  #ttb.end() \\
+  #btt.end()
+`}
+  image="/typst_docs_assets/images/zKeaV9Qtvk5cLWGCvffd4w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.end() -> alignment
+```
+
+### `inv` [#definitions-inv]
+
+*Since: forever*
+
+Обратное (противоположное) направление.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #ltr.inv() \\
+  #rtl.inv() \\
+  #ttb.inv() \\
+  #btt.inv()
+`}
+  image="/typst_docs_assets/images/mosx3XJR9GAo7TW4PgbtgA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.inv() -> direction
+```

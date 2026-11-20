@@ -1,0 +1,291 @@
+---
+title: "Лево/Право"
+description: "Документация по функциям, которые позволяют верстать парные, потенциально масштабируемые разделители."
+---
+
+
+Сопоставление разделителей.
+
+Функция `lr` позволяет сопоставить два разделителя и масштабировать их вместе с содержимым, которое они охватывают. Хотя это также происходит автоматически для разделителей, которые сопоставляются синтаксически, `lr` позволяет сопоставить два произвольных разделителя и точно управлять их размером. Помимо функции `lr`, Typst предоставляет ещё несколько функций, которые создают пары разделителей для абсолютных значений, значений с округлением вверх и вниз, а также норм.
+
+Чтобы разделитель не сопоставлялся Typst и, следовательно, не масштабировался автоматически, экранируйте его обратной косой чертой. Чтобы вместо этого полностью отключить автоматическое масштабирование, используйте `set math.lr(size: 1em)`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ [a, b/2] $
+  $ lr(]sum_(x=1)^n], size: #50%) x $
+  $ abs((x + y) / 2) $
+  $ \\{ (x / y) \\} $
+  #set math.lr(size: 1em)
+  $ { (a / b), a, b in (0; 1/2] } $
+`}
+  image="/typst_docs_assets/images/gf2-k7QkTDLRWZHA68lLXg.png"
+  alt=""
+  editable={true}
+/>
+
+## Функции [#functions]
+
+### `lr` [#functions-lr]
+
+*Элемент* · *Доступно с: всегда*
+
+Масштабирует разделители.
+
+Хотя сопоставленные разделители масштабируются по умолчанию, эту функцию можно использовать для масштабирования несопоставленных разделителей и для более точного управления масштабированием разделителей.
+
+```typst
+math.lr(
+  size: relative,
+  content,
+)
+```
+
+#### `size` [#functions-lr-size]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `100% + 0pt`
+
+Размер скобок относительно высоты охватываемого содержимого.
+
+#### `body` [#functions-lr-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое с разделителями, включая сами разделители.
+
+### `mid` [#functions-mid]
+
+*Элемент* · *Доступно с: 0.10.0*
+
+Масштабирует разделители по вертикали до ближайшей окружающей группы `lr()`.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ { x mid(|) sum_(i=1)^n w_i abs(f_i (x)) < 1 } $
+`}
+  image="/typst_docs_assets/images/zK3_tY8TpDpxJ_Jo56cqjw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.mid(content)
+```
+
+#### `body` [#functions-mid-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, подлежащее масштабированию.
+
+### `abs` [#functions-abs]
+
+*Доступно с: всегда*
+
+Берёт абсолютное значение выражения.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ abs(x/2) $
+`}
+  image="/typst_docs_assets/images/BktKzLtTNRO0M4IbQhnY1Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.abs(
+  size: relative,
+  content,
+)
+```
+
+#### `size` [#functions-abs-size]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative)
+
+Размер скобок относительно высоты охватываемого содержимого.
+
+По умолчанию: текущее значение [`lr.size`](#functions-lr-size).
+
+#### `body` [#functions-abs-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Выражение, для которого берётся абсолютное значение.
+
+### `norm` [#functions-norm]
+
+*Доступно с: всегда*
+
+Берёт норму выражения.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ norm(x/2) $
+`}
+  image="/typst_docs_assets/images/b_2i0gIOmF7kQhvlkW67mw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.norm(
+  size: relative,
+  content,
+)
+```
+
+#### `size` [#functions-norm-size]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative)
+
+Размер скобок относительно высоты охватываемого содержимого.
+
+По умолчанию: текущее значение [`lr.size`](#functions-lr-size).
+
+#### `body` [#functions-norm-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Выражение, для которого берётся норма.
+
+### `floor` [#functions-floor]
+
+*Доступно с: всегда*
+
+Округляет выражение вниз.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ floor(x/2) $
+`}
+  image="/typst_docs_assets/images/nBcoiDGKLrqzIXnCJycXyA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.floor(
+  size: relative,
+  content,
+)
+```
+
+#### `size` [#functions-floor-size]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative)
+
+Размер скобок относительно высоты охватываемого содержимого.
+
+По умолчанию: текущее значение [`lr.size`](#functions-lr-size).
+
+#### `body` [#functions-floor-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Выражение, для которого берётся округление вниз.
+
+### `ceil` [#functions-ceil]
+
+*Доступно с: всегда*
+
+Округляет выражение вверх.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ ceil(x/2) $
+`}
+  image="/typst_docs_assets/images/sPgcS2bukvDnFGTEtRMqGQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.ceil(
+  size: relative,
+  content,
+)
+```
+
+#### `size` [#functions-ceil-size]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative)
+
+Размер скобок относительно высоты охватываемого содержимого.
+
+По умолчанию: текущее значение [`lr.size`](#functions-lr-size).
+
+#### `body` [#functions-ceil-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Выражение, для которого берётся округление вверх.
+
+### `round` [#functions-round]
+
+*Доступно с: всегда*
+
+Округляет выражение.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ round(x/2) $
+`}
+  image="/typst_docs_assets/images/wBoQpNzxE1-90GfcURnjDw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.round(
+  size: relative,
+  content,
+)
+```
+
+#### `size` [#functions-round-size]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative)
+
+Размер скобок относительно высоты охватываемого содержимого.
+
+По умолчанию: текущее значение [`lr.size`](#functions-lr-size).
+
+#### `body` [#functions-round-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Выражение, для которого берётся округление.

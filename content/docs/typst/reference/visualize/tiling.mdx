@@ -1,0 +1,266 @@
+---
+title: "Тайлинг"
+description: "Документация для типа `tiling`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.13.0*
+
+Повторяющаяся тайловая заливка.
+
+Typst поддерживает наиболее распространённый тип тайлинга, при котором узор повторяется в виде сетки, покрывая всю область элемента, к которому применяется заливка или обводка. Узор определяется [`size`](#constructor-size) тайла и телом, задающим содержимое каждой ячейки. Вы также можете добавить горизонтальный или вертикальный [`spacing`](#constructor-spacing) между ячейками тайлинга. [`offset`](#constructor-offset) и [`angle`](#constructor-angle) определяют размещение тайлинга.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let pat = tiling(size: (30pt, 30pt), {
+    place(line(start: (0%, 0%), end: (100%, 100%)))
+    place(line(start: (0%, 100%), end: (100%, 0%)))
+  })
+
+  #rect(fill: pat, width: 100%, height: 60pt, stroke: 1pt)
+`}
+  image="/typst_docs_assets/images/t1bFk30FBB1ozFJIgoxNXg.png"
+  alt=""
+  editable={true}
+/>
+
+## Тайлинг на тексте [#tilings-on-text]
+
+Тайлинг также поддерживается на тексте, но только если для [`relative`](#constructor-relative) задано значение `auto` (значение по умолчанию) или `"parent"`. Чтобы создать тайлинг по словам или по глифам, вы можете вручную обернуть слова или символы текста в [блоки](/docs/typst/reference/layout/box) или сделать это с помощью [правила show](/docs/typst/reference/styling#show-rules).
+
+<TypstRender
+  code={`
+  #let pat = tiling(
+    size: (30pt, 30pt),
+    relative: "parent",
+    square(
+      size: 30pt,
+      fill: gradient
+        .conic(..color.map.rainbow),
+    )
+  )
+
+  #set text(fill: pat)
+  #lorem(10)
+`}
+  image="/typst_docs_assets/images/aVrxdLr4a6L_gCVTbFQQEg.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Создаёт новый тайлинг.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #let pat = tiling(
+    size: (20pt, 20pt),
+    relative: "parent",
+    place(
+      dx: 5pt,
+      dy: 5pt,
+      rotate(45deg, square(
+        size: 5pt,
+        fill: black,
+      )),
+    ),
+  )
+
+  #rect(width: 100%, height: 60pt, fill: pat)
+`}
+  image="/typst_docs_assets/images/4ul92BVXgkXkO3RO3em31w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+tiling(
+  size: auto | array,
+  spacing: array,
+  offset: array,
+  angle: angle,
+  relative: auto | str,
+  content,
+) -> tiling
+```
+
+### `size` [#constructor-size]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `auto`
+
+Ограничивающий прямоугольник каждой ячейки тайлинга, задаваемый как пара `(x, y)`.
+
+Если задано значение `auto`, тайлинг принимает размер размещённого содержимого.
+
+### `spacing` [#constructor-spacing]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `(0pt, 0pt)`
+
+Расстояние между ячейками тайлинга, задаваемое как пара `(x, y)`.
+
+Если расстояние меньше размера тайлинга, тайлинг будет перекрываться сам с собой. Если больше — между ячейками появятся промежутки.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #let pat = tiling(
+    size: (30pt, 30pt),
+    spacing: (10pt, 20pt),
+    square(size: 30pt, fill: gradient.conic(..color.map.rainbow)),
+  )
+
+  #rect(
+    width: 100%,
+    height: 80pt,
+    fill: pat,
+    stroke: (thickness: 1pt, dash: "dotted"),
+  )
+`}
+  image="/typst_docs_assets/images/7la3EsrSQXxnKovmedEidw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `offset` [#constructor-offset]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `(0% + 0pt, 0% + 0pt)`
+
+Смещает всю сетку тайлов, не влияя на размер тайла или расстояние между ними.
+
+Смещение задаётся как пара `(x, y)`. Положительные значения `x` сдвигают узор вправо, а положительные значения `y` — вниз. Относительные значения вычисляются относительно размера тайла плюс расстояние между тайлами.
+
+Обратите внимание, что смещение, вызванное параметром offset, влияет на сами тайлы, тогда как смещение внутреннего содержимого (например, с помощью `place(dx: .., dy: ..)`) может привести к обрезке, если содержимое выходит за пределы ограничивающего прямоугольника тайла.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%, height: 80pt, stroke: 1pt)
+
+  #let pat = tiling(
+    size: (20pt, 20pt),
+    circle(radius: 10pt, fill: blue),
+  )
+
+  #let pat-with-offset = tiling(
+    size: (20pt, 20pt),
+    offset: (50%, 50%),
+    circle(radius: 10pt, fill: blue),
+  )
+
+  #grid(
+    columns: 2,
+    column-gutter: 10pt,
+    rect(fill: pat),
+    rect(fill: pat-with-offset),
+  )
+`}
+  image="/typst_docs_assets/images/cAkpjrRbjEwdDl4HxiSLKw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `angle` [#constructor-angle]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **По умолчанию:** `0deg`
+
+Поворачивает тайлы и сетку по часовой стрелке вокруг координат смещения на заданный угол. Поворот применяется после смещения.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #let pat = tiling(
+    size: (20pt, 20pt),
+    angle: 45deg,
+    line(start: (0%, 50%), end: (100%, 50%)),
+  )
+
+  #rect(width: 100%, height: 60pt, fill: pat)
+`}
+  image="/typst_docs_assets/images/w6E0Gc707fIwaVk9Djz2oQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `relative` [#constructor-relative]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `auto`
+
+Определяет, относительно ограничивающего прямоугольника какого элемента рисуется тайлинг.
+
+По умолчанию тайлинги рисуются относительно фигуры, на которую они наносятся (`"self"`), если только тайлинг не применяется к тексту — в этом случае они рисуются относительно ближайшего контейнера-предка (`"parent"`).
+
+Предком элемента является самый внутренний [`box`](/docs/typst/reference/layout/box) или [`block`](/docs/typst/reference/layout/block), содержащий элемент, или, если такого нет, сама страница.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #let pat = tiling(
+    size: (20pt, 20pt),
+    spacing: (5pt, 5pt),
+    relative: "self",
+    circle(radius: 10pt, fill: teal),
+  )
+
+  #let pat-with-parent = tiling(
+    size: (20pt, 20pt),
+    spacing: (5pt, 5pt),
+    relative: "parent",
+    circle(radius: 10pt, fill: teal),
+  )
+
+  #set raw(lang: "typc")
+  #table(
+    columns: (1fr, 1fr, 1fr),
+    rows: (auto, 80pt),
+    table.header(\`"self"\`, \`"parent"\`, \`"parent"\`),
+
+    // This one is local to the cell itself.
+    table.cell(fill: pat, none),
+
+    // These two are both page-relative, so the
+  // pattern is continuous.
+    table.cell(fill: pat-with-parent, none),
+    table.cell(fill: pat-with-parent, none),
+  )
+`}
+  image="/typst_docs_assets/images/-AEN6tPixVo9a6UfSfO0tw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"self"` | Относительно самого себя (собственного ограничивающего прямоугольника). |
+| `"parent"` | Относительно предка (ограничивающего прямоугольника предка). |
+
+### `body` [#constructor-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** обязательный, позиционный
+
+Содержимое каждой ячейки тайлинга.

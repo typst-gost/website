@@ -1,0 +1,291 @@
+---
+title: "Аргументы"
+description: "Документация для типа `arguments`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Захваченные аргументы функции.
+
+Аргументы бывают _позиционными_ или _именованными_, и к ним можно обращаться через методы [`pos`](#definitions-pos), [`named`](#definitions-named) и [`at`](#definitions-at).
+
+Кроме того, к именованным аргументам можно обращаться с помощью [синтаксиса полей](#definitions-at), аналогично [словарям](/docs/typst/reference/foundations/dictionary).
+
+## Приёмники аргументов [#argument-sinks]
+
+Как и встроенные функции, пользовательские функции также могут принимать переменное число аргументов. Вы можете указать _приёмник аргументов_, который собирает все лишние аргументы в виде `..sink`. Полученное значение `sink` имеет тип `arguments`. Оно предоставляет методы для доступа к позиционным и именованным аргументам.
+
+<TypstRender
+  code={`
+  #let format(title, ..authors) = {
+    let by = authors
+      .pos()
+      .join(", ", last: " and ")
+
+    [= #title]
+    text(style: "italic")[By #by]
+  }
+
+  #format("ArtosFlow", "Jane", "Joe")
+`}
+  image="/typst_docs_assets/images/mCv-QHBTosj1ej-Ew1q8WA.png"
+  alt=""
+  editable={true}
+/>
+
+## Раскрытие [#spreading]
+
+В противоположность приёмнику аргументов, вы можете _раскрывать_ аргументы, массивы и словари в вызове функции с помощью оператора `..spread`.
+
+<TypstRender
+  code={`
+  #let array = (2, 3, 5)
+  #calc.min(..array)
+  #let dict = (fill: blue)
+  #text(..dict)[Hello]
+`}
+  image="/typst_docs_assets/images/McqbGIdOHNiPhP_80EWSgQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Создаёт раскрываемые аргументы на месте.
+
+Эта функция ведёт себя как `let arguments(..args) = args`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let args = arguments(
+    stroke: red,
+    inset: 1em,
+    [Body],
+  )
+  #box(..args)
+`}
+  image="/typst_docs_assets/images/C-GBndChrGHBaktAHgwXig.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+arguments(..any) -> arguments
+```
+
+### `args` [#constructor-args]
+
+**Тип:** `any` · **Модификаторы:** Required, Positional, Variadic
+
+Аргументы для создания.
+
+## Функции [#functions]
+
+### `len` [#definitions-len]
+
+*Since: 0.15.0*
+
+Возвращает количество аргументов — позиционных или именованных.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #arguments(a: "b", none, 1).len()
+`}
+  image="/typst_docs_assets/images/8lEaoBu9sLVnDPr6fSMUbg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.len() -> int
+```
+
+### `at` [#definitions-at]
+
+*Since: 0.12.0*
+
+Возвращает позиционный аргумент по указанному индексу или именованный аргумент с указанным именем.
+
+Если ключ является [`int`](/docs/typst/reference/foundations/int), это эквивалентно сначала вызову [`pos`](#definitions-pos), а затем [`array.at`](/docs/typst/reference/foundations/array#definitions-at). Если это [`str`](/docs/typst/reference/foundations/str), это эквивалентно сначала вызову [`named`](#definitions-named), а затем [`dictionary.at`](/docs/typst/reference/foundations/dictionary#definitions-at).
+
+К именованным аргументам также можно обращаться с помощью синтаксиса полей (например, `arguments(key: 42).key`), если значение по умолчанию не требуется. В отличие от [словарей](/docs/typst/reference/foundations/dictionary), поля аргументов нельзя изменять.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let args = arguments(1, x: 2, 3)
+  #args.at(1) \\
+  #args.at("x") \\
+  #args.x
+`}
+  image="/typst_docs_assets/images/fEyVBqnBVwyiDQPWkS9dHQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.at(
+  int | str,
+  default: any,
+)
+```
+
+#### `key` [#definitions-at-key]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Required, Positional
+
+Индекс или имя получаемого аргумента.
+
+#### `default` [#definitions-at-default]
+
+**Тип:** `any`
+
+Значение по умолчанию, возвращаемое, если ключ недопустим.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let args = arguments("hello")
+  #args.at(0, default: "missing") \\
+  #args.at(1, default: "missing") \\
+  #args.at("a", default: "missing")
+`}
+  image="/typst_docs_assets/images/POhCddyWny9oc2TETcdlJw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `pos` [#definitions-pos]
+
+*Since: forever*
+
+Возвращает позиционные аргументы в виде массива.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #arguments(1, a: 2, "foo").pos()
+`}
+  image="/typst_docs_assets/images/PA_kMpQkSz_U6h6T1XQQLQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.pos() -> array
+```
+
+### `named` [#definitions-named]
+
+*Since: forever*
+
+Возвращает именованные аргументы в виде словаря.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #arguments(1, a: 2, "foo").named()
+`}
+  image="/typst_docs_assets/images/T66PxIT-TLbjrnakoGCcog.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.named() -> dictionary
+```
+
+### `filter` [#definitions-filter]
+
+*Since: 0.15.0*
+
+Создаёт новый `arguments`, содержащий только те аргументы, значения которых проходят проверку.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #{
+    arguments(-1, a: 0, b: 1, 2)
+      .filter(v => v > 0)
+  }
+`}
+  image="/typst_docs_assets/images/zJ-7eT9azvIo3IWRRVmLXQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.filter(function) -> arguments
+```
+
+#### `test` [#definitions-filter-test]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Required, Positional
+
+Функция, применяемая к каждому значению. Должна возвращать логическое значение.
+
+### `map` [#definitions-map]
+
+*Since: 0.15.0*
+
+Создаёт новый `arguments`, преобразуя каждое значение аргумента с помощью переданной функции.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #{
+    arguments(0, a: 1, 2)
+      .map(v => v + 1)
+  }
+`}
+  image="/typst_docs_assets/images/ejMmA-qb-RB_tbAt7NhE0g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.map(function) -> arguments
+```
+
+#### `mapper` [#definitions-map-mapper]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Required, Positional
+
+Функция, применяемая к каждому значению.

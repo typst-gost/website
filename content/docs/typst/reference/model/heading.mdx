@@ -1,0 +1,271 @@
+---
+title: "Heading"
+description: "Документация для функции `heading`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Начиная с: всегда*
+
+Заголовок раздела.
+
+С помощью заголовков вы можете структурировать документ на разделы. Каждый заголовок имеет _уровень,_ который начинается с единицы и не ограничен сверху. Этот уровень указывает логическую роль последующего содержимого (раздел, подраздел и т. д.). Заголовок верхнего уровня обозначает раздел верхнего уровня документа (а не заголовок документа). Чтобы вставить заголовок документа, используйте вместо этого элемент [`title`](/docs/typst/reference/model/title).
+
+Typst может автоматически нумеровать ваши заголовки. Чтобы включить нумерацию, укажите, как вы хотите нумеровать заголовки, с помощью [шаблона или функции нумерации](/docs/typst/reference/model/numbering).
+
+Независимо от нумерации, Typst также может автоматически создавать для вас [оглавление](/docs/typst/reference/model/outline) всех заголовков. Чтобы исключить один или несколько заголовков из этого оглавления, установите для параметра `outlined` значение `false`.
+
+При написании [правила show](/docs/typst/reference/styling#show-rules), которое обращается к [полю `body`](#parameters-body) для создания полностью настраиваемого внешнего вида заголовков, обязательно оберните содержимое в [`block`](/docs/typst/reference/layout/block) (который неявно [прилипает](/docs/typst/reference/layout/block#parameters-sticky) для заголовков благодаря встроенному правилу show-set). Это предотвращает превращение заголовков в «сирот», то есть их оставание в конце страницы, когда следующее содержимое оказывается на следующей странице.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.a)")
+
+  = Introduction
+  In recent years, ...
+  == Preliminaries
+  To start, ...
+`}
+  image="/typst_docs_assets/images/HpGSUj2-bdrLJBR-IvEc4A.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Заголовки имеют специальный синтаксис: их можно создать, начав строку с одного или нескольких знаков равенства, за которыми следует пробел. Количество знаков равенства определяет логическую глубину вложенности заголовка. Поле `offset` можно задать для настройки начальной глубины.
+
+## Доступность [#accessibility]
+
+Заголовки важны для доступности, так как они помогают пользователям вспомогательных технологий (AT), например программ чтения с экрана, перемещаться по документу. Пользователи программ чтения с экрана смогут переходить от заголовка к заголовку или получать обзор всех заголовков в документе.
+
+Чтобы сделать заголовки доступными, не следует пропускать уровни заголовков. Это означает, что следует начинать с заголовка первого уровня. Кроме того, если предыдущий заголовок был уровня 3, следующий заголовок должен быть уровня 3 (оставаться на той же глубине), уровня 4 (перейти ровно на один уровень глубже) или уровня 1 или 2 (новые иерархически более высокие заголовки).
+
+## Экспорт в HTML [#html-export]
+
+Как упоминалось выше, заголовок верхнего уровня обозначает раздел верхнего уровня документа, а не его заголовок. Это отличается от HTML-элемента `<h1>`, которого в документе должно быть только один.
+
+По этой причине при экспорте в HTML элемент [`title`](/docs/typst/reference/model/title) превращается в `<h1>`, а заголовки — в `<h2>` и ниже (таким образом, заголовок уровня 1 превращается в `<h2>`, заголовок уровня 2 — в `<h3>` и т. д.).
+
+## Параметры [#parameters]
+
+```typst
+heading(
+  level: auto | int,
+  depth: int,
+  offset: int,
+  numbering: none | str | function,
+  supplement: none | auto | content | function,
+  outlined: bool,
+  bookmarked: auto | bool,
+  hanging-indent: auto | length,
+  content,
+)
+```
+
+### `level` [#parameters-level]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Абсолютная глубина вложенности заголовка, начиная с единицы. Если установлено значение `auto`, оно вычисляется из `offset + depth`.
+
+Это в первую очередь полезно для использования в [правилах show](/docs/typst/reference/styling#show-rules) (либо с селекторами [`where`](/docs/typst/reference/foundations/function#definitions-where), либо путём прямого обращения к уровню у отображаемого заголовка).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #show heading.where(level: 2): set text(red)
+
+  = Level 1
+  == Level 2
+  #set heading(offset: 1)
+  = Also level 2
+  == Level 3
+`}
+  image="/typst_docs_assets/images/HB4IsO6sdV4kQ1qCxUE5aQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `depth` [#parameters-depth]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Относительная глубина вложенности заголовка, начиная с единицы. Она комбинируется с `offset` для вычисления фактического `level`.
+
+Она задаётся синтаксисом заголовка, так что `== Heading` создаёт заголовок с логической глубиной 2, но фактическим уровнем `offset + 2`. Если вы создаёте заголовок вручную, обычно следует предпочесть этот параметр установке абсолютного уровня.
+
+### `offset` [#parameters-offset]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `0`
+
+Начальное смещение `level` каждого заголовка, используемое для преобразования его относительного `depth` в абсолютный `level`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  = Level 1
+  #set heading(offset: 1, numbering: "1.1")
+  = Level 2
+  #heading(offset: 2, depth: 2)[
+    I'm level 4
+  ]
+`}
+  image="/typst_docs_assets/images/5YRci2EtDVVca9dwN7G2ig.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `numbering` [#parameters-numbering]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как нумеровать заголовок. Принимает [шаблон или функцию нумерации](/docs/typst/reference/model/numbering), принимающую несколько чисел.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.a.")
+
+  = A section
+  == A subsection
+  === A sub-subsection
+`}
+  image="/typst_docs_assets/images/HmqvxZmLO7JcJWLlGsFGBg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `supplement` [#parameters-supplement]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Дополнение для заголовка.
+
+Для ссылок на заголовки оно добавляется перед номером, на который делается ссылка.
+
+Если указана функция, ей передаётся заголовок, на который делается ссылка, и она должна возвращать содержимое.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.", supplement: [Chapter])
+
+  = Introduction <intro>
+  In @intro, we see how to turn
+  Sections into Chapters. And
+  in @intro[Part], it is done
+  manually.
+`}
+  image="/typst_docs_assets/images/Hhj0NQBwKOpSeJ5hyHIy2Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `outlined` [#parameters-outlined]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Должен ли заголовок отображаться в [оглавлении](/docs/typst/reference/model/outline).
+
+Обратите внимание, что это свойство, если установлено в `true`, гарантирует, что заголовок также отображается как закладка в оглавлении экспортируемого PDF (при экспорте в PDF). Чтобы изменить это поведение, используйте свойство `bookmarked`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #outline()
+
+  #heading[Normal]
+  This is a normal heading.
+
+  #heading(outlined: false)[Hidden]
+  This heading does not appear
+  in the outline.
+`}
+  image="/typst_docs_assets/images/sNuh2gx5vCZzHSh51DhDBw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `bookmarked` [#parameters-bookmarked]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Должен ли заголовок отображаться как закладка в оглавлении экспортируемого PDF. Не влияет на другие форматы экспорта, например PNG.
+
+Значение по умолчанию `auto` указывает, что заголовок будет отображаться в оглавлении экспортируемого PDF только в том случае, если его свойство `outlined` установлено в `true`, то есть если он также будет указан в [оглавлении](/docs/typst/reference/model/outline) Typst. Установка этого свойства в `true` (закладка) или `false` (не создавать закладку) обходит это поведение.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #heading[Normal heading]
+  This heading will be shown in
+  the PDF's bookmark outline.
+
+  #heading(bookmarked: false)[Not bookmarked]
+  This heading won't be
+  bookmarked in the resulting
+  PDF.
+`}
+  image="/typst_docs_assets/images/jdHhRN5DWJUpcKTnFtVROQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `hanging-indent` [#parameters-hanging-indent]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Отступ, который должны иметь все строки заголовка, кроме первой.
+
+Значение по умолчанию `auto` использует ширину нумерации в качестве отступа, если заголовок выровнен по [началу](/docs/typst/reference/layout/direction#definitions-start) [направления текста](/docs/typst/reference/text/text#parameters-dir), и не использует отступ для выравнивания по центру и других выравниваний.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+  = A very, very, very, very, very, very long heading
+  #show heading: set align(center)
+  == A very long heading\\ with center alignment
+`}
+  image="/typst_docs_assets/images/y1kFfja6_6xcFtGkmTLGtQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Заголовок раздела.

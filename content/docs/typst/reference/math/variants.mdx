@@ -1,0 +1,239 @@
+---
+title: "Варианты"
+description: "Документация для функций, позволяющих переключаться на альтернативные математические шрифты."
+---
+
+
+Альтернативные шрифты в формулах.
+
+Эти функции отличаются от функции [`text`](/docs/typst/reference/text/text), поскольку математические шрифты содержат несколько вариантов каждой буквы.
+
+## Функции [#functions]
+
+### `serif` [#functions-serif]
+
+*Появилось: всегда*
+
+Шрифт с засечками (романский) в математике.
+
+Это уже используется по умолчанию.
+
+```typst
+math.serif(content)
+```
+
+#### `body` [#functions-serif-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `sans` [#functions-sans]
+
+*Появилось: всегда*
+
+Шрифт без засечек в математике.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ sans(A B C) $
+`}
+  image="/typst_docs_assets/images/p2QD5Mk66b3kw8ur-4hWbw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.sans(content)
+```
+
+#### `body` [#functions-sans-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `frak` [#functions-frak]
+
+*Появилось: всегда*
+
+Шрифт фрактура в математике.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ frak(P) $
+`}
+  image="/typst_docs_assets/images/WCBbk0ruU9zGNY-g7I2WDQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.frak(content)
+```
+
+#### `body` [#functions-frak-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `mono` [#functions-mono]
+
+*Появилось: всегда*
+
+Моноширинный шрифт в математике.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ mono(x + y = z) $
+`}
+  image="/typst_docs_assets/images/vnSEQMC4Gtf0nfGqHnkJZA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.mono(content)
+```
+
+#### `body` [#functions-mono-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `bb` [#functions-bb]
+
+*Появилось: всегда*
+
+Шрифт с полыми буквами (двойной штрих) в математике.
+
+Для заглавных латинских букв полые буквы дополнительно доступны через [символы](/docs/typst/reference/symbols/sym) вида `NN` и `RR`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ bb(b) $
+  $ bb(N) = NN $
+  $ f: NN -> RR $
+`}
+  image="/typst_docs_assets/images/F4jf8cTFVQT3t_4PLzJJ-A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.bb(content)
+```
+
+#### `body` [#functions-bb-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `cal` [#functions-cal]
+
+*Появилось: всегда*
+
+Каллиграфический (канцелярский) шрифт в математике.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Let $cal(P)$ be the set of ...
+`}
+  image="/typst_docs_assets/images/WKTfkkaggzOYpZGpg7dmmg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Это каллиграфический/рукописный стиль по умолчанию для большинства математических шрифтов. См. [`scr`](#functions-scr), чтобы узнать больше о том, как получить другой стиль (рондо).
+
+```typst
+math.cal(content)
+```
+
+#### `body` [#functions-cal-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `scr` [#functions-scr]
+
+*Появилось: 0.14.0*
+
+Рукописный (рондо) шрифт в математике.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $scr(L)$ is not the set of linear
+  maps $cal(L)$.
+`}
+  image="/typst_docs_assets/images/BtsQYogdmPfwz9kqtTraLA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Существует два способа, которыми шрифты могут поддерживать различие между `cal` и `scr`. Первый — использование вариационных последовательностей Unicode. Это работает в Typst из коробки, однако в настоящее время это поддерживает лишь несколько математических шрифтов.
+
+Другой способ — использование [возможностей шрифта](/docs/typst/reference/text/text#parameters-features). Например, стиль рондо может быть доступен в шрифте через функцию _[стилистического набора](/docs/typst/reference/text/text#parameters-stylistic-set) 1_ (`ss01`). Чтобы использовать его в Typst, вы можете определить свою собственную версию `scr`, как в примере ниже.
+
+<details>
+<summary>Посмотреть пример: воссоздание с использованием стилистического набора 1</summary>
+
+<TypstRender
+  code={`
+  #let scr(it) = text(
+    stylistic-set: 1,
+    $cal(it)$,
+  )
+
+  We establish $cal(P) != scr(P)$.
+`}
+  image="/typst_docs_assets/images/WABhpb5zYKvVFHEyv4l37w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.scr(content)
+```
+
+#### `body` [#functions-scr-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.

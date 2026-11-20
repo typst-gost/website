@@ -1,0 +1,330 @@
+---
+title: "Datetime"
+description: "Документация для типа `datetime`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.5.0*
+
+Представляет дату, время или их комбинацию.
+
+Может быть создан либо путём указания пользовательской даты и времени с помощью конструктора этого типа, либо путём получения текущей даты с помощью [`datetime.today`](#definitions-today).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let date = datetime(
+    year: 2020,
+    month: 10,
+    day: 4,
+  )
+
+  #date.display() \\
+  #date.display(
+    "y:[year repr:last_two]"
+  )
+
+  #let time = datetime(
+    hour: 18,
+    minute: 2,
+    second: 23,
+  )
+
+  #time.display() \\
+  #time.display(
+    "h:[hour repr:12][period]"
+  )
+`}
+  image="/typst_docs_assets/images/_7RfmSWD9kJ1cNrqjNwNhQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Datetime и Duration [#datetime-and-duration]
+
+Вы можете получить [duration](/docs/typst/reference/foundations/duration), вычтя одну дату и время из другой:
+
+<TypstRender
+  code={`
+  #let first-of-march = datetime(day: 1, month: 3, year: 2024)
+  #let first-of-jan = datetime(day: 1, month: 1, year: 2024)
+  #let distance = first-of-march - first-of-jan
+  #distance.hours()
+`}
+  image="/typst_docs_assets/images/xtEIMVCwNMMyZe4pWEGP8g.png"
+  alt=""
+  editable={true}
+/>
+
+Вы также можете складывать и вычитать дату и время с duration, чтобы получить новую дату и время со смещением:
+
+<TypstRender
+  code={`
+  #let date = datetime(day: 1, month: 3, year: 2024)
+  #let two-days = duration(days: 2)
+  #let two-days-earlier = date - two-days
+  #let two-days-later = date + two-days
+
+  #date.display() \\
+  #two-days-earlier.display() \\
+  #two-days-later.display()
+`}
+  image="/typst_docs_assets/images/kZbfH4WlXFtaG-Ig16x82g.png"
+  alt=""
+  editable={true}
+/>
+
+## Формат [#format]
+
+Вы можете задать собственное форматирование с помощью метода [`display`](#definitions-display). Формат даты и времени задаётся путём указания _компонентов_ с определённым числом _модификаторов_. Компонент представляет определённую часть даты и времени, которую вы хотите отобразить, а с помощью модификаторов вы можете определить, как отображать этот компонент. Чтобы отобразить компонент, заключите имя компонента в квадратные скобки (например, `[year]` отобразит год). Чтобы добавить модификаторы, добавьте после имени компонента пробел, затем имя модификатора, двоеточие и значение модификатора (например, `[month repr:short]` отобразит краткое представление месяца).
+
+Возможные комбинации компонентов и соответствующих им модификаторов приведены ниже:
+
+- `year`: Отображает год даты и времени.
+  - `base`: Может быть `calendar` или `iso_week`. Указывает, основан ли год на григорианском календаре или на номере недели ISO.
+  - `padding`: Может быть `zero`, `space` или `none`. Указывает, как дополняется год.
+  - `repr` Может быть `full`, и тогда отображается полный год, или `last_two`, и тогда отображаются только последние две цифры.
+  - `sign`: Может быть `automatic` или `mandatory`. Указывает, когда должен отображаться знак.
+- `month`: Отображает месяц даты и времени.
+  - `padding`: Может быть `zero`, `space` или `none`. Указывает, как дополняется месяц.
+  - `repr`: Может быть `numerical`, `long` или `short`. Указывает, должен ли месяц отображаться числом или словом. К сожалению, при выборе словесного представления в настоящее время можно отобразить только английскую версию. В будущем планируется поддержка локализации.
+- `day`: Отображает день даты и времени.
+  - `padding`: Может быть `zero`, `space` или `none`. Указывает, как дополняется день.
+- `week_number`: Отображает номер недели даты и времени.
+  - `padding`: Может быть `zero`, `space` или `none`. Указывает, как дополняется номер недели.
+  - `repr`: Может быть `ISO`, `sunday` или `monday`. В случае `ISO` номера недель находятся в диапазоне от 1 до 53, а в остальных случаях — от 0 до 53.
+- `weekday`: Отображает день недели даты.
+  - `repr` Может быть `long`, `short`, `sunday` или `monday`. В случае `long` и `short` будет отображаться соответствующее английское название (так же, как и для месяца, другие языки в настоящее время не поддерживаются). В случае `sunday` и `monday` будет отображаться числовое значение (считая воскресенье и понедельник первым днём недели соответственно).
+  - `one_indexed`: Может быть `true` или `false`. Определяет, начинается ли числовое представление недели с 0 или с 1.
+- `hour`: Отображает час даты.
+  - `padding`: Может быть `zero`, `space` или `none`. Указывает, как дополняется час.
+  - `repr`: Может быть `24` или `12`. Изменяет, отображается ли час в 24-часовом или 12-часовом формате.
+- `period`: Часть часа AM/PM
+  - `case`: Может быть `lower` для отображения в нижнем регистре и `upper` для отображения в верхнем регистре.
+- `minute`: Отображает минуту даты.
+  - `padding`: Может быть `zero`, `space` или `none`. Указывает, как дополняется минута.
+- `second`: Отображает секунду даты.
+  - `padding`: Может быть `zero`, `space` или `none`. Указывает, как дополняется секунда.
+
+[См. здесь](https://time-rs.github.io/book/api/format-description.html#components) дополнительные сведения о поддерживаемом синтаксисе.
+
+Имейте в виду, что не всегда можно использовать все компоненты. Например, если вы создадите новую дату и время с помощью `datetime(year: 2023, month: 10, day: 13)`, она будет храниться внутри как простая дата, а значит, вы не сможете использовать такие компоненты, как `hour` или `minute`, которые работают только с датами и временем, имеющими указанное время.
+
+## Конструктор [#constructor]
+
+Создаёт новую дату и время.
+
+Вы можете указать [datetime](/docs/typst/reference/foundations/datetime) с помощью года, месяца, дня, часа, минуты и секунды.
+
+_Примечание_: в зависимости от того, какие компоненты даты и времени вы укажете, Typst сохранит её одним из следующих трёх способов:
+
+- Если вы укажете год, месяц и день, Typst сохранит только дату.
+- Если вы укажете час, минуту и секунду, Typst сохранит только время.
+- Если вы укажете все компоненты: год, месяц, день, час, минуту и секунду, Typst сохранит полную дату и время.
+
+В зависимости от способа хранения метод [`display`](#definitions-display) по умолчанию выберет различное форматирование.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #datetime(
+    year: 2012,
+    month: 8,
+    day: 3,
+  ).display()
+`}
+  image="/typst_docs_assets/images/c8IpPZo9qnXkSDIn3TQEjQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+datetime(
+  year: int,
+  month: int,
+  day: int,
+  hour: int,
+  minute: int,
+  second: int,
+) -> datetime
+```
+
+### `year` [#constructor-year]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Год даты и времени.
+
+### `month` [#constructor-month]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Месяц даты и времени.
+
+### `day` [#constructor-day]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+День даты и времени.
+
+### `hour` [#constructor-hour]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Час даты и времени.
+
+### `minute` [#constructor-minute]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Минута даты и времени.
+
+### `second` [#constructor-second]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Секунда даты и времени.
+
+## Функции [#functions]
+
+### `today` [#definitions-today]
+
+*Добавлено в версии: 0.5.0*
+
+Возвращает текущую дату.
+
+В CLI это можно переопределить с помощью аргумента `--creation-timestamp` или путём установки переменной окружения [`SOURCE_DATE_EPOCH`](https://reproducible-builds.org/specs/source-date-epoch/). В обоих случаях значение должно быть задано как временная метка UNIX.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Today's date is
+  #datetime.today().display().
+`}
+  image="/typst_docs_assets/images/AlZlS1-tvlovFj64FyFb-g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+datetime.today(offset: auto | int | duration) -> datetime
+```
+
+#### `offset` [#definitions-today-offset]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [duration](/docs/typst/reference/foundations/duration) · **По умолчанию:** `auto`
+
+Смещение, применяемое к текущей дате в UTC. Если задано `auto`, смещением будет локальное смещение.
+
+Если задано целочисленное смещение, оно будет рассматриваться как длительность в часах.
+
+### `display` [#definitions-display]
+
+*Добавлено в версии: 0.5.0*
+
+Отображает дату и время в указанном формате.
+
+В зависимости от того, определили ли вы только дату, только время или и то и другое, формат по умолчанию будет разным. Если вы указали дату, это будет `[year]-[month]-[day]`. Если вы указали время, это будет `[hour]:[minute]:[second]`. В случае даты и времени это будет `[year]-[month]-[day] [hour]:[minute]:[second]`.
+
+Дополнительные сведения см. в разделе [синтаксис формата](#format).
+
+```typst
+self.display(auto | str)
+```
+
+#### `pattern` [#definitions-display-pattern]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Позиционный · **По умолчанию:** `auto`
+
+Формат, используемый для отображения даты и времени.
+
+### `year` [#definitions-year]
+
+*Добавлено в версии: 0.5.0*
+
+Год, если он был указан, или `none` для времени без даты.
+
+```typst
+self.year() -> none | int
+```
+
+### `month` [#definitions-month]
+
+*Добавлено в версии: 0.5.0*
+
+Месяц, если он был указан, или `none` для времени без даты.
+
+```typst
+self.month() -> none | int
+```
+
+### `weekday` [#definitions-weekday]
+
+*Добавлено в версии: 0.5.0*
+
+День недели (считая понедельник за 1) или `none` для времени без даты.
+
+```typst
+self.weekday() -> none | int
+```
+
+### `day` [#definitions-day]
+
+*Добавлено в версии: 0.5.0*
+
+День, если он был указан, или `none` для времени без даты.
+
+```typst
+self.day() -> none | int
+```
+
+### `hour` [#definitions-hour]
+
+*Добавлено в версии: 0.5.0*
+
+Час, если он был указан, или `none` для дат без времени.
+
+```typst
+self.hour() -> none | int
+```
+
+### `minute` [#definitions-minute]
+
+*Добавлено в версии: 0.5.0*
+
+Минута, если она была указана, или `none` для дат без времени.
+
+```typst
+self.minute() -> none | int
+```
+
+### `second` [#definitions-second]
+
+*Добавлено в версии: 0.5.0*
+
+Секунда, если она была указана, или `none` для дат без времени.
+
+```typst
+self.second() -> none | int
+```
+
+### `ordinal` [#definitions-ordinal]
+
+*Добавлено в версии: 0.5.0*
+
+Порядковый номер (день года) или `none` для времени без даты.
+
+```typst
+self.ordinal() -> none | int
+```

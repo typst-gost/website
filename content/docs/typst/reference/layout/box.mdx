@@ -1,0 +1,211 @@
+---
+title: "Box"
+description: "Документация для функции `box`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступен с: всегда*
+
+Встроенный контейнер, размеры которого определяются содержимым.
+
+Все элементы, кроме встроенной математики, текста и блоков, являются блочными и не могут находиться внутри [абзаца](/docs/typst/reference/model/par). Функцию box можно использовать для встраивания таких элементов в абзац. По умолчанию блоки принимают размер своего содержимого, но их также можно [задать](#parameters-width) явно.
+
+Подобно блокам, box можно использовать для [обрезки](#parameters-clip) содержимого или для задания ему [фона](#parameters-fill) или [рамки](#parameters-stroke). Однако их следует использовать для этих целей только в том случае, если получившийся контейнер применяется во встроенном контексте. В противном случае предпочтительнее [`block`](/docs/typst/reference/layout/block).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Refer to the docs
+  #box(
+    height: 9pt,
+    image("docs.svg")
+  )
+  for more information.
+`}
+  image="/typst_docs_assets/images/evvtMMnFaoR7_cy091HJ_A.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+box(
+  width: auto | relative | fraction,
+  height: auto | relative,
+  baseline: auto | relative | dictionary | alignment,
+  fill: none | color | gradient | tiling,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  radius: relative | dictionary,
+  inset: relative | dictionary,
+  outset: relative | dictionary,
+  clip: bool,
+  none | content,
+)
+```
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Ширина блока.
+
+Блоки могут иметь [дробные](/docs/typst/reference/layout/fraction) ширины, как показано в примере ниже.
+
+_Примечание:_ В настоящее время только блоки и только их ширины могут иметь дробные размеры внутри абзацев. Поддержка дробных размеров изображений, фигур и других элементов может быть добавлена в будущем.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Line in #box(width: 1fr, line(length: 100%)) between.
+`}
+  image="/typst_docs_assets/images/8ypT2BSnA6DT3Jzsu3fVYw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Высота блока.
+
+### `baseline` [#parameters-baseline]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `(at: auto, shift: 0% + 0pt)`
+
+Вертикальное положение базовой линии блока. Используется для выравнивания блока с окружающим его текстом в абзаце, поскольку по умолчанию базовая линия должна проходить непосредственно под текстом.
+
+По умолчанию базовая линия блока совпадает с базовой линией его содержимого (например, текста или формулы внутри него) — это параметр `auto`. Однако базовую линию можно настроить двумя способами. Первый — просто выбрать вертикальное [выравнивание](/docs/typst/reference/layout/alignment), например `top`, `horizon` или `bottom`, чтобы разместить базовую линию в этой позиции относительно общей высоты блока (включая inset).
+
+Другой способ — сдвинуть базовую линию по умолчанию по вертикали на некоторую величину, заданную как [относительная длина](/docs/typst/reference/layout/relative). Например, значение `2pt` сдвинет её вверх ровно на эту длину (из-за чего содержимое сместится _вниз_, так как точка выравнивания перемещается _вверх_), а `-40%` сдвинет базовую линию _вниз_ на 40% общей высоты блока, включая inset (таким образом содержимое сместится _вверх_).
+
+Оба варианта можно задать одновременно через словарь с ключами `at` и `shift` соответственно. Например, при указании `(at: bottom, shift: 10pt)` базовая линия блока будет установлена на высоте ровно `10pt` выше нижней границы его содержимого.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Image: #box(baseline: 40%, image("tiger.jpg", width: 2cm)).
+`}
+  image="/typst_docs_assets/images/pvQH-TUbXZ-jhIQ866TKlQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Цвет фона блока. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-fill).
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Цвет рамки блока. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+### `radius` [#parameters-radius]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько скруглить углы блока. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-radius).
+
+### `inset` [#parameters-inset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько дополнить отступы вокруг содержимого блока.
+
+Это может быть единая длина для всех сторон или словарь длин для отдельных сторон. При передаче словаря он может содержать следующие ключи в порядке приоритета: `top`, `right`, `bottom`, `left` (управляют соответствующими сторонами), `x`, `y` (управляют вертикальными и горизонтальными отступами) и `rest` (охватывает все отступы, не заданные другими записями словаря). Все ключи необязательны; пропущенные ключи используют ранее заданное значение или значение по умолчанию, если оно никогда не задавалось.
+
+[Относительные длины](/docs/typst/reference/layout/relative) для этого параметра отсчитываются от размера блока без учёта [outset](#parameters-outset). Обратите внимание, что относительные inset и outset отличаются от относительных [ширин](#parameters-width) и [высот](#parameters-height), которые отсчитываются от контейнера.
+
+_Примечание:_ Когда блок содержит текст, его точный размер зависит от текущих [границ текста](/docs/typst/reference/text/text#parameters-top-edge).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #rect(inset: 0pt)[Tight]
+`}
+  image="/typst_docs_assets/images/_dw3iJ5QAUB_9bmDbJK1QQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `outset` [#parameters-outset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько расширить размер блока без влияния на вёрстку.
+
+Это может быть единая длина для всех сторон или словарь длин для отдельных сторон. [Относительные длины](/docs/typst/reference/layout/relative) для этого параметра отсчитываются от размера блока без учёта outset. Дополнительные сведения см. в документации для [inset](#parameters-inset) выше.
+
+Это полезно, чтобы отступы не влияли на вёрстку строки. Обобщённую версию примера ниже см. в документации для [параметра block у raw-текста](/docs/typst/reference/text/raw#parameters-block).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  An inline
+  #box(
+    fill: luma(235),
+    inset: (x: 3pt, y: 0pt),
+    outset: (y: 3pt),
+    radius: 2pt,
+  )[rectangle].
+`}
+  image="/typst_docs_assets/images/hBG7TR1lIw1sUg8t4ACrwA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `clip` [#parameters-clip]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Обрезать ли содержимое внутри блока.
+
+Обрезка полезна, когда содержимое блока больше самого блока: всё, что выходит за его границы, будет скрыто.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #box(
+    width: 50pt,
+    height: 50pt,
+    clip: true,
+    image("tiger.jpg", width: 100pt, height: 100pt)
+  )
+`}
+  image="/typst_docs_assets/images/AHoPEpIEqEY7LeZ8ycoaRg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Positional, Settable · **По умолчанию:** `none`
+
+Содержимое блока.

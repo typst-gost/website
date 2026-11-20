@@ -1,0 +1,98 @@
+---
+title: "Measure"
+description: "Документация для функции `measure`."
+---
+
+
+<span id="summary" />
+
+*Контекстная* · *Начиная с: всегда*
+
+Измеряет размер содержимого после вёрстки.
+
+Функция `measure` позволяет определить размер содержимого после вёрстки. По умолчанию предполагается бесконечное пространство, поэтому измеренные размеры могут не совпадать с итоговыми размерами содержимого. Если вы хотите измерить в текущих размерах макета, можно скомбинировать `measure` и [`layout`](/docs/typst/reference/layout/layout).
+
+## Пример [#example]
+
+Одно и то же содержимое может иметь разный размер в зависимости от [контекста](/docs/typst/reference/context), в который оно помещено. В примере ниже `#content`, разумеется, становится больше при увеличении размера шрифта.
+
+<TypstRender
+  code={`
+  #let content = [Hello!]
+  #content
+  #set text(14pt)
+  #content
+`}
+  image="/typst_docs_assets/images/OTKOMmkhW10_J_y-J7lBIQ.png"
+  alt=""
+  editable={true}
+/>
+
+По этой причине измерять можно только при наличии контекста.
+
+<TypstRender
+  code={`
+  #let thing(body) = context {
+    let size = measure(body)
+    [Width of "#body" is #size.width]
+  }
+
+  #thing[Hey] \\
+  #thing[Welcome]
+`}
+  image="/typst_docs_assets/images/JUiBCP43hRuGzGqcTzDnQw.png"
+  alt=""
+  editable={true}
+/>
+
+Функция measure возвращает словарь с записями `width`, `height` и `baseline`, все типа [`length`](/docs/typst/reference/layout/length). Запись `baseline` — это вертикальное положение базовой линии содержимого относительно его верхнего края, причём положительные значения направлены вниз.
+
+## Параметры [#parameters]
+
+```typst
+measure(
+  width: auto | length,
+  height: auto | length,
+  content,
+) -> dictionary
+```
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **По умолчанию:** `auto`
+
+Доступная ширина для вёрстки содержимого.
+
+Значение `auto` указывает на бесконечную доступную ширину.
+
+Обратите внимание, что использование параметров `width` и `height` этой функции отличается от измерения [`block`](/docs/typst/reference/layout/block) с заданным размером, содержащего содержимое. В следующем примере первый вариант даст размеры внутреннего содержимого, а не размеры блока.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #context measure(lorem(100), width: 400pt)
+
+  #context measure(block(lorem(100), width: 400pt))
+`}
+  image="/typst_docs_assets/images/PWb6kBoCWFeEIZoJWB9VYg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **По умолчанию:** `auto`
+
+Доступная высота для вёрстки содержимого.
+
+Значение `auto` указывает на бесконечную доступную высоту.
+
+### `content` [#parameters-content]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, размер которого нужно измерить.

@@ -78,6 +78,15 @@ const config = {
             },
         ];
     },
+    async redirects() {
+        return [
+            {
+                source: '/docs',
+                destination: '/docs/typst-gost',
+                permanent: true,
+            },
+        ];
+    },
     async rewrites() {
         return [
         {

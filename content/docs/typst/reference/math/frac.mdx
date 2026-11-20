@@ -1,0 +1,153 @@
+---
+title: "Дробь"
+description: "Документация для функции `frac`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Математическая дробь.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ 1/2 < (x+1)/2 $
+  $ ((x+1)) / 2 = frac(a, b) $
+`}
+  image="/typst_docs_assets/images/g9yUGbHDI7DUKeucbR1-gQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Эта функция также имеет специальный синтаксис: используйте косую черту, чтобы превратить соседние выражения в дробь. Несколько атомов можно объединить в одно выражение с помощью круглых группирующих скобок. Такие скобки удаляются из вывода, но вы можете вложить несколько, чтобы принудительно их сохранить.
+
+## Параметры [#parameters]
+
+```typst
+math.frac(
+  content,
+  content,
+  style: str,
+)
+```
+
+### `num` [#parameters-num]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Числитель дроби.
+
+### `denom` [#parameters-denom]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Знаменатель дроби.
+
+### `style` [#parameters-style]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `"vertical"`
+
+Как должна быть свёрстана дробь.
+
+<details>
+<summary>Посмотреть пример: Стили</summary>
+
+<TypstRender
+  code={`
+  $ frac(x, y, style: "vertical") $
+  $ frac(x, y, style: "skewed") $
+  $ frac(x, y, style: "horizontal") $
+`}
+  image="/typst_docs_assets/images/BbRhRRDQA8_5KJQ25d1Hsw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: Установка значения по умолчанию</summary>
+
+<TypstRender
+  code={`
+  #set math.frac(style: "skewed")
+  $ a / b $
+`}
+  image="/typst_docs_assets/images/UgzWQn5940_tiR2aT4jRHg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: Обработка группирующих скобок</summary>
+
+<TypstRender
+  code={`
+  // Grouping parentheses are removed.
+  #set math.frac(style: "vertical")
+  $ (a + b) / b $
+  // Grouping parentheses are removed.
+  #set math.frac(style: "skewed")
+  $ (a + b) / b $
+  // Grouping parentheses are retained.
+  #set math.frac(style: "horizontal")
+  $ (a + b) / b $
+`}
+  image="/typst_docs_assets/images/12r_5uEam7rgaogpRdhsiw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: Разные стили во встроенных и блочных формулах</summary>
+
+<TypstRender
+  code={`
+  // This changes the style for inline equations only.
+  #show math.equation.where(block: false): set math.frac(style: "horizontal")
+
+  This $(x-y)/z = 3$ is inline math, and this is block math:
+  $ (x-y)/z = 3 $
+`}
+  image="/typst_docs_assets/images/WXtmVB0dwoPxzbjFSbkbFA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: Использование соглашения в стиле LaTeX</summary>
+
+<TypstRender
+  code={`
+  // Change the default style.
+  #set math.frac(style: "horizontal")
+  // Define a shorthand with the original style.
+  #let frac = math.frac.with(style: "vertical")
+
+  $ p/q = frac(p, q) $
+  // The shadowed definition can still be accessed.
+  #assert.eq($p/q$, $std.math.frac(p, q)$)
+`}
+  image="/typst_docs_assets/images/b2UXRBM8QmbgezYDHlzxug.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"vertical"` | Числитель и знаменатель расположены друг над другом с чертой. |
+| `"skewed"` | Числитель и знаменатель разделены косой чертой. |
+| `"horizontal"` | Числитель и знаменатель расположены в строке, а скобки не поглощаются. |

@@ -1,0 +1,282 @@
+---
+title: "Float"
+description: "Документация для типа `float`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Число с плавающей точкой.
+
+Представление вещественного числа с ограниченной точностью. Typst использует 64 бита для хранения чисел с плавающей точкой. Везде, где ожидается число с плавающей точкой, вы также можете передать [целое число](/docs/typst/reference/foundations/int).
+
+Вы можете преобразовать значение в число с плавающей точкой с помощью конструктора этого типа.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #3.14 \\
+  #1e4 \\
+  #(10 / 4)
+`}
+  image="/typst_docs_assets/images/atChYIdZNAaTo62mrcKbYA.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Преобразует значение в число с плавающей точкой.
+
+- Логические значения преобразуются в `0.0` или `1.0`.
+- Целые числа преобразуются в ближайшее 64-битное число с плавающей точкой. Для целых чисел с абсолютным значением меньше `calc.pow(2, 53)` это преобразование является точным.
+- Отношения делятся на 100%.
+- Строки разбираются в системе счисления по основанию 10 в ближайшее 64-битное число с плавающей точкой. Поддерживается экспоненциальная запись.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #float(false) \\
+  #float(true) \\
+  #float(4) \\
+  #float(40%) \\
+  #float("2.7") \\
+  #float("1e5")
+`}
+  image="/typst_docs_assets/images/n3RCYUeEAxqSr8NigYvC2g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+float(bool | int | float | ratio | decimal | str)
+```
+
+### `value` [#constructor-value]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [ratio](/docs/typst/reference/layout/ratio) или [decimal](/docs/typst/reference/foundations/decimal) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое должно быть преобразовано в число с плавающей точкой.
+
+## Константы [#constants]
+
+### `inf` [#definitions-inf]
+
+*Since: 0.12.0* · **Тип:** [float](/docs/typst/reference/foundations/float)
+
+Бесконечность ($+ \infty$) как значение.
+
+Это значение больше любого вещественного числа.
+
+Отрицательную бесконечность ($- \infty$) можно получить путём отрицания этого значения: `-float.inf`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(9999999 < float.inf) \\
+  #(-float.inf < -9999999)
+`}
+  image="/typst_docs_assets/images/NzoxUwzfRWku7gQrsTDcAQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `nan` [#definitions-nan]
+
+*Since: 0.12.0* · **Тип:** [float](/docs/typst/reference/foundations/float)
+
+Значение NaN, определённое [стандартом IEEE 754](https://en.wikipedia.org/wiki/IEEE_754).
+
+## Функции [#functions]
+
+### `is-nan` [#definitions-is-nan]
+
+*Since: 0.11.0*
+
+Проверяет, является ли число с плавающей точкой не числом.
+
+В IEEE 754 более одного битового шаблона представляют NaN. Эта функция возвращает `true`, если число с плавающей точкой соответствует любому из этих битовых шаблонов.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #float.is-nan(0) \\
+  #float.is-nan(1) \\
+  #float.is-nan(float.nan)
+`}
+  image="/typst_docs_assets/images/aDvAvlCSwvtIsCd5eDQnMg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.is-nan() -> bool
+```
+
+### `is-infinite` [#definitions-is-infinite]
+
+*Since: 0.11.0*
+
+Проверяет, является ли число с плавающей точкой бесконечным.
+
+Числа с плавающей точкой могут представлять положительную и отрицательную бесконечность. Эта функция возвращает `true`, если число с плавающей точкой является бесконечностью.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #float.is-infinite(0) \\
+  #float.is-infinite(1) \\
+  #float.is-infinite(float.inf)
+`}
+  image="/typst_docs_assets/images/aDvAvlCSwvtIsCd5eDQnMg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.is-infinite() -> bool
+```
+
+### `signum` [#definitions-signum]
+
+*Since: 0.11.0*
+
+Вычисляет знак числа с плавающей точкой.
+
+- Если число положительное (включая `+0.0`), возвращает `1.0`.
+- Если число отрицательное (включая `-0.0`), возвращает `-1.0`.
+- Если число равно NaN, возвращает [`float.nan`](#definitions-nan).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(5.0).signum() \\
+  #(-5.0).signum() \\
+  #(0.0).signum() \\
+  #float.nan.signum()
+`}
+  image="/typst_docs_assets/images/QmJvDPBXN-Yl5ILo70QKWg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.signum() -> float
+```
+
+### `from-bytes` [#definitions-from-bytes]
+
+*Since: 0.12.0*
+
+Интерпретирует байты как число с плавающей точкой.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #float.from-bytes(bytes((0, 0, 0, 0, 0, 0, 240, 63))) \\
+  #float.from-bytes(bytes((63, 240, 0, 0, 0, 0, 0, 0)), endian: "big")
+`}
+  image="/typst_docs_assets/images/O7x1bsGKnWT3Jv6oyhpBzw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+float.from-bytes(
+  bytes,
+  endian: str,
+) -> float
+```
+
+#### `bytes` [#definitions-from-bytes-bytes]
+
+**Тип:** [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Байты, которые должны быть преобразованы в число с плавающей точкой.
+
+Длина должна быть равна 4 или 8. Затем байты интерпретируются в формате binary32 (одинарной точности) или binary64 (двойной точности) [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) в зависимости от длины байтов.
+
+#### `endian` [#definitions-from-bytes-endian]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"little"`
+
+Порядок байтов при преобразовании.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"big"` | Порядок байтов от старшего к младшему: байт с наибольшим значением находится в начале последовательности байтов. |
+| `"little"` | Порядок байтов от младшего к старшему: байт с наименьшим значением находится в начале последовательности байтов. |
+
+### `to-bytes` [#definitions-to-bytes]
+
+*Since: 0.12.0*
+
+Преобразует число с плавающей точкой в байты.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #array(1.0.to-bytes(endian: "big")) \\
+  #array(1.0.to-bytes())
+`}
+  image="/typst_docs_assets/images/84fCw0nf3ShX27KZrbLokQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.to-bytes(
+  endian: str,
+  size: int,
+) -> bytes
+```
+
+#### `endian` [#definitions-to-bytes-endian]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"little"`
+
+Порядок байтов при преобразовании.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"big"` | Порядок байтов от старшего к младшему: байт с наибольшим значением находится в начале последовательности байтов. |
+| `"little"` | Порядок байтов от младшего к старшему: байт с наименьшим значением находится в начале последовательности байтов. |
+
+#### `size` [#definitions-to-bytes-size]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `8`
+
+Размер результирующих байтов.
+
+Должен быть равен 4 или 8. Вызов вернёт представление этого числа с плавающей точкой в формате binary32 (одинарной точности) или binary64 (двойной точности) [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) в зависимости от указанного размера.

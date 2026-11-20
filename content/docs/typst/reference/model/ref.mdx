@@ -1,0 +1,206 @@
+---
+title: "Справочник"
+description: "Документация для функции `ref`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Начиная с: всегда*
+
+Ссылка на метку или библиографию.
+
+Принимает метку и создаёт перекрёстную ссылку на неё. Существует два вида ссылок, определяемых полем [`form`](#parameters-form): `"normal"` и `"page"`.
+
+По умолчанию ссылка `"normal"` создаёт текстовую ссылку на метку. Например, ссылка на заголовок даст подходящую строку, такую как «Раздел 1» для ссылки на первый заголовок. Слово «Раздел» зависит от настройки [`lang`](/docs/typst/reference/text/text#parameters-lang) и локализуется соответствующим образом. Ссылки также являются гиперссылками на соответствующие элементы. Синтаксис ссылок также можно использовать для [цитирования](/docs/typst/reference/model/cite) из библиографии.
+
+Поскольку форма по умолчанию требует дополнения и нумерации, метка должна быть привязана к _элементу, на который можно ссылаться_. К таким элементам относятся [заголовки](/docs/typst/reference/model/heading), [иллюстрации](/docs/typst/reference/model/figure), [формулы](/docs/typst/reference/math/equation) и [сноски](/docs/typst/reference/model/footnote). Чтобы создать собственный элемент, на который можно ссылаться, например теорему, можно создать иллюстрацию с пользовательским [`kind`](/docs/typst/reference/model/figure#parameters-kind) и написать для неё правило show. В будущем, возможно, появится более прямой способ определения пользовательского элемента, на который можно ссылаться.
+
+Если вы просто хотите сослаться на элемент с меткой, не получая автоматическую текстовую ссылку, рассмотрите возможность использования функции [`link`](/docs/typst/reference/model/link).
+
+Ссылка `"page"` создаёт ссылку на страницу с меткой, отображая номер страницы в месте её расположения. Вы можете использовать [дополнение страницы](/docs/typst/reference/layout/page#parameters-supplement), чтобы изменить текст перед номером страницы. В отличие от ссылки `"normal"`, метка может быть привязана к любому элементу, если задана соответствующая [нумерация страницы](/docs/typst/reference/layout/page#parameters-numbering).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set page(numbering: "1")
+  #set heading(numbering: "1.")
+  #set math.equation(numbering: "(1)")
+
+  = Introduction <intro>
+  Recent developments in
+  typesetting software have
+  rekindled hope in previously
+  frustrated researchers. @distress
+  As shown in @results (see
+  #ref(<results>, form: "page")),
+  we ...
+  = Results <results>
+  We discuss our approach in
+  comparison with others.
+
+  == Performance <perf>
+  @slow demonstrates what slow
+  software looks like.
+  $ T(n) = O(2^n) $ <slow>
+  #bibliography("works.bib")
+`}
+  image="/typst_docs_assets/images/UFCjrkd9HZvb27axvzBwaQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Эта функция также имеет специальный синтаксис: ссылку `"normal"` на метку можно создать, набрав `@`, за которым следует имя метки (например, на `= Introduction <intro>` можно сослаться, набрав `@intro`).
+
+Чтобы настроить дополнение, добавьте содержимое в квадратных скобках после ссылки: `@intro[Chapter]`.
+
+## Настройка [#customization]
+
+Если вам всегда нужно ссылаться только на страницы иллюстрации/таблицы/заголовка и т. д. в документе, значение поля `form` по умолчанию можно изменить на `"page"` с помощью правила set. Если вы предпочитаете короткое дополнение «p.» вместо «page», для его изменения можно использовать поле [`page.supplement`](/docs/typst/reference/layout/page#parameters-supplement):
+
+<TypstRender
+  code={`
+  #set page(
+    numbering: "1",
+    supplement: "p.",
+  )
+  #set ref(form: "page")
+
+  #figure(
+    stack(
+      dir: ltr,
+      spacing: 1em,
+      circle(),
+      square(),
+    ),
+    caption: [Shapes],
+  ) <shapes>
+  #pagebreak()
+
+  See @shapes for examples
+  of different shapes.
+`}
+  image="/typst_docs_assets/images/BU5rWV04XcywbXWysdmEdg.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/HJcMN-J6Z3ltdqDUg12Ixw.png" alt="" width="480" height="110" />
+
+Если вы пишете правило show для ссылок, вы можете получить доступ к элементу, на который ссылаются, через поле `element` ссылки. `element` может быть `none`, даже если он существует, если Typst ещё не обнаружил его, поэтому вам всегда нужно обрабатывать этот случай в своём коде.
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+  #set math.equation(numbering: "(1)")
+
+  #show ref: it => {
+    let eq = math.equation
+    let el = it.element
+    // Skip all other references.
+  if el == none or el.func() != eq { return it }
+    // Override equation references.
+  link(el.location(), counter(eq).display(at: el.location()))
+  }
+
+  = Beginnings <beginning>
+  In @beginning we prove @pythagoras.
+  $ a^2 + b^2 = c^2 $ <pythagoras>
+`}
+  image="/typst_docs_assets/images/evzhtHA33kSSpuPFSLwg-A.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+ref(
+  label,
+  supplement: none | auto | content | function,
+  form: str,
+)
+```
+
+### `target` [#parameters-target]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) · **Модификаторы:** Обязательный, Позиционный
+
+Целевая метка, на которую следует сослаться.
+
+Может быть меткой, определённой в документе, или, если [`form`](#parameters-form) имеет значение `"normal"`, записью из [`bibliography`](/docs/typst/reference/model/bibliography).
+
+### `supplement` [#parameters-supplement]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+Дополнение для ссылки.
+
+Если [`form`](#parameters-form) имеет значение `"normal"`:
+
+- Для ссылок на заголовки или иллюстрации оно добавляется перед номером, на который ссылаются.
+- Для цитирований его можно использовать для добавления номера страницы.
+
+Если [`form`](#parameters-form) имеет значение `"page"`, то оно добавляется перед номером страницы метки, на которую ссылаются.
+
+Если указана функция, ей передаётся элемент, на который ссылаются, и она должна возвращать содержимое.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+  #show ref.where(
+    form: "normal"
+  ): set ref(supplement: it => {
+    if it.func() == heading {
+      "Chapter"
+    } else {
+      "Thing"
+    }
+  })
+
+  = Introduction <intro>
+  In @intro, we see how to turn
+  Sections into Chapters. And
+  in @intro[Part], it is done
+  manually.
+`}
+  image="/typst_docs_assets/images/Hhj0NQBwKOpSeJ5hyHIy2Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `form` [#parameters-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `"normal"`
+
+Вид создаваемой ссылки.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(numbering: "1")
+
+  Here <here> we are on
+  #ref(<here>, form: "page").
+`}
+  image="/typst_docs_assets/images/J_juWAX7lXyp4GFoa-tUkA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"normal"` | Создаёт текстовую ссылку на метку. |
+| `"page"` | Создаёт ссылку на страницу с меткой. |

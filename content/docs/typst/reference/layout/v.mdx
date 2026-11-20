@@ -1,0 +1,74 @@
+---
+title: "Интервалы (V)"
+description: "Документация для функции `v`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Появился: всегда*
+
+Вставляет вертикальный интервал в поток блоков.
+
+Интервал может быть абсолютным, относительным или дробным. В последнем случае оставшееся на странице пространство распределяется между всеми дробными интервалами в соответствии с их относительными долями.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #grid(
+    rows: 3cm,
+    columns: 6,
+    gutter: 1fr,
+    [A #parbreak() B],
+    [A #v(0pt) B],
+    [A #v(10pt) B],
+    [A #v(0pt, weak: true) B],
+    [A #v(40%, weak: true) B],
+    [A #v(1fr) B],
+  )
+`}
+  image="/typst_docs_assets/images/NMPkAHvKQczZI3rnicsLTQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+v(
+  relative | fraction,
+  weak: bool,
+) -> content
+```
+
+### `amount` [#parameters-amount]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Обязательный, Позиционный
+
+Сколько интервала вставить.
+
+### `weak` [#parameters-weak]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Настраиваемый · **По умолчанию:** `false`
+
+Если `true`, интервал схлопывается в начале или конце потока. Кроме того, из нескольких соседних слабых интервалов схлопываются все, кроме наибольшего. Слабые интервалы всегда схлопывают соседний интервал между абзацами, даже если интервал между абзацами больше.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  The following theorem is
+  foundational to the field:
+  #v(4pt, weak: true)
+  $ x^2 + y^2 = r^2 $
+  #v(4pt, weak: true)
+  The proof is simple:
+`}
+  image="/typst_docs_assets/images/TyIcSMELAbFyY49XVCX7Aw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

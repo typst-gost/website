@@ -1,0 +1,66 @@
+---
+title: "Ячейка данных"
+description: "Документация для функции `data-cell`."
+---
+
+
+<span id="summary" />
+
+*С версии: 0.14.0* · *Флаг функции: требует функции `a11y-extras`*
+
+Явно определяет эту ячейку как ячейку данных.
+
+Каждая ячейка в таблице является либо ячейкой заголовка, либо ячейкой данных. По умолчанию все ячейки в [`table.header`](/docs/typst/reference/model/table#definitions-header) являются ячейками заголовка, а все остальные ячейки — ячейками данных.
+
+Если ваш заголовок содержит ячейку, которая не является ячейкой заголовка, вы можете использовать эту функцию, чтобы пометить её как ячейку данных.
+
+API этой функции является временным. Поэтому в настоящее время вызов этой функции требует включения флага функции `a11y-extras`. В будущем выпуске Typst эта функциональность может быть вынесена из модуля `pdf`, чтобы таблицы в других целях экспорта могли содержать ту же информацию.
+
+<TypstRender
+  code={`
+  #show table.cell.where(x: 0): set text(weight: "bold")
+  #show table.cell.where(x: 1): set text(style: "italic")
+  #show table.cell.where(x: 1, y: 0): set text(style: "normal")
+
+  #table(
+    columns: 3,
+    align: (left, left, center),
+
+    table.header[Objective][Key Result][Status],
+
+    table.header(
+      level: 2,
+      table.cell(colspan: 2)[Improve Customer Satisfaction],
+      // Status is data for this objective, not a header
+      pdf.data-cell[✓ On Track],
+    ),
+    [], [Increase NPS to 50+], [45],
+    [], [Reduce churn to \\<5%], [4.2%],
+
+    table.header(
+      level: 2,
+      table.cell(colspan: 2)[Grow Revenue],
+      pdf.data-cell[⚠ At Risk],
+    ),
+    [], [Achieve \\$2M ARR], [\\$1.8M],
+    [], [Close 50 enterprise deals], [38],
+  )
+`}
+  image="/typst_docs_assets/images/Ry0LESZ5KO_bHTjPUlmQKQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+pdf.data-cell(content)
+```
+
+### `cell` [#parameters-cell]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Ячейка таблицы.
+
+Это может быть контент или вызов [`table.cell`](/docs/typst/reference/model/table#definitions-cell).

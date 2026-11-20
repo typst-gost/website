@@ -1,0 +1,8 @@
+{
+  "title": "Символы",
+  "description": "Предопределённые символы в Typst.",
+  "pages": [
+    "sym",
+    "emoji"
+  ]
+}

@@ -35,6 +35,7 @@
     "fumadocs-mdx": "^13.0.8",
     "fumadocs-ui": "^16.8.5",
     "glob": "^13.0.6",
+    "katex": "^0.19.1",
     "lru-cache": "^11.3.5",
     "lucide-react": "^0.556.0",
     "markdown-to-jsx": "^9.7.16",
@@ -47,6 +48,8 @@
     "react-dom": "^19.2.5",
     "react-pdf": "^10.4.1",
     "react-snowfall": "^2.4.0",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
     "shiki": "^3.23.0"
   },
   "devDependencies": {

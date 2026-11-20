@@ -1,0 +1,92 @@
+---
+title: "Ячейка заголовка"
+description: "Документация для функции `header-cell`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.14.0* · *Функциональный флагТребует флаг `a11y-extras`*
+
+Явно определяет ячейку как ячейку заголовка.
+
+Ячейки заголовков помогают пользователям вспомогательных технологий (AT) понимать сложные таблицы и ориентироваться в них. Если ваша таблица правильно размечена с помощью ячеек заголовков, AT может по запросу сообщать соответствующую информацию о заголовке при входе в ячейку.
+
+По умолчанию Typst автоматически помечает все ячейки внутри [`table.header`](/docs/typst/reference/model/table#definitions-header) как ячейки заголовков. Они применяются к столбцам под ними. Вы можете использовать параметр [`level`](/docs/typst/reference/model/table#definitions-header-level) этой функции, чтобы ячейки заголовков помечались другими ячейками заголовков.
+
+Функция `pdf.header-cell` позволяет указать, что ячейка является ячейкой заголовка, в следующих дополнительных ситуациях:
+
+- У вас есть **столбец заголовков**, в котором каждая ячейка применяется к своей строке. В этом случае вы передаёте `"row"` в качестве аргумента [параметру `scope`](#parameters-scope), чтобы указать, что ячейка заголовка применяется к строке.
+- У вас есть ячейка в [`table.header`](/docs/typst/reference/model/table#definitions-header), например в самом начале, которая помечает как свою строку, так и свой столбец. В этом случае вы передаёте `"both"` в качестве аргумента [параметру `scope`](#parameters-scope).
+- У вас есть ячейка заголовка в строке, не содержащей других ячеек заголовков. В этом случае вы можете использовать эту функцию, чтобы пометить её как ячейку заголовка.
+
+API этой функции является временным. Поэтому вызов этой функции в настоящий момент требует включения функционального флага `a11y-extras`. В будущем выпуске Typst эта функциональность может быть вынесена из модуля `pdf`, чтобы таблицы в других целевых форматах экспорта могли содержать ту же информацию.
+
+<TypstRender
+  code={`
+  #show table.cell.where(x: 0): set text(weight: "medium")
+  #show table.cell.where(y: 0): set text(weight: "bold")
+
+  #table(
+    columns: 3,
+    align: (start, end, end),
+
+    table.header(
+      // Top-left cell: Labels both the nutrient rows
+  // and the serving size columns.
+      pdf.header-cell(scope: "both")[Nutrient],
+      [Per 100g],
+      [Per Serving],
+    ),
+
+    // First column cells are row headers
+    pdf.header-cell(scope: "row")[Calories],
+    [250 kcal], [375 kcal],
+    pdf.header-cell(scope: "row")[Protein],
+    [8g], [12g],
+    pdf.header-cell(scope: "row")[Fat],
+    [12g], [18g],
+    pdf.header-cell(scope: "row")[Carbs],
+    [30g], [45g],
+  )
+`}
+  image="/typst_docs_assets/images/eHTcxDZ0b2dkBRhKo4ip9Q.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+pdf.header-cell(
+  level: int,
+  scope: str,
+  content,
+)
+```
+
+### `level` [#parameters-level]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `1`
+
+Уровень вложенности этой ячейки заголовка.
+
+### `scope` [#parameters-scope]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"column"`
+
+К какому треку таблицы применяется эта ячейка заголовка.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"both"` | Ячейка заголовка относится как к строке, так и к столбцу. |
+| `"column"` | Ячейка заголовка относится к столбцу. |
+| `"row"` | Ячейка заголовка относится к строке. |
+
+### `cell` [#parameters-cell]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Ячейка таблицы.
+
+Это может быть содержимое или вызов [`table.cell`](/docs/typst/reference/model/table#definitions-cell).

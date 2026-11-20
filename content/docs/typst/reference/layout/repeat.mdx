@@ -1,0 +1,67 @@
+---
+title: "Repeat"
+description: "Документация для функции `repeat`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Повторяет содержимое до доступного пространства.
+
+Это может быть полезно при реализации пользовательского указателя, справочника или оглавления.
+
+Пространство может быть вставлено между экземплярами параметра body, поэтому обязательно настройте параметр [`justify`](#parameters-justify) соответствующим образом.
+
+Выдаёт ошибку, если доступное пространство не ограничено, так как это создало бы бесконечное содержимое.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Sign on the dotted line:
+  #box(width: 1fr, repeat[.])
+
+  #set text(10pt)
+  #v(8pt, weak: true)
+  #align(right)[
+    Berlin, the 22nd of December, 2022
+  ]
+`}
+  image="/typst_docs_assets/images/aXgkI4qZ-XmSpUQBTpKSZA.png"
+  alt=""
+  editable={true}
+/>
+
+## Доступность [#accessibility]
+
+Повторяющееся содержимое автоматически помечается как [артефакт](/docs/typst/reference/format/pdf/artifact) и скрывается от вспомогательных технологий (AT). Не используйте эту функцию для создания содержимого, которое вносит вклад в смысл вашего документа.
+
+## Параметры [#parameters]
+
+```typst
+repeat(
+  content,
+  gap: length,
+  justify: bool,
+)
+```
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое для повторения.
+
+### `gap` [#parameters-gap]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `0pt`
+
+Промежуток между каждым экземпляром body.
+
+### `justify` [#parameters-justify]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `true`
+
+Увеличивать ли промежуток между экземплярами, чтобы полностью заполнить доступное пространство.

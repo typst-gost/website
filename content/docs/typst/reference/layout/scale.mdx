@@ -1,0 +1,110 @@
+---
+title: "Scale"
+description: "Документация для функции `scale`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Масштабирует содержимое, не влияя на макет.
+
+Позволяет зеркально отражать содержимое, задавая отрицательный масштаб по одной оси.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set align(center)
+  #scale(x: -100%)[This is mirrored.]
+  #scale(x: -100%, reflow: true)[This is mirrored.]
+`}
+  image="/typst_docs_assets/images/BqKufYEV_PhU67WNNs7odw.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+scale(
+  auto | length | ratio,
+  x: auto | length | ratio,
+  y: auto | length | ratio,
+  origin: alignment,
+  reflow: bool,
+  content,
+)
+```
+
+### `factor` [#parameters-factor]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Коэффициент масштабирования для обеих осей, задаваемый как позиционный аргумент. Это всего лишь необязательная сокращённая запись для установки `x` и `y` в одно и то же значение.
+
+### `x` [#parameters-x]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `100%`
+
+Коэффициент масштабирования по горизонтали.
+
+Если параметр отрицательный, содержимое будет зеркально отражено по горизонтали.
+
+### `y` [#parameters-y]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `100%`
+
+Коэффициент масштабирования по вертикали.
+
+Если параметр отрицательный, содержимое будет зеркально отражено по вертикали.
+
+### `origin` [#parameters-origin]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `center + horizon`
+
+Начало преобразования.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  A#box(scale(75%)[A])A \\
+  B#box(scale(75%, origin: bottom + left)[B])B
+`}
+  image="/typst_docs_assets/images/JgEVs89gkVB-zmz2un2wlA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `reflow` [#parameters-reflow]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `false`
+
+Влияет ли масштабирование на макет.
+
+Если задано значение `false`, масштабированному содержимому будет разрешено перекрывать другое содержимое. Если задано `true`, будет вычислен новый размер масштабированного содержимого и макет скорректирован соответствующим образом.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Hello #scale(x: 20%, y: 40%, reflow: true)[World]!
+`}
+  image="/typst_docs_assets/images/VoXWAKusD6ZvcUiJZLl_cw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое для масштабирования.

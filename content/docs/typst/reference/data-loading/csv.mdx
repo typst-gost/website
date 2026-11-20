@@ -1,0 +1,61 @@
+---
+title: "CSV"
+description: "Документация для функции `csv`."
+---
+
+
+<span id="summary" />
+
+*Добавлено: навсегда*
+
+Считывает структурированные данные из CSV-файла.
+
+CSV-файл будет прочитан и разобран в двумерный массив строк: каждая строка CSV-файла будет представлена как массив строк, а все строки будут собраны в единый массив. Строки заголовков не удаляются.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let results = csv("example.csv")
+
+  #table(
+    columns: 2,
+    [*Condition*], [*Result*],
+    ..results.flatten(),
+  )
+`}
+  image="/typst_docs_assets/images/GlIf53ouCTddGdZvB48t4g.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+csv(
+  str | path | bytes,
+  delimiter: str,
+  row-type: type,
+) -> array
+```
+
+### `source` [#parameters-source]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** обязательный, позиционный
+
+Путь к CSV-файлу или необработанные байты CSV.
+
+### `delimiter` [#parameters-delimiter]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `","`
+
+Разделитель, отделяющий столбцы в CSV-файле. Должен быть одиночным ASCII-символом.
+
+### `row-type` [#parameters-row-type]
+
+**Тип:** [type](/docs/typst/reference/foundations/type) · **По умолчанию:** `array`
+
+Способ представления строк файла.
+
+- Если задано значение `array`, каждая строка представляется как обычный массив строк.
+- Если задано значение `dictionary`, каждая строка представляется как словарь, сопоставляющий ключи заголовков строкам. Этот вариант имеет смысл только при наличии строки заголовков в CSV-файле.

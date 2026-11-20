@@ -1,0 +1,259 @@
+---
+title: "Place"
+description: "Документация для функции `place`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Размещает содержимое относительно его родительского контейнера.
+
+Размещённое содержимое может быть либо наложенным (по умолчанию), либо плавающим. Наложенное содержимое выравнивается относительно родительского контейнера в соответствии с заданным [`alignment`](#parameters-alignment) и отображается поверх любого другого содержимого, добавленного к этому моменту в контейнер. Плавающее содержимое размещается вверху или внизу контейнера, смещая другое содержимое вниз или вверх соответственно. В обоих случаях положение содержимого можно скорректировать с помощью смещений [`dx`](#parameters-dx) и [`dy`](#parameters-dy), не влияя на макет.
+
+Родителем может быть любой контейнер, например [`block`](/docs/typst/reference/layout/block), [`box`](/docs/typst/reference/layout/box), [`rect`](/docs/typst/reference/visualize/rect) и т. д. Вызов `place` верхнего уровня разместит содержимое непосредственно в текстовой области текущей страницы. Это можно использовать для абсолютного позиционирования на странице: при [`alignment`](#parameters-alignment) `top + left` смещения `dx` и `dy` задают положение верхнего левого угла элемента относительно верхнего левого угла текстовой области. Для абсолютного позиционирования на всей странице, включая поля, можно использовать `place` в [`page.foreground`](/docs/typst/reference/layout/page#parameters-foreground) или [`page.background`](/docs/typst/reference/layout/page#parameters-background).
+
+## Примеры [#examples]
+
+<TypstRender
+  code={`
+  #set page(height: 120pt)
+  Hello, world!
+
+  #rect(
+    width: 100%,
+    height: 2cm,
+    place(horizon + right, square()),
+  )
+
+  #place(
+    top + left,
+    dx: -5pt,
+    square(size: 5pt, fill: red),
+  )
+`}
+  image="/typst_docs_assets/images/rn1yQi2W7Mmq9-x3l2HJdw.png"
+  alt=""
+  editable={true}
+/>
+
+## Влияние на положение других элементов [#effect-on-other-elements]
+
+Наложенные элементы не занимают места в потоке содержимого, но вызов `place` вставляет в поток невидимый блочный элемент. Это может повлиять на макет, разрывая текущий абзац. Чтобы избежать этого, можно обернуть вызов `place` в [`box`](/docs/typst/reference/layout/box), когда вызов выполняется в середине абзаца. Тогда выравнивание и смещения будут задаваться относительно этого блока нулевого размера. Чтобы убедиться, что он не влияет на интервалы, блок следует прикрепить к слову с помощью соединителя слов.
+
+Например, следующее определяет функцию для прикрепления аннотации к следующему слову:
+
+<TypstRender
+  code={`
+  #let annotate(..args) = {
+    box(place(..args))
+    sym.wj
+    h(0pt, weak: true)
+  }
+
+  A placed #annotate(square(), dy: 2pt)
+  square in my text.
+`}
+  image="/typst_docs_assets/images/eaGlIKqKaQpsjUYyRpBt2A.png"
+  alt=""
+  editable={true}
+/>
+
+Слабое пространство нулевой ширины служит для отбрасывания пробелов между вызовом функции и следующим словом.
+
+## Доступность [#accessibility]
+
+Вспомогательные технологии (AT) всегда будут читать размещённый элемент в том месте, где он логически появляется в документе, независимо от того, куда эта функция физически его переместила. Размещайте его разметку там, где она имеет наибольший смысл в порядке чтения.
+
+## Параметры [#parameters]
+
+```typst
+place(
+  auto | alignment,
+  scope: str,
+  float: bool,
+  clearance: length,
+  dx: relative,
+  dy: relative,
+  content,
+)
+```
+
+### `alignment` [#parameters-alignment]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Positional, Settable · **По умолчанию:** `start`
+
+Относительно какой позиции в родительском контейнере размещать содержимое.
+
+- Если `float` равен `false`, то это может быть любое выравнивание, кроме `auto`.
+- Если `float` равен `true`, то это должно быть `auto`, `top` или `bottom`.
+
+Когда `float` равен `false` и вертикальное выравнивание не указано, содержимое размещается в текущей позиции по вертикальной оси.
+
+### `scope` [#parameters-scope]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"column"`
+
+Относительно какой содержащей области что-либо размещается.
+
+Родительская область в первую очередь используется с рисунками, и по этой причине функция figure имеет зеркальный [`параметр scope`](/docs/typst/reference/model/figure#parameters-scope). Тем не менее, она также может быть в целом полезна для выхода за пределы колонок. Типичным примером было бы [создание секции заголовка в одну колонку](/docs/typst/guides/page-setup#columns) в документе с двумя колонками.
+
+Обратите внимание, что размещение в родительской области в настоящее время поддерживается только если `float` равен `true`. В будущем это может измениться.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 150pt, columns: 2)
+  #place(
+    top + center,
+    scope: "parent",
+    float: true,
+    rect(width: 80%, fill: aqua),
+  )
+
+  #lorem(25)
+`}
+  image="/typst_docs_assets/images/yNkSTfPSTXG-WQ6Fgt3yMw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"column"` | Разместить в текущей колонке. |
+| `"parent"` | Разместить относительно родителя, позволяя содержимому охватывать все колонки. |
+
+### `float` [#parameters-float]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Имеет ли размещённый элемент плавающий макет.
+
+Плавающие элементы позиционируются вверху или внизу родительского контейнера, смещая содержимое в потоке. Они всегда размещаются в порядке потока относительно друг друга, а также перед любым содержимым, следующим за более поздним элементом [`place.flush`](#definitions-flush).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 150pt)
+  #let note(where, body) = place(
+    center + where,
+    float: true,
+    clearance: 6pt,
+    rect(body),
+  )
+
+  #lorem(10)
+  #note(bottom)[Bottom 1]
+  #note(bottom)[Bottom 2]
+  #lorem(40)
+  #note(top)[Top]
+  #lorem(10)
+`}
+  image="/typst_docs_assets/images/-1RQJ08XtQrRHG-l8pt3aQ.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/PBAuxzVWyqaJootafeFg_w.png" alt="" width="480" height="300" />
+
+</details>
+
+### `clearance` [#parameters-clearance]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `1.5em`
+
+Интервал между размещённым элементом и другими элементами в плавающем макете.
+
+Не имеет эффекта, если `float` равен `false`.
+
+### `dx` [#parameters-dx]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Горизонтальное смещение размещённого содержимого.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 100pt)
+  #for x in range(-8, 8) {
+    place(center + horizon,
+      dx: x * 8pt, dy: x * 4pt,
+      text(
+        size: calc.root(x + 10, 3) * 6pt,
+        fill: color.mix((green, 8 - x), (blue, 8 + x)),
+      )[T]
+    )
+  }
+`}
+  image="/typst_docs_assets/images/DHjlSs4dX3bbE8qqxYa3JA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Это не влияет на макет содержимого в потоке. Другими словами, размещённое содержимое обрабатывается так, как если бы оно было обёрнуто в элемент [`move`](/docs/typst/reference/layout/move).
+
+### `dy` [#parameters-dy]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Вертикальное смещение размещённого содержимого.
+
+Это не влияет на макет содержимого в потоке. Другими словами, размещённое содержимое обрабатывается так, как если бы оно было обёрнуто в элемент [`move`](/docs/typst/reference/layout/move).
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое для размещения.
+
+## Функции [#functions]
+
+### `flush` [#definitions-flush]
+
+*Элемент* · *Since: 0.12.0*
+
+Просит алгоритм вёрстки разместить ожидающие плавающие элементы перед продолжением работы с содержимым.
+
+Это полезно для предотвращения перетекания плавающих рисунков в следующий раздел.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #lorem(15)
+
+  #figure(
+    rect(width: 100%, height: 50pt),
+    placement: auto,
+    caption: [A rectangle],
+  )
+
+  #place.flush()
+
+  This text appears after the figure.
+`}
+  image="/typst_docs_assets/images/slA_3EKCShfxgvF1yWN23A.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/0HPVCCw7BAseuFgvadbV4w.png" alt="" width="300" height="320" />
+
+</details>
+
+```typst
+place.flush() -> content
+```

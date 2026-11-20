@@ -1,0 +1,335 @@
+---
+title: "Нумерованный список"
+description: "Документация для функции `enum`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Нумерованный список.
+
+Отображает последовательность элементов по вертикали и нумерует их последовательно.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Automatically numbered:
+  + Preparations
+  + Analysis
+  + Conclusions
+
+  Manually numbered:
+  2. What is the first step?
+  5. I am confused.
+  +  Moving on ...
+
+  Multiple lines:
+  + This enum item has multiple
+    lines because the next line
+    is indented.
+
+  Function call.
+  #enum[First][Second]
+`}
+  image="/typst_docs_assets/images/KHSms7DT8tdO40ueNVJDOA.png"
+  alt=""
+  editable={true}
+/>
+
+Вы можете легко переключить все ваши перечисления на другой стиль нумерации с помощью правила set.
+
+<TypstRender
+  code={`
+  #set enum(numbering: "a)")
+
+  + Starting off ...
+  + Don't forget step two
+`}
+  image="/typst_docs_assets/images/bFbQUkprhnkNkNypRmYMcw.png"
+  alt=""
+  editable={true}
+/>
+
+Вы также можете использовать [`enum.item`](#definitions-item), чтобы программно настроить номер каждого элемента перечисления:
+
+<TypstRender
+  code={`
+  #enum(
+    enum.item(1)[First step],
+    enum.item(5)[Fifth step],
+    enum.item(10)[Tenth step]
+  )
+`}
+  image="/typst_docs_assets/images/eOQ1TBjl9c9ZUI3CkQzHHg.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Эта функция также имеет специальный синтаксис:
+
+- Строка, начинающаяся со знака плюс, создаёт автоматически нумерованный элемент перечисления.
+- Строка, начинающаяся с числа, за которым следует точка, создаёт явно нумерованный элемент перечисления.
+
+Элементы перечисления могут содержать несколько абзацев и другой блочный контент. Весь контент, имеющий отступ больше, чем маркер элемента, становится частью этого элемента.
+
+## Параметры [#parameters]
+
+```typst
+enum(
+  tight: bool,
+  numbering: str | function,
+  start: auto | int,
+  full: bool,
+  reversed: bool,
+  indent: length,
+  body-indent: length,
+  spacing: auto | length,
+  number-align: alignment,
+  ..content,
+)
+```
+
+### `tight` [#parameters-tight]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Определяет [интервал](#parameters-spacing) перечисления по умолчанию. Если значение равно `false`, элементы разделяются [интервалом между абзацами](/docs/typst/reference/model/par#parameters-spacing). Если значение равно `true`, вместо этого используется [интерлиньяж абзаца](/docs/typst/reference/model/par#parameters-leading). Это делает список более компактным, что может выглядеть лучше, если элементы короткие.
+
+В режиме разметки значение этого параметра определяется тем, разделены ли элементы пустой строкой. Если элементы следуют непосредственно друг за другом, значение устанавливается в `true`; если элементы разделены пустой строкой, значение устанавливается в `false`. Плотность, заданную разметкой, нельзя переопределить с помощью правил set.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  + If an enum has a lot of text, and
+    maybe other inline content, it
+    should not be tight anymore.
+
+  + To make an enum wide, simply
+    insert a blank line between the
+    items.
+`}
+  image="/typst_docs_assets/images/4jIfFjr46WL3tji0IYZ5SQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `numbering` [#parameters-numbering]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `"1."`
+
+Как нумеровать перечисление. Принимает [шаблон нумерации или функцию](/docs/typst/reference/model/numbering).
+
+Если шаблон нумерации содержит несколько счётных символов, они применяются к вложенным перечислениям. Если задана функция, она получает один аргумент, если `full` равно `false`, и несколько аргументов, если `full` равно `true`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set enum(numbering: "1.a)")
+  + Different
+  + Numbering
+    + Nested
+    + Items
+  + Style
+
+  #set enum(numbering: n => super[#n])
+  + Superscript
+  + Numbering!
+`}
+  image="/typst_docs_assets/images/QBCTy6npgCdoXImSN_9MRA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `start` [#parameters-start]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+С какого номера начинать перечисление.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #enum(
+    start: 3,
+    [Skipping],
+    [Ahead],
+  )
+`}
+  image="/typst_docs_assets/images/MtAV8vihzARge8w1zvh-dg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `full` [#parameters-full]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Отображать ли полную нумерацию, включая номера всех родительских перечислений.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set enum(numbering: "1.a)", full: true)
+  + Cook
+    + Heat water
+    + Add ingredients
+  + Eat
+`}
+  image="/typst_docs_assets/images/16Ly_-Yei_bEQKESmiiRKA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `reversed` [#parameters-reversed]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Обращать ли нумерацию для этого перечисления.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set enum(reversed: true)
+  + Coffee
+  + Tea
+  + Milk
+`}
+  image="/typst_docs_assets/images/LCx1XcfGe9xSA42vYuFfMw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `indent` [#parameters-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Отступ каждого элемента.
+
+### `body-indent` [#parameters-body-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0.5em`
+
+Пространство между нумерацией и телом каждого элемента.
+
+### `spacing` [#parameters-spacing]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Интервал между элементами перечисления.
+
+Если установлено значение `auto`, используется [`leading`](/docs/typst/reference/model/par#parameters-leading) абзаца для плотных перечислений и [`spacing`](/docs/typst/reference/model/par#parameters-spacing) абзаца для широких (неплотных) перечислений.
+
+### `number-align` [#parameters-number-align]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `end`
+
+Выравнивание, которое должны иметь номера перечисления.
+
+По умолчанию установлено значение `end`, которое выравнивает номера перечисления по горизонтали к концу текущего направления текста (например, в письменности слева направо это то же самое, что `right`). Кроме того, отсутствие вертикального выравнивания размещает каждый номер по вертикали чуть выше базовой линии элемента, как если бы он был частью его первой строки текста.
+
+Выбор `end` для горизонтального выравнивания номеров перечисления обычно предпочтительнее, чем `start`, поскольку тогда номера растут в сторону от текста, а не к нему. Однако эта опция позволяет переопределить такое поведение.
+
+Что касается вертикального выравнивания, его можно переопределить, если выравнивание по базовой линии нежелательно. Например, выравнивание `end + top` всегда размещало бы маркер по вертикали ближе к верху элемента, тогда как `end +
+bottom` переместило бы его ближе к низу.
+
+Также стоит отметить, что [маркированный список](/docs/typst/reference/model/list) имеет аналогичную опцию с именем `marker-align`, которая также управляет обеими осями выравнивания маркера точно так же, как номера `enum`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set enum(number-align: start + bottom)
+
+  Here are some powers of two:
+  1. One
+  2. Two
+  4. Four
+  8. Eight
+  16. Sixteen
+  32. Thirty two
+`}
+  image="/typst_docs_assets/images/FD0GkRZMNyXIsuySF6XZFQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `children` [#parameters-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Элементы нумерованного списка.
+
+При использовании синтаксиса enum соседние элементы автоматически собираются в перечисления, даже через такие конструкции, как циклы for.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #for phase in (
+     "Launch",
+     "Orbit",
+     "Descent",
+  ) [+ #phase]
+`}
+  image="/typst_docs_assets/images/lm3h3lPdcVMZPMhQZRMYNg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `item` [#definitions-item]
+
+*Элемент* · *Since: 0.4.0*
+
+Элемент перечисления.
+
+```typst
+enum.item(
+  auto | int,
+  content,
+)
+```
+
+#### `number` [#definitions-item-number]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Positional, Settable · **По умолчанию:** `auto`
+
+Номер элемента.
+
+#### `body` [#definitions-item-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Тело элемента.

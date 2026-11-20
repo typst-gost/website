@@ -1,0 +1,59 @@
+---
+title: "Target"
+description: "Документация для функции `target`."
+---
+
+
+<span id="summary" />
+
+*Контекстная* · *Доступна с версии: 0.13.0*
+
+Возвращает текущую цель экспорта.
+
+Эта функция возвращает
+
+- `"paged"` при экспорте в [PDF](/docs/typst/reference/format/pdf), [PNG](/docs/typst/reference/format/png) и [SVG](/docs/typst/reference/format/svg), а также внутри [HTML-фрейма](/docs/typst/reference/format/html/frame)
+- `"html"` при экспорте в [HTML](/docs/typst/reference/format/html)
+- `"bundle"` при экспорте в [Bundle](/docs/typst/reference/format/bundle)
+
+## Когда использовать [#when-to-use-it]
+
+Эта функция позволяет правильно форматировать документ для постраничного, HTML- и многофайлового экспорта. Её следует использовать прежде всего в шаблонах и правилах show, а не напрямую в содержимом. Благодаря этому содержимое документа может быть полностью независимым от цели экспорта, а контент можно совместно использовать между разными целями экспорта.
+
+## Изменяющиеся цели [#varying-targets]
+
+Эта функция является [контекстной](/docs/typst/reference/context), поскольку цель может меняться в рамках одной компиляции: при экспорте в HTML цель будет `"paged"` внутри [`html.frame`](/docs/typst/reference/format/html/frame).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let kbd(it) = context {
+    if target() == "html" {
+      html.elem("kbd", it)
+    } else {
+      set text(fill: rgb("#1f2328"))
+      let r = 3pt
+  box(
+        fill: rgb("#f6f8fa"),
+        stroke: rgb("#d1d9e0b3"),
+        outset: (y: r),
+        inset: (x: r),
+        radius: r,
+        raw(it)
+      )
+    }
+  }
+
+  Press #kbd("F1") for help.
+`}
+  image="/typst_docs_assets/images/ZdhcnuKFDaG0aJWzqmCNsA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+target() -> str
+```

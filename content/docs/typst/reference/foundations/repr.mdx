@@ -1,0 +1,57 @@
+---
+title: "Представление"
+description: "Документация для функции `repr`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Возвращает строковое представление значения.
+
+При вставке в содержимое большинство значений отображаются в виде этого представления моноширинным шрифтом с подсветкой синтаксиса. Исключения составляют `none`, целые числа, числа с плавающей точкой, строки, содержимое и функции.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #none vs #repr(none) \\
+  #"hello" vs #repr("hello") \\
+  #(1, 2) vs #repr((1, 2)) \\
+  #[*Hi*] vs #repr([*Hi*])
+`}
+  image="/typst_docs_assets/images/fd9M_hPZGvPu2pLXr-S9dA.png"
+  alt=""
+  editable={true}
+/>
+
+## Только для отладки [#debugging-only]
+
+Эта функция предназначена для отладки. Её вывод не следует считать стабильным, и он может измениться в любое время.
+
+В частности, одинаковый `repr` не гарантирует эквивалентность значений, а `repr` не является строго обратной функцией к [`eval`](/docs/typst/reference/foundations/eval). В следующем примере для удобочитаемости [`length`](/docs/typst/reference/layout/length) округлён до двух значащих цифр, а список параметров и тело [безымянной `function`](/docs/typst/reference/foundations/function#unnamed) опущены.
+
+<TypstRender
+  code={`
+  #assert(2pt / 3 < 0.67pt)
+  #repr(2pt / 3)
+
+  #repr(x => x + 1)
+`}
+  image="/typst_docs_assets/images/wcDKWOhXAcQ5x746TkR7lA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+repr(any) -> str
+```
+
+### `value` [#parameters-value]
+
+**Тип:** `any` · **Модификаторы:** обязательный, позиционный
+
+Значение, строковое представление которого нужно получить.

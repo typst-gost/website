@@ -1,0 +1,118 @@
+---
+title: "Надстрочный текст"
+description: "Документация для функции `super`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступен: всегда*
+
+Отображает текст в виде надстрочного.
+
+Текст отображается меньшим размером, а его базовая линия поднимается.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  1#super[st] try!
+`}
+  image="/typst_docs_assets/images/51fyRQim4FN3Ah_5u7q7XA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+super(
+  typographic: bool,
+  baseline: auto | length,
+  size: auto | length,
+  content,
+)
+```
+
+### `typographic` [#parameters-typographic]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Использовать ли надстрочные глифы из шрифта, если они доступны.
+
+В идеале надстрочные глифы предоставляются шрифтом (с помощью функции OpenType `sups`). В противном случае Typst может синтезировать надстрочные символы, поднимая и уменьшая обычные глифы.
+
+Если для этого параметра задано значение `false`, синтезированные глифы будут использоваться независимо от того, предоставляет ли шрифт специальные надстрочные глифы. Если задано `true`, синтезированные глифы всё равно могут использоваться, если шрифт не предоставляет необходимые надстрочные глифы.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  N#super(typographic: true)[1]
+  N#super(typographic: false)[1]
+`}
+  image="/typst_docs_assets/images/L3uX0lgLXte2BE5hyVzmVg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `baseline` [#parameters-baseline]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Смещение базовой линии вниз для синтезированных надстрочных символов.
+
+Это применяется только к синтезированным надстрочным символам. Иными словами, это не оказывает эффекта, если `typographic` равен `true` и шрифт предоставляет необходимые надстрочные глифы.
+
+Если задано значение `auto`, базовая линия смещается в соответствии с метриками, предоставленными шрифтом, с запасным значением `-0.5em` в случае, если шрифт не определяет необходимые метрики.
+
+Обратите внимание, что, поскольку смещение базовой линии применяется вниз, вам нужно будет указать отрицательное значение, чтобы содержимое отображалось поднятым над обычной базовой линией.
+
+Иногда необходимо явно задать `baseline` и [`size`](#parameters-size). В следующем примере надстрочный текст использует несколько шрифтов с несовместимыми метриками. Чтобы избежать несовпадения, мы переопределяем метрики для всех шрифтов.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let tz(timezone) = text(
+    font: "Roboto",
+    smallcaps(timezone, all: true),
+  )
+
+  / Per-font metrics:
+    14:00#super[#tz[UTC], not #tz[CET]]
+
+  #set super(
+    baseline: -0.4em,
+    size: 0.6em,
+    typographic: false,
+  )
+  / Unified metrics:
+    14:00#super[#tz[UTC], not #tz[CET]]
+`}
+  image="/typst_docs_assets/images/NU6VwI6reQLhAu8CQYWXkQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `size` [#parameters-size]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Размер шрифта для синтезированных надстрочных символов.
+
+Это применяется только к синтезированным надстрочным символам. Иными словами, это не оказывает эффекта, если `typographic` равен `true` и шрифт предоставляет необходимые надстрочные глифы.
+
+Если задано значение `auto`, размер масштабируется в соответствии с метриками, предоставленными шрифтом, с запасным значением `0.6em` в случае, если шрифт не определяет необходимые метрики.
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Текст, отображаемый в виде надстрочного.

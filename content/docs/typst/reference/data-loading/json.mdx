@@ -1,0 +1,112 @@
+---
+title: "JSON"
+description: "Документация для функции `json`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Читает структурированные данные из файла JSON.
+
+Файл должен содержать допустимое значение JSON, например объект или массив. Значения JSON будут преобразованы в соответствующие значения Typst, как указано в [таблице ниже](#conversion).
+
+Функция возвращает словарь, массив или, в зависимости от файла JSON, другой тип данных JSON.
+
+Файлы JSON в примере содержат объекты с ключами `temperature`, `unit` и `weather`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let forecast(day) = block[
+    #box(square(
+      width: 2cm,
+      inset: 8pt,
+      fill: if day.weather == "sunny" {
+        yellow
+      } else {
+        aqua
+      },
+      align(
+        bottom + right,
+        strong(day.weather),
+      ),
+    ))
+    #h(6pt)
+    #set text(22pt, baseline: -8pt)
+    #day.temperature °#day.unit
+  ]
+
+  #forecast(json("monday.json"))
+  #forecast(json("tuesday.json"))
+`}
+  image="/typst_docs_assets/images/cVAFCiU4-NdsRJrCH3nJlg.png"
+  alt=""
+  editable={true}
+/>
+
+## Детали преобразования [#conversion]
+
+| **Значение JSON** | **Преобразуется в Typst** |
+| --- | --- |
+| `null` | `none` |
+| bool | [`bool`](/docs/typst/reference/foundations/bool) |
+| number | [`float`](/docs/typst/reference/foundations/float) или [`int`](/docs/typst/reference/foundations/int) |
+| string | [`str`](/docs/typst/reference/foundations/str) |
+| array | [`array`](/docs/typst/reference/foundations/array) |
+| object | [`dictionary`](/docs/typst/reference/foundations/dictionary) |
+
+| **Значение Typst** | **Преобразуется в JSON** |
+| --- | --- |
+| типы, которые можно преобразовать из JSON | соответствующее значение JSON |
+| [`bytes`](/docs/typst/reference/foundations/bytes) | строка через [`repr`](/docs/typst/reference/foundations/repr) |
+| [`symbol`](/docs/typst/reference/foundations/symbol) | строка |
+| [`content`](/docs/typst/reference/foundations/content) | объект, описывающий содержимое |
+| другие типы ([`length`](/docs/typst/reference/layout/length) и т. д.) | строка через [`repr`](/docs/typst/reference/foundations/repr) |
+
+### Примечания [#notes]
+
+- В большинстве случаев числа JSON будут преобразованы в числа с плавающей точкой или целые числа в зависимости от того, являются ли они целыми. Однако учтите, что целые числа больше $2^{63} - 1$ или меньше $- 2^{63}$ будут преобразованы в числа с плавающей точкой, что может привести к приблизительному значению.
+- Байты не кодируются как массивы JSON по соображениям производительности и читаемости. Для двоичных данных рассмотрите возможность использования [`cbor.encode`](/docs/typst/reference/data-loading/cbor#definitions-encode).
+- Функция `repr` [предназначена только для отладки](/docs/typst/reference/foundations/repr#debugging-only), и её вывод не гарантируется стабильным между версиями Typst.
+
+## Параметры [#parameters]
+
+```typst
+json(str | path | bytes) -> any
+```
+
+### `source` [#parameters-source]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Путь к файлу JSON или необработанные байты JSON.
+
+## Функции [#functions]
+
+### `encode` [#definitions-encode]
+
+*Since: 0.8.0*
+
+Кодирует структурированные данные в строку JSON.
+
+```typst
+json.encode(
+  any,
+  pretty: bool,
+) -> str
+```
+
+#### `value` [#definitions-encode-value]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение для кодирования.
+
+#### `pretty` [#definitions-encode-pretty]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Следует ли форматировать JSON с переносами строк и отступами.

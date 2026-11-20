@@ -1,0 +1,61 @@
+---
+title: "0.14.1"
+description: "Изменения в Typst 0.14.1"
+---
+
+## Экспорт в PDF [#pdf-export]
+
+- Исправлена регрессия, из-за которой ссылки на элементы с метками иногда работали некорректно [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/304)
+- Исправлена ошибка, из-за которой атрибуты текста PDF могли записываться некорректно [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7478)
+- Исправлено падение при обработке ссылок [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7471)
+- Исправлено падение для страниц нулевого размера [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7454)
+- Исправлено падение, когда [`vline`](/docs/typst/reference/model/table#definitions-vline) или [`hline`](/docs/typst/reference/model/table#definitions-hline) таблицы имеет индекс за пределами допустимого диапазона [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7448)
+- Исправлено падение при форматировании ошибок экспорта в PDF, связанных со шрифтами [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7460)
+- Исправлено падение, когда элемент [`footnote`](/docs/typst/reference/model/footnote) или [`place`](/docs/typst/reference/layout/place) запрашивался и повторно вставлялся в документ [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7216)
+- Исправлено падение для PNG с некорректными метаданными [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/286), [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/287)
+- Исправлена ошибка, из-за которой текст в SVG с порядком отрисовки `fill-and-stroke` мог экспортироваться некорректно [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/292)
+- Исправлена ошибка с изоляцией слоёв в SVG, где используется смешивание/маскирование [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/295)
+- Исправлено, что заголовки таблиц могли помечаться некорректно в некоторых сценариях [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/289)
+- Исправлены проблемы, из-за которых сгенерированные PDF могли различаться между 32-битными и 64-битными системами [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/317), [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/316), [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/312)
+- Обновлён декодер JPEG, используемый при экспорте в PDF, для улучшения совместимости; исправлен случай, когда корректный JPEG отклонялся [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/288)
+- Пустой словарь информации о документе PDF теперь полностью опускается [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/LaurenzV/krilla/pull/280)
+- Редкое падение при тегировании PDF теперь превращается в ошибку компиляции [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7450)
+
+## Экспорт в HTML [#html-export]
+
+- Исправлен экспорт [заголовков](/docs/typst/reference/model/table#definitions-header) и [нижних колонтитулов](/docs/typst/reference/model/table#definitions-footer) таблиц с промежутком [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7332)
+- Правило set для [`page`](/docs/typst/reference/layout/page) при экспорте в HTML теперь выдаёт предупреждение вместо жёсткой ошибки, в соответствии с тем, как обычно обрабатываются неподдерживаемые элементы [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7513)
+
+## Математика [#math]
+
+- Исправлена регрессия, из-за которой `arrow.l.r` больше нельзя было использовать в качестве [акцента](/docs/typst/reference/math/accent) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7481)
+- Исправлено, что однобуквенные строки не реагировали на пробелы вокруг них так, как это делают много­буквенные строки [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7276)
+- Исправлено, что интервалы вокруг [`mat`](/docs/typst/reference/math/mat) и [`vec`](/docs/typst/reference/math/vec) с ограничителем-скобкой зависели от пробельных символов [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7309)
+- Исправлен расчёт высоты для горизонтально растянутых глифов [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7327)
+
+## Модель [#model]
+
+- Исправлена регрессия, из-за которой Typst выдавал ошибку в функциях нумерации заголовков, не обрабатывающих состояние счётчика `(0,)`. Это может происходить на первой итерации вёрстки. Обычно такие ошибки автоматически перехватываются Typst, но в данном случае этого не происходило. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7459)
+
+## Текст [#text]
+
+- Исправлена регрессия, из-за которой Typst синтезировал надстрочные знаки для некоторых шрифтов, даже когда были доступны [типографские](/docs/typst/reference/text/super#parameters-typographic) глифы [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7462)
+- Исправлена регрессия, из-за которой некоторые наклонные шрифты классифицировались как курсивные [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7483)
+
+## Скрипты [#scripting]
+
+- Исправлено падение из-за нарушения инвариантов в [`array.sorted`](/docs/typst/reference/foundations/array#definitions-sorted) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7520)
+- Исправлены падения из-за переполнения в [`calc.rem`](/docs/typst/reference/foundations/calc#functions-rem), [`calc.rem-euclid`](/docs/typst/reference/foundations/calc#functions-rem-euclid), [`calc.div-euclid`](/docs/typst/reference/foundations/calc#functions-div-euclid), [`calc.quo`](/docs/typst/reference/foundations/calc#functions-quo) и [`calc.gcd`](/docs/typst/reference/foundations/calc#functions-gcd) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7419)
+- Обновлена среда выполнения WebAssembly; исправлена ошибка, с которой могли столкнуться [плагины](/docs/typst/reference/foundations/plugin) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7438)
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Компиляция в стандартный вывод в сочетании с `--deps --deps-format=make` (что приводит к ошибке) больше не создаёт пустой файл зависимостей Make как побочный эффект [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7246)
+
+## Разработка [#development]
+
+- Минимальная поддерживаемая версия Rust повышена до 1.89 [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/7363)
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

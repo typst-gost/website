@@ -1,0 +1,171 @@
+---
+title: "Equation"
+description: "Документация для функции `equation`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Математическое уравнение.
+
+Может отображаться в строке с текстом или как отдельный блок. Уравнение становится блочным, если после открывающего знака доллара и перед закрывающим знаком доллара присутствует пробел.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set text(font: "New Computer Modern")
+
+  Let $a$, $b$, and $c$ be the side
+  lengths of a right-angled triangle.
+  Then, we know that:
+  $ a^2 + b^2 = c^2 $
+
+  Prove by induction:
+  $ sum_(k=1)^n k = (n(n+1)) / 2 $
+`}
+  image="/typst_docs_assets/images/GtMeAZeJH75lkU_mvM1Pyw.png"
+  alt=""
+  editable={true}
+/>
+
+По умолчанию блочные уравнения не разрываются между страницами. Это можно изменить с помощью `show math.equation: set block(breakable: true)`.
+
+## Синтаксис [#syntax]
+
+Эта функция также имеет специальный синтаксис: пишите математическую разметку внутри знаков доллара, чтобы создать уравнение. Если начать и закончить уравнение пробелом, оно превращается в отдельный блок, выровненный по центру по горизонтали. Подробнее о синтаксисе математики см. на [основной странице математики](/docs/typst/reference/math).
+
+## Параметры [#parameters]
+
+```typst
+math.equation(
+  block: bool,
+  numbering: none | str | function,
+  number-align: alignment,
+  supplement: none | auto | content | function,
+  alt: none | str,
+  content,
+)
+```
+
+### `block` [#parameters-block]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Отображается ли уравнение как отдельный блок.
+
+### `numbering` [#parameters-numbering]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как нумеровать блочные уравнения. Принимает [шаблон нумерации или функцию](/docs/typst/reference/model/numbering), принимающую одно число.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.equation(numbering: "(1)")
+
+  We define:
+  $ phi.alt := (1 + sqrt(5)) / 2 $ <ratio>
+
+  With @ratio, we get:
+  $ F_n = floor(1 / sqrt(5) phi.alt^n) $
+`}
+  image="/typst_docs_assets/images/kSs-B_cNdxFvTRVQOkjMDA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `number-align` [#parameters-number-align]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `end + horizon`
+
+Выравнивание нумерации уравнения.
+
+По умолчанию выравнивание — `end + horizon`. Для горизонтальной составляющей можно использовать `right`, `left` или `start` и `end` направления текста; для вертикальной составляющей можно использовать `top`, `horizon` или `bottom`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.equation(numbering: "(1)", number-align: bottom)
+
+  We can calculate:
+  $ E &= sqrt(m_0^2 + p^2) \\
+  &approx 125 "GeV" $
+`}
+  image="/typst_docs_assets/images/4IWXtXFtL405iDJ8hxdPqQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `supplement` [#parameters-supplement]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Дополнение к уравнению.
+
+Для ссылок на уравнения оно добавляется перед номером, на который делается ссылка.
+
+Если указана функция, ей передаётся уравнение, на которое делается ссылка, и она должна возвращать содержимое.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.equation(numbering: "(1)", supplement: [Eq.])
+
+  We define:
+  $ phi.alt := (1 + sqrt(5)) / 2 $ <ratio>
+
+  With @ratio, we get:
+  $ F_n = floor(1 / sqrt(5) phi.alt^n) $
+`}
+  image="/typst_docs_assets/images/yn05m_vWQOpv2aEBtUQkPg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `alt` [#parameters-alt]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Альтернативное описание математического уравнения.
+
+Оно должно описывать полное уравнение на естественном языке и будет доступно вспомогательным технологиям. Подробнее см. в [разделе «Текстовые представления» руководства по доступности](/docs/typst/guides/accessibility#textual-representations).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #math.equation(
+    alt: "integral from 1 to infinity of a x squared plus b with respect to x",
+    block: true,
+    $ integral_1^oo a x^2 + b dif x $,
+  )
+`}
+  image="/typst_docs_assets/images/sLh_munZDxQZrxze_JgRQQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое уравнения.

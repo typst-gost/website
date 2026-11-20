@@ -1,0 +1,136 @@
+---
+title: "Duration"
+description: "Документация для типа `duration`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.8.0*
+
+Представляет положительный или отрицательный промежуток времени.
+
+## Конструктор [#constructor]
+
+Создаёт новую длительность.
+
+Вы можете задать [длительность](/docs/typst/reference/foundations/duration) в неделях, днях, часах, минутах и секундах. Также длительность можно получить, вычтя одну [дату и время](/docs/typst/reference/foundations/datetime) из другой.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #duration(
+    days: 3,
+    hours: 12,
+  ).hours()
+`}
+  image="/typst_docs_assets/images/7apLSsUE6uT8APPxVz7a7Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+duration(
+  seconds: int,
+  minutes: int,
+  hours: int,
+  days: int,
+  weeks: int,
+) -> duration
+```
+
+### `seconds` [#constructor-seconds]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `0`
+
+Количество секунд.
+
+### `minutes` [#constructor-minutes]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `0`
+
+Количество минут.
+
+### `hours` [#constructor-hours]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `0`
+
+Количество часов.
+
+### `days` [#constructor-days]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `0`
+
+Количество дней.
+
+### `weeks` [#constructor-weeks]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `0`
+
+Количество недель.
+
+## Функции [#functions]
+
+### `seconds` [#definitions-seconds]
+
+*Добавлено в версии: 0.8.0*
+
+Длительность, выраженная в секундах.
+
+Эта функция возвращает общую длительность, представленную в секундах, в виде числа с плавающей точкой, а не компонент секунд длительности.
+
+```typst
+self.seconds() -> float
+```
+
+### `minutes` [#definitions-minutes]
+
+*Добавлено в версии: 0.8.0*
+
+Длительность, выраженная в минутах.
+
+Эта функция возвращает общую длительность, представленную в минутах, в виде числа с плавающей точкой, а не компонент минут длительности.
+
+```typst
+self.minutes() -> float
+```
+
+### `hours` [#definitions-hours]
+
+*Добавлено в версии: 0.8.0*
+
+Длительность, выраженная в часах.
+
+Эта функция возвращает общую длительность, представленную в часах, в виде числа с плавающей точкой, а не компонент часов длительности.
+
+```typst
+self.hours() -> float
+```
+
+### `days` [#definitions-days]
+
+*Добавлено в версии: 0.8.0*
+
+Длительность, выраженная в днях.
+
+Эта функция возвращает общую длительность, представленную в днях, в виде числа с плавающей точкой, а не компонент дней длительности.
+
+```typst
+self.days() -> float
+```
+
+### `weeks` [#definitions-weeks]
+
+*Добавлено в версии: 0.8.0*
+
+Длительность, выраженная в неделях.
+
+Эта функция возвращает общую длительность, представленную в неделях, в виде числа с плавающей точкой, а не компонент недель длительности.
+
+```typst
+self.weeks() -> float
+```

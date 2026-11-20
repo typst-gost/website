@@ -1,0 +1,239 @@
+---
+title: "Quote"
+description: "Документация для функции `quote`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *С версии: 0.9.0*
+
+Отображает цитату вместе с необязательной атрибуцией.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Plato is often misquoted
+  as the author of
+  #quote[I know that I know nothing.]
+  However, this is a derivation from
+  his original quote:
+
+  #quote(
+    block: true,
+    attribution: [Plato],
+  )[
+    ... ἔοικα γοῦν τούτου γε σμικρῷ
+    τινι αὐτῷ τούτῳ σοφώτερος εἶναι,
+    ὅτι ἃ μὴ οἶδα οὐδὲ οἴομαι εἰδέναι.
+  ]
+`}
+  image="/typst_docs_assets/images/US-lKSlwU2MZbnHPlST9ow.png"
+  alt=""
+  editable={true}
+/>
+
+По умолчанию блочные цитаты имеют отступы слева и справа по `1em`. Выравнивание и отступы можно настроить с помощью правил show-set:
+
+<TypstRender
+  code={`
+  #set quote(block: true)
+  #show quote: set align(center)
+  #show quote: set pad(x: 5em)
+
+  #quote[
+    You cannot pass... I am a servant
+    of the Secret Fire, wielder of the
+    flame of Anor. You cannot pass.
+    The dark fire will not avail you,
+    flame of Udûn. Go back to the
+    Shadow! You cannot pass.
+  ]
+`}
+  image="/typst_docs_assets/images/Cn6_7GAxECc-kDQc9_dvvw.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+quote(
+  block: bool,
+  quotes: auto | bool,
+  attribution: none | label | content,
+  content,
+)
+```
+
+### `block` [#parameters-block]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Является ли эта цитата блочной.
+
+<details>
+<summary>Показать пример: Встроенная цитата</summary>
+
+<TypstRender
+  code={`
+  #quote[Cogito, ergo sum]
+`}
+  image="/typst_docs_assets/images/0_v42a0nKxGJhigPbuzSXQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Показать пример: Блочная цитата</summary>
+
+<TypstRender
+  code={`
+  #quote(
+    block: true,
+    attribution: [John F. Kennedy],
+  )[
+    Ich bin ein Berliner.
+  ]
+`}
+  image="/typst_docs_assets/images/E-vWJRb-9wWtM2lZG6zhBQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `quotes` [#parameters-quotes]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Следует ли добавлять двойные кавычки вокруг этой цитаты.
+
+Используемые двойные кавычки определяются на основе свойства `quotes` у [smartquote](/docs/typst/reference/text/smartquote), на которое влияет свойство `lang` у [text](/docs/typst/reference/text/text).
+
+- `true`: Заключить эту цитату в двойные кавычки.
+- `false`: Не заключать эту цитату в двойные кавычки.
+- `auto`: Определить, следует ли заключать эту цитату в двойные кавычки, на основе свойства `block`. Если `block` равно `false`, двойные кавычки добавляются автоматически.
+
+<details>
+<summary>Показать пример: Использование курсива вместо кавычек</summary>
+
+<TypstRender
+  code={`
+  #set quote(quotes: false)
+  #show quote: set text(style: "italic")
+
+  The well-known phrase
+  #quote[Ich bin ein Berliner]
+  from JFK's speech in Berlin
+  marked a turning point in
+  relations between East and West.
+`}
+  image="/typst_docs_assets/images/EV3FqsO5c7aGsbCuWWs5cg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Показать пример: Кавычки зависят от языка</summary>
+
+<TypstRender
+  code={`
+  #text(lang: "de")[
+    Ein deutschsprachiger Autor
+    zitiert unter Umständen Kennedy:
+    #quote[Ich bin ein Berliner.]
+  ]
+
+  #text(lang: "en")[
+    And an English-speaking author
+    may translate the quote to:
+    #quote[I am a Berliner.]
+  ]
+`}
+  image="/typst_docs_assets/images/jyGRq0cBpB6B67LO_iXTDQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `attribution` [#parameters-attribution]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [label](/docs/typst/reference/foundations/label) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Атрибуция этой цитаты, обычно автор или источник.
+
+Это может быть либо произвольное содержимое, либо метка, указывающая на запись в библиографии. Если атрибуция является содержимым, по умолчанию она отображается только для блочных цитат (это можно изменить с помощью правила show). Если атрибуция является меткой, она отображается как [ссылка на источник](/docs/typst/reference/model/cite) в обычной или прозаической [форме](/docs/typst/reference/model/cite#parameters-form) для встроенных и блочных цитат соответственно.
+
+<details>
+<summary>Показать пример: Ссылка на запись в библиографии в качестве атрибуции</summary>
+
+<TypstRender
+  code={`
+  Gandalf the Grey appeared in the scene
+  #quote(attribution: <tolkien54>)[
+    The Bridge of Khazad-dûm
+  ].
+
+  #quote(
+    block: true,
+    attribution: <tolkien54>,
+  )[
+    You cannot pass... I am a servant
+    of the Secret Fire, wielder of the
+    flame of Anor. You cannot pass. The
+    dark fire will not avail you, flame
+    of Udûn. Go back to the Shadow! You
+    cannot pass.
+  ]
+
+  #bibliography(
+    "works.bib",
+    style: "apa",
+  )
+`}
+  image="/typst_docs_assets/images/tc2AbupEtiyL6MQA-EWJfw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Показать пример: Настройка атрибуции для встроенных цитат</summary>
+
+<TypstRender
+  code={`
+  // With default show rule.
+  #quote(attribution: [René Descartes])[
+    Cogito, ergo sum
+  ]
+
+  #show quote.where(block: false): it => {
+    ["] + h(0pt, weak: true) + it.body + h(0pt, weak: true) + ["]
+    if it.attribution != none [ (#it.attribution)]
+  }
+
+  // With our custom show rule.
+  #quote(attribution: [René Descartes])[
+    Cogito, ergo sum
+  ]
+`}
+  image="/typst_docs_assets/images/b2KQmWcg9fVXSUugte9Ijw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Текст цитаты.

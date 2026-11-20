@@ -1,0 +1,71 @@
+---
+title: "XML"
+description: "Документация для функции `xml`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Читает структурированные данные из XML-файла.
+
+XML-файл разбирается в массив словарей и строк. Узлы XML могут быть элементами или строками. Элементы представлены в виде словарей со следующими ключами:
+
+- `tag`: имя элемента в виде строки.
+- `attrs`: словарь атрибутов элемента в виде строк.
+- `children`: массив дочерних узлов элемента.
+
+XML-файл в примере содержит корневой тег `news` с несколькими тегами `article`. Каждая статья имеет теги `title`, `author` и `content`. Тег `content` содержит один или несколько абзацев, которые представлены тегами `p`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let find-child(elem, tag) = {
+    elem.children
+      .find(e => "tag" in e and e.tag == tag)
+  }
+
+  #let article(elem) = {
+    let title = find-child(elem, "title")
+    let author = find-child(elem, "author")
+    let pars = find-child(elem, "content")
+
+    [= #title.children.first()]
+    text(10pt, weight: "medium")[
+      Published by
+      #author.children.first()
+    ]
+
+    for p in pars.children {
+      if type(p) == dictionary {
+        parbreak()
+        p.children.first()
+      }
+    }
+  }
+
+  #let data = xml("example.xml")
+  #for elem in data.first().children {
+    if type(elem) == dictionary {
+      article(elem)
+    }
+  }
+`}
+  image="/typst_docs_assets/images/OuUazyaLOy4-I7BJY1uYzg.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+xml(str | path | bytes) -> any
+```
+
+### `source` [#parameters-source]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** обязательный, позиционный
+
+Путь к XML-файлу или необработанные байты XML.

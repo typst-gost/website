@@ -1,0 +1,160 @@
+---
+title: "Overline"
+description: "Документация для функции `overline`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступно с: всегда*
+
+Добавляет линию над текстом.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #overline[A line over text.]
+`}
+  image="/typst_docs_assets/images/jihDuEiDjLWkgrO1fNGY1A.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+overline(
+  stroke: auto | length | color | gradient | stroke | tiling | dictionary,
+  offset: auto | length,
+  extent: length,
+  evade: bool,
+  background: bool,
+  content,
+)
+```
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как [обвести](/docs/typst/reference/visualize/stroke) линию.
+
+Если задано значение `auto`, используется цвет текста и толщина, определённая в текущем шрифте.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(fill: olive)
+  #overline(
+    stroke: green.darken(20%),
+    offset: -12pt,
+    [The Forest Theme],
+  )
+`}
+  image="/typst_docs_assets/images/GyzhVF80KrGMBCARtKB4HQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `offset` [#parameters-offset]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Положение линии относительно базовой линии. Считывается из таблиц шрифта, если задано `auto`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #overline(offset: -1.2em)[
+    The Tale Of A Faraway Line II
+  ]
+`}
+  image="/typst_docs_assets/images/76wTuOHsKH3mZxKVUU5UQQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `extent` [#parameters-extent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Величина, на которую линия выходит за пределы содержимого (или внутрь, если значение отрицательное).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set overline(extent: 4pt)
+  #set underline(extent: 4pt)
+  #overline(underline[Typography Today])
+`}
+  image="/typst_docs_assets/images/xHHOOLkADNU68lo_qTR2rA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `evade` [#parameters-evade]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Пропускает ли линия участки, на которых она пересекалась бы с глифами.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #overline(
+    evade: false,
+    offset: -7.5pt,
+    stroke: 1pt,
+    extent: 3pt,
+    [Temple],
+  )
+`}
+  image="/typst_docs_assets/images/KSE7l9cpqj-_59rmDKM6-Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `background` [#parameters-background]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Размещается ли линия позади содержимого, над которым она проводится.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set overline(stroke: aqua + 5pt)
+  #overline(background: true)[Fully visible.] \\
+  #overline(background: false)[Partially hidden.]
+`}
+  image="/typst_docs_assets/images/PYX9zEYZE8kIV-CXZUV1NQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, над которым нужно добавить линию.

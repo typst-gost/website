@@ -1,0 +1,94 @@
+---
+title: "Капитель"
+description: "Документация для функции `smallcaps`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Отображает текст капителью.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Hello \\
+  #smallcaps[Hello]
+`}
+  image="/typst_docs_assets/images/5aZWPr3hXVeEnC_8ZRfd0g.png"
+  alt=""
+  editable={true}
+/>
+
+## Шрифты с капителью [#smallcaps-fonts]
+
+По умолчанию используются OpenType-функции `smcp` и `c2sc` шрифта. Не все шрифты поддерживают эти функции. Иногда капитель является частью отдельного шрифта. Так обстоит дело, например, с семейством шрифтов _Latin Modern_. В таких случаях можно использовать правило show-set, чтобы настроить внешний вид текста в капители:
+
+```typst
+#show smallcaps: set text(font: "Latin Modern Roman Caps")
+```
+
+В будущем эта функция будет поддерживать синтез капители из обычных букв, но пока это не реализовано.
+
+## Заголовки капителью [#smallcaps-headings]
+
+Вы можете использовать [правило show](/docs/typst/reference/styling#show-rules), чтобы применить форматирование капителью ко всем заголовкам. В примере ниже мы также выравниваем заголовки по центру и отключаем стандартный полужирный шрифт.
+
+<TypstRender
+  code={`
+  #set par(justify: true)
+  #set heading(numbering: "I.")
+
+  #show heading: smallcaps
+  #show heading: set align(center)
+  #show heading: set text(
+    weight: "regular"
+  )
+
+  = Introduction
+  #lorem(40)
+`}
+  image="/typst_docs_assets/images/wNfuzWBOWDVph2TsH_NV9A.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+smallcaps(
+  all: bool,
+  content,
+)
+```
+
+### `all` [#parameters-all]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Преобразовывать ли заглавные буквы также в капитель.
+
+Если это не переопределено правилом show, включает OpenType-функцию `c2sc`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #smallcaps(all: true)[UNICEF] is an
+  agency of #smallcaps(all: true)[UN].
+`}
+  image="/typst_docs_assets/images/xyFlNAWjdevPpP3s8Sc_fg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое для отображения капителью.

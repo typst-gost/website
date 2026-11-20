@@ -1,0 +1,484 @@
+---
+title: "Figure"
+description: "Документация для функции `figure`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Фигура с необязательной подписью.
+
+Автоматически определяет свой вид для выбора правильной последовательности нумерации. Например, фигуры, содержащие изображения, будут нумероваться отдельно от фигур, содержащих таблицы.
+
+## Примеры [#examples]
+
+В примере ниже показана базовая фигура с изображением:
+
+<TypstRender
+  code={`
+  @glacier shows a glacier. Glaciers
+  are complex systems.
+
+  #figure(
+    image("glacier.jpg", width: 80%),
+    caption: [A curious figure.],
+  ) <glacier>
+`}
+  image="/typst_docs_assets/images/AB-08MlVljZSDvJtpXLOtQ.png"
+  alt=""
+  editable={true}
+/>
+
+Вы также можете вставлять [таблицы](/docs/typst/reference/model/table) в фигуры, чтобы дать им подпись. Фигура определит это и автоматически использует отдельный счётчик.
+
+<TypstRender
+  code={`
+  #figure(
+    table(
+      columns: 4,
+      [t], [1], [2], [3],
+      [y], [0.3s], [0.4s], [0.8s],
+    ),
+    caption: [Timing results],
+  )
+`}
+  image="/typst_docs_assets/images/TMOgVG5Isq8A_aZYG-YvdA.png"
+  alt=""
+  editable={true}
+/>
+
+Это поведение можно переопределить, явно указав `kind` фигуры. Все фигуры одного вида используют общий счётчик.
+
+## Поведение фигур [#figure-behaviour]
+
+По умолчанию фигуры размещаются в потоке содержимого. Чтобы заставить их «плавать» вверху или внизу страницы, можно использовать аргумент [`placement`](#parameters-placement).
+
+Если ваша фигура слишком большая и её содержимое может разрываться между страницами (например, если она содержит большую таблицу), то и саму фигуру можно сделать разрываемой между страницами с помощью следующего правила show:
+
+```typst
+#show figure: set block(breakable: true)
+```
+
+Дополнительную информацию о разрываемых и неразрываемых блоках см. в документации [`block`](/docs/typst/reference/layout/block#parameters-breakable).
+
+## Настройка подписи [#caption-customization]
+
+Вы можете изменить внешний вид подписи фигуры с помощью связанной с ней функции [`caption`](#definitions-caption). В примере ниже мы выделяем все подписи:
+
+<TypstRender
+  code={`
+  #show figure.caption: emph
+  #figure(
+    rect[Hello],
+    caption: [I am emphasized!],
+  )
+`}
+  image="/typst_docs_assets/images/y05qakwhy4bCiX4NruIQlg.png"
+  alt=""
+  editable={true}
+/>
+
+Используя селектор [`where`](/docs/typst/reference/foundations/function#definitions-where), можно ограничить такие правила конкретными видами фигур. Например, чтобы расположить подпись над таблицами, но оставить её снизу для всех остальных видов фигур, можно написать следующее правило show-set:
+
+<TypstRender
+  code={`
+  #show figure.where(
+    kind: table
+  ): set figure.caption(position: top)
+
+  #figure(
+    table(columns: 2)[A][B][C][D],
+    caption: [I'm up here],
+  )
+`}
+  image="/typst_docs_assets/images/itbFcQ2PjjpOzz-N_wV7Rg.png"
+  alt=""
+  editable={true}
+/>
+
+## Доступность [#accessibility]
+
+Вы можете использовать параметр [`alt`](#parameters-alt), чтобы предоставить [альтернативное описание](/docs/typst/guides/accessibility#textual-representations) фигуры для программ чтения с экрана и других вспомогательных технологий (AT). Подробнее см. в [его документации](#parameters-alt).
+
+Вы можете использовать фигуры, чтобы добавить альтернативные описания к путям, фигурам или визуализациям, у которых нет собственного параметра `alt`. Если ваша графика является чисто декоративной и не несёт смысловой нагрузки, рассмотрите возможность обернуть её в [`pdf.artifact`](/docs/typst/reference/format/pdf/artifact), что скроет её от AT при экспорте в PDF.
+
+AT всегда будет читать фигуру в том месте, где она появляется в документе, независимо от её [`placement`](#parameters-placement). Размещайте её разметку там, где она имеет наибольший смысл в порядке чтения.
+
+## Параметры [#parameters]
+
+```typst
+figure(
+  content,
+  alt: none | str,
+  placement: none | auto | alignment,
+  scope: str,
+  caption: none | content,
+  kind: auto | str | function,
+  supplement: none | auto | content | function,
+  numbering: none | str | function,
+  gap: length,
+  outlined: bool,
+)
+```
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое фигуры. Часто — [изображение](/docs/typst/reference/visualize/image).
+
+### `alt` [#parameters-alt]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Альтернативное описание фигуры.
+
+Когда вы добавляете альтернативное описание, AT прочитает и его, и подпись (если она есть). Однако содержимое самой фигуры будет пропущено.
+
+Если тело вашей фигуры — это [изображение](/docs/typst/reference/visualize/image) с собственным заданным текстом `alt`, этот параметр не следует использовать на элементе figure. Аналогично, не используйте этот параметр, если фигура содержит таблицу, код или другое содержимое, которое уже доступно. В таких случаях содержимое фигуры будет прочитано AT, и добавление альтернативного описания приведёт к потере информации.
+
+О том, как писать хорошие альтернативные описания, можно узнать в [руководстве по доступности](/docs/typst/guides/accessibility#textual-representations).
+
+### `placement` [#parameters-placement]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Размещение фигуры на странице.
+
+- `none`: фигура остаётся в потоке точно там, где она была указана, как и другое содержимое.
+- `auto`: фигура выбирает `top` или `bottom` в зависимости от того, что ближе.
+- `top`: фигура «плавает» вверху страницы.
+- `bottom`: фигура «плавает» внизу страницы.
+
+Промежуток между основным потоком содержимого и плавающей фигурой управляется аргументом [`clearance`](/docs/typst/reference/layout/place#parameters-clearance) функции `place`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 200pt)
+  #show figure: set place(
+    clearance: 1em,
+  )
+
+  = Introduction
+  #figure(
+    placement: bottom,
+    caption: [A glacier],
+    image("glacier.jpg", width: 60%),
+  )
+  #lorem(60)
+`}
+  image="/typst_docs_assets/images/_iXQkt4Zf_hrldt90YBmqg.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/qTLGSX-6xETUl3bPfTEaZA.png" alt="" width="480" height="400" />
+
+</details>
+
+### `scope` [#parameters-scope]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"column"`
+
+Относительно какой содержащей области размещается фигура.
+
+Установите значение `"parent"`, чтобы создать фигуру на всю ширину в документе с двумя колонками.
+
+Не имеет эффекта, если `placement` равен `none`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 250pt, columns: 2)
+
+  = Introduction
+  #figure(
+    placement: bottom,
+    scope: "parent",
+    caption: [A glacier],
+    image("glacier.jpg", width: 60%),
+  )
+  #lorem(60)
+`}
+  image="/typst_docs_assets/images/WD07SesI0VQiTfZtQlPVEA.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/QpPDaslEWHUNNXF0eE173w.png" alt="" width="480" height="500" />
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"column"` | Разместить в текущей колонке. |
+| `"parent"` | Разместить относительно родителя, позволяя содержимому занимать все колонки. |
+
+### `caption` [#parameters-caption]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Подпись фигуры.
+
+### `kind` [#parameters-kind]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Вид этой фигуры.
+
+Все фигуры одного вида используют общий счётчик.
+
+Если установлено значение `auto`, фигура попытается автоматически определить свой вид на основе типа своего тела. Автоматически определяемые виды — это [таблицы](/docs/typst/reference/model/table) и [код](/docs/typst/reference/text/raw). В остальных случаях выводимый вид — это вид [изображения](/docs/typst/reference/visualize/image).
+
+Установка значения, отличного от `auto`, переопределит автоматическое определение. Это может быть полезно, если
+
+- вы хотите создать пользовательский вид фигуры, который не является [изображением](/docs/typst/reference/visualize/image), [таблицей](/docs/typst/reference/model/table) или [кодом](/docs/typst/reference/text/raw),
+- вы хотите заставить фигуру использовать определённый счётчик независимо от её содержимого.
+
+Вы можете задать вид как функцию-элемент или строку. Если вы зададите его как функцию-элемент, отличную от [`table`](/docs/typst/reference/model/table), [`raw`](/docs/typst/reference/text/raw) или [`image`](/docs/typst/reference/visualize/image), вам потребуется вручную указать supplement фигуры.
+
+<details>
+<summary>Посмотреть пример: настройка вида фигуры</summary>
+
+<TypstRender
+  code={`
+  #figure(
+    circle(radius: 10pt),
+    caption: [A curious atom.],
+    kind: "atom",
+    supplement: [Atom],
+  )
+`}
+  image="/typst_docs_assets/images/Ze1WvUz1ZKPFRP6IAvB8kQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Если вы хотите изменить счётчик, чтобы пропустить номер или сбросить его, вы можете получить доступ к [счётчику](/docs/typst/reference/introspection/counter) каждого вида фигуры с помощью селектора [`where`](/docs/typst/reference/foundations/function#definitions-where):
+
+- Для [таблиц](/docs/typst/reference/model/table): `counter(figure.where(kind: table))`
+- Для [изображений](/docs/typst/reference/visualize/image): `counter(figure.where(kind: image))`
+- Для пользовательского вида: `counter(figure.where(kind: kind))`
+
+<details>
+<summary>Посмотреть пример: изменение счётчика фигур для конкретных видов</summary>
+
+<TypstRender
+  code={`
+  #figure(
+    table(columns: 2, $n$, $1$),
+    caption: [The first table.],
+  )
+
+  #counter(
+    figure.where(kind: table)
+  ).update(41)
+
+  #figure(
+    table(columns: 2, $n$, $42$),
+    caption: [The 42nd table],
+  )
+
+  #figure(
+    rect[Image],
+    caption: [Does not affect images],
+  )
+`}
+  image="/typst_docs_assets/images/nDLTROdz1vSAO0kyZld1nw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Чтобы удобно использовать правильный счётчик в правиле show, вы можете получить доступ к полю `counter`. Пример этого есть в документации [поля `body` элемента `figure.caption`](#definitions-caption-body).
+
+### `supplement` [#parameters-supplement]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Supplement фигуры.
+
+Если установлено значение `auto`, фигура попытается автоматически определить правильный supplement на основе `kind` и активного [языка текста](/docs/typst/reference/text/text#parameters-lang). Если вы используете пользовательский вид фигуры, вам потребуется вручную указать supplement.
+
+Если указана функция, ей передаётся первый потомок указанного `kind` (обычно тело фигуры), и она должна вернуть содержимое.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #figure(
+    [The contents of my figure!],
+    caption: [My custom figure],
+    supplement: [Bar],
+    kind: "foo",
+  )
+`}
+  image="/typst_docs_assets/images/6mCH4GXCU1heUVZe4VlNnQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `numbering` [#parameters-numbering]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `"1"`
+
+Как нумеровать фигуру. Принимает [шаблон нумерации или функцию](/docs/typst/reference/model/numbering), принимающую одно число.
+
+### `gap` [#parameters-gap]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0.65em`
+
+Вертикальный промежуток между телом и подписью.
+
+### `outlined` [#parameters-outlined]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Должна ли фигура появляться в [`outline`](/docs/typst/reference/model/outline) фигур.
+
+## Функции [#functions]
+
+### `caption` [#definitions-caption]
+
+*Элемент* · *Locatable* · *Since: 0.8.0*
+
+Подпись фигуры. Этот элемент можно использовать в правилах set и show для настройки внешнего вида подписей для всех фигур или фигур определённого вида.
+
+Помимо `position` и `body`, `caption` также предоставляет `kind`, `supplement`, `counter` и `numbering` фигуры в качестве полей. Эти части можно использовать в селекторах [`where`](/docs/typst/reference/foundations/function#definitions-where) и правилах show для создания полностью пользовательской подписи.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #show figure.caption: emph
+  #figure(
+    rect[Hello],
+    caption: [A rectangle],
+  )
+`}
+  image="/typst_docs_assets/images/FHA7J2cx0m_LW98DIFB1vQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+figure.caption(
+  position: alignment,
+  separator: auto | content,
+  content,
+)
+```
+
+#### `position` [#definitions-caption-position]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `bottom`
+
+Положение подписи в фигуре. Либо `top`, либо `bottom`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #show figure.where(
+    kind: table
+  ): set figure.caption(position: top)
+
+  #figure(
+    table(columns: 2)[A][B],
+    caption: [I'm up here],
+  )
+
+  #figure(
+    rect[Hi],
+    caption: [I'm down here],
+  )
+
+  #figure(
+    table(columns: 2)[A][B],
+    caption: figure.caption(
+      position: bottom,
+      [I'm down here too!]
+    )
+  )
+`}
+  image="/typst_docs_assets/images/CbtuCQeiWeQwHAgVjj9U2w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `separator` [#definitions-caption-separator]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Разделитель, который будет отображаться между номером и телом.
+
+Если установлено значение `auto`, разделитель будет адаптирован к текущему [языку](/docs/typst/reference/text/text#parameters-lang) и [региону](/docs/typst/reference/text/text#parameters-region).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set figure.caption(separator: [ --- ])
+
+  #figure(
+    rect[Hello],
+    caption: [A rectangle],
+  )
+`}
+  image="/typst_docs_assets/images/axltRCbs-lZ-3qowwfhs5Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `body` [#definitions-caption-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Тело подписи.
+
+Может использоваться вместе с `kind`, `supplement`, `counter`, `numbering` и `location` для полной настройки подписи.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #show figure.caption: it => [
+    #underline(it.body) |
+    #it.supplement
+  #context it.counter.display(it.numbering)
+  ]
+
+  #figure(
+    rect[Hello],
+    caption: [A rectangle],
+  )
+`}
+  image="/typst_docs_assets/images/zXq-q8akdIcTa3d1nYihXw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

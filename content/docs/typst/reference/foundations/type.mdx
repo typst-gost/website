@@ -1,0 +1,96 @@
+---
+title: "Type"
+description: "Документация для типа `type`."
+---
+
+
+<span id="summary" />
+
+*Since: 0.8.0*
+
+Описывает разновидность значения.
+
+Чтобы оформить документ, вам нужно работать со значениями разных видов: длинами, задающими размер ваших элементов, цветами для текста и фигур и многим другим. Typst распределяет их по чётко определённым _типам_ и сообщает, где ожидает значение какого типа.
+
+Помимо базовых типов для числовых значений и [типичных](/docs/typst/reference/foundations/int) [типов](/docs/typst/reference/foundations/float), [известных](/docs/typst/reference/foundations/str) [из](/docs/typst/reference/foundations/array) [языков](/docs/typst/reference/foundations/dictionary) [программирования](/docs/typst/reference/foundations/dictionary), Typst предоставляет особый тип для [_содержимого._](/docs/typst/reference/foundations/content) Значение этого типа может хранить всё, что вы можете ввести в свой документ: текст, элементы вроде заголовков и фигур, а также информацию о стиле.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let x = 10
+  #if type(x) == int [
+    #x is an integer!
+  ] else [
+    #x is another value...
+  ]
+
+  An image is of type
+  #type(image("glacier.jpg")).
+`}
+  image="/typst_docs_assets/images/LxepoVFr_eUF98Y5LzUGWg.png"
+  alt=""
+  editable={true}
+/>
+
+Тип `10` — это `int`. А теперь, каков тип `int` или даже `type`?
+
+<TypstRender
+  code={`
+  #type(int) \\
+  #type(type)
+`}
+  image="/typst_docs_assets/images/qkKTLluL80YQA0dTRzOIbA.png"
+  alt=""
+  editable={true}
+/>
+
+В отличие от других типов, таких как `int`, [none](/docs/typst/reference/foundations/none) и [auto](/docs/typst/reference/foundations/auto) не имеют имени, которое бы их представляло. Чтобы проверить, является ли значение одним из них, сравните ваше значение с ними напрямую, например:
+
+<TypstRender
+  code={`
+  #let val = none
+  #if val == none [
+    Yep, it's none.
+  ]
+`}
+  image="/typst_docs_assets/images/GjOMwJ_H8iFslyFp7CPFRA.png"
+  alt=""
+  editable={true}
+/>
+
+Обратите внимание, что `type` вернёт [`content`](/docs/typst/reference/foundations/content) для всех элементов документа. Чтобы программно определить, с каким видом содержимого вы имеете дело, см. [`content.func`](/docs/typst/reference/foundations/content#definitions-func).
+
+## Конструктор [#constructor]
+
+Определяет тип значения.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #type(12) \\
+  #type(14.7) \\
+  #type("hello") \\
+  #type(<glacier>) \\
+  #type([Hi]) \\
+  #type(x => x + 1) \\
+  #type(type)
+`}
+  image="/typst_docs_assets/images/yfv8DGeEz5rioKfNATuoYQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+type(any) -> type
+```
+
+### `value` [#constructor-value]
+
+**Type:** `any` · **Modifiers:** Required, Positional
+
+Значение, тип которого нужно определить.

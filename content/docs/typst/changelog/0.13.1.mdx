@@ -1,0 +1,30 @@
+---
+title: "0.13.1"
+description: "Изменения в Typst 0.13.1"
+---
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Исправлена высокая загрузка ЦП для `typst watch` в Linux. В зависимости от размера проекта загрузка ЦП возрастала на разное время. Эта ошибка появилась в версии 0.13.0 из-за изменения поведения бэкенда отслеживания файлов inotify.
+
+## Экспорт в HTML [#html-export]
+
+- Исправлен экспорт таблиц с [промежутками](/docs/typst/reference/model/table#parameters-gutter)
+- Исправлено использование элементов `<html>` и `<body>` внутри [контекста](/docs/typst/reference/context)
+- Исправлен запрос [метаданных](/docs/typst/reference/introspection/metadata) рядом с элементами `<html>` и `<body>`
+
+## Визуализация [#visualization]
+
+- Исправлены [кривые](/docs/typst/reference/visualize/curve) с несколькими незамкнутыми компонентами
+
+## Интроспекция [#introspection]
+
+- Исправлена регрессия, из-за которой помеченные [символы](/docs/typst/reference/foundations/symbol) не удавалось [запросить](/docs/typst/reference/introspection/query) по метке
+
+## Устаревания [#deprecations]
+
+- Исправлены ложные срабатывания предупреждений об устаревании для сравнений type/str
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

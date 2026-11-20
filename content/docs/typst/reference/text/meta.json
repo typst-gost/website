@@ -1,0 +1,20 @@
+{
+  "title": "Текст",
+  "description": "Документация по функциональности стилизации текста.",
+  "pages": [
+    "highlight",
+    "linebreak",
+    "lorem",
+    "lower",
+    "overline",
+    "raw",
+    "smallcaps",
+    "smartquote",
+    "strike",
+    "sub",
+    "super",
+    "text",
+    "underline",
+    "upper"
+  ]
+}

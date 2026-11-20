@@ -1,0 +1,82 @@
+---
+title: "Относительная длина"
+description: "Документация для типа `relative`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Длина по отношению к некоторой известной длине.
+
+Этот тип представляет собой комбинацию [длины](/docs/typst/reference/layout/length) с [отношением](/docs/typst/reference/layout/ratio). Он получается в результате сложения и вычитания длины и отношения. Везде, где ожидается относительная длина, вы также можете использовать просто длину или отношение.
+
+## Относительно страницы [#relative-to-the-page]
+
+Распространённый случай использования — задание ширины или высоты элемента макета (например, [block](/docs/typst/reference/layout/block), [rect](/docs/typst/reference/visualize/rect) и т.д.) как определённого процента от ширины страницы. Здесь ширина прямоугольника задана как `25%`, поэтому он занимает одну четвёртую _внутренней_ ширины страницы (ширины за вычетом полей).
+
+<TypstRender
+  code={`
+  #rect(width: 25%)
+`}
+  image="/typst_docs_assets/images/Hbm-tZpzlOZD_-0z34N8uQ.png"
+  alt=""
+  editable={true}
+/>
+
+Просто длины или отношения всегда допустимы там, где ожидаются относительные длины, но их также можно свободно смешивать:
+
+<TypstRender
+  code={`
+  #rect(width: 25% + 1cm)
+`}
+  image="/typst_docs_assets/images/wqKp_Palut2gbDdRRmfemA.png"
+  alt=""
+  editable={true}
+/>
+
+Если вы пытаетесь задать размер элемента относительно _полной_ ширины страницы, у вас есть несколько вариантов (это сильно зависит от вашего конкретного случая использования):
+
+1. Установите поля страницы в `0pt` (`#set page(margin: 0pt)`)
+2. Умножьте отношение на известную полную ширину страницы (`21cm * 69%`)
+3. Используйте отступы (padding), которые компенсируют поля (`#pad(x: -2.5cm, ...)`)
+4. Используйте поля страницы [`background`](/docs/typst/reference/layout/page#parameters-background) или [`foreground`](/docs/typst/reference/layout/page#parameters-foreground), так как они не учитывают поля (учтите, что это отрисует содержимое вне потока документа, см. [`place`](/docs/typst/reference/layout/place) для управления положением содержимого)
+
+Для содержимого в [background](/docs/typst/reference/layout/page#parameters-background) и [foreground](/docs/typst/reference/layout/page#parameters-foreground) страницы относительные длины вычисляются относительно размера страницы, включая [bleed](/docs/typst/reference/layout/page#parameters-bleed). Этот выбор сделан для удобства, поскольку создание правильного фона с учётом bleed по своей сути требует его расширения в область bleed.
+
+## Относительно контейнера [#relative-to-a-container]
+
+Когда элемент макета (например, [rect](/docs/typst/reference/visualize/rect)) вложен в другой контейнер макета (например, [block](/docs/typst/reference/layout/block)), а не является прямым потомком страницы, относительные ширины становятся относительными к контейнеру:
+
+<TypstRender
+  code={`
+  #block(
+    width: 100pt,
+    fill: aqua,
+    rect(width: 50%),
+  )
+`}
+  image="/typst_docs_assets/images/PLB7xM6yaVCJEvrtv3appg.png"
+  alt=""
+  editable={true}
+/>
+
+## Скриптинг [#scripting]
+
+Вы можете умножать относительные длины на [отношения](/docs/typst/reference/layout/ratio), [целые числа](/docs/typst/reference/foundations/int) и [числа с плавающей точкой](/docs/typst/reference/foundations/float).
+
+Относительная длина имеет следующие поля:
+
+- `length`: Её компонент [длины](/docs/typst/reference/layout/length).
+- `ratio`: Её компонент [отношения](/docs/typst/reference/layout/ratio).
+
+<TypstRender
+  code={`
+  #(100% - 50pt).length \\
+  #(100% - 50pt).ratio
+`}
+  image="/typst_docs_assets/images/_hNkfLZvCLD6oaNTm7C5ew.png"
+  alt=""
+  editable={true}
+/>

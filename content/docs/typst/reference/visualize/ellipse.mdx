@@ -1,0 +1,88 @@
+---
+title: "Ellipse"
+description: "Документация для функции `ellipse`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Эллипс с необязательным содержимым.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  // Without content.
+  #ellipse(width: 35%, height: 30pt)
+
+  // With content.
+  #ellipse[
+    #set align(center)
+    Automatically sized \\
+    to fit the content.
+  ]
+`}
+  image="/typst_docs_assets/images/WL1QK5VX2tXIhBINsZs5Fg.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+ellipse(
+  width: auto | relative,
+  height: auto | relative | fraction,
+  fill: none | color | gradient | tiling,
+  stroke: none | auto | length | color | gradient | stroke | tiling | dictionary,
+  inset: relative | dictionary,
+  outset: relative | dictionary,
+  none | content,
+)
+```
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Ширина эллипса относительно его родительского контейнера.
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Высота эллипса относительно его родительского контейнера.
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как заполнять эллипс. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-fill).
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как обводить эллипс. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+### `inset` [#parameters-inset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `0% + 5pt`
+
+Насколько добавлять внутренние отступы для содержимого эллипса. Подробнее см. в [документации блока box](/docs/typst/reference/layout/box#parameters-inset).
+
+### `outset` [#parameters-outset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько расширять размер эллипса, не влияя на макет. Подробнее см. в [документации блока box](/docs/typst/reference/layout/box#parameters-outset).
+
+### `body` [#parameters-body]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Positional, Settable · **По умолчанию:** `none`
+
+Содержимое, размещаемое внутри эллипса.
+
+Если этот параметр опущен, эллипс принимает размер по умолчанию не более `45pt` на `30pt`.

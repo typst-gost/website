@@ -1,0 +1,4950 @@
+---
+title: "Типизированный HTML"
+description: "Документация по API типизированного HTML."
+---
+
+Типизированный слой поверх необработанных HTML-элементов.
+
+Модуль `html` предоставляет типизированный слой поверх необработанной функции [`html.elem`](/docs/typst/reference/format/html/elem), который позволяет удобно создавать HTML-элементы. Атрибуты HTML представлены как параметры функций, принимающие типы Typst и автоматически преобразующие их в соответствующий HTML.
+
+Некоторые параметры являются общими для всех типизированных HTML-функций. Для удобства чтения они перечислены внизу в разделе [Глобальные атрибуты](#global-attributes), а не явно у каждого элемента.
+
+## Пример [#example]
+
+```typst
+#html.video(
+  controls: true,
+  width: 1280,
+  height: 720,
+  src: "sunrise.mp4",
+)[
+  Your browser does not support the video tag.
+]
+```
+
+## Функции [#functions]
+
+### `a` [#functions-a]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Гиперссылка.
+
+```typst
+html.a(
+  download: str,
+  href: str,
+  hreflang: str,
+  ping: str | array,
+  referrerpolicy: none | str,
+  rel: str | array,
+  target: str,
+  type: str,
+  content,
+)
+```
+
+#### `download` [#functions-a-download]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Следует ли загрузить ресурс вместо перехода к нему, и его имя файла, если да.
+
+#### `href` [#functions-a-href]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес гиперссылки.
+
+#### `hreflang` [#functions-a-hreflang]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Язык связанного ресурса.
+
+#### `ping` [#functions-a-ping]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+URL-адреса для ping.
+
+#### `referrerpolicy` [#functions-a-referrerpolicy]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Политика referrer для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"no-referrer"` |  |
+| `"no-referrer-when-downgrade"` |  |
+| `"same-origin"` |  |
+| `"origin"` |  |
+| `"strict-origin"` |  |
+| `"origin-when-cross-origin"` |  |
+| `"strict-origin-when-cross-origin"` |  |
+| `"unsafe-url"` |  |
+
+#### `rel` [#functions-a-rel]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Связь между местоположением в документе, содержащим гиперссылку, и целевым ресурсом.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"alternate"` |  |
+| `"canonical"` |  |
+| `"author"` |  |
+| `"bookmark"` |  |
+| `"dns-prefetch"` |  |
+| `"expect"` |  |
+| `"external"` |  |
+| `"help"` |  |
+| `"icon"` |  |
+| `"manifest"` |  |
+| `"modulepreload"` |  |
+| `"license"` |  |
+| `"next"` |  |
+| `"nofollow"` |  |
+| `"noopener"` |  |
+| `"noreferrer"` |  |
+| `"opener"` |  |
+| `"pingback"` |  |
+| `"preconnect"` |  |
+| `"prefetch"` |  |
+| `"preload"` |  |
+| `"prev"` |  |
+| `"privacy-policy"` |  |
+| `"search"` |  |
+| `"stylesheet"` |  |
+| `"tag"` |  |
+| `"terms-of-service"` |  |
+
+</details>
+
+#### `target` [#functions-a-target]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Навигационный контекст для навигации по гиперссылке.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+#### `type` [#functions-a-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Подсказка о типе ресурса, на который указывает ссылка.
+
+#### `body` [#functions-a-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `abbr` [#functions-abbr]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Аббревиатура.
+
+```typst
+html.abbr(content)
+```
+
+#### `body` [#functions-abbr-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `address` [#functions-address]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Контактная информация для элемента страницы или статьи.
+
+```typst
+html.address(content)
+```
+
+#### `body` [#functions-address-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `area` [#functions-area]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Гиперссылка или мёртвая область на карте изображения.
+
+```typst
+html.area(
+  alt: str,
+  coords: array,
+  download: str,
+  href: str,
+  ping: str | array,
+  referrerpolicy: none | str,
+  rel: str | array,
+  shape: str,
+  target: str,
+) -> content
+```
+
+#### `alt` [#functions-area-alt]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Замещающий текст на случай, когда изображения недоступны.
+
+#### `coords` [#functions-area-coords]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Координаты для фигуры, создаваемой на карте изображения. Ожидается массив чисел с плавающей точкой.
+
+#### `download` [#functions-area-download]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Следует ли загрузить ресурс вместо перехода к нему, и его имя файла, если да.
+
+#### `href` [#functions-area-href]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес гиперссылки.
+
+#### `ping` [#functions-area-ping]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+URL-адреса для ping.
+
+#### `referrerpolicy` [#functions-area-referrerpolicy]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Политика referrer для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"no-referrer"` |  |
+| `"no-referrer-when-downgrade"` |  |
+| `"same-origin"` |  |
+| `"origin"` |  |
+| `"strict-origin"` |  |
+| `"origin-when-cross-origin"` |  |
+| `"strict-origin-when-cross-origin"` |  |
+| `"unsafe-url"` |  |
+
+#### `rel` [#functions-area-rel]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Связь между местоположением в документе, содержащим гиперссылку, и целевым ресурсом.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"alternate"` |  |
+| `"canonical"` |  |
+| `"author"` |  |
+| `"bookmark"` |  |
+| `"dns-prefetch"` |  |
+| `"expect"` |  |
+| `"external"` |  |
+| `"help"` |  |
+| `"icon"` |  |
+| `"manifest"` |  |
+| `"modulepreload"` |  |
+| `"license"` |  |
+| `"next"` |  |
+| `"nofollow"` |  |
+| `"noopener"` |  |
+| `"noreferrer"` |  |
+| `"opener"` |  |
+| `"pingback"` |  |
+| `"preconnect"` |  |
+| `"prefetch"` |  |
+| `"preload"` |  |
+| `"prev"` |  |
+| `"privacy-policy"` |  |
+| `"search"` |  |
+| `"stylesheet"` |  |
+| `"tag"` |  |
+| `"terms-of-service"` |  |
+
+</details>
+
+#### `shape` [#functions-area-shape]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип фигуры, создаваемой на карте изображения.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"circle"` |  |
+| `"default"` |  |
+| `"poly"` |  |
+| `"rect"` |  |
+
+#### `target` [#functions-area-target]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Навигационный контекст для навигации по гиперссылке.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+### `article` [#functions-article]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Самодостаточная синдицируемая или многоразовая композиция.
+
+```typst
+html.article(content)
+```
+
+#### `body` [#functions-article-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `aside` [#functions-aside]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Боковая панель для косвенно связанного содержимого.
+
+```typst
+html.aside(content)
+```
+
+#### `body` [#functions-aside-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `audio` [#functions-audio]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Аудиоплеер.
+
+```typst
+html.audio(
+  autoplay: bool,
+  controls: bool,
+  crossorigin: str,
+  loop: bool,
+  muted: bool,
+  preload: none | auto | str,
+  src: str,
+  content,
+)
+```
+
+#### `autoplay` [#functions-audio-autoplay]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Подсказка о том, что медиаресурс может запускаться автоматически при загрузке страницы.
+
+#### `controls` [#functions-audio-controls]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Показывать элементы управления пользовательского агента.
+
+#### `crossorigin` [#functions-audio-crossorigin]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Как элемент обрабатывает кросс-доменные запросы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"anonymous"` |  |
+| `"use-credentials"` |  |
+
+#### `loop` [#functions-audio-loop]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Следует ли зациклить медиаресурс.
+
+#### `muted` [#functions-audio-muted]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Следует ли отключить звук медиаресурса по умолчанию.
+
+#### `preload` [#functions-audio-preload]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str)
+
+Подсказки о том, сколько буферизации, вероятно, потребуется медиаресурсу.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"metadata"` |  |
+
+#### `src` [#functions-audio-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `body` [#functions-audio-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `b` [#functions-b]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Ключевые слова.
+
+```typst
+html.b(content)
+```
+
+#### `body` [#functions-b-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `base` [#functions-base]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Базовый URL и целевой навигационный контекст по умолчанию для гиперссылок и форм.
+
+```typst
+html.base(
+  href: str,
+  target: str,
+) -> content
+```
+
+#### `href` [#functions-base-href]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Базовый URL документа.
+
+#### `target` [#functions-base-target]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Навигационный контекст по умолчанию для навигации по гиперссылкам и отправки форм.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+### `bdi` [#functions-bdi]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Изоляция направления текста.
+
+```typst
+html.bdi(content)
+```
+
+#### `body` [#functions-bdi-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `bdo` [#functions-bdo]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Форматирование направления текста.
+
+```typst
+html.bdo(content)
+```
+
+#### `body` [#functions-bdo-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `blockquote` [#functions-blockquote]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Раздел, цитируемый из другого источника.
+
+```typst
+html.blockquote(
+  cite: str,
+  content,
+)
+```
+
+#### `cite` [#functions-blockquote-cite]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Ссылка на источник цитаты или дополнительную информацию о правке.
+
+#### `body` [#functions-blockquote-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `body` [#functions-body]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Тело документа.
+
+```typst
+html.body(content)
+```
+
+#### `body` [#functions-body-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `br` [#functions-br]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Разрыв строки, например, в стихотворении или почтовом адресе.
+
+```typst
+html.br() -> content
+```
+
+### `button` [#functions-button]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Элемент управления «кнопка».
+
+```typst
+html.button(
+  command: str,
+  commandfor: str,
+  disabled: bool,
+  form: str,
+  formaction: str,
+  formenctype: str,
+  formmethod: str,
+  formnovalidate: bool,
+  formtarget: str,
+  name: str,
+  popovertarget: str,
+  popovertargetaction: str,
+  type: str,
+  value: str,
+  content,
+)
+```
+
+#### `command` [#functions-button-command]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает целевому элементу, какое действие выполнить.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"toggle-popover"` |  |
+| `"show-popover"` |  |
+| `"hide-popover"` |  |
+| `"close"` |  |
+| `"request-close"` |  |
+| `"show-modal"` |  |
+
+#### `commandfor` [#functions-button-commandfor]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает другой элемент, который должен быть вызван.
+
+#### `disabled` [#functions-button-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключён ли элемент управления формы.
+
+#### `form` [#functions-button-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связывает элемент с элементом формы.
+
+#### `formaction` [#functions-button-formaction]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+URL для отправки формы.
+
+#### `formenctype` [#functions-button-formenctype]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип кодирования списка записей для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"application/x-www-form-urlencoded"` |  |
+| `"multipart/form-data"` |  |
+| `"text/plain"` |  |
+
+#### `formmethod` [#functions-button-formmethod]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Вариант для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"GET"` |  |
+| `"POST"` |  |
+| `"dialog"` |  |
+
+#### `formnovalidate` [#functions-button-formnovalidate]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Обход проверки элемента управления формы при отправке формы.
+
+#### `formtarget` [#functions-button-formtarget]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Навигационный контекст для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+#### `name` [#functions-button-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента для отправки формы и в API form.elements.
+
+#### `popovertarget` [#functions-button-popovertarget]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает элемент popover для переключения, показа или скрытия.
+
+#### `popovertargetaction` [#functions-button-popovertargetaction]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает, следует ли переключить, показать или скрыть целевой элемент popover.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"toggle"` |  |
+| `"show"` |  |
+| `"hide"` |  |
+
+#### `type` [#functions-button-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип кнопки.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"submit"` |  |
+| `"reset"` |  |
+| `"button"` |  |
+
+#### `value` [#functions-button-value]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Значение, используемое для отправки формы.
+
+#### `body` [#functions-button-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `canvas` [#functions-canvas]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Программируемый растровый холст.
+
+```typst
+html.canvas(
+  height: int,
+  width: int,
+  content,
+)
+```
+
+#### `height` [#functions-canvas-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `width` [#functions-canvas-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+#### `body` [#functions-canvas-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `caption` [#functions-caption]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок таблицы.
+
+```typst
+html.caption(content)
+```
+
+#### `body` [#functions-caption-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `cite` [#functions-cite]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Название произведения.
+
+```typst
+html.cite(content)
+```
+
+#### `body` [#functions-cite-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `code` [#functions-code]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Компьютерный код.
+
+```typst
+html.code(content)
+```
+
+#### `body` [#functions-code-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `col` [#functions-col]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Столбец таблицы.
+
+```typst
+html.col(span: int) -> content
+```
+
+#### `span` [#functions-col-span]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество столбцов, охватываемых элементом.
+
+### `colgroup` [#functions-colgroup]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Группа столбцов в таблице.
+
+```typst
+html.colgroup(
+  span: int,
+  content,
+)
+```
+
+#### `span` [#functions-colgroup-span]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество столбцов, охватываемых элементом.
+
+#### `body` [#functions-colgroup-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `data` [#functions-data]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Машиночитаемый эквивалент.
+
+```typst
+html.data(
+  value: str,
+  content,
+)
+```
+
+#### `value` [#functions-data-value]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Машиночитаемое значение.
+
+#### `body` [#functions-data-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `datalist` [#functions-datalist]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Контейнер для параметров элемента управления «выпадающий список».
+
+```typst
+html.datalist(content)
+```
+
+#### `body` [#functions-datalist-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `dd` [#functions-dd]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Содержимое для соответствующего элемента(ов) dt.
+
+```typst
+html.dd(content)
+```
+
+#### `body` [#functions-dd-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `del` [#functions-del]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Удаление из документа.
+
+```typst
+html.del(
+  cite: str,
+  datetime: datetime,
+  content,
+)
+```
+
+#### `cite` [#functions-del-cite]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Ссылка на источник цитаты или дополнительную информацию о правке.
+
+#### `datetime` [#functions-del-datetime]
+
+**Тип:** [datetime](/docs/typst/reference/foundations/datetime)
+
+Дата и (необязательно) время изменения.
+
+#### `body` [#functions-del-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `details` [#functions-details]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Элемент управления раскрытием для скрытия подробностей.
+
+```typst
+html.details(
+  name: str,
+  open: bool,
+  content,
+)
+```
+
+#### `name` [#functions-details-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя группы взаимоисключающих элементов details.
+
+#### `open` [#functions-details-open]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Видны ли подробности.
+
+#### `body` [#functions-details-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `dfn` [#functions-dfn]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Определяющий экземпляр.
+
+```typst
+html.dfn(content)
+```
+
+#### `body` [#functions-dfn-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `dialog` [#functions-dialog]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Диалоговое окно или окно.
+
+```typst
+html.dialog(
+  open: bool,
+  content,
+)
+```
+
+#### `open` [#functions-dialog-open]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Показано ли диалоговое окно.
+
+#### `body` [#functions-dialog-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `div` [#functions-div]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Универсальный потоковый контейнер или контейнер для групп «имя — значение» в элементах dl.
+
+```typst
+html.div(content)
+```
+
+#### `body` [#functions-div-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `dl` [#functions-dl]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Список ассоциаций, состоящий из нуля или более групп «имя — значение».
+
+```typst
+html.dl(content)
+```
+
+#### `body` [#functions-dl-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `dt` [#functions-dt]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Легенда для соответствующего элемента(ов) dd.
+
+```typst
+html.dt(content)
+```
+
+#### `body` [#functions-dt-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `em` [#functions-em]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Смысловое ударение.
+
+```typst
+html.em(content)
+```
+
+#### `body` [#functions-em-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `embed` [#functions-embed]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Плагин.
+
+```typst
+html.embed(
+  height: int,
+  src: str,
+  type: str,
+  width: int,
+) -> content
+```
+
+#### `height` [#functions-embed-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `src` [#functions-embed-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `type` [#functions-embed-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип встроенного ресурса.
+
+#### `width` [#functions-embed-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+### `fieldset` [#functions-fieldset]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Группа элементов управления формы.
+
+```typst
+html.fieldset(
+  disabled: bool,
+  form: str,
+  name: str,
+  content,
+)
+```
+
+#### `disabled` [#functions-fieldset-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключены ли дочерние элементы управления формы, кроме находящихся внутри legend.
+
+#### `form` [#functions-fieldset-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связывает элемент с элементом формы.
+
+#### `name` [#functions-fieldset-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента для отправки формы и в API form.elements.
+
+#### `body` [#functions-fieldset-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `figcaption` [#functions-figcaption]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Подпись к иллюстрации.
+
+```typst
+html.figcaption(content)
+```
+
+#### `body` [#functions-figcaption-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `figure` [#functions-figure]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Иллюстрация с необязательной подписью.
+
+```typst
+html.figure(content)
+```
+
+#### `body` [#functions-figure-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `footer` [#functions-footer]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Нижний колонтитул страницы или раздела.
+
+```typst
+html.footer(content)
+```
+
+#### `body` [#functions-footer-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `form` [#functions-form]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Форма, отправляемая пользователем.
+
+```typst
+html.form(
+  accept-charset: str,
+  action: str,
+  autocomplete: bool,
+  enctype: str,
+  method: str,
+  name: str,
+  novalidate: bool,
+  rel: str | array,
+  target: str,
+  content,
+)
+```
+
+#### `accept-charset` [#functions-form-accept-charset]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Кодировки символов для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"utf-8"` |  |
+
+#### `action` [#functions-form-action]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+URL для отправки формы.
+
+#### `autocomplete` [#functions-form-autocomplete]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Настройка по умолчанию для функции автозаполнения элементов управления в форме.
+
+#### `enctype` [#functions-form-enctype]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип кодирования списка записей для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"application/x-www-form-urlencoded"` |  |
+| `"multipart/form-data"` |  |
+| `"text/plain"` |  |
+
+#### `method` [#functions-form-method]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Вариант для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"GET"` |  |
+| `"POST"` |  |
+| `"dialog"` |  |
+
+#### `name` [#functions-form-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя формы для использования в API document.forms.
+
+#### `novalidate` [#functions-form-novalidate]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Обход проверки элемента управления формы при отправке формы.
+
+#### `rel` [#functions-form-rel]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Связь между документом, содержащим форму, и адресатом её действия
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"alternate"` |  |
+| `"canonical"` |  |
+| `"author"` |  |
+| `"bookmark"` |  |
+| `"dns-prefetch"` |  |
+| `"expect"` |  |
+| `"external"` |  |
+| `"help"` |  |
+| `"icon"` |  |
+| `"manifest"` |  |
+| `"modulepreload"` |  |
+| `"license"` |  |
+| `"next"` |  |
+| `"nofollow"` |  |
+| `"noopener"` |  |
+| `"noreferrer"` |  |
+| `"opener"` |  |
+| `"pingback"` |  |
+| `"preconnect"` |  |
+| `"prefetch"` |  |
+| `"preload"` |  |
+| `"prev"` |  |
+| `"privacy-policy"` |  |
+| `"search"` |  |
+| `"stylesheet"` |  |
+| `"tag"` |  |
+| `"terms-of-service"` |  |
+
+</details>
+
+#### `target` [#functions-form-target]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Навигационный контекст для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+#### `body` [#functions-form-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `h1` [#functions-h1]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок.
+
+```typst
+html.h1(content)
+```
+
+#### `body` [#functions-h1-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `h2` [#functions-h2]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок.
+
+```typst
+html.h2(content)
+```
+
+#### `body` [#functions-h2-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `h3` [#functions-h3]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок.
+
+```typst
+html.h3(content)
+```
+
+#### `body` [#functions-h3-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `h4` [#functions-h4]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок.
+
+```typst
+html.h4(content)
+```
+
+#### `body` [#functions-h4-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `h5` [#functions-h5]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок.
+
+```typst
+html.h5(content)
+```
+
+#### `body` [#functions-h5-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `h6` [#functions-h6]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок.
+
+```typst
+html.h6(content)
+```
+
+#### `body` [#functions-h6-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `head` [#functions-head]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Контейнер для метаданных документа.
+
+```typst
+html.head(content)
+```
+
+#### `body` [#functions-head-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `header` [#functions-header]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Вводные или навигационные средства для страницы или раздела.
+
+```typst
+html.header(content)
+```
+
+#### `body` [#functions-header-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `hgroup` [#functions-hgroup]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Контейнер заголовков.
+
+```typst
+html.hgroup(content)
+```
+
+#### `body` [#functions-hgroup-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `hr` [#functions-hr]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Тематический разрыв.
+
+```typst
+html.hr() -> content
+```
+
+### `html` [#functions-html]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Корневой элемент.
+
+```typst
+html.html(content)
+```
+
+#### `body` [#functions-html-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `i` [#functions-i]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Альтернативный голос.
+
+```typst
+html.i(content)
+```
+
+#### `body` [#functions-i-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `iframe` [#functions-iframe]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Дочерний навигационный контекст.
+
+```typst
+html.iframe(
+  allow: str,
+  allowfullscreen: bool,
+  height: int,
+  loading: str,
+  name: str,
+  referrerpolicy: none | str,
+  sandbox: str | array,
+  src: str,
+  srcdoc: str,
+  width: int,
+  content,
+)
+```
+
+#### `allow` [#functions-iframe-allow]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Политика разрешений, применяемая к содержимому iframe.
+
+#### `allowfullscreen` [#functions-iframe-allowfullscreen]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Разрешать ли содержимому iframe использовать requestFullscreen().
+
+#### `height` [#functions-iframe-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `loading` [#functions-iframe-loading]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Используется при определении отложенной загрузки.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"lazy"` |  |
+| `"eager"` |  |
+
+#### `name` [#functions-iframe-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя навигационного контекста содержимого.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+#### `referrerpolicy` [#functions-iframe-referrerpolicy]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Политика referrer для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"no-referrer"` |  |
+| `"no-referrer-when-downgrade"` |  |
+| `"same-origin"` |  |
+| `"origin"` |  |
+| `"strict-origin"` |  |
+| `"origin-when-cross-origin"` |  |
+| `"strict-origin-when-cross-origin"` |  |
+| `"unsafe-url"` |  |
+
+#### `sandbox` [#functions-iframe-sandbox]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Правила безопасности для вложенного содержимого.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"allow-downloads"` |  |
+| `"allow-forms"` |  |
+| `"allow-modals"` |  |
+| `"allow-orientation-lock"` |  |
+| `"allow-pointer-lock"` |  |
+| `"allow-popups"` |  |
+| `"allow-popups-to-escape-sandbox"` |  |
+| `"allow-presentation"` |  |
+| `"allow-same-origin"` |  |
+| `"allow-scripts"` |  |
+| `"allow-top-navigation"` |  |
+| `"allow-top-navigation-by-user-activation"` |  |
+| `"allow-top-navigation-to-custom-protocols"` |  |
+
+</details>
+
+#### `src` [#functions-iframe-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `srcdoc` [#functions-iframe-srcdoc]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Документ для отображения в iframe.
+
+#### `width` [#functions-iframe-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+#### `body` [#functions-iframe-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `img` [#functions-img]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Изображение.
+
+```typst
+html.img(
+  alt: str,
+  crossorigin: str,
+  decoding: auto | str,
+  fetchpriority: auto | str,
+  height: int,
+  ismap: bool,
+  loading: str,
+  referrerpolicy: none | str,
+  sizes: array,
+  src: str,
+  srcset: array,
+  usemap: str,
+  width: int,
+) -> content
+```
+
+#### `alt` [#functions-img-alt]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Замещающий текст на случай, когда изображения недоступны.
+
+#### `crossorigin` [#functions-img-crossorigin]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Как элемент обрабатывает кросс-доменные запросы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"anonymous"` |  |
+| `"use-credentials"` |  |
+
+#### `decoding` [#functions-img-decoding]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str)
+
+Подсказка о декодировании, используемая при обработке этого изображения для отображения.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"sync"` |  |
+| `"async"` |  |
+
+#### `fetchpriority` [#functions-img-fetchpriority]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str)
+
+Задаёт приоритет для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"high"` |  |
+| `"low"` |  |
+
+#### `height` [#functions-img-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `ismap` [#functions-img-ismap]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Является ли изображение серверной картой изображения.
+
+#### `loading` [#functions-img-loading]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Используется при определении отложенной загрузки.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"lazy"` |  |
+| `"eager"` |  |
+
+#### `referrerpolicy` [#functions-img-referrerpolicy]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Политика referrer для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"no-referrer"` |  |
+| `"no-referrer-when-downgrade"` |  |
+| `"same-origin"` |  |
+| `"origin"` |  |
+| `"strict-origin"` |  |
+| `"origin-when-cross-origin"` |  |
+| `"strict-origin-when-cross-origin"` |  |
+| `"unsafe-url"` |  |
+
+#### `sizes` [#functions-img-sizes]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Размеры изображения для разных макетов страницы. Ожидается массив словарей с ключами `condition` (строка) и `size` (длина).
+
+#### `src` [#functions-img-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `srcset` [#functions-img-srcset]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Изображения для использования в разных ситуациях, например, на дисплеях с высоким разрешением, на маленьких мониторах и т. д. Ожидается массив словарей с ключами `src` (строка) и `width` (целое число) или `density` (число с плавающей точкой).
+
+#### `usemap` [#functions-img-usemap]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя используемой карты изображения.
+
+#### `width` [#functions-img-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+### `input` [#functions-input]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Элемент управления формы.
+
+```typst
+html.input(
+  accept: str | array,
+  alpha: bool,
+  alt: str,
+  autocomplete: str | array,
+  checked: bool,
+  colorspace: str,
+  dirname: str,
+  disabled: bool,
+  form: str,
+  formaction: str,
+  formenctype: str,
+  formmethod: str,
+  formnovalidate: bool,
+  formtarget: str,
+  height: int,
+  list: str,
+  max: float | datetime | str,
+  maxlength: int,
+  min: float | datetime | str,
+  minlength: int,
+  multiple: bool,
+  name: str,
+  pattern: str,
+  placeholder: str,
+  popovertarget: str,
+  popovertargetaction: str,
+  readonly: bool,
+  required: bool,
+  size: int,
+  src: str,
+  step: float | str,
+  type: str,
+  value: float | color | datetime | str | array,
+  width: int,
+) -> content
+```
+
+#### `accept` [#functions-input-accept]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Подсказка об ожидаемом типе файла в элементах управления загрузкой файлов.
+
+#### `alpha` [#functions-input-alpha]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Разрешить установку альфа-компонента цвета.
+
+#### `alt` [#functions-input-alt]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Замещающий текст на случай, когда изображения недоступны.
+
+#### `autocomplete` [#functions-input-autocomplete]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Подсказка для функции автозаполнения формы.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"shipping"` |  |
+| `"billing"` |  |
+| `"name"` |  |
+| `"honorific-prefix"` |  |
+| `"given-name"` |  |
+| `"additional-name"` |  |
+| `"family-name"` |  |
+| `"honorific-suffix"` |  |
+| `"nickname"` |  |
+| `"username"` |  |
+| `"new-password"` |  |
+| `"current-password"` |  |
+| `"one-time-code"` |  |
+| `"organization-title"` |  |
+| `"organization"` |  |
+| `"street-address"` |  |
+| `"address-line1"` |  |
+| `"address-line2"` |  |
+| `"address-line3"` |  |
+| `"address-level4"` |  |
+| `"address-level3"` |  |
+| `"address-level2"` |  |
+| `"address-level1"` |  |
+| `"country"` |  |
+| `"country-name"` |  |
+| `"postal-code"` |  |
+| `"cc-name"` |  |
+| `"cc-given-name"` |  |
+| `"cc-additional-name"` |  |
+| `"cc-family-name"` |  |
+| `"cc-number"` |  |
+| `"cc-exp"` |  |
+| `"cc-exp-month"` |  |
+| `"cc-exp-year"` |  |
+| `"cc-csc"` |  |
+| `"cc-type"` |  |
+| `"transaction-currency"` |  |
+| `"transaction-amount"` |  |
+| `"language"` |  |
+| `"bday"` |  |
+| `"bday-day"` |  |
+| `"bday-month"` |  |
+| `"bday-year"` |  |
+| `"sex"` |  |
+| `"url"` |  |
+| `"photo"` |  |
+| `"home"` |  |
+| `"work"` |  |
+| `"mobile"` |  |
+| `"fax"` |  |
+| `"pager"` |  |
+| `"tel"` |  |
+| `"tel-country-code"` |  |
+| `"tel-national"` |  |
+| `"tel-area-code"` |  |
+| `"tel-local"` |  |
+| `"tel-local-prefix"` |  |
+| `"tel-local-suffix"` |  |
+| `"tel-extension"` |  |
+| `"email"` |  |
+| `"impp"` |  |
+
+</details>
+
+#### `checked` [#functions-input-checked]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отмечен ли элемент управления.
+
+#### `colorspace` [#functions-input-colorspace]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Цветовое пространство сериализованного цвета.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"limited-srgb"` |  |
+| `"display-p3"` |  |
+
+#### `dirname` [#functions-input-dirname]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента управления формы для отправки направленности элемента при отправке формы.
+
+#### `disabled` [#functions-input-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключён ли элемент управления формы.
+
+#### `form` [#functions-input-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связывает элемент с элементом формы.
+
+#### `formaction` [#functions-input-formaction]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+URL для отправки формы.
+
+#### `formenctype` [#functions-input-formenctype]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип кодирования списка записей для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"application/x-www-form-urlencoded"` |  |
+| `"multipart/form-data"` |  |
+| `"text/plain"` |  |
+
+#### `formmethod` [#functions-input-formmethod]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Вариант для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"GET"` |  |
+| `"POST"` |  |
+| `"dialog"` |  |
+
+#### `formnovalidate` [#functions-input-formnovalidate]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Обход проверки элемента управления формы при отправке формы.
+
+#### `formtarget` [#functions-input-formtarget]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Навигационный контекст для отправки формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+#### `height` [#functions-input-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `list` [#functions-input-list]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Список параметров автозаполнения.
+
+#### `max` [#functions-input-max]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) или [datetime](/docs/typst/reference/foundations/datetime) или [str](/docs/typst/reference/foundations/str)
+
+Максимальное значение.
+
+#### `maxlength` [#functions-input-maxlength]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Максимальная длина значения.
+
+#### `min` [#functions-input-min]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) или [datetime](/docs/typst/reference/foundations/datetime) или [str](/docs/typst/reference/foundations/str)
+
+Минимальное значение.
+
+#### `minlength` [#functions-input-minlength]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Минимальная длина значения.
+
+#### `multiple` [#functions-input-multiple]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Разрешать ли несколько значений.
+
+#### `name` [#functions-input-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента для отправки формы и в API form.elements.
+
+#### `pattern` [#functions-input-pattern]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Шаблон, которому должно соответствовать значение элемента управления формы.
+
+#### `placeholder` [#functions-input-placeholder]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Видимая пользователю метка, размещаемая внутри элемента управления формы.
+
+#### `popovertarget` [#functions-input-popovertarget]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает элемент popover для переключения, показа или скрытия.
+
+#### `popovertargetaction` [#functions-input-popovertargetaction]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает, следует ли переключить, показать или скрыть целевой элемент popover.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"toggle"` |  |
+| `"show"` |  |
+| `"hide"` |  |
+
+#### `readonly` [#functions-input-readonly]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Разрешать ли пользователю редактировать значение.
+
+#### `required` [#functions-input-required]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Обязателен ли элемент управления для отправки формы.
+
+#### `size` [#functions-input-size]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Размер элемента управления.
+
+#### `src` [#functions-input-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `step` [#functions-input-step]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) или [str](/docs/typst/reference/foundations/str)
+
+Гранулярность, которой должно соответствовать значение элемента управления формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"any"` |  |
+
+#### `type` [#functions-input-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип элемента управления формы.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"hidden"` |  |
+| `"text"` |  |
+| `"search"` |  |
+| `"tel"` |  |
+| `"url"` |  |
+| `"email"` |  |
+| `"password"` |  |
+| `"date"` |  |
+| `"month"` |  |
+| `"week"` |  |
+| `"time"` |  |
+| `"datetime-local"` |  |
+| `"number"` |  |
+| `"range"` |  |
+| `"color"` |  |
+| `"checkbox"` |  |
+| `"radio"` |  |
+| `"file"` |  |
+| `"submit"` |  |
+| `"image"` |  |
+| `"reset"` |  |
+| `"button"` |  |
+
+</details>
+
+#### `value` [#functions-input-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) или [color](/docs/typst/reference/visualize/color) или [datetime](/docs/typst/reference/foundations/datetime) или [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Значение элемента управления формы.
+
+#### `width` [#functions-input-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+### `ins` [#functions-ins]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Добавление в документ.
+
+```typst
+html.ins(
+  cite: str,
+  datetime: datetime,
+  content,
+)
+```
+
+#### `cite` [#functions-ins-cite]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Ссылка на источник цитаты или дополнительную информацию о правке.
+
+#### `datetime` [#functions-ins-datetime]
+
+**Тип:** [datetime](/docs/typst/reference/foundations/datetime)
+
+Дата и (необязательно) время изменения.
+
+#### `body` [#functions-ins-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `kbd` [#functions-kbd]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Пользовательский ввод.
+
+```typst
+html.kbd(content)
+```
+
+#### `body` [#functions-kbd-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `label` [#functions-label]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Подпись к элементу управления формы.
+
+```typst
+html.label(
+  for: str,
+  content,
+)
+```
+
+#### `for` [#functions-label-for]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связать метку с элементом управления формы.
+
+#### `body` [#functions-label-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `legend` [#functions-legend]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Подпись к fieldset.
+
+```typst
+html.legend(content)
+```
+
+#### `body` [#functions-legend-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `li` [#functions-li]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Элемент списка.
+
+```typst
+html.li(
+  value: int,
+  content,
+)
+```
+
+#### `value` [#functions-li-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Порядковое значение элемента списка.
+
+#### `body` [#functions-li-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `link` [#functions-link]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Метаданные ссылки.
+
+```typst
+html.link(
+  as: str,
+  blocking: str | array,
+  color: color,
+  crossorigin: str,
+  disabled: bool,
+  fetchpriority: auto | str,
+  href: str,
+  hreflang: str,
+  imagesizes: array,
+  imagesrcset: array,
+  integrity: str,
+  media: str,
+  referrerpolicy: none | str,
+  rel: str | array,
+  sizes: array,
+  type: str,
+) -> content
+```
+
+#### `as` [#functions-link-as]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Потенциальное назначение для запроса предзагрузки (для rel=«preload» и rel=«modulepreload»).
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"audio"` |  |
+| `"audioworklet"` |  |
+| `"document"` |  |
+| `"embed"` |  |
+| `"font"` |  |
+| `"frame"` |  |
+| `"iframe"` |  |
+| `"image"` |  |
+| `"json"` |  |
+| `"manifest"` |  |
+| `"object"` |  |
+| `"paintworklet"` |  |
+| `"report"` |  |
+| `"script"` |  |
+| `"serviceworker"` |  |
+| `"sharedworker"` |  |
+| `"style"` |  |
+| `"track"` |  |
+| `"video"` |  |
+| `"webidentity"` |  |
+| `"worker"` |  |
+| `"xslt"` |  |
+
+</details>
+
+#### `blocking` [#functions-link-blocking]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Является ли элемент потенциально блокирующим отрисовку.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"blocking"` |  |
+
+#### `color` [#functions-link-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color)
+
+Цвет, используемый при настройке значка сайта (для rel=«mask-icon»).
+
+#### `crossorigin` [#functions-link-crossorigin]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Как элемент обрабатывает кросс-доменные запросы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"anonymous"` |  |
+| `"use-credentials"` |  |
+
+#### `disabled` [#functions-link-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключена ли ссылка.
+
+#### `fetchpriority` [#functions-link-fetchpriority]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str)
+
+Задаёт приоритет для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"high"` |  |
+| `"low"` |  |
+
+#### `href` [#functions-link-href]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес гиперссылки.
+
+#### `hreflang` [#functions-link-hreflang]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Язык связанного ресурса.
+
+#### `imagesizes` [#functions-link-imagesizes]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Размеры изображения для разных макетов страницы (для rel=«preload»). Ожидается массив словарей с ключами `condition` (строка) и `size` (длина).
+
+#### `imagesrcset` [#functions-link-imagesrcset]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Изображения для использования в разных ситуациях, например, на дисплеях с высоким разрешением, на маленьких мониторах и т. д. (для rel=«preload»). Ожидается массив словарей с ключами `src` (строка) и `width` (целое число) или `density` (число с плавающей точкой).
+
+#### `integrity` [#functions-link-integrity]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Метаданные целостности, используемые в проверках целостности подресурсов.
+
+#### `media` [#functions-link-media]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Применимые медиа.
+
+#### `referrerpolicy` [#functions-link-referrerpolicy]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Политика referrer для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"no-referrer"` |  |
+| `"no-referrer-when-downgrade"` |  |
+| `"same-origin"` |  |
+| `"origin"` |  |
+| `"strict-origin"` |  |
+| `"origin-when-cross-origin"` |  |
+| `"strict-origin-when-cross-origin"` |  |
+| `"unsafe-url"` |  |
+
+#### `rel` [#functions-link-rel]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Связь между документом, содержащим гиперссылку, и целевым ресурсом.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"alternate"` |  |
+| `"canonical"` |  |
+| `"author"` |  |
+| `"bookmark"` |  |
+| `"dns-prefetch"` |  |
+| `"expect"` |  |
+| `"external"` |  |
+| `"help"` |  |
+| `"icon"` |  |
+| `"manifest"` |  |
+| `"modulepreload"` |  |
+| `"license"` |  |
+| `"next"` |  |
+| `"nofollow"` |  |
+| `"noopener"` |  |
+| `"noreferrer"` |  |
+| `"opener"` |  |
+| `"pingback"` |  |
+| `"preconnect"` |  |
+| `"prefetch"` |  |
+| `"preload"` |  |
+| `"prev"` |  |
+| `"privacy-policy"` |  |
+| `"search"` |  |
+| `"stylesheet"` |  |
+| `"tag"` |  |
+| `"terms-of-service"` |  |
+
+</details>
+
+#### `sizes` [#functions-link-sizes]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Размеры значков (для rel=«icon»). Ожидается массив размеров. Каждый размер задаётся как массив из двух целых чисел (ширина и высота).
+
+#### `type` [#functions-link-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Подсказка о типе ресурса, на который указывает ссылка.
+
+### `main` [#functions-main]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Контейнер для основного содержимого документа.
+
+```typst
+html.main(content)
+```
+
+#### `body` [#functions-main-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `map` [#functions-map]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Карта изображения.
+
+```typst
+html.map(
+  name: str,
+  content,
+)
+```
+
+#### `name` [#functions-map-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя карты изображения для ссылки из атрибута usemap.
+
+#### `body` [#functions-map-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `mark` [#functions-mark]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Выделение.
+
+```typst
+html.mark(content)
+```
+
+#### `body` [#functions-mark-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `menu` [#functions-menu]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Меню команд.
+
+```typst
+html.menu(content)
+```
+
+#### `body` [#functions-menu-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `meta` [#functions-meta]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Текстовые метаданные.
+
+```typst
+html.meta(
+  charset: str,
+  content: str,
+  http-equiv: str,
+  media: str,
+  name: str,
+) -> content
+```
+
+#### `charset` [#functions-meta-charset]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Объявление кодировки символов.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"utf-8"` |  |
+
+#### `content` [#functions-meta-content]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Значение элемента.
+
+#### `http-equiv` [#functions-meta-http-equiv]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Директива pragma.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"content-type"` |  |
+| `"default-style"` |  |
+| `"refresh"` |  |
+| `"x-ua-compatible"` |  |
+| `"content-security-policy"` |  |
+
+#### `media` [#functions-meta-media]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Применимые медиа.
+
+#### `name` [#functions-meta-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя метаданных.
+
+### `meter` [#functions-meter]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Индикатор.
+
+```typst
+html.meter(
+  high: float,
+  low: float,
+  max: float,
+  min: float,
+  optimum: float,
+  value: float,
+  content,
+)
+```
+
+#### `high` [#functions-meter-high]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Нижний предел высокого диапазона.
+
+#### `low` [#functions-meter-low]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Верхний предел низкого диапазона.
+
+#### `max` [#functions-meter-max]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Верхняя граница диапазона.
+
+#### `min` [#functions-meter-min]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Нижняя граница диапазона.
+
+#### `optimum` [#functions-meter-optimum]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Оптимальное значение индикатора.
+
+#### `value` [#functions-meter-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Текущее значение элемента.
+
+#### `body` [#functions-meter-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `nav` [#functions-nav]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Раздел с навигационными ссылками.
+
+```typst
+html.nav(content)
+```
+
+#### `body` [#functions-nav-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `noscript` [#functions-noscript]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Резервное содержимое для скрипта.
+
+```typst
+html.noscript(content)
+```
+
+#### `body` [#functions-noscript-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `object` [#functions-object]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Изображение, дочерний навигационный контекст или плагин.
+
+```typst
+html.object(
+  data: str,
+  form: str,
+  height: int,
+  name: str,
+  type: str,
+  width: int,
+  content,
+)
+```
+
+#### `data` [#functions-object-data]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `form` [#functions-object-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связывает элемент с элементом формы.
+
+#### `height` [#functions-object-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `name` [#functions-object-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя навигационного контекста содержимого.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"_blank"` |  |
+| `"_self"` |  |
+| `"_parent"` |  |
+| `"_top"` |  |
+
+#### `type` [#functions-object-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип встроенного ресурса.
+
+#### `width` [#functions-object-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+#### `body` [#functions-object-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `ol` [#functions-ol]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Упорядоченный список.
+
+```typst
+html.ol(
+  reversed: bool,
+  start: int,
+  type: str,
+  content,
+)
+```
+
+#### `reversed` [#functions-ol-reversed]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Нумеровать список в обратном порядке.
+
+#### `start` [#functions-ol-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Начальное значение списка.
+
+#### `type` [#functions-ol-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип маркера списка.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"1"` |  |
+| `"a"` |  |
+| `"A"` |  |
+| `"i"` |  |
+| `"I"` |  |
+
+#### `body` [#functions-ol-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `optgroup` [#functions-optgroup]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Группа параметров в списке.
+
+```typst
+html.optgroup(
+  disabled: bool,
+  label: str,
+  content,
+)
+```
+
+#### `disabled` [#functions-optgroup-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключён ли элемент управления формы.
+
+#### `label` [#functions-optgroup-label]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Видимая пользователю метка.
+
+#### `body` [#functions-optgroup-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `option` [#functions-option]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Параметр в элементе управления «список» или «выпадающий список».
+
+```typst
+html.option(
+  disabled: bool,
+  label: str,
+  selected: bool,
+  value: str,
+  content,
+)
+```
+
+#### `disabled` [#functions-option-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключён ли элемент управления формы.
+
+#### `label` [#functions-option-label]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Видимая пользователю метка.
+
+#### `selected` [#functions-option-selected]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Выбран ли параметр по умолчанию.
+
+#### `value` [#functions-option-value]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Значение, используемое для отправки формы.
+
+#### `body` [#functions-option-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `output` [#functions-output]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Вычисленное выходное значение.
+
+```typst
+html.output(
+  for: str | array,
+  form: str,
+  name: str,
+  content,
+)
+```
+
+#### `for` [#functions-output-for]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Указывает элементы управления, на основе которых было вычислено выходное значение.
+
+#### `form` [#functions-output-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связывает элемент с элементом формы.
+
+#### `name` [#functions-output-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента для отправки формы и в API form.elements.
+
+#### `body` [#functions-output-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `p` [#functions-p]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Абзац.
+
+```typst
+html.p(content)
+```
+
+#### `body` [#functions-p-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `picture` [#functions-picture]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Изображение.
+
+```typst
+html.picture(content)
+```
+
+#### `body` [#functions-picture-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `pre` [#functions-pre]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Блок предварительно отформатированного текста.
+
+```typst
+html.pre(content)
+```
+
+#### `body` [#functions-pre-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `progress` [#functions-progress]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Индикатор выполнения.
+
+```typst
+html.progress(
+  max: float,
+  value: float,
+  content,
+)
+```
+
+#### `max` [#functions-progress-max]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Верхняя граница диапазона.
+
+#### `value` [#functions-progress-value]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Текущее значение элемента.
+
+#### `body` [#functions-progress-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `q` [#functions-q]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Цитата.
+
+```typst
+html.q(
+  cite: str,
+  content,
+)
+```
+
+#### `cite` [#functions-q-cite]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Ссылка на источник цитаты или дополнительную информацию о правке.
+
+#### `body` [#functions-q-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `rp` [#functions-rp]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Скобки для текста аннотации ruby.
+
+```typst
+html.rp(content)
+```
+
+#### `body` [#functions-rp-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `rt` [#functions-rt]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Текст аннотации ruby.
+
+```typst
+html.rt(content)
+```
+
+#### `body` [#functions-rt-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `ruby` [#functions-ruby]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Аннотация(и) ruby.
+
+```typst
+html.ruby(content)
+```
+
+#### `body` [#functions-ruby-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `s` [#functions-s]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Неточный текст.
+
+```typst
+html.s(content)
+```
+
+#### `body` [#functions-s-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `samp` [#functions-samp]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Вывод компьютера.
+
+```typst
+html.samp(content)
+```
+
+#### `body` [#functions-samp-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `script` [#functions-script]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Встроенный скрипт.
+
+```typst
+html.script(
+  async: bool,
+  blocking: str | array,
+  crossorigin: str,
+  defer: bool,
+  fetchpriority: auto | str,
+  integrity: str,
+  nomodule: bool,
+  referrerpolicy: none | str,
+  src: str,
+  type: str,
+  str,
+) -> content
+```
+
+#### `async` [#functions-script-async]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Выполнять скрипт, когда он доступен, не блокируя во время загрузки.
+
+#### `blocking` [#functions-script-blocking]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Является ли элемент потенциально блокирующим отрисовку.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"blocking"` |  |
+
+#### `crossorigin` [#functions-script-crossorigin]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Как элемент обрабатывает кросс-доменные запросы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"anonymous"` |  |
+| `"use-credentials"` |  |
+
+#### `defer` [#functions-script-defer]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отложить выполнение скрипта.
+
+#### `fetchpriority` [#functions-script-fetchpriority]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str)
+
+Задаёт приоритет для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"high"` |  |
+| `"low"` |  |
+
+#### `integrity` [#functions-script-integrity]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Метаданные целостности, используемые в проверках целостности подресурсов.
+
+#### `nomodule` [#functions-script-nomodule]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Предотвращает выполнение в пользовательских агентах, поддерживающих модульные скрипты.
+
+#### `referrerpolicy` [#functions-script-referrerpolicy]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Политика referrer для запросов, инициируемых элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"no-referrer"` |  |
+| `"no-referrer-when-downgrade"` |  |
+| `"same-origin"` |  |
+| `"origin"` |  |
+| `"strict-origin"` |  |
+| `"origin-when-cross-origin"` |  |
+| `"strict-origin-when-cross-origin"` |  |
+| `"unsafe-url"` |  |
+
+#### `src` [#functions-script-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `type` [#functions-script-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип скрипта.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"module"` |  |
+
+#### `body` [#functions-script-body]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Позиционный
+
+Текстовое содержимое HTML-элемента.
+
+### `search` [#functions-search]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Контейнер для элементов управления поиском.
+
+```typst
+html.search(content)
+```
+
+#### `body` [#functions-search-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `section` [#functions-section]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Универсальный раздел документа или приложения.
+
+```typst
+html.section(content)
+```
+
+#### `body` [#functions-section-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `select` [#functions-select]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Элемент управления «список».
+
+```typst
+html.select(
+  autocomplete: str | array,
+  disabled: bool,
+  form: str,
+  multiple: bool,
+  name: str,
+  required: bool,
+  size: int,
+  content,
+)
+```
+
+#### `autocomplete` [#functions-select-autocomplete]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Подсказка для функции автозаполнения формы.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"shipping"` |  |
+| `"billing"` |  |
+| `"name"` |  |
+| `"honorific-prefix"` |  |
+| `"given-name"` |  |
+| `"additional-name"` |  |
+| `"family-name"` |  |
+| `"honorific-suffix"` |  |
+| `"nickname"` |  |
+| `"username"` |  |
+| `"new-password"` |  |
+| `"current-password"` |  |
+| `"one-time-code"` |  |
+| `"organization-title"` |  |
+| `"organization"` |  |
+| `"street-address"` |  |
+| `"address-line1"` |  |
+| `"address-line2"` |  |
+| `"address-line3"` |  |
+| `"address-level4"` |  |
+| `"address-level3"` |  |
+| `"address-level2"` |  |
+| `"address-level1"` |  |
+| `"country"` |  |
+| `"country-name"` |  |
+| `"postal-code"` |  |
+| `"cc-name"` |  |
+| `"cc-given-name"` |  |
+| `"cc-additional-name"` |  |
+| `"cc-family-name"` |  |
+| `"cc-number"` |  |
+| `"cc-exp"` |  |
+| `"cc-exp-month"` |  |
+| `"cc-exp-year"` |  |
+| `"cc-csc"` |  |
+| `"cc-type"` |  |
+| `"transaction-currency"` |  |
+| `"transaction-amount"` |  |
+| `"language"` |  |
+| `"bday"` |  |
+| `"bday-day"` |  |
+| `"bday-month"` |  |
+| `"bday-year"` |  |
+| `"sex"` |  |
+| `"url"` |  |
+| `"photo"` |  |
+| `"home"` |  |
+| `"work"` |  |
+| `"mobile"` |  |
+| `"fax"` |  |
+| `"pager"` |  |
+| `"tel"` |  |
+| `"tel-country-code"` |  |
+| `"tel-national"` |  |
+| `"tel-area-code"` |  |
+| `"tel-local"` |  |
+| `"tel-local-prefix"` |  |
+| `"tel-local-suffix"` |  |
+| `"tel-extension"` |  |
+| `"email"` |  |
+| `"impp"` |  |
+
+</details>
+
+#### `disabled` [#functions-select-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключён ли элемент управления формы.
+
+#### `form` [#functions-select-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связывает элемент с элементом формы.
+
+#### `multiple` [#functions-select-multiple]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Разрешать ли несколько значений.
+
+#### `name` [#functions-select-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента для отправки формы и в API form.elements.
+
+#### `required` [#functions-select-required]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Обязателен ли элемент управления для отправки формы.
+
+#### `size` [#functions-select-size]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Размер элемента управления.
+
+#### `body` [#functions-select-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `slot` [#functions-slot]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Слот теневого дерева.
+
+```typst
+html.slot(
+  name: str,
+  content,
+)
+```
+
+#### `name` [#functions-slot-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя слота теневого дерева.
+
+#### `body` [#functions-slot-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `small` [#functions-small]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Побочный комментарий.
+
+```typst
+html.small(content)
+```
+
+#### `body` [#functions-small-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `source` [#functions-source]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Источник изображения для img или источник медиа для video или audio.
+
+```typst
+html.source(
+  height: int,
+  media: str,
+  sizes: array,
+  src: str,
+  srcset: array,
+  type: str,
+  width: int,
+) -> content
+```
+
+#### `height` [#functions-source-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `media` [#functions-source-media]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Применимые медиа.
+
+#### `sizes` [#functions-source-sizes]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Размеры изображения для разных макетов страницы. Ожидается массив словарей с ключами `condition` (строка) и `size` (длина).
+
+#### `src` [#functions-source-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `srcset` [#functions-source-srcset]
+
+**Тип:** [array](/docs/typst/reference/foundations/array)
+
+Изображения для использования в разных ситуациях, например, на дисплеях с высоким разрешением, на маленьких мониторах и т. д. Ожидается массив словарей с ключами `src` (строка) и `width` (целое число) или `density` (число с плавающей точкой).
+
+#### `type` [#functions-source-type]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип встроенного ресурса.
+
+#### `width` [#functions-source-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+### `span` [#functions-span]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Универсальный контейнер для фразового содержимого.
+
+```typst
+html.span(content)
+```
+
+#### `body` [#functions-span-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `strong` [#functions-strong]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Важность.
+
+```typst
+html.strong(content)
+```
+
+#### `body` [#functions-strong-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `style` [#functions-style]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Встроенная информация о стилях.
+
+```typst
+html.style(
+  blocking: str | array,
+  media: str,
+  str,
+) -> content
+```
+
+#### `blocking` [#functions-style-blocking]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Является ли элемент потенциально блокирующим отрисовку.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"blocking"` |  |
+
+#### `media` [#functions-style-media]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Применимые медиа.
+
+#### `body` [#functions-style-body]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Позиционный
+
+Текстовое содержимое HTML-элемента.
+
+### `sub` [#functions-sub]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Нижний индекс.
+
+```typst
+html.sub(content)
+```
+
+#### `body` [#functions-sub-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `summary` [#functions-summary]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Подпись к details.
+
+```typst
+html.summary(content)
+```
+
+#### `body` [#functions-summary-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `sup` [#functions-sup]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Верхний индекс.
+
+```typst
+html.sup(content)
+```
+
+#### `body` [#functions-sup-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `table` [#functions-table]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Таблица.
+
+```typst
+html.table(content)
+```
+
+#### `body` [#functions-table-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `tbody` [#functions-tbody]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Группа строк в таблице.
+
+```typst
+html.tbody(content)
+```
+
+#### `body` [#functions-tbody-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `td` [#functions-td]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Ячейка таблицы.
+
+```typst
+html.td(
+  colspan: int,
+  headers: str | array,
+  rowspan: int,
+  content,
+)
+```
+
+#### `colspan` [#functions-td-colspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество столбцов, охватываемых ячейкой.
+
+#### `headers` [#functions-td-headers]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Ячейки заголовка для этой ячейки.
+
+#### `rowspan` [#functions-td-rowspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество строк, охватываемых ячейкой.
+
+#### `body` [#functions-td-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `template` [#functions-template]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Шаблон.
+
+```typst
+html.template(
+  shadowrootclonable: bool,
+  shadowrootcustomelementregistry: bool,
+  shadowrootdelegatesfocus: bool,
+  shadowrootmode: str,
+  shadowrootserializable: bool,
+  content,
+)
+```
+
+#### `shadowrootclonable` [#functions-template-shadowrootclonable]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Устанавливает клонируемость для декларативного теневого корня.
+
+#### `shadowrootcustomelementregistry` [#functions-template-shadowrootcustomelementregistry]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Позволяет декларативным теневым корням указывать, что они будут использовать реестр пользовательских элементов.
+
+#### `shadowrootdelegatesfocus` [#functions-template-shadowrootdelegatesfocus]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Устанавливает делегирование фокуса для декларативного теневого корня.
+
+#### `shadowrootmode` [#functions-template-shadowrootmode]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Включает потоковые декларативные теневые корни.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"open"` |  |
+| `"closed"` |  |
+
+#### `shadowrootserializable` [#functions-template-shadowrootserializable]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Устанавливает сериализуемость для декларативного теневого корня.
+
+#### `body` [#functions-template-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `textarea` [#functions-textarea]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Многострочные элементы управления текстом.
+
+```typst
+html.textarea(
+  autocomplete: str | array,
+  cols: int,
+  dirname: str,
+  disabled: bool,
+  form: str,
+  maxlength: int,
+  minlength: int,
+  name: str,
+  placeholder: str,
+  readonly: bool,
+  required: bool,
+  rows: int,
+  wrap: str,
+  content,
+)
+```
+
+#### `autocomplete` [#functions-textarea-autocomplete]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Подсказка для функции автозаполнения формы.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"shipping"` |  |
+| `"billing"` |  |
+| `"name"` |  |
+| `"honorific-prefix"` |  |
+| `"given-name"` |  |
+| `"additional-name"` |  |
+| `"family-name"` |  |
+| `"honorific-suffix"` |  |
+| `"nickname"` |  |
+| `"username"` |  |
+| `"new-password"` |  |
+| `"current-password"` |  |
+| `"one-time-code"` |  |
+| `"organization-title"` |  |
+| `"organization"` |  |
+| `"street-address"` |  |
+| `"address-line1"` |  |
+| `"address-line2"` |  |
+| `"address-line3"` |  |
+| `"address-level4"` |  |
+| `"address-level3"` |  |
+| `"address-level2"` |  |
+| `"address-level1"` |  |
+| `"country"` |  |
+| `"country-name"` |  |
+| `"postal-code"` |  |
+| `"cc-name"` |  |
+| `"cc-given-name"` |  |
+| `"cc-additional-name"` |  |
+| `"cc-family-name"` |  |
+| `"cc-number"` |  |
+| `"cc-exp"` |  |
+| `"cc-exp-month"` |  |
+| `"cc-exp-year"` |  |
+| `"cc-csc"` |  |
+| `"cc-type"` |  |
+| `"transaction-currency"` |  |
+| `"transaction-amount"` |  |
+| `"language"` |  |
+| `"bday"` |  |
+| `"bday-day"` |  |
+| `"bday-month"` |  |
+| `"bday-year"` |  |
+| `"sex"` |  |
+| `"url"` |  |
+| `"photo"` |  |
+| `"home"` |  |
+| `"work"` |  |
+| `"mobile"` |  |
+| `"fax"` |  |
+| `"pager"` |  |
+| `"tel"` |  |
+| `"tel-country-code"` |  |
+| `"tel-national"` |  |
+| `"tel-area-code"` |  |
+| `"tel-local"` |  |
+| `"tel-local-prefix"` |  |
+| `"tel-local-suffix"` |  |
+| `"tel-extension"` |  |
+| `"email"` |  |
+| `"impp"` |  |
+
+</details>
+
+#### `cols` [#functions-textarea-cols]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Максимальное количество символов в строке.
+
+#### `dirname` [#functions-textarea-dirname]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента управления формы для отправки направленности элемента при отправке формы.
+
+#### `disabled` [#functions-textarea-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Отключён ли элемент управления формы.
+
+#### `form` [#functions-textarea-form]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Связывает элемент с элементом формы.
+
+#### `maxlength` [#functions-textarea-maxlength]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Максимальная длина значения.
+
+#### `minlength` [#functions-textarea-minlength]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Минимальная длина значения.
+
+#### `name` [#functions-textarea-name]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Имя элемента для отправки формы и в API form.elements.
+
+#### `placeholder` [#functions-textarea-placeholder]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Видимая пользователю метка, размещаемая внутри элемента управления формы.
+
+#### `readonly` [#functions-textarea-readonly]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Разрешать ли пользователю редактировать значение.
+
+#### `required` [#functions-textarea-required]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Обязателен ли элемент управления для отправки формы.
+
+#### `rows` [#functions-textarea-rows]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество отображаемых строк.
+
+#### `wrap` [#functions-textarea-wrap]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Как значение элемента управления формы должно переноситься при отправке формы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"soft"` |  |
+| `"hard"` |  |
+
+#### `body` [#functions-textarea-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `tfoot` [#functions-tfoot]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Группа строк нижнего колонтитула в таблице.
+
+```typst
+html.tfoot(content)
+```
+
+#### `body` [#functions-tfoot-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `th` [#functions-th]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Ячейка заголовка таблицы.
+
+```typst
+html.th(
+  abbr: str,
+  colspan: int,
+  headers: str | array,
+  rowspan: int,
+  scope: str,
+  content,
+)
+```
+
+#### `abbr` [#functions-th-abbr]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Альтернативная метка для ячейки заголовка при ссылке на ячейку в других контекстах.
+
+#### `colspan` [#functions-th-colspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество столбцов, охватываемых ячейкой.
+
+#### `headers` [#functions-th-headers]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Ячейки заголовка для этой ячейки.
+
+#### `rowspan` [#functions-th-rowspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество строк, охватываемых ячейкой.
+
+#### `scope` [#functions-th-scope]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает, к каким ячейкам применяется ячейка заголовка.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"row"` |  |
+| `"col"` |  |
+| `"rowgroup"` |  |
+| `"colgroup"` |  |
+
+#### `body` [#functions-th-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `thead` [#functions-thead]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Группа строк заголовка в таблице.
+
+```typst
+html.thead(content)
+```
+
+#### `body` [#functions-thead-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `time` [#functions-time]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Машиночитаемый эквивалент данных, связанных с датой или временем.
+
+```typst
+html.time(
+  datetime: datetime | duration,
+  content,
+)
+```
+
+#### `datetime` [#functions-time-datetime]
+
+**Тип:** [datetime](/docs/typst/reference/foundations/datetime) или [duration](/docs/typst/reference/foundations/duration)
+
+Машиночитаемое значение.
+
+#### `body` [#functions-time-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `title` [#functions-title]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Заголовок документа.
+
+```typst
+html.title(content)
+```
+
+#### `body` [#functions-title-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `tr` [#functions-tr]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Строка таблицы.
+
+```typst
+html.tr(content)
+```
+
+#### `body` [#functions-tr-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `track` [#functions-track]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Дорожка синхронизированного текста.
+
+```typst
+html.track(
+  default: bool,
+  kind: str,
+  label: str,
+  src: str,
+  srclang: str,
+) -> content
+```
+
+#### `default` [#functions-track-default]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Включить дорожку, если нет другой более подходящей текстовой дорожки.
+
+#### `kind` [#functions-track-kind]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Тип текстовой дорожки.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"subtitles"` |  |
+| `"captions"` |  |
+| `"descriptions"` |  |
+| `"chapters"` |  |
+| `"metadata"` |  |
+
+#### `label` [#functions-track-label]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Видимая пользователю метка.
+
+#### `src` [#functions-track-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `srclang` [#functions-track-srclang]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Язык текстовой дорожки.
+
+### `u` [#functions-u]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Неартикулированная аннотация.
+
+```typst
+html.u(content)
+```
+
+#### `body` [#functions-u-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `ul` [#functions-ul]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Список.
+
+```typst
+html.ul(content)
+```
+
+#### `body` [#functions-ul-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `var` [#functions-var]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Переменная.
+
+```typst
+html.var(content)
+```
+
+#### `body` [#functions-var-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `video` [#functions-video]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Видеоплеер.
+
+```typst
+html.video(
+  autoplay: bool,
+  controls: bool,
+  crossorigin: str,
+  height: int,
+  loop: bool,
+  muted: bool,
+  playsinline: bool,
+  poster: str,
+  preload: none | auto | str,
+  src: str,
+  width: int,
+  content,
+)
+```
+
+#### `autoplay` [#functions-video-autoplay]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Подсказка о том, что медиаресурс может запускаться автоматически при загрузке страницы.
+
+#### `controls` [#functions-video-controls]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Показывать элементы управления пользовательского агента.
+
+#### `crossorigin` [#functions-video-crossorigin]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Как элемент обрабатывает кросс-доменные запросы.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"anonymous"` |  |
+| `"use-credentials"` |  |
+
+#### `height` [#functions-video-height]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Вертикальный размер.
+
+#### `loop` [#functions-video-loop]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Следует ли зациклить медиаресурс.
+
+#### `muted` [#functions-video-muted]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Следует ли отключить звук медиаресурса по умолчанию.
+
+#### `playsinline` [#functions-video-playsinline]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Побуждает пользовательский агент отображать видеосодержимое в области воспроизведения элемента.
+
+#### `poster` [#functions-video-poster]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Постер-кадр для показа перед воспроизведением видео.
+
+#### `preload` [#functions-video-preload]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str)
+
+Подсказки о том, сколько буферизации, вероятно, потребуется медиаресурсу.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"metadata"` |  |
+
+#### `src` [#functions-video-src]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Адрес ресурса.
+
+#### `width` [#functions-video-width]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Горизонтальный размер.
+
+#### `body` [#functions-video-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный
+
+Содержимое HTML-элемента.
+
+### `wbr` [#functions-wbr]
+
+*С версии: 0.14.0* · *Флаг функцииТребуется функцияhtml*
+
+Возможность разрыва строки.
+
+```typst
+html.wbr() -> content
+```
+
+## Глобальные атрибуты [#global-attributes]
+
+Эти параметры являются общими для всех типизированных HTML-функций. Для удобства чтения они перечислены здесь один раз, а не явно у каждого элемента.
+
+### `accesskey` [#global-attributes-accesskey]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Сочетание клавиш для активации или фокусировки элемента. Ожидается строка из одного кодового символа или массив таких строк.
+
+### `aria-activedescendant` [#global-attributes-aria-activedescendant]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Определяет текущий активный элемент, когда фокус DOM находится на составном виджете, текстовом поле, группе или приложении.
+
+### `aria-atomic` [#global-attributes-aria-atomic]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, будут ли вспомогательные технологии представлять всю изменённую область или только её части на основе уведомлений об изменениях, определённых атрибутом aria-relevant.
+
+### `aria-autocomplete` [#global-attributes-aria-autocomplete]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Указывает, может ли ввод текста вызывать отображение одного или нескольких предсказаний предполагаемого значения пользователя для поля ввода, и определяет, как будут представлены предсказания, если они сделаны.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"inline"` | Когда пользователь вводит данные, текст, предлагающий один из способов завершения введённых данных, может динамически вставляться после курсора. |
+| `"list"` | Когда пользователь вводит данные, может отображаться элемент, содержащий набор значений, которые могут завершить введённые данные. |
+| `"both"` | Когда пользователь вводит данные, может отображаться элемент, содержащий набор значений, которые могут завершить введённые данные. Если он отображается, одно значение из набора выбирается автоматически, и текст, необходимый для завершения автоматически выбранного значения, появляется после курсора в поле ввода. |
+
+### `aria-busy` [#global-attributes-aria-busy]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, что элемент изменяется и что вспомогательные технологии МОГУТ захотеть подождать, пока изменения не будут завершены, прежде чем представлять их пользователю.
+
+### `aria-checked` [#global-attributes-aria-checked]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Указывает текущее состояние «отмечено» флажков, переключателей и других виджетов. См. связанные aria-pressed и aria-selected.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"mixed"` | Промежуточное значение между true и false. |
+
+### `aria-colcount` [#global-attributes-aria-colcount]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет общее количество столбцов в таблице, сетке или древовидной сетке. См. связанный aria-colindex.
+
+### `aria-colindex` [#global-attributes-aria-colindex]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет индекс или позицию столбца элемента относительно общего количества столбцов в таблице, сетке или древовидной сетке. См. связанные aria-colcount и aria-colspan.
+
+### `aria-colspan` [#global-attributes-aria-colspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет количество столбцов, охватываемых ячейкой или ячейкой сетки в таблице, сетке или древовидной сетке. См. связанные aria-colindex и aria-rowspan.
+
+### `aria-controls` [#global-attributes-aria-controls]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Определяет элемент (или элементы), содержимым или присутствием которых управляет текущий элемент. См. связанный aria-owns.
+
+### `aria-current` [#global-attributes-aria-current]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Указывает элемент, представляющий текущий элемент в контейнере или наборе связанных элементов.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"page"` | Представляет текущую страницу в наборе страниц. |
+| `"step"` | Представляет текущий шаг в процессе. |
+| `"location"` | Представляет текущее местоположение в среде или контексте. |
+| `"date"` | Представляет текущую дату в наборе дат. |
+| `"time"` | Представляет текущее время в наборе времён. |
+
+### `aria-describedby` [#global-attributes-aria-describedby]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Определяет элемент (или элементы), описывающие объект. См. связанный aria-labelledby.
+
+### `aria-details` [#global-attributes-aria-details]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Определяет элемент, предоставляющий подробное, расширенное описание объекта. См. связанный aria-describedby.
+
+### `aria-disabled` [#global-attributes-aria-disabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, что элемент воспринимаем, но отключён, поэтому не редактируем или иным образом неработоспособен. См. связанные aria-hidden и aria-readonly.
+
+### `aria-errormessage` [#global-attributes-aria-errormessage]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Определяет элемент, предоставляющий сообщение об ошибке для объекта. См. связанные aria-invalid и aria-describedby.
+
+### `aria-expanded` [#global-attributes-aria-expanded]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, развёрнут или свёрнут в данный момент элемент или другой группирующий элемент, которым он управляет.
+
+### `aria-flowto` [#global-attributes-aria-flowto]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Определяет следующий элемент (или элементы) в альтернативном порядке чтения содержимого, который по усмотрению пользователя позволяет вспомогательной технологии переопределить общий порядок чтения по порядку исходного документа.
+
+### `aria-haspopup` [#global-attributes-aria-haspopup]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Указывает доступность и тип интерактивного всплывающего элемента, такого как меню или диалог, который может быть вызван элементом.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"menu"` | Указывает, что всплывающий элемент — это меню. |
+| `"listbox"` | Указывает, что всплывающий элемент — это список. |
+| `"tree"` | Указывает, что всплывающий элемент — это дерево. |
+| `"grid"` | Указывает, что всплывающий элемент — это сетка. |
+| `"dialog"` | Указывает, что всплывающий элемент — это диалог. |
+
+### `aria-hidden` [#global-attributes-aria-hidden]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, доступен ли элемент для API специальных возможностей. См. связанный aria-disabled.
+
+### `aria-invalid` [#global-attributes-aria-invalid]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Указывает, что введённое значение не соответствует формату, ожидаемому приложением. См. связанный aria-errormessage.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"grammar"` | Обнаружена грамматическая ошибка. |
+| `"spelling"` | Обнаружена орфографическая ошибка. |
+
+### `aria-keyshortcuts` [#global-attributes-aria-keyshortcuts]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает сочетания клавиш, реализованные автором для активации или фокусировки элемента.
+
+### `aria-label` [#global-attributes-aria-label]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Определяет строковое значение, которое маркирует текущий элемент. См. связанный aria-labelledby.
+
+### `aria-labelledby` [#global-attributes-aria-labelledby]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Определяет элемент (или элементы), которые маркируют текущий элемент. См. связанный aria-describedby.
+
+### `aria-level` [#global-attributes-aria-level]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет иерархический уровень элемента в структуре.
+
+### `aria-live` [#global-attributes-aria-live]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает, что элемент будет обновляться, и описывает типы обновлений, которые пользовательские агенты, вспомогательные технологии и пользователь могут ожидать от живой области.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"assertive"` | Указывает, что обновления области имеют наивысший приоритет и должны быть представлены пользователю немедленно. |
+| `"off"` | Указывает, что обновления области не должны представляться пользователю, если только пользователь в данный момент не сфокусирован на этой области. |
+| `"polite"` | Указывает, что обновления области должны представляться при следующей удобной возможности, например, в конце произнесения текущего предложения или когда пользователь приостанавливает ввод. |
+
+### `aria-modal` [#global-attributes-aria-modal]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, является ли элемент модальным при отображении.
+
+### `aria-multiline` [#global-attributes-aria-multiline]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, принимает ли текстовое поле несколько строк ввода или только одну строку.
+
+### `aria-multiselectable` [#global-attributes-aria-multiselectable]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, что пользователь может выбрать более одного элемента из текущих выбираемых потомков.
+
+### `aria-orientation` [#global-attributes-aria-orientation]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Указывает, является ли ориентация элемента горизонтальной, вертикальной или неизвестной/неоднозначной.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"horizontal"` | Элемент ориентирован горизонтально. |
+| `"undefined"` | Ориентация элемента неизвестна/неоднозначна. |
+| `"vertical"` | Элемент ориентирован вертикально. |
+
+### `aria-owns` [#global-attributes-aria-owns]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Определяет элемент (или элементы) для определения визуальной, функциональной или контекстной связи родитель/потомок между элементами DOM, где иерархия DOM не может быть использована для представления связи. См. связанный aria-controls.
+
+### `aria-placeholder` [#global-attributes-aria-placeholder]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Определяет короткую подсказку (слово или короткую фразу), предназначенную для помощи пользователю при вводе данных, когда элемент управления не имеет значения. Подсказка может быть примером значения или кратким описанием ожидаемого формата.
+
+### `aria-posinset` [#global-attributes-aria-posinset]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет номер или позицию элемента в текущем наборе элементов списка или элементов дерева. Не требуется, если все элементы набора присутствуют в DOM. См. связанный aria-setsize.
+
+### `aria-pressed` [#global-attributes-aria-pressed]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Указывает текущее состояние «нажато» кнопок-переключателей. См. связанные aria-checked и aria-selected.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"mixed"` | Промежуточное значение между true и false. |
+
+### `aria-readonly` [#global-attributes-aria-readonly]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, что элемент не редактируем, но в остальном работоспособен. См. связанный aria-disabled.
+
+### `aria-relevant` [#global-attributes-aria-relevant]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Указывает, какие уведомления будет вызывать пользовательский агент при изменении дерева специальных возможностей в живой области. См. связанный aria-atomic.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"additions"` | Узлы элементов добавляются в дерево специальных возможностей в живой области. |
+| `"additions text"` | Эквивалентно комбинации значений «additions text». |
+| `"all"` | Эквивалентно комбинации всех значений «additions removals text». |
+| `"removals"` | Текстовое содержимое, текстовая альтернатива или узел элемента в живой области удаляются из дерева специальных возможностей. |
+| `"text"` | Текстовое содержимое или текстовая альтернатива добавляются к любому потомку в дереве специальных возможностей живой области. |
+
+### `aria-required` [#global-attributes-aria-required]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Указывает, что пользовательский ввод обязателен для элемента, прежде чем форма может быть отправлена.
+
+### `aria-roledescription` [#global-attributes-aria-roledescription]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Определяет удобочитаемое, локализованное автором описание роли элемента.
+
+### `aria-rowcount` [#global-attributes-aria-rowcount]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет общее количество строк в таблице, сетке или древовидной сетке. См. связанный aria-rowindex.
+
+### `aria-rowindex` [#global-attributes-aria-rowindex]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет индекс или позицию строки элемента относительно общего количества строк в таблице, сетке или древовидной сетке. См. связанные aria-rowcount и aria-rowspan.
+
+### `aria-rowspan` [#global-attributes-aria-rowspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет количество строк, охватываемых ячейкой или ячейкой сетки в таблице, сетке или древовидной сетке. См. связанные aria-rowindex и aria-colspan.
+
+### `aria-selected` [#global-attributes-aria-selected]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [bool](/docs/typst/reference/foundations/bool)
+
+Указывает текущее состояние «выбрано» различных виджетов. См. связанные aria-checked и aria-pressed.
+
+### `aria-setsize` [#global-attributes-aria-setsize]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Определяет количество элементов в текущем наборе элементов списка или элементов дерева. Не требуется, если все элементы набора присутствуют в DOM. См. связанный aria-posinset.
+
+### `aria-sort` [#global-attributes-aria-sort]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Указывает, отсортированы ли элементы в таблице или сетке по возрастанию или убыванию.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"ascending"` | Элементы отсортированы по возрастанию по этому столбцу. |
+| `"descending"` | Элементы отсортированы по убыванию по этому столбцу. |
+| `"other"` | Применён алгоритм сортировки, отличный от возрастания или убывания. |
+
+### `aria-valuemax` [#global-attributes-aria-valuemax]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Определяет максимально допустимое значение для виджета диапазона.
+
+### `aria-valuemin` [#global-attributes-aria-valuemin]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Определяет минимально допустимое значение для виджета диапазона.
+
+### `aria-valuenow` [#global-attributes-aria-valuenow]
+
+**Тип:** [float](/docs/typst/reference/foundations/float)
+
+Определяет текущее значение для виджета диапазона. См. связанный aria-valuetext.
+
+### `aria-valuetext` [#global-attributes-aria-valuetext]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Определяет удобочитаемую текстовую альтернативу aria-valuenow для виджета диапазона.
+
+### `autocapitalize` [#global-attributes-autocapitalize]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Рекомендуемое поведение автоматической капитализации (для поддерживаемых методов ввода).
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"sentences"` |  |
+| `"words"` |  |
+| `"characters"` |  |
+
+### `autocorrect` [#global-attributes-autocorrect]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Рекомендуемое поведение автокоррекции (для поддерживаемых методов ввода).
+
+### `autofocus` [#global-attributes-autofocus]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Автоматически фокусировать элемент при загрузке страницы.
+
+### `class` [#global-attributes-class]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Классы, к которым принадлежит элемент.
+
+### `contenteditable` [#global-attributes-contenteditable]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Редактируем ли элемент.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"plaintext-only"` |  |
+
+### `dir` [#global-attributes-dir]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [direction](/docs/typst/reference/layout/direction)
+
+Направленность текста элемента.
+
+### `draggable` [#global-attributes-draggable]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Можно ли перетаскивать элемент.
+
+### `enterkeyhint` [#global-attributes-enterkeyhint]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Подсказка для выбора действия клавиши Enter.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"enter"` |  |
+| `"done"` |  |
+| `"go"` |  |
+| `"next"` |  |
+| `"previous"` |  |
+| `"search"` |  |
+| `"send"` |  |
+
+### `hidden` [#global-attributes-hidden]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [str](/docs/typst/reference/foundations/str)
+
+Релевантен ли элемент.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"until-found"` |  |
+
+### `id` [#global-attributes-id]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+ID элемента.
+
+### `inert` [#global-attributes-inert]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Является ли элемент инертным.
+
+### `inputmode` [#global-attributes-inputmode]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Подсказка для выбора модальности ввода.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"text"` |  |
+| `"tel"` |  |
+| `"email"` |  |
+| `"url"` |  |
+| `"numeric"` |  |
+| `"decimal"` |  |
+| `"search"` |  |
+
+### `is` [#global-attributes-is]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Создаёт настроенный встроенный элемент.
+
+### `itemid` [#global-attributes-itemid]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Глобальный идентификатор для элемента микроданных.
+
+### `itemprop` [#global-attributes-itemprop]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Имена свойств элемента микроданных.
+
+### `itemref` [#global-attributes-itemref]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Ссылочные элементы.
+
+### `itemscope` [#global-attributes-itemscope]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Вводит элемент микроданных.
+
+### `itemtype` [#global-attributes-itemtype]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array)
+
+Типы элементов микроданных.
+
+### `lang` [#global-attributes-lang]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Язык элемента.
+
+### `nonce` [#global-attributes-nonce]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Криптографический nonce, используемый в проверках политики безопасности содержимого.
+
+### `popover` [#global-attributes-popover]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str)
+
+Делает элемент элементом popover.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"manual"` |  |
+
+### `role` [#global-attributes-role]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str)
+
+Роль ARIA.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"alert"` | Тип живой области с важной и обычно срочной информацией. См. связанные alertdialog и status. |
+| `"alertdialog"` | Тип диалога, содержащего предупреждающее сообщение, где начальный фокус переходит к элементу внутри диалога. См. связанные alert и dialog. |
+| `"application"` | Структура, содержащая один или несколько фокусируемых элементов, требующих пользовательского ввода, такого как события клавиатуры или жестов, которые не следуют стандартному шаблону взаимодействия, поддерживаемому ролью виджета. |
+| `"article"` | Раздел страницы, состоящий из композиции, образующей независимую часть документа, страницы или сайта. |
+| `"banner"` | Область, содержащая в основном контент, ориентированный на сайт, а не на конкретную страницу. |
+| `"button"` | Ввод, позволяющий выполнять действия, инициируемые пользователем, при щелчке или нажатии. См. связанную link. |
+| `"cell"` | Ячейка в табличном контейнере. См. связанную gridcell. |
+| `"checkbox"` | Отмечаемый ввод, имеющий три возможных значения: true, false или mixed. |
+| `"columnheader"` | Ячейка, содержащая информацию заголовка для столбца. |
+| `"combobox"` | Составной виджет, содержащий однострочное текстовое поле и другой элемент, такой как список или сетка, который может динамически всплывать, чтобы помочь пользователю установить значение текстового поля. |
+| `"command"` | Форма виджета, которая выполняет действие, но не получает входные данные. |
+| `"complementary"` | Вспомогательный раздел документа, предназначенный для дополнения основного содержимого на аналогичном уровне иерархии DOM, но остающийся значимым при отделении от основного содержимого. |
+| `"composite"` | Виджет, который может содержать навигационных потомков или принадлежащих ему дочерних элементов. |
+| `"contentinfo"` | Большая воспринимаемая область, содержащая информацию о родительском документе. |
+| `"definition"` | Определение термина или понятия. См. связанный term. |
+| `"dialog"` | Диалог — это дочернее окно первичного окна веб-приложения. Для HTML-страниц первичным окном приложения является весь веб-документ, то есть элемент body. |
+| `"directory"` | Список ссылок на членов группы, например, статическое оглавление. |
+| `"document"` | Элемент, содержащий контент, который пользователи вспомогательных технологий могут захотеть просматривать в режиме чтения. |
+| `"feed"` | Прокручиваемый список статей, где прокрутка может приводить к добавлению или удалению статей с любого конца списка. |
+| `"figure"` | Воспринимаемый раздел содержимого, который обычно содержит графический документ, изображения, фрагменты кода или пример текста. Части figure МОГУТ быть доступны для навигации пользователя. |
+| `"form"` | Ориентирная область, содержащая набор элементов и объектов, которые в целом объединяются, образуя форму. См. связанный search. |
+| `"grid"` | Составной виджет, содержащий набор из одной или нескольких строк с одной или несколькими ячейками, где некоторые или все ячейки в сетке фокусируемы с помощью методов двумерной навигации, таких как клавиши со стрелками. |
+| `"gridcell"` | Ячейка в сетке или древовидной сетке. |
+| `"group"` | Набор объектов пользовательского интерфейса, которые не предназначены для включения в сводку страницы или оглавление вспомогательными технологиями. |
+| `"heading"` | Заголовок для раздела страницы. |
+| `"img"` | Контейнер для набора элементов, образующих изображение. |
+| `"input"` | Универсальный тип виджета, позволяющий пользовательский ввод. |
+| `"landmark"` | Воспринимаемый раздел, содержащий контент, относящийся к конкретной, заданной автором цели и достаточно важный, чтобы пользователи, вероятно, захотели иметь возможность легко перейти к разделу и видеть его в сводке страницы. Такая сводка страницы может генерироваться динамически пользовательским агентом или вспомогательной технологией. |
+| `"link"` | Интерактивная ссылка на внутренний или внешний ресурс, которая при активации заставляет пользовательский агент перейти к этому ресурсу. См. связанную button. |
+| `"list"` | Раздел, содержащий элементы listitem. См. связанный listbox. |
+| `"listbox"` | Виджет, позволяющий пользователю выбрать один или несколько элементов из списка вариантов. См. связанные combobox и list. |
+| `"listitem"` | Отдельный элемент в списке или каталоге. |
+| `"log"` | Тип живой области, где новая информация добавляется в значимом порядке, а старая информация может исчезать. См. связанный marquee. |
+| `"main"` | Основное содержимое документа. |
+| `"marquee"` | Тип живой области, где несущественная информация часто меняется. См. связанный log. |
+| `"math"` | Содержимое, представляющее математическое выражение. |
+| `"menu"` | Тип виджета, предлагающий пользователю список вариантов. |
+| `"menubar"` | Представление меню, которое обычно остаётся видимым и обычно представлено горизонтально. |
+| `"menuitem"` | Параметр в наборе вариантов, содержащемся в меню или строке меню. |
+| `"menuitemcheckbox"` | Элемент меню с отмечаемым состоянием, возможные значения которого — true, false или mixed. |
+| `"menuitemradio"` | Отмечаемый элемент меню в наборе элементов с одинаковой ролью, только один из которых может быть отмечен одновременно. |
+| `"navigation"` | Набор навигационных элементов (обычно ссылок) для навигации по документу или связанным документам. |
+| `"note"` | Раздел, содержимое которого является пояснительным или вспомогательным по отношению к основному содержимому ресурса. |
+| `"option"` | Выбираемый элемент в списке выбора. |
+| `"presentation"` | Элемент, неявная семантика нативной роли которого не будет отображаться в API специальных возможностей. См. синоним none. |
+| `"progressbar"` | Элемент, отображающий состояние выполнения для задач, занимающих много времени. |
+| `"radio"` | Отмечаемый ввод в группе элементов с одинаковой ролью, только один из которых может быть отмечен одновременно. |
+| `"radiogroup"` | Группа переключателей. |
+| `"range"` | Ввод, представляющий диапазон значений, который может быть установлен пользователем. |
+| `"region"` | Воспринимаемый раздел, содержащий контент, относящийся к конкретной, заданной автором цели и достаточно важный, чтобы пользователи, вероятно, захотели иметь возможность легко перейти к разделу и видеть его в сводке страницы. Такая сводка страницы может генерироваться динамически пользовательским агентом или вспомогательной технологией. |
+| `"roletype"` | Базовая роль, от которой наследуются все остальные роли в этой таксономии. |
+| `"row"` | Строка ячеек в табличном контейнере. |
+| `"rowgroup"` | Структура, содержащая один или несколько элементов row в табличном контейнере. |
+| `"rowheader"` | Ячейка, содержащая информацию заголовка для строки в сетке. |
+| `"scrollbar"` | Графический объект, управляющий прокруткой содержимого в области просмотра, независимо от того, полностью ли содержимое отображается в области просмотра. |
+| `"search"` | Ориентирная область, содержащая набор элементов и объектов, которые в целом объединяются, образуя средство поиска. См. связанные form и searchbox. |
+| `"searchbox"` | Тип текстового поля, предназначенный для указания критериев поиска. См. связанные textbox и search. |
+| `"section"` | Отображаемая структурная единица содержания в документе или приложении. |
+| `"sectionhead"` | Структура, которая маркирует или обобщает тему связанного с ней раздела. |
+| `"select"` | Виджет формы, позволяющий пользователю делать выбор из набора вариантов. |
+| `"separator"` | Разделитель, который разделяет и различает разделы содержимого или группы элементов меню. |
+| `"slider"` | Пользовательский ввод, при котором пользователь выбирает значение в заданном диапазоне. |
+| `"spinbutton"` | Форма диапазона, которая ожидает от пользователя выбора среди дискретных вариантов. |
+| `"status"` | Тип живой области, содержимое которой является справочной информацией для пользователя, но недостаточно важной, чтобы оправдать предупреждение, часто, но не обязательно, представляемой в виде строки состояния. |
+| `"structure"` | Структурный элемент документа. |
+| `"switch"` | Тип флажка, представляющий значения вкл/выкл, в отличие от значений отмечено/не отмечено. См. связанный checkbox. |
+| `"tab"` | Группирующая метка, обеспечивающая механизм выбора содержимого вкладки, которое должно быть отображено пользователю. |
+| `"table"` | Раздел, содержащий данные, расположенные в строках и столбцах. См. связанную grid. |
+| `"tablist"` | Список элементов tab, которые являются ссылками на элементы tabpanel. |
+| `"tabpanel"` | Контейнер для ресурсов, связанных с вкладкой, где каждая вкладка содержится в tablist. |
+| `"term"` | Слово или фраза с соответствующим определением. См. связанное definition. |
+| `"textbox"` | Тип ввода, позволяющий использовать свободный текст в качестве значения. |
+| `"timer"` | Тип живой области, содержащей числовой счётчик, который указывает количество прошедшего времени от начальной точки или время, оставшееся до конечной точки. |
+| `"toolbar"` | Набор часто используемых функциональных кнопок или элементов управления, представленных в компактной визуальной форме. |
+| `"tooltip"` | Контекстное всплывающее окно, отображающее описание для элемента. |
+| `"tree"` | Тип списка, который может содержать вложенные группы подуровней, которые можно сворачивать и разворачивать. |
+| `"treegrid"` | Сетка, строки которой можно разворачивать и сворачивать так же, как для дерева. |
+| `"treeitem"` | Элемент параметра дерева. Это элемент внутри дерева, который может быть развёрнут или свёрнут, если он содержит группу подуровня элементов дерева. |
+| `"widget"` | Интерактивный компонент графического пользовательского интерфейса (GUI). |
+| `"window"` | Окно браузера или приложения. |
+
+</details>
+
+### `slot` [#global-attributes-slot]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Желаемый слот элемента.
+
+### `spellcheck` [#global-attributes-spellcheck]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Должны ли проверяться орфография и грамматика элемента.
+
+### `style` [#global-attributes-style]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Инструкции по представлению и форматированию.
+
+### `tabindex` [#global-attributes-tabindex]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Является ли элемент фокусируемым и последовательно фокусируемым, и относительный порядок элемента для целей последовательной навигации фокуса.
+
+### `title` [#global-attributes-title]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Справочная информация для элемента.
+
+### `translate` [#global-attributes-translate]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Должен ли элемент переводиться при локализации страницы.
+
+### `writingsuggestions` [#global-attributes-writingsuggestions]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool)
+
+Может ли элемент предлагать подсказки по написанию или нет.

@@ -1,0 +1,121 @@
+---
+title: "Location"
+description: "Документация для типа `location`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Идентифицирует элемент в документе.
+
+Location (местоположение) однозначно идентифицирует элемент в документе и позволяет получить доступ к его абсолютной позиции на страницах. Текущее местоположение можно получить с помощью функции [`here`](/docs/typst/reference/introspection/here), а местоположение запрошенного или показанного элемента — с помощью метода [`location()`](/docs/typst/reference/foundations/content#definitions-location) у содержимого.
+
+## Элементы с местоположением [#locatable]
+
+Элементы, которым автоматически назначается местоположение, называются _locatable_ (элементами с местоположением), и их можно найти с помощью [запросов](/docs/typst/reference/introspection/query). Такие элементы помечены соответствующим образом на своих страницах документации, но также вы можете найти их полный список ниже.
+
+- В [категории Model](/docs/typst/reference/model) следующие элементы имеют местоположение: [`asset`](/docs/typst/reference/format/bundle/asset), [`bibliography`](/docs/typst/reference/model/bibliography), [`cite`](/docs/typst/reference/model/cite), [`divider`](/docs/typst/reference/model/divider), [`document`](/docs/typst/reference/model/document), [`emph`](/docs/typst/reference/model/emph), [`enum`](/docs/typst/reference/model/enum), [`figure`](/docs/typst/reference/model/figure), [`figure.caption`](/docs/typst/reference/model/figure#definitions-caption), [`footnote`](/docs/typst/reference/model/footnote), [`footnote.entry`](/docs/typst/reference/model/footnote#definitions-entry), [`heading`](/docs/typst/reference/model/heading), [`link`](/docs/typst/reference/model/link), [`list`](/docs/typst/reference/model/list), [`outline`](/docs/typst/reference/model/outline), [`outline.entry`](/docs/typst/reference/model/outline#definitions-entry), [`par`](/docs/typst/reference/model/par), [`quote`](/docs/typst/reference/model/quote), [`ref`](/docs/typst/reference/model/ref), [`strong`](/docs/typst/reference/model/strong), [`table`](/docs/typst/reference/model/table), [`terms`](/docs/typst/reference/model/terms) и [`title`](/docs/typst/reference/model/title). Большинство элементов в категории _Model_ имеют местоположение, поскольку семантические элементы, такие как заголовки и рисунки, часто используются вместе с интроспекцией.
+- В [категории Text](/docs/typst/reference/text) элемент [`raw`](/docs/typst/reference/text/raw) и элементы оформления [`underline`](/docs/typst/reference/text/underline), [`overline`](/docs/typst/reference/text/overline), [`strike`](/docs/typst/reference/text/strike) и [`highlight`](/docs/typst/reference/text/highlight) имеют местоположение, так как они также довольно семантичны по своей природе.
+- В [категории Introspection](/docs/typst/reference/introspection) элемент [`metadata`](/docs/typst/reference/introspection/metadata) имеет местоположение, поскольку запрос к нему является его основным назначением.
+- В остальных категориях большинство элементов не имеют местоположения. Исключениями являются [`math.equation`](/docs/typst/reference/math/equation), [`image`](/docs/typst/reference/visualize/image) и [`pdf.attach`](/docs/typst/reference/format/pdf/attach).
+
+Чтобы узнать, имеет ли конкретный элемент местоположение, вы можете попробовать выполнить для него [`query`](/docs/typst/reference/introspection/query).
+
+Обратите внимание, что вы всё ещё можете наблюдать элементы без местоположения в запросах другими способами, например, когда к ним прикреплена метка.
+
+## Функции [#functions]
+
+### `page` [#definitions-page]
+
+*Since: forever*
+
+Возвращает номер страницы для этого местоположения.
+
+Обратите внимание, что эта функция возвращает не значение [счётчика страниц](/docs/typst/reference/introspection/counter) в этом местоположении, а истинный номер страницы (начиная с единицы). Если вы хотите узнать значение счётчика страниц, используйте вместо этого `counter(page).at(loc)`.
+
+В HTML-документе Typst не может знать, где окажется содержимое, поэтому эта функция возвращает `none`.
+
+Этот метод можно использовать в сочетании с [`here`](/docs/typst/reference/introspection/here) для получения физической позиции страницы текущего контекста.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  I am located on page
+  #context here().page()
+`}
+  image="/typst_docs_assets/images/h-q_-rZ5pdJoN64CDMUZOw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.page() -> none | int
+```
+
+### `page-numbering` [#definitions-page-numbering]
+
+*Since: forever*
+
+Возвращает шаблон нумерации страниц для страницы в этом местоположении. Это можно использовать при отображении счётчика страниц для получения локальной нумерации. Это полезно, если вы создаёте собственные указатели или оглавления.
+
+Если нумерация страниц в этом местоположении установлена в `none`, эта функция возвращает `none`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(numbering: "1")
+  #context {
+    locate(<h>).page-numbering()
+  }
+
+  #set page(numbering: "i")
+  = Heading <h>
+`}
+  image="/typst_docs_assets/images/JtNAoOqXUxznXiywHMSH3g.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/KDwthfkB_iQUiVfPtSYt1Q.png" alt="" width="480" height="100" />
+
+</details>
+
+```typst
+self.page-numbering() -> none | str | function
+```
+
+### `position` [#definitions-position]
+
+*Since: forever*
+
+Возвращает словарь с номером страницы и координатами x, y для этого местоположения. Номер страницы начинается с единицы, а координаты отсчитываются от верхнего левого угла страницы (без её [области вылета](/docs/typst/reference/layout/page#parameters-bleed)).
+
+Если вам нужен только номер страницы, используйте вместо этого [`page()`](#definitions-page), так как это позволяет Typst пропустить ненужную работу.
+
+В HTML-документе Typst не может знать, где окажется содержимое, поэтому эта функция возвращает `none`. Содержимое [`html.frame`](/docs/typst/reference/format/html/frame) является исключением, поскольку оно размещается с помощью движка вёрстки Typst. Для местоположений внутри таких фреймов эта функция возвращает словарь только с координатами `x` и `y` внутри фрейма, но без ключа `page`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #context here().position()
+`}
+  image="/typst_docs_assets/images/HrVYilZZEf61sfsJHwUtzA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.position() -> none | dictionary
+```

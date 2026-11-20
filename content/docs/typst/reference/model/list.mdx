@@ -1,0 +1,207 @@
+---
+title: "Маркированный список"
+description: "Документация для функции `list`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступно с: всегда*
+
+Маркированный список.
+
+Отображает последовательность элементов по вертикали, причём каждый элемент предваряется маркером.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Normal list.
+  - Text
+  - Math
+  - Layout
+  - ...
+
+  Multiple lines.
+  - This list item spans multiple
+    lines because it is indented.
+
+  Function call.
+  #list(
+    [Foundations],
+    [Calculate],
+    [Construct],
+    [Data Loading],
+  )
+`}
+  image="/typst_docs_assets/images/g5wza4dC9dgpLaofKAu_dg.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+У этой функции также есть специальный синтаксис: начните строку с дефиса, за которым следует пробел, чтобы создать элемент списка. Элемент списка может содержать несколько абзацев и другой блочный контент. Весь контент, имеющий отступ больше, чем маркер элемента, становится частью этого элемента.
+
+## Параметры [#parameters]
+
+```typst
+list(
+  tight: bool,
+  marker: content | array | function,
+  indent: length,
+  body-indent: length,
+  spacing: auto | length,
+  marker-align: alignment,
+  ..content,
+)
+```
+
+### `tight` [#parameters-tight]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Определяет [spacing](#parameters-spacing) списка по умолчанию. Если значение равно `false`, элементы разделяются с помощью [межстрочного интервала абзаца](/docs/typst/reference/model/par#parameters-spacing). Если значение равно `true`, вместо этого используется [интерлиньяж абзаца](/docs/typst/reference/model/par#parameters-leading). Это делает список более компактным, что может выглядеть лучше, если элементы короткие.
+
+В режиме разметки значение этого параметра определяется тем, разделены ли элементы пустой строкой. Если элементы следуют непосредственно друг за другом, устанавливается значение `true`; если элементы разделены пустой строкой, устанавливается значение `false`. Плотность, заданную разметкой, нельзя переопределить с помощью правил set.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  - If a list has a lot of text, and
+    maybe other inline content, it
+    should not be tight anymore.
+
+  - To make a list wide, simply insert
+    a blank line between the items.
+`}
+  image="/typst_docs_assets/images/Z6J4KLIkP9vn90H9_7HTpw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `marker` [#parameters-marker]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) или [array](/docs/typst/reference/foundations/array) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `([•], [‣], [–])`
+
+Маркер, который предваряет каждый элемент.
+
+Вместо простого контента вы также можете передать массив с несколькими маркерами, которые должны использоваться для вложенных списков. Если глубина вложенности списка превышает количество маркеров, маркеры повторяются по циклу. Для полного контроля вы можете передать функцию, которая отображает глубину вложенности списка (начиная с `0`) в нужный маркер.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set list(marker: [--])
+  - A more classic list
+  - With en-dashes
+
+  #set list(marker: ([•], [--]))
+  - Top-level
+    - Nested
+    - Items
+  - Items
+`}
+  image="/typst_docs_assets/images/gWc3hXCrIcmCqLoBqE_-lw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `indent` [#parameters-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Отступ каждого элемента.
+
+### `body-indent` [#parameters-body-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0.5em`
+
+Расстояние между маркером и телом каждого элемента.
+
+### `spacing` [#parameters-spacing]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Расстояние между элементами списка.
+
+Если установлено значение `auto`, для плотных списков используется [`leading`](/docs/typst/reference/model/par#parameters-leading) абзаца, а для широких (неплотных) списков — [`spacing`](/docs/typst/reference/model/par#parameters-spacing) абзаца.
+
+### `marker-align` [#parameters-marker-align]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `end`
+
+Выравнивание, используемое для маркеров списка.
+
+Вертикальное выравнивание всегда задаётся относительно высоты элементов списка, к которым они прикреплены. По умолчанию оно не задано, что означает, что каждый маркер будет вертикально выровнен по базовой линии элемента, к которому он прикреплён (обычно это его первая строка текста или, в противном случае, его верх).
+
+Горизонтальное выравнивание, напротив, задаётся относительно других маркеров на том же уровне списка. По умолчанию оно установлено в `end`, что означает, что маркеры выстраиваются к концу текущего направления текста (`right` для LTR, `left` для RTL-текста). Однако, поскольку маркеры на каждом уровне обычно идентичны, ожидается, что горизонтальное выравнивание в большинстве случаев не будет иметь фактического эффекта. Тем не менее, в некоторых случаях оно всё же может иметь значение, особенно если маркеры используют счётчики или другие формы состояния для отображения разного контента для каждого элемента.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  - Baseline \\
+    aligned
+
+  #set list(marker-align: horizon)
+
+  - Horizon \\
+    aligned
+`}
+  image="/typst_docs_assets/images/6bmtdQDcwNcKJFiGZsyeeg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `children` [#parameters-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Дочерние элементы маркированного списка.
+
+При использовании синтаксиса списка соседние элементы автоматически собираются в списки, даже через такие конструкции, как циклы for.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #for letter in "ABC" [
+    - Letter #letter
+  ]
+`}
+  image="/typst_docs_assets/images/PZUvLIC2V1PvDbhpAuYsAQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `item` [#definitions-item]
+
+*Элемент* · *Доступно с: 0.4.0*
+
+Элемент маркированного списка.
+
+```typst
+list.item(content)
+```
+
+#### `body` [#definitions-item-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Тело элемента.

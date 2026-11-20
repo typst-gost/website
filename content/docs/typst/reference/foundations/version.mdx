@@ -1,0 +1,103 @@
+---
+title: "Version"
+description: "Документация для типа `version`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.9.0*
+
+Версия с произвольным числом компонентов.
+
+Первые три компонента имеют имена, которые можно использовать как поля: `major`, `minor`, `patch`. Все последующие компоненты не имеют имён.
+
+Список компонентов семантически дополняется бесконечным списком нулей. Это означает, что, например, `0.8` совпадает с `0.8.0`. В качестве особого случая пустая версия (не имеющая компонентов вовсе) совпадает с `0`, `0.0`, `0.0.0` и так далее.
+
+Текущая версия компилятора Typst доступна как [`sys.version`](/docs/typst/reference/foundations/sys#constants-version).
+
+Вы можете преобразовать версию в массив явно заданных компонентов с помощью конструктора [`array`](/docs/typst/reference/foundations/array).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Current version: #sys.version \\
+  #sys.version.minor \\
+  #(sys.version >= version(0, 14, 0)) \\
+  #(version(3, 2, 0) > version(4, 1, 0))
+`}
+  image="/typst_docs_assets/images/M__8MLIUaYCgyITgcnzYjA.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Создаёт новую версию.
+
+Она может иметь любое число компонентов (даже ноль).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #version() \\
+  #version(1) \\
+  #version(1, 2, 3, 4) \\
+  #version((1, 2, 3, 4)) \\
+  #version((1, 2), 3)
+`}
+  image="/typst_docs_assets/images/ehswtiXftzxfI9J9uIT_qg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+version(..int | array) -> version
+```
+
+### `components` [#constructor-components]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional, Variadic
+
+Компоненты версии (аргументы-массивы разворачиваются)
+
+## Функции [#functions]
+
+### `at` [#definitions-at]
+
+*Добавлено в версии: 0.9.0*
+
+Извлекает компонент версии.
+
+Возвращаемое целое число всегда неотрицательно. Возвращает `0`, если версия не задана до необходимой длины.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #version(1, 2, 3).at(0) \\
+  #version(1, 2, 3).at(3) \\
+  #version(1, 2, 3).at(-1)
+`}
+  image="/typst_docs_assets/images/QXQRnYU4vTrUPNzIydhQ3Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.at(int)
+```
+
+#### `index` [#definitions-at-index]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Required, Positional
+
+Индекс, по которому извлекается компонент. Если отрицательный, отсчёт ведётся с конца явно заданных компонентов.

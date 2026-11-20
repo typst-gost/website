@@ -1,0 +1,64 @@
+---
+title: "Сводка таблицы"
+description: "Документация для функции `table-summary`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.14.0* · *Функциональный флагТребует флаг `a11y-extras`*
+
+Сводка назначения и структуры сложной таблицы.
+
+Она будет доступна вспомогательным технологиям (AT), таким как программы экранного доступа, при экспорте в PDF, но не для зрячих читателей вашего файла.
+
+Это поле предназначено для инструкций, помогающих пользователю ориентироваться в таблице с помощью AT. Это не альтернативное описание, поэтому не дублируйте в нём содержимое таблицы. Равным образом не используйте его для передачи основной сути таблицы. Вместо этого включите её в текст вокруг таблицы или, что ещё лучше, в [подпись к рисунку](/docs/typst/reference/model/figure#definitions-caption).
+
+Если вы сомневаетесь, достаточно ли сложна ваша таблица, чтобы заслуживать сводки, лучше её не включать. Если же вы уверены, что таблица достаточно сложна, подумайте, не покажется ли она трудной зрячему пользователю. Ему могут пригодиться инструкции, которые вы здесь размещаете, поэтому рассмотрите возможность напечатать их видимо в документе.
+
+API этой функции временный. Поэтому вызов этой функции в настоящее время требует включения функционального флага `a11y-extras`. Даже если в будущем эта функциональность станет доступна без функционального флага, сводка останется эксклюзивной для экспорта в PDF.
+
+<TypstRender
+  code={`
+  #figure(
+    pdf.table-summary(
+      // The summary just provides orientation and structural
+  // information for AT users.
+      summary: "The first two columns list the names of each participant. The last column contains cells spanning multiple rows for their assigned group.",
+      table(
+        columns: 3,
+        table.header[First Name][Given Name][Group],
+        [Mike], [Davis], table.cell(rowspan: 3)[Sales],
+        [Anna], [Smith],
+        [John], [Johnson],
+        [Sara], [Wilkins], table.cell(rowspan: 2)[Operations],
+        [Tom], [Brown],
+      ),
+    ),
+    // This is the key takeaway of the table, so we put it in the caption.
+    caption: [The Sales org now has a new member],
+  )
+`}
+  image="/typst_docs_assets/images/Z7JrrVMzS1NYgZ-3S6_bjA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+pdf.table-summary(
+  summary: str,
+  content,
+)
+```
+
+### `summary` [#parameters-summary]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+### `table` [#parameters-table]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Таблица.

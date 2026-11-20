@@ -1,0 +1,10 @@
+{
+  "title": "Руководство",
+  "description": "Руководство по Typst.",
+  "pages": [
+    "writing-in-typst",
+    "formatting",
+    "advanced-styling",
+    "making-a-template"
+  ]
+}

@@ -1,0 +1,114 @@
+---
+title: "0.7.0"
+description: "Изменения в Typst 0.7.0"
+---
+
+## Текст и вёрстка [#text-and-layout]
+
+- Добавлена поддержка плавающих рисунков через аргумент [`placement`](/docs/typst/reference/model/figure#parameters-placement) функции figure
+- Добавлена поддержка произвольного плавающего содержимого через аргумент [`float`](/docs/typst/reference/layout/place#parameters-float) функции place
+- Добавлена поддержка загрузки файлов `.sublime-syntax` в качестве [синтаксисов](/docs/typst/reference/text/raw#parameters-syntaxes) подсветки для блоков raw
+- Добавлена поддержка загрузки файлов `.tmTheme` в качестве [тем](/docs/typst/reference/text/raw#parameters-theme) подсветки для блоков raw
+- Добавлена опция _bounds_ в аргументы [`top-edge`](/docs/typst/reference/text/text#parameters-top-edge) и [`bottom-edge`](/docs/typst/reference/text/text#parameters-bottom-edge) функции text для точных ограничивающих рамок
+- Удалены бессмысленные опции top- и bottom-edge, например _ascender_ для нижнего края **(Обратно несовместимое изменение)**
+- Добавлен аргумент [`script`](/docs/typst/reference/text/text#parameters-script) функции text
+- Добавлен аргумент [`alternative`](/docs/typst/reference/text/smartquote#parameters-alternative) функции smart quote
+- Добавлена базовая поддержка i18n для японского языка
+- Добавлена поддержка переносов для языковых кодов `nb` и `nn` в дополнение к `no`
+- Исправлено позиционирование [размещённых элементов](/docs/typst/reference/layout/place) в контейнерах
+- Исправлены переполняющиеся контейнеры из-за оптимизированных переносов строк
+
+## Экспорт [#export]
+
+- Значительно улучшен экспорт SVG-изображений в PDF. Большое спасибо [@LaurenzV](https://github.com/LaurenzV) за проделанную работу.
+- Добавлена поддержка альфа-канала цветов RGBA при экспорте в PDF
+- Исправлена ошибка с PPI (пикселей на дюйм) при экспорте в PNG
+
+## Математика [#math]
+
+- Улучшена вёрстка штрихов (например, в `$a'_1$`)
+- Улучшено отображение множественных штрихов (например, в `$a''$`)
+- Улучшена вёрстка [корней](/docs/typst/reference/math/roots#functions-root)
+- Изменено поведение отношений: по умолчанию они отображают прикреплённые элементы как [пределы](/docs/typst/reference/math/attach#functions-limits) (например, в `$a ->^x b$`)
+- Большие операторы и разделители теперь всегда выравниваются по вертикали по центру
+- [Блоки](/docs/typst/reference/layout/box) в формулах теперь по умолчанию располагаются на базовой линии, а не выравниваются по вертикали по центру. Примечательно, что это не затрагивает [блочные элементы](/docs/typst/reference/layout/block), поскольку они не являются строчными элементами.
+- Добавлена поддержка [слабых пробелов](/docs/typst/reference/layout/h#parameters-weak)
+- Добавлена поддержка вариантов символов OpenType
+- Добавлена поддержка настройки [математического класса](/docs/typst/reference/math/class) содержимого
+- Исправлены пробелы вокруг `.`, `\/` и `...`
+- Исправлены пробелы между закрывающими разделителями и большими операторами
+- Исправлена ошибка с выбором начертания математического шрифта
+- Символы и операторы **(Обратно несовместимые изменения)**
+  - Добавлены текстовые [операторы](/docs/typst/reference/math/op) `id`, `im` и `tr`
+  - `ident` переименован в `equiv` с псевдонимом `eq.triple`, а `ident.strict` удалён в пользу `eq.quad`
+  - `ast.sq` переименован в `ast.square`, а `integral.sq` — в `integral.square`
+  - Модификатор `.eqq` переименован в `.equiv` (а `.neqq` — в `.nequiv`) для `tilde`, `gt`, `lt`, `prec` и `succ`
+  - Добавлен `emptyset` как псевдоним для `nothing`
+  - Добавлены `lt.curly` и `gt.curly` как псевдонимы для `prec` и `succ`
+  - Добавлены `aleph`, `beth` и `gimmel` как псевдонимы для `alef`, `bet` и `gimel`
+
+## Скрипты [#scripting]
+
+- Поля
+  - Добавлены поля `abs` и `em` в [длины](/docs/typst/reference/layout/length)
+  - Добавлены поля `ratio` и `length` в [относительные длины](/docs/typst/reference/layout/relative)
+  - Добавлены поля `x` и `y` в [двумерные выравнивания](/docs/typst/reference/layout/align#parameters-alignment)
+  - Добавлены поля `paint`, `thickness`, `cap`, `join`, `dash` и `miter-limit` в [обводки](/docs/typst/reference/visualize/stroke)
+- Методы доступа и служебные методы
+  - Добавлен метод [`dedup`](/docs/typst/reference/foundations/array#definitions-dedup) для массивов
+  - Добавлены методы `pt`, `mm`, `cm` и `inches` для [длин](/docs/typst/reference/layout/length)
+  - Добавлены методы `deg` и `rad` для [углов](/docs/typst/reference/layout/angle)
+  - Добавлены методы `kind`, `hex`, `rgba`, `cmyk` и `luma` для [цветов](/docs/typst/reference/visualize/color)
+  - Добавлены методы `axis`, `start`, `end` и `inv` для [направлений](/docs/typst/reference/layout/stack#parameters-dir)
+  - Добавлены методы `axis` и `inv` для [выравниваний](/docs/typst/reference/layout/align#parameters-alignment)
+  - Добавлен метод `inv` для [двумерных выравниваний](/docs/typst/reference/layout/align#parameters-alignment)
+  - Добавлен аргумент `start` в метод [`enumerate`](/docs/typst/reference/foundations/array#definitions-enumerate) для массивов
+- Добавлена функция [`color.mix`](/docs/typst/reference/visualize/color#definitions-mix)
+- Добавлены аргументы `mode` и `scope` в функцию [`eval`](/docs/typst/reference/foundations/eval)
+- Добавлен тип [`bytes`](/docs/typst/reference/foundations/bytes) для хранения больших байтовых буферов
+  - Добавлен аргумент [`encoding`](/docs/typst/reference/data-loading/read#parameters-encoding) в функцию read для чтения файла как байтов вместо строки
+  - Добавлена функция `image.decode` для декодирования изображения непосредственно из строки или байтов
+  - Добавлена функция [`bytes`](/docs/typst/reference/foundations/bytes) для преобразования строки или массива целых чисел в байты
+  - Добавлена функция [`array`](/docs/typst/reference/foundations/array) для преобразования байтов в массив целых чисел
+  - Добавлена поддержка преобразования байтов в строку с помощью функции [`str`](/docs/typst/reference/foundations/str)
+
+## Инструменты и диагностика [#tooling-and-diagnostics]
+
+- Добавлена поддержка предупреждений компилятора
+- Добавлено предупреждение, когда компиляция не сходится в течение пяти попыток из-за интенсивного использования возможностей интроспекции
+- Добавлены предупреждения о пустом выделении (`__` и `**`)
+- Улучшено сообщение об ошибке для недопустимых присваиваний полям
+- Улучшено сообщение об ошибке после одиночного `#`
+- Улучшено сообщение об ошибке, когда ключевое слово используется там, где ожидается идентификатор
+- Исправлено автодополнение параметров для функций, находящихся в модулях
+- Автодополнение импорта теперь показывает только последнюю версию пакета, пока не введено двоеточие
+- Исправлено автодополнение для ключа словаря, содержащего пробел
+- Исправлено автодополнение для циклов `for`
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Добавлена подкоманда `typst query` для выполнения [запроса](/docs/typst/reference/introspection/query#command-line-queries) в командной строке
+- Аргументы `--root` и `--font-path` больше не могут стоять перед командой **(Обратно несовместимое изменение)**
+- Локальные и кэшированные пакеты теперь хранятся в каталогах вида `{namespace}/{name}/{version}` вместо `{namespace}/{name}-{version}` **(Обратно несовместимое изменение)**
+- Теперь явно заданные шрифты (через `--font-path`) имеют приоритет над системными и встроенными шрифтами, когда существуют и те, и другие
+- Исправлена работа `typst watch` с некоторыми текстовыми редакторами
+- Исправлено отображаемое время компиляции (теперь включает экспорт)
+
+## Прочие улучшения [#miscellaneous-improvements]
+
+- Добавлен аргумент [`bookmarked`](/docs/typst/reference/model/heading#parameters-bookmarked) в heading для управления тем, становится ли заголовок частью оглавления PDF
+- Добавлен аргумент [`caption-pos`](/docs/typst/reference/model/figure#definitions-caption-position) для управления положением подписи рисунка
+- Добавлена функция [`metadata`](/docs/typst/reference/introspection/metadata) для предоставления произвольного значения системе интроспекции
+- Исправлено, что [`state`](/docs/typst/reference/introspection/state) идентифицировался парой `(key, init)`, а не только своим `key`
+- Улучшена логика отступов [перечислений](/docs/typst/reference/model/enum). Вместо требования отступа как минимум до конца маркера теперь требуется лишь на один пробел больше отступа, чем начало маркера. В результате даже длинные маркеры вроде `12.` работают при отступе всего в 2 пробела.
+- Исправлена ошибка с логикой отступов блоков [`raw`](/docs/typst/reference/text/raw)
+- Исправлена ошибка разбора словарей
+
+## Разработка [#development]
+
+- Парсер и синтаксическое дерево выделены в крейт `typst-syntax`
+- Реализация `World::today` у зависимых от Typst проектов может потребовать исправления, если у них есть та же [ошибка](https://github.com/typst/typst/issues/1842), что была у CLI world
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

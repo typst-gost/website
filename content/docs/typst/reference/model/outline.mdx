@@ -1,0 +1,395 @@
+---
+title: "Outline"
+description: "Документация для функции `outline`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Оглавление, список рисунков или других элементов.
+
+Эта функция создаёт список всех вхождений элемента в документе вплоть до заданной [`глубины`](#parameters-depth). Нумерация элемента и номер страницы будут отображаться в оглавлении рядом с его заголовком или подписью.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+  #outline()
+
+  = Introduction
+  #lorem(5)
+
+  = Methods
+  == Setup
+  #lorem(10)
+`}
+  image="/typst_docs_assets/images/WH9yf4-BCrCBMZd7ZJsY0w.png"
+  alt=""
+  editable={true}
+/>
+
+## Альтернативные оглавления [#alternative-outlines]
+
+В конфигурации по умолчанию эта функция создаёт оглавление. Задав параметр `target`, оглавление можно использовать для создания списка других видов элементов, помимо заголовков.
+
+В примере ниже мы перечисляем все рисунки, содержащие изображения, задав для `target` значение `figure.where(kind: image)`. Точно так же можно было бы задать `figure.where(kind: table)`, чтобы создать список таблиц.
+
+Можно также задать просто `figure`, не используя селектор [`where`](/docs/typst/reference/foundations/function#definitions-where), но тогда список будет содержать _все_ рисунки — будь то изображения, таблицы или другой материал.
+
+<TypstRender
+  code={`
+  #outline(
+    title: [List of Figures],
+    target: figure.where(kind: image),
+  )
+
+  #figure(
+    image("tiger.jpg"),
+    caption: [A nice figure!],
+  )
+`}
+  image="/typst_docs_assets/images/_DJKjIqEdozj5rgibRH0sg.png"
+  alt=""
+  editable={true}
+/>
+
+## Оформление оглавления [#styling-the-outline]
+
+На самом базовом уровне оглавление можно оформить, задав свойства для него самого и его записей. Так вы можете настроить [заголовок](#parameters-title) оглавления, [отступы](#parameters-indent) записей и то, как должно [заполняться](#definitions-entry-fill) пространство между текстом записи и номером страницы.
+
+Более богатая настройка возможна через конфигурацию [записей](#definitions-entry) оглавления. Оглавление создаёт по одной записи для каждого включённого элемента.
+
+### Интервалы между записями [#entry-spacing]
+
+Записи оглавления являются [блоками](/docs/typst/reference/layout/block), поэтому интервалы между ними можно регулировать обычными правилами блочных интервалов:
+
+<TypstRender
+  code={`
+  #show outline.entry.where(
+    level: 1
+  ): set block(above: 1.2em)
+
+  #outline()
+
+  = About ACME Corp.
+  == History
+  === Origins
+  = Products
+  == ACME Tools
+`}
+  image="/typst_docs_assets/images/dKo0Jm5mhgfDaMe1Wrd70A.png"
+  alt=""
+  editable={true}
+/>
+
+### Построение записи оглавления из её частей [#building-an-entry]
+
+Для полного контроля можно также написать преобразующее правило show для `outline.entry`. Однако логика правильного форматирования и отступов записей оглавления довольно сложна, а сама запись оглавления содержит только два поля: уровень и включённый элемент.
+
+По этой причине предусмотрены различные вспомогательные функции. Вы можете комбинировать их, чтобы составить запись только из нужных вам частей.
+
+Правило show по умолчанию для записи оглавления выглядит так<sup>[1](#loc-2)</sup>:
+
+```typst
+#show outline.entry: it => link(
+  it.element.location(),
+  it.indented(it.prefix(), it.inner()),
+)
+```
+
+- Функция [`indented`](#definitions-entry-definitions-indented) принимает необязательный префикс и внутреннее содержимое и автоматически применяет к ним правильный отступ, чтобы разные записи аккуратно выравнивались, а длинные заголовки корректно переносились.
+- Функция [`prefix`](#definitions-entry-definitions-prefix) форматирует нумерацию элемента (если она есть). Она также добавляет дополнение для некоторых элементов.
+- Функция [`inner`](#definitions-entry-definitions-inner) объединяет [`body`](#definitions-entry-definitions-body) элемента, заполнитель и [номер страницы](#definitions-entry-definitions-page).
+
+Вы можете использовать эти отдельные функции для оформления записи оглавления разными способами. Допустим, вы хотите полностью убрать заполнитель и номера страниц. Для этого можно написать такое правило show:
+
+<TypstRender
+  code={`
+  #show outline.entry: it => link(
+    it.element.location(),
+    // Keep just the body, dropping
+  // the fill and the page.
+    it.indented(it.prefix(), it.body()),
+  )
+
+  #outline()
+
+  = About ACME Corp.
+  == History
+`}
+  image="/typst_docs_assets/images/QAwTliOVh-t2PWxSKjZzFw.png"
+  alt=""
+  editable={true}
+/>
+
+1. <sup>[1](#loc-1)</sup>Оглавление уравнений является исключением из этого правила, поскольку у него нет body и, следовательно, не используется indented-раскладка.
+
+## Параметры [#parameters]
+
+```typst
+outline(
+  title: none | auto | content,
+  target: label | selector | location | function,
+  depth: none | int,
+  indent: auto | relative | function,
+)
+```
+
+### `title` [#parameters-title]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Заголовок оглавления.
+
+- Если задано `auto`, будет использоваться подходящий заголовок для [языка текста](/docs/typst/reference/text/text#parameters-lang).
+- Если задано `none`, у оглавления не будет заголовка.
+- Пользовательский заголовок можно задать, передав содержимое.
+
+Заголовок оглавления по умолчанию не нумеруется, но это можно принудительно включить с помощью правила show-set: `show outline: set heading(numbering: "1.")`
+
+### `target` [#parameters-target]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `heading`
+
+Тип элемента, включаемого в оглавление.
+
+Чтобы перечислить рисунки, содержащие определённый вид элемента, например изображение или таблицу, можно указать нужный вид в селекторе [`where`](/docs/typst/reference/foundations/function#definitions-where). Подробнее см. раздел об [альтернативных оглавлениях](#alternative-outlines).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #outline(
+    title: [List of Tables],
+    target: figure.where(kind: table),
+  )
+
+  #figure(
+    table(
+      columns: 4,
+      [t], [1], [2], [3],
+      [y], [0.3], [0.7], [0.5],
+    ),
+    caption: [Experiment results],
+  )
+`}
+  image="/typst_docs_assets/images/C9xRqPg13i0L6qYO9NJ0Hg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `depth` [#parameters-depth]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Максимальный уровень, до которого элементы включаются в оглавление. Если этот аргумент равен `none`, включаются все элементы.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+  #outline(depth: 2)
+
+  = Yes
+  Top-level section.
+
+  == Still
+  Subsection.
+
+  === Nope
+  Not included.
+`}
+  image="/typst_docs_assets/images/XK8w7jJr51cZuvE0rwCWcA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `indent` [#parameters-indent]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как делать отступы для записей оглавления.
+
+- `auto`: выравнивает нумерацию/префикс вложенной записи по заголовку её родительской записи. Если записи не нумеруются (например, с помощью [нумерации заголовков](/docs/typst/reference/model/heading#parameters-numbering)), вместо этого просто вставляется фиксированный отступ `1.2em` на каждый уровень.
+- [Относительная длина](/docs/typst/reference/layout/relative): делает отступ записи на указанную длину за каждый уровень вложенности. Например, указав `2em`, вы получите отступ `0em` для заголовков верхнего уровня (без вложенности), `2em` для заголовков второго уровня (вложенность один раз), `4em` для заголовков третьего уровня (вложенность дважды) и так далее.
+- [Функция](/docs/typst/reference/foundations/function): эту настройку можно дополнительно настроить с помощью функции. Эта функция получает уровень вложенности в качестве параметра (начиная с 0 для заголовков/элементов верхнего уровня) и должна возвращать (относительную) длину. Например, `n => n * 2em` было бы эквивалентно простому указанию `2em`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set heading(numbering: "I-I.")
+  #set outline(title: none)
+
+  #outline()
+  #line(length: 100%)
+  #outline(indent: 3em)
+
+  = Software engineering technologies
+  == Requirements
+  == Tools and technologies
+  === Code editors
+  == Analyzing alternatives
+  = Designing software components
+  = Testing and integration
+`}
+  image="/typst_docs_assets/images/dxVnffk3xHrP5fzWki9w0Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `entry` [#definitions-entry]
+
+*Элемент* · *Locatable* · *Since: 0.6.0*
+
+Представляет строку записи в оглавлении.
+
+С помощью правил show-set и show для записей оглавления можно богато настраивать внешний вид оглавления. Подробнее см. [раздел об оформлении оглавления](#styling-the-outline).
+
+```typst
+outline.entry(
+  int,
+  content,
+  fill: none | content,
+)
+```
+
+#### `level` [#definitions-entry-level]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Required, Positional
+
+Уровень вложенности этой записи оглавления. Начинается с `1` для записей верхнего уровня.
+
+#### `element` [#definitions-entry-element]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Элемент, к которому относится эта запись. Его местоположение будет доступно через метод [`location`](/docs/typst/reference/foundations/content#definitions-location) у содержимого, и на него можно [ссылаться](/docs/typst/reference/model/link).
+
+#### `fill` [#definitions-entry-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `repeat(body: [.], gap: 0.15em)`
+
+Содержимое для заполнения пространства между заголовком и номером страницы. Можно задать `none`, чтобы отключить заполнение.
+
+`fill` будет помещён во фракционально размеренный блок, охватывающий пространство между body записи и номером страницы. Поэтому при использовании правил show для переопределения записей оглавления рекомендуется оборачивать fill в [`box`](/docs/typst/reference/layout/box) с фракциональной шириной, то есть `box(width: 1fr, it.fill)`.
+
+При использовании [`repeat`](/docs/typst/reference/layout/repeat) свойство [`gap`](/docs/typst/reference/layout/repeat#parameters-gap) может быть полезно для настройки визуального веса заполнителя.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set outline.entry(fill: line(length: 100%))
+  #outline()
+
+  = A New Beginning
+`}
+  image="/typst_docs_assets/images/FlvP-C5Db4gmUBFT66v0Ow.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### Функции для `entry` [#definitions-entry-functions]
+
+##### `indented` [#definitions-entry-definitions-indented]
+
+*Contextual* · *Since: 0.13.0*
+
+Вспомогательная функция для создания раскладки записи с отступом: размещает префикс и остальную часть записи с учётом отступов.
+
+Если [`indent`](#parameters-indent) родительского оглавления равен `auto`, внутреннее содержимое всех записей уровня `N` выравнивается по префиксу всех записей уровня `N + 1`, оставляя как минимум `gap` пространства между префиксом и внутренними частями. Кроме того, содержимое `inner` всех записей одного уровня выравнивается между собой.
+
+Если indent оглавления является фиксированным значением или функцией, префиксы получают отступ, но внутреннее содержимое просто смещается от префикса на указанный `gap`, а не выравнивается по всему оглавлению. Визуальное объяснение см. в [`outline.indent`](#parameters-indent).
+
+```typst
+self.indented(
+  none | content,
+  content,
+  gap: length,
+)
+```
+
+###### `prefix` [#definitions-entry-definitions-indented-prefix]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+`prefix` выравнивается по содержимому `inner` записей, уровень которых на единицу меньше.
+
+В правиле show по умолчанию это просто `it.prefix()`, но его можно свободно настроить.
+
+###### `inner` [#definitions-entry-definitions-indented-inner]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Отформатированное внутреннее содержимое записи.
+
+В правиле show по умолчанию это просто `it.inner()`, но его можно свободно настроить.
+
+###### `gap` [#definitions-entry-definitions-indented-gap]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **По умолчанию:** `0.5em`
+
+Промежуток между префиксом и внутренним содержимым.
+
+##### `prefix` [#definitions-entry-definitions-prefix]
+
+*Contextual* · *Since: 0.13.0*
+
+Форматирует нумерацию элемента (если она есть).
+
+Она также добавляет дополнение элемента в случае рисунков или уравнений. Например, для заголовка она выведет `1.1`, а для рисунка — `Figure 1`, как обычно и бывает в оглавлениях.
+
+```typst
+self.prefix() -> none | content
+```
+
+##### `inner` [#definitions-entry-definitions-inner]
+
+*Contextual* · *Since: 0.13.0*
+
+Создаёт внутреннее содержимое записи по умолчанию.
+
+Оно включает body, заполнитель и номер страницы.
+
+```typst
+self.inner() -> content
+```
+
+##### `body` [#definitions-entry-definitions-body]
+
+*Since: 0.13.0*
+
+Содержимое, которое отображается вместо упомянутого элемента в его записи в оглавлении. Для заголовка это его [`body`](/docs/typst/reference/model/heading#parameters-body); для рисунка — подпись, а для уравнений оно пустое.
+
+```typst
+self.body() -> content
+```
+
+##### `page` [#definitions-entry-definitions-page]
+
+*Contextual* · *Since: 0.13.0*
+
+Номер страницы элемента этой записи, отформатированный с нумерацией, заданной для страницы, на которую ссылаются.
+
+```typst
+self.page() -> content
+```

@@ -1,0 +1,345 @@
+---
+title: "Счётчик"
+description: "Документация для типа `counter`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Считает страницы, элементы и многое другое.
+
+С помощью функции counter вы можете получать доступ к счётчикам страниц, заголовков, рисунков и многого другого и изменять их. Кроме того, вы можете определять собственные счётчики для других вещей, которые хотите подсчитывать.
+
+Поскольку счётчики изменяются по ходу документа, их текущее значение является _контекстным._ Рекомендуется прочитать главу о [контексте](/docs/typst/reference/context), прежде чем продолжать.
+
+## Доступ к счётчику [#accessing]
+
+Чтобы получить необработанное значение счётчика, можно использовать функцию [`get`](#definitions-get). Эта функция возвращает [массив](/docs/typst/reference/foundations/array): счётчики могут иметь несколько уровней (например, для заголовков разделов, подразделов и т. д.), и каждый элемент массива соответствует одному уровню.
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+
+  = Introduction
+  Raw value of heading counter is
+  #context counter(heading).get()
+`}
+  image="/typst_docs_assets/images/1Y8IHXmOmcGX9j7f-EzVxw.png"
+  alt=""
+  editable={true}
+/>
+
+## Отображение счётчика [#displaying]
+
+Часто требуется отобразить значение счётчика в более удобочитаемом виде. Для этого можно вызвать функцию [`display`](#definitions-display) для счётчика. Эта функция получает текущее значение счётчика и форматирует его с помощью заданного или автоматически выведенного [формата нумерации](/docs/typst/reference/model/numbering).
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+
+  = Introduction
+  Some text here.
+
+  = Background
+  The current value is: #context {
+    counter(heading).display()
+  }
+
+  Or in roman numerals: #context {
+    counter(heading).display("I")
+  }
+`}
+  image="/typst_docs_assets/images/9HJYaO1Id_BBflpMQ2vwFQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Изменение счётчика [#modifying]
+
+Чтобы изменить счётчик, можно использовать методы `step` и `update`:
+
+- Метод `step` увеличивает значение счётчика на единицу. Поскольку счётчики могут иметь несколько уровней, он необязательно принимает аргумент `level`. Если он задан, счётчик увеличивается на указанной глубине.
+- Метод `update` позволяет произвольно изменять счётчик. В базовой форме ему передаётся целое число (или массив для нескольких уровней). Для большей гибкости вместо этого можно передать функцию, которая получает текущее значение и возвращает новое значение.
+
+Счётчик заголовков увеличивается до отображения заголовка, поэтому `Analysis` получает номер семь, хотя после второго обновления счётчик равен шести.
+
+<TypstRender
+  code={`
+  #set heading(numbering: "1.")
+
+  = Introduction
+  #counter(heading).step()
+
+  = Background
+  #counter(heading).update(3)
+  #counter(heading).update(n => n * 2)
+
+  = Analysis
+  Let's skip 7.1.
+  #counter(heading).step(level: 2)
+
+  == Analysis
+  Still at #context {
+    counter(heading).display()
+  }
+`}
+  image="/typst_docs_assets/images/kq4u4gv1cE-tixW8skbtsw.png"
+  alt=""
+  editable={true}
+/>
+
+## Счётчики элементов [#element-counters]
+
+Выше приведены различные примеры использования счётчика [`heading`](/docs/typst/reference/model/heading). Заголовки — лишь один из видов элементов, которые можно подсчитывать. В общем случае счётчики могут считать любые виды [_локализуемых_ элементов](/docs/typst/reference/introspection/location#locatable).
+
+Кроме того, счётчик может считать только те элементы, которые соответствуют определённому [`селектору`](/docs/typst/reference/foundations/selector). Например, `counter(figure.where(kind: image))` считает рисунки, содержащие изображения, но игнорирует другие виды рисунков.
+
+## Счётчик страниц [#page-counter]
+
+Счётчик страниц особенный. Он автоматически увеличивается при каждом разрыве страницы. Но, как и другие счётчики, его можно увеличивать вручную. Например, можно использовать римские номера страниц для предисловия, а затем переключиться на арабские номера страниц для основного содержимого и сбросить счётчик страниц на единицу.
+
+<TypstRender
+  code={`
+  #set page(numbering: "(i)")
+
+  = Preface
+  The preface is numbered with
+  roman numerals.
+
+  #set page(numbering: "1 / 1")
+  #counter(page).update(1)
+
+  = Main text
+  Here, the counter is reset to one.
+  We also display both the current
+  page and total number of pages in
+  Arabic numbers.
+`}
+  image="/typst_docs_assets/images/c0noeHh8-_rjc0i_ElwgnA.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/3r1bPZH6T6IkJIsdYIBKhw.png" alt="" width="480" height="200" />
+
+## Пользовательские счётчики [#custom-counters]
+
+Чтобы определить собственный счётчик, вызовите функцию `counter` со строкой в качестве ключа. Этот ключ глобально идентифицирует счётчик.
+
+<TypstRender
+  code={`
+  #let mine = counter("mycounter")
+  #context mine.display() \\
+  #mine.step()
+  #context mine.display() \\
+  #mine.update(c => c * 3)
+  #context mine.display()
+`}
+  image="/typst_docs_assets/images/Bq_igSASO4gV1vOrQlTyuA.png"
+  alt=""
+  editable={true}
+/>
+
+## Как увеличивать счётчик [#how-to-step]
+
+Когда вы определяете и используете пользовательский счётчик, в общем случае следует сначала увеличить счётчик, а затем отобразить его. Так поведение увеличения счётчика может зависеть от элемента, для которого он увеличивается. Если бы вы писали счётчик, скажем, для теорем, то определение вашей теоремы сначала включало бы увеличение счётчика и только затем отображало бы счётчик и содержимое теоремы.
+
+<TypstRender
+  code={`
+  #let c = counter("theorem")
+  #let theorem(it) = block[
+    #c.step()
+    *Theorem #context c.display():*
+  #it
+  ]
+
+  #theorem[$1 = 1$]
+  #theorem[$2 < 3$]
+`}
+  image="/typst_docs_assets/images/3f7PyDedOQRc6H7lsK5zIA.png"
+  alt=""
+  editable={true}
+/>
+
+Обоснование этого лучше всего объяснить на примере счётчика заголовков: обновление счётчика заголовков зависит от уровня заголовка. Увеличивая счётчик непосредственно перед заголовком, мы можем корректно перейти от `1` к `1.1` при встрече с заголовком уровня 2. Если бы мы увеличивали счётчик после заголовка, мы бы не знали, до какого значения его увеличивать.
+
+Поскольку счётчики всегда должны увеличиваться перед элементами, которые они считают, они всегда начинаются с нуля. Таким образом, при первом отображении (которое происходит после первого увеличения) они равны единице.
+
+## Путешествие во времени [#time-travel]
+
+Счётчики могут путешествовать во времени! Вы можете узнать конечное значение счётчика до того, как оно будет достигнуто, и даже определить, каким было значение в любом конкретном месте документа.
+
+<TypstRender
+  code={`
+  #let mine = counter("mycounter")
+
+  = Values
+  #context [
+    Value here: #mine.get() \\
+    At intro: #mine.at(<intro>) \\
+    Final value: #mine.final()
+  ]
+
+  #mine.update(n => n + 3)
+
+  = Introduction <intro>
+  #lorem(10)
+
+  #mine.step()
+  #mine.step()
+`}
+  image="/typst_docs_assets/images/mkaANnMbnh9Jx3sc1eMqYg.png"
+  alt=""
+  editable={true}
+/>
+
+## Другие виды состояния [#other-state]
+
+Тип `counter` тесно связан с типом [state](/docs/typst/reference/introspection/state). Прочитайте его документацию, чтобы узнать больше об управлении состоянием в Typst и о том, почему он не использует для счётчиков обычные переменные.
+
+## Конструктор [#constructor]
+
+Создаёт новый счётчик, идентифицируемый ключом.
+
+```typst
+counter(str | label | selector | location | function) -> counter
+```
+
+### `key` [#constructor-key]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Ключ, который глобально идентифицирует этот счётчик.
+
+- Если это строка, создаётся пользовательский счётчик, на который влияют только ручные обновления,
+- Если это функция [`page`](/docs/typst/reference/layout/page), счётчик считает страницы,
+- Если это [селектор](/docs/typst/reference/foundations/selector), счётчик считает элементы, соответствующие селектору. Например, можно
+  - передать функцию элемента, чтобы считать элементы этого типа,
+  - передать селектор [`where`](/docs/typst/reference/foundations/function#definitions-where), чтобы считать тип элемента с определёнными полями,
+  - передать [`<label>`](/docs/typst/reference/foundations/label), чтобы считать элементы с этой меткой.
+
+  Ключи счётчиков в виде селекторов элементов и [`where`](/docs/typst/reference/foundations/function#definitions-where) поддерживаются только для [локализуемых элементов](/docs/typst/reference/introspection/location#locatable).
+
+## Функции [#functions]
+
+### `get` [#definitions-get]
+
+*Контекстная* · *Since: 0.11.0*
+
+Получает значение счётчика в текущем местоположении. Всегда возвращает массив целых чисел, даже если счётчик содержит только одно число.
+
+Эквивалентно `counter.at(here())`.
+
+```typst
+self.get() -> int | array
+```
+
+### `display` [#definitions-display]
+
+*Контекстная* · *Since: forever*
+
+Отображает значение счётчика.
+
+Можно задать как пользовательскую нумерацию, так и пользовательское местоположение. Оба параметра по умолчанию равны `auto`, что выбирает разумные значения по умолчанию (нумерацию подсчитываемого элемента и текущее местоположение соответственно).
+
+Возвращает отформатированный вывод.
+
+```typst
+self.display(
+  auto | str | function,
+  at: auto | label | selector | location | function,
+  both: bool,
+) -> any
+```
+
+#### `numbering` [#definitions-display-numbering]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Позиционный · **По умолчанию:** `auto`
+
+[Шаблон нумерации или функция](/docs/typst/reference/model/numbering), которая определяет, как отображать счётчик. Если передана функция, она получает каждое число счётчика в качестве отдельного аргумента. Если количество чисел варьируется, например, для аргумента заголовка, можно использовать [приёмник аргументов](/docs/typst/reference/foundations/arguments).
+
+Если параметр опущен или установлен в `auto`, счётчик отображается со стилем нумерации для подсчитываемого элемента или с шаблоном `"1.1"`, если такого стиля нет.
+
+#### `at` [#definitions-display-at]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **По умолчанию:** `auto`
+
+Место, в котором следует отображать счётчик.
+
+Если используется селектор, он должен соответствовать ровно одному элементу в документе. Наиболее полезными видами селекторов для этого являются [метки](/docs/typst/reference/foundations/label) и [местоположения](/docs/typst/reference/introspection/location).
+
+Если параметр опущен или установлен в `auto`, счётчик отображается в текущем местоположении. Это эквивалентно использованию [`here()`](/docs/typst/reference/introspection/here).
+
+Нумерация будет выполняться в контексте, в котором `here()` разрешается в указанное местоположение, чтобы нумерации, включающие другие счётчики, разрешались корректно.
+
+#### `both` [#definitions-display-both]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Если включено, отображает текущее и конечное значение верхнего уровня вместе. Оба значения можно оформить с помощью одного шаблона нумерации. Это используется свойством нумерации страниц для отображения текущего и общего числа страниц, когда задан шаблон вроде `"1 / 1"`.
+
+### `at` [#definitions-at]
+
+*Контекстная* · *Since: forever*
+
+Получает значение счётчика в заданном местоположении. Всегда возвращает массив целых чисел, даже если счётчик содержит только одно число.
+
+`selector` должен соответствовать ровно одному элементу в документе. Наиболее полезными видами селекторов для этого являются [метки](/docs/typst/reference/foundations/label) и [местоположения](/docs/typst/reference/introspection/location).
+
+```typst
+self.at(label | selector | location | function) -> int | array
+```
+
+#### `selector` [#definitions-at-selector]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Место, в котором следует получить значение счётчика.
+
+### `final` [#definitions-final]
+
+*Контекстная* · *Since: forever*
+
+Получает значение счётчика в конце документа. Всегда возвращает массив целых чисел, даже если счётчик содержит только одно число.
+
+```typst
+self.final() -> int | array
+```
+
+### `step` [#definitions-step]
+
+*Since: forever*
+
+Увеличивает значение счётчика на единицу.
+
+Обновление вступит в силу в той позиции, куда возвращённое содержимое вставляется в документ. Если вы не поместите вывод в документ, ничего не произойдёт! Так было бы, например, если написать `let _ = counter(page).step()`. Обновления счётчиков всегда применяются в порядке вёрстки, и в этом случае Typst не знал бы, когда увеличивать счётчик.
+
+```typst
+self.step(level: int) -> content
+```
+
+#### `level` [#definitions-step-level]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `1`
+
+Глубина, на которой следует увеличить счётчик. По умолчанию `1`.
+
+### `update` [#definitions-update]
+
+*Since: forever*
+
+Обновляет значение счётчика.
+
+Как и в случае с `step`, обновление происходит только в том случае, если вы поместите полученное содержимое в документ.
+
+```typst
+self.update(int | array | function) -> content
+```
+
+#### `update` [#definitions-update-update]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [array](/docs/typst/reference/foundations/array) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Если передано целое число или массив целых чисел, устанавливает счётчик в это значение. Если передана функция, она получает предыдущее значение счётчика (каждое число как отдельный аргумент) и должна вернуть новое значение (целое число или массив).

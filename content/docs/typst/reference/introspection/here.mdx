@@ -1,0 +1,61 @@
+---
+title: "Here"
+description: "Документация для функции `here`."
+---
+
+
+<span id="summary" />
+
+*Контекстная* · *Добавлено в версии: 0.11.0*
+
+Возвращает текущее местоположение в документе.
+
+Можно рассматривать `here` как низкоуровневый строительный блок, который напрямую извлекает текущее местоположение из активного [контекста](/docs/typst/reference/context). Некоторые другие функции используют его внутри себя: например, `counter.get()` эквивалентно `counter.at(here())`.
+
+Внутри правил show для [локализуемых](/docs/typst/reference/introspection/location#locatable) элементов `here()` будет соответствовать местоположению отображаемого элемента.
+
+Если вы хотите отобразить текущий номер страницы, обратитесь к документации типа [`counter`](/docs/typst/reference/introspection/counter). Хотя `here` можно использовать для определения физического номера страницы, обычно требуется логический номер страницы, который, например, мог быть сброшен после предисловия.
+
+## Примеры [#examples]
+
+Определение текущей позиции в документе в сочетании с методом [`position`](/docs/typst/reference/introspection/location#definitions-position):
+
+<TypstRender
+  code={`
+  #context [
+    I am located at
+    #here().position()
+  ]
+`}
+  image="/typst_docs_assets/images/cL1Sx01d0DNDJWVeKFY6MA.png"
+  alt=""
+  editable={true}
+/>
+
+Выполнение [запроса](/docs/typst/reference/introspection/query) для элементов перед текущей позицией:
+
+<TypstRender
+  code={`
+  = Introduction
+  = Background
+
+  There are
+  #context query(
+    selector(heading).before(here())
+  ).len()
+  headings before me.
+
+  = Conclusion
+`}
+  image="/typst_docs_assets/images/BMzPRt8rdgRzYiesyCnsyQ.png"
+  alt=""
+  editable={true}
+/>
+
+Дополнительные сведения о селекторах before/after см. в документации типа [`selector`](/docs/typst/reference/foundations/selector).
+
+## Параметры [#parameters]
+
+```typst
+here() -> location
+```

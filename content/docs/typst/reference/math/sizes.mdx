@@ -1,0 +1,176 @@
+---
+title: "Размеры"
+description: "Документация для функций, позволяющих переключаться на альтернативные размеры математического текста."
+---
+
+
+Принудительные стили размера для выражений внутри формул.
+
+Эти функции позволяют вручную настраивать размер элементов уравнения, чтобы они выглядели как в выключной/строчной формуле или как если бы они использовались в корне или под/надстрочных знаках.
+
+## Функции [#functions]
+
+### `display` [#functions-display]
+
+*С версии: 0.5.0*
+
+Принудительный выключной стиль в математике.
+
+Это обычный размер для блочных уравнений.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $sum_i x_i/2 = display(sum_i x_i/2)$
+`}
+  image="/typst_docs_assets/images/mwprkuQW3kLsODHi7wGrJg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.display(
+  content,
+  cramped: bool,
+)
+```
+
+#### `body` [#functions-display-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется размер.
+
+#### `cramped` [#functions-display-cramped]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Следует ли накладывать ограничение по высоте для показателей степени, как это делают обычные под- и надстрочные знаки.
+
+### `inline` [#functions-inline]
+
+*С версии: 0.5.0*
+
+Принудительный строчный (текстовый) стиль в математике.
+
+Это обычный размер для строчных уравнений.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ sum_i x_i/2
+      = inline(sum_i x_i/2) $
+`}
+  image="/typst_docs_assets/images/0WTswtISWaLROdazWBN5dg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.inline(
+  content,
+  cramped: bool,
+)
+```
+
+#### `body` [#functions-inline-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется размер.
+
+#### `cramped` [#functions-inline-cramped]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Следует ли накладывать ограничение по высоте для показателей степени, как это делают обычные под- и надстрочные знаки.
+
+### `script` [#functions-script]
+
+*С версии: 0.5.0*
+
+Принудительный стиль скрипта в математике.
+
+Это меньший размер, используемый в степенях или под- и надстрочных знаках.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $sum_i x_i/2 = script(sum_i x_i/2)$
+`}
+  image="/typst_docs_assets/images/TMh8T45hawxsnJ5I1iTUAQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.script(
+  content,
+  cramped: bool,
+)
+```
+
+#### `body` [#functions-script-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется размер.
+
+#### `cramped` [#functions-script-cramped]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Следует ли накладывать ограничение по высоте для показателей степени, как это делают обычные под- и надстрочные знаки.
+
+### `sscript` [#functions-sscript]
+
+*С версии: 0.5.0*
+
+Принудительный стиль второго скрипта в математике.
+
+Это наименьший размер, используемый в под- и надстрочных знаках второго уровня (скрипт скрипта).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $sum_i x_i/2 = sscript(sum_i x_i/2)$
+`}
+  image="/typst_docs_assets/images/nZ7pT_qmlP8yfxl2FmUKiw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.sscript(
+  content,
+  cramped: bool,
+)
+```
+
+#### `body` [#functions-sscript-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется размер.
+
+#### `cramped` [#functions-sscript-cramped]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Следует ли накладывать ограничение по высоте для показателей степени, как это делают обычные под- и надстрочные знаки.

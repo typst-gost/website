@@ -1,0 +1,187 @@
+---
+title: "Список терминов"
+description: "Документация для функции `terms`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Список терминов и их описаний.
+
+Отображает последовательность терминов и их описаний по вертикали. Когда описания занимают несколько строк, используется висячий отступ для передачи визуальной иерархии.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  / Ligature: A merged glyph.
+  / Kerning: A spacing adjustment
+    between two adjacent letters.
+`}
+  image="/typst_docs_assets/images/hV9qdEOfoyFJ0Qyt073YVA.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Эта функция также имеет специальный синтаксис: строка, начинающаяся со слэша, за которым следуют термин, двоеточие и описание, создаёт элемент списка терминов.
+
+## Параметры [#parameters]
+
+```typst
+terms(
+  tight: bool,
+  separator: content,
+  indent: length,
+  hanging-indent: length,
+  spacing: auto | length,
+  ..content,
+)
+```
+
+### `tight` [#parameters-tight]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Определяет [интервал](#parameters-spacing) по умолчанию для списка терминов. Если значение равно `false`, элементы разделяются с помощью [интервала между абзацами](/docs/typst/reference/model/par#parameters-spacing). Если значение равно `true`, вместо этого используется [интерлиньяж абзаца](/docs/typst/reference/model/par#parameters-leading). Это делает список более компактным, что может выглядеть лучше, если элементы короткие.
+
+В режиме разметки значение этого параметра определяется на основе того, разделены ли элементы пустой строкой. Если элементы следуют непосредственно друг за другом, устанавливается значение `true`; если элементы разделены пустой строкой, устанавливается значение `false`. Плотность, заданную разметкой, нельзя переопределить с помощью правил set.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  / Fact: If a term list has a lot
+    of text, and maybe other inline
+    content, it should not be tight
+    anymore.
+
+  / Tip: To make it wide, simply
+    insert a blank line between the
+    items.
+`}
+  image="/typst_docs_assets/images/hMn1JqvfvD76UHUYU4ybrA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `separator` [#parameters-separator]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `h(amount: 0.6em, weak: true)`
+
+Разделитель между элементом и описанием.
+
+Если вы хотите просто разделить их определённым количеством пространства, используйте `h(2cm, weak: true)` в качестве разделителя и замените `2cm` на желаемое количество пространства.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set terms(separator: [: ])
+
+  / Colon: A nice separator symbol.
+`}
+  image="/typst_docs_assets/images/W5yohw6sjes9hN4_anym-A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `indent` [#parameters-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Отступ каждого элемента.
+
+### `hanging-indent` [#parameters-hanging-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `2em`
+
+Висячий отступ описания.
+
+Это дополнение к `indent` всего элемента.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set terms(hanging-indent: 0pt)
+  / Term: This term list does not
+    make use of hanging indents.
+`}
+  image="/typst_docs_assets/images/OlII38TGv4zaebHnTQRolQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `spacing` [#parameters-spacing]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Интервал между элементами списка терминов.
+
+Если установлено значение `auto`, используется [`leading`](/docs/typst/reference/model/par#parameters-leading) абзаца для плотных списков терминов и [`spacing`](/docs/typst/reference/model/par#parameters-spacing) абзаца для широких (неплотных) списков терминов.
+
+### `children` [#parameters-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Дочерние элементы списка терминов.
+
+При использовании синтаксиса списка терминов соседние элементы автоматически собираются в списки терминов, даже через такие конструкции, как циклы for.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #for (year, product) in (
+    "1978": "TeX",
+    "1984": "LaTeX",
+    "2019": "Typst",
+  ) [/ #product: Born in #year.]
+`}
+  image="/typst_docs_assets/images/r5Ct_ZYlSPmIiKYTjdnyiQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `item` [#definitions-item]
+
+*Элемент* · *Since: 0.4.0*
+
+Элемент списка терминов.
+
+```typst
+terms.item(
+  content,
+  content,
+)
+```
+
+#### `term` [#definitions-item-term]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Термин, описываемый элементом списка.
+
+#### `description` [#definitions-item-description]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Описание термина.

@@ -1,0 +1,62 @@
+---
+title: "0.5.0"
+description: "Изменения в Typst 0.5.0"
+---
+
+## Текст и вёрстка [#text-and-layout]
+
+- Добавлена подсветка синтаксиса [`raw`](/docs/typst/reference/text/raw) для многих других языков
+- Добавлена поддержка корейской [нумерации](/docs/typst/reference/model/numbering)
+- Добавлена базовая интернационализация (i18n) для ещё нескольких языков (NL, SV, DA)
+- Улучшен перенос строк для восточноазиатских языков
+- Расширена функциональность свойства [`indent`](/docs/typst/reference/model/outline#parameters-indent) оглавления
+- Исправлены сноски в колонках
+- Исправлены ошибки разбиения на страницы со [сносками](/docs/typst/reference/model/footnote)
+- Исправлена ошибка при обработке сносок в списках, таблицах и фигурах
+- Исправлена ошибка с настройкой CJK-пунктуации
+- Исправлено падение при работе со скруглёнными прямоугольниками
+- Исправлено выравнивание элементов [`line`](/docs/typst/reference/visualize/line)
+
+## Математика [#math]
+
+- **Обратно несовместимое изменение:** Улучшены синтаксические правила для математических [присоединений](/docs/typst/reference/math/attach#functions-attach): `$f^abs(3)$` теперь разбирается как `$f^(abs(3))$`, а не как `$(f^abs)(3)$`. Для устранения неоднозначности добавьте пробел: `$f^zeta (3)$`.
+- Добавлены команды [принудительного размера](/docs/typst/reference/math/sizes) для математики (например, [`display`](/docs/typst/reference/math/sizes#functions-display))
+- Добавлен параметр [`supplement`](/docs/typst/reference/math/equation#parameters-supplement) в [`equation`](/docs/typst/reference/math/equation), используемый в [ссылках](/docs/typst/reference/model/ref)
+- Новые [символы](/docs/typst/reference/symbols/sym): `bullet`, `xor`, `slash.big`, `sigma.alt`, `tack.r.not`, `tack.r.short`, `tack.r.double.not`
+- Исправлена ошибка с символами в матрицах
+- Исправлено падение в функции [`attach`](/docs/typst/reference/math/attach#functions-attach)
+
+## Скрипты [#scripting]
+
+- Добавлен новый тип [`datetime`](/docs/typst/reference/foundations/datetime) и [`datetime.today`](/docs/typst/reference/foundations/datetime#definitions-today) для получения текущей даты
+- Добавлены функции [`str.from-unicode`](/docs/typst/reference/foundations/str#definitions-from-unicode) и [`str.to-unicode`](/docs/typst/reference/foundations/str#definitions-to-unicode)
+- Добавлен метод [`fields`](/docs/typst/reference/foundations/content#definitions-fields) для content
+- Добавлен параметр `base` в функцию [`str`](/docs/typst/reference/foundations/str)
+- Добавлены [`calc.exp`](/docs/typst/reference/foundations/calc#functions-exp) и [`calc.ln`](/docs/typst/reference/foundations/calc#functions-ln)
+- Повышена точность [`calc.pow`](/docs/typst/reference/foundations/calc#functions-pow) и [`calc.log`](/docs/typst/reference/foundations/calc#functions-log) для отдельных оснований
+- Исправлен порядок [удаления](/docs/typst/reference/foundations/dictionary#definitions-remove) для словаря
+- Исправлен `.at(default: ..)` для [строк](/docs/typst/reference/foundations/str#definitions-at) и [content](/docs/typst/reference/foundations/content#definitions-at)
+- Исправлен доступ к полям у стилизованных элементов
+- Удалена устаревшая функция `calc.mod`
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Добавлен экспорт в PNG через `typst compile source.typ output-{n}.png`. Путь вывода должен содержать `{n}`, если документ имеет несколько страниц.
+- Добавлен `--diagnostic-format=short` для короткой диагностики в стиле Unix
+- Больше не выводит цветовые коды, если stderr не является TTY
+- Теперь устанавливает правильный код завершения при вызове с несуществующим файлом
+- Теперь игнорирует UTF-8 BOM в файлах Typst
+
+## Прочие улучшения [#miscellaneous-improvements]
+
+- Улучшены сообщения об ошибках для несогласованных разделителей
+- Улучшено сообщение об ошибке при неудачном сравнении длин
+- Исправлена ошибка, из-за которой изображения не отображались в Apple Preview
+- Исправлено несколько ошибок с оглавлением PDF
+- Исправлены цитирования и другие элементы поиска в [`hide`](/docs/typst/reference/layout/hide)
+- Исправлены ошибки с [дополнениями ссылок](/docs/typst/reference/model/ref#parameters-supplement)
+- Исправлен Nix flake
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!
