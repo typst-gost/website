@@ -603,7 +603,7 @@ function Failure({ reason, onRetry }: { reason: string; onRetry: () => void }) {
     >
       <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-fd-error" />
       <div className="min-w-0 flex-1">
-        <p>{t('Something went wrong.')}</p>
+        <p>{t('Что-то пошло не так.')}</p>
         <p className="line-clamp-2 text-xs wrap-break-word text-fd-muted-foreground">{reason}</p>
       </div>
       <button
@@ -611,7 +611,7 @@ function Failure({ reason, onRetry }: { reason: string; onRetry: () => void }) {
         className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'shrink-0')}
         onClick={onRetry}
       >
-        {t('Try again')}
+        {t('Попробуйте ещё раз')}
       </button>
     </div>
   );

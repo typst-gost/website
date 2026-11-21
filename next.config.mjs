@@ -67,14 +67,14 @@ const config = {
     serverExternalPackages: ["pdfjs-dist", "@lancedb/lancedb"],
     reactStrictMode: true,
     async headers() {
-        return[
+        return [
             {
                 source: '/wasm/:path*',
-                headers:[{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+                headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
             },
             {
                 source: '/pdfjs/:path*',
-                headers:[{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+                headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
             },
         ];
     },

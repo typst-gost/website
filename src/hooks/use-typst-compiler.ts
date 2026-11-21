@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const TYPST_COMPILER_URL = "/wasm/typst_ts_web_compiler_bg.wasm";
-const TYPST_RENDERER_URL = "/wasm/typst_ts_renderer_bg.wasm";
+const TYPST_VERSION = "0.7.0-rc2";
+const TYPST_COMPILER_URL = `/wasm/typst_ts_web_compiler_bg.wasm?v=${TYPST_VERSION}`;
+const TYPST_RENDERER_URL = `/wasm/typst_ts_renderer_bg.wasm?v=${TYPST_VERSION}`;
 const loadedAssets = new Set();
 
 type TypstModule = Window["$typst"];

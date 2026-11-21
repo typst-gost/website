@@ -1,313 +1,411 @@
+"""Индексация MD/MDX-документации Typst в LanceDB.
+
+Установка:
+    pip install openai lancedb pyyaml python-dotenv python-slugify
+
+.env рядом со скриптом:
+    POLZA_AI_API_KEY=...
+
+Запуск:
+    python build_typst_docs_db.py
+    python build_typst_docs_db.py --dry-run   # проверить чанки без API и БД
+
+Разместите файл в той же папке, где находился исходный скрипт:
+DOCS_DIR по умолчанию = CURRENT_DIR.parent.parent / 'content/docs'.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
 import os
 import re
-import json
-import hashlib
+import textwrap
 from pathlib import Path
+from typing import Any
+
 import yaml
-import lancedb
-from openai import OpenAI, BadRequestError
-from slugify import slugify
 from dotenv import load_dotenv
 
-load_dotenv()
+try:
+    from slugify import slugify
+except ImportError:
+    def slugify(value: str, allow_unicode: bool = True) -> str:
+        value = re.sub(r"[^\w\s-]", "", value.lower(), flags=re.UNICODE)
+        return re.sub(r"[-\s]+", "-", value).strip("-")
 
-# --- ПУТИ ---
 CURRENT_DIR = Path(__file__).resolve().parent
 WEBSITE_DIR = CURRENT_DIR.parent.parent
 DOCS_DIR = WEBSITE_DIR / "content" / "docs"
 DB_PATH = WEBSITE_DIR / "docs_vector_db"
 CACHE_FILE = CURRENT_DIR / "embeddings_cache.jsonl"
 
-# --- КОНФИГУРАЦИЯ POLZA.AI ---
-POLZA_API_KEY = os.getenv("POLZA_AI_API_KEY")
-if not POLZA_API_KEY or "ТВОЙ" in POLZA_API_KEY:
-    raise ValueError("❌ Не найден POLZA_AI_API_KEY в .env!")
-
 BASE_URL = "https://polza.ai/api/v1"
-EMBEDDING_MODEL = "baai/bge-m3"
+EMBEDDING_MODEL = "qwen/qwen3-embedding-8b"
 BASE_SITE_URL = "https://typst-gost.ru/docs"
+MAX_CHUNK_CHARS = 2500
+CHUNK_OVERLAP = 250
+BATCH_SIZE = 16
 
-# Лимиты для нарезки чанков
-MAX_CHUNK_CHARS = 2500  # Идеальный размер для семантического поиска
-CHUNK_OVERLAP = 250     # Перекрытие между частями, чтобы не терять контекст
+HEADING_RE = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.+?)\s*$")
+EXPLICIT_ID_RE = re.compile(r"\s*\{#([^}]+)\}\s*$")
+FENCE_RE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+TYPST_RENDER_RE = re.compile(r"<TypstRender\b(?P<attrs>[\s\S]*?)\s*/>")
+TYPST_CODE_RE = re.compile(r"\bcode\s*=\s*\{\s*`([\s\S]*?)`\s*\}")
 
-client = OpenAI(base_url=BASE_URL, api_key=POLZA_API_KEY)
+
+def text_hash(text: str) -> str:
+    # Модель включена в ключ: векторы другой модели не переиспользуются.
+    return hashlib.sha256(f"{EMBEDDING_MODEL}\0{text}".encode("utf-8")).hexdigest()
 
 
-def get_text_hash(text: str) -> str:
-    """Хэш текста для поиска в кэше."""
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+def parse_frontmatter(raw: str) -> tuple[dict[str, Any], str]:
+    m = re.match(r"\A---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?:\r?\n|\Z)", raw, re.S)
+    if not m:
+        return {}, raw
+    try:
+        metadata = yaml.safe_load(m.group(1)) or {}
+    except yaml.YAMLError:
+        metadata = {}
+    return (metadata if isinstance(metadata, dict) else {}), raw[m.end():]
+
+
+def update_fence(line: str, opened: tuple[str, int] | None) -> tuple[str, int] | None:
+    m = FENCE_RE.match(line)
+    if not m:
+        return opened
+    marks, rest = m.groups()
+    if opened is None:
+        return (marks[0], len(marks))
+    if marks[0] == opened[0] and len(marks) >= opened[1] and not rest.strip():
+        return None
+    return opened
+
+
+def normalize_mdx(body: str) -> str:
+    """Сохраняем Typst-код, удаляем лишь обёртки известных JSX-компонентов."""
+    def typst_render(m: re.Match[str]) -> str:
+        code = TYPST_CODE_RE.search(m.group("attrs"))
+        if code:
+            return "\n\n```typst\n" + code.group(1).strip("\n") + "\n```\n\n"
+        return m.group(0)  # неизвестная форма code={...}: данные не теряем
+
+    body = TYPST_RENDER_RE.sub(typst_render, body)
+    result = []
+    fence = None
+    for line in body.splitlines():
+        if fence is None:
+            # Не используем r'<[^>]+>': это удалило бы типстовские метки.
+            line = re.sub(r"</?[A-Z][\w.]*\b[^>]*>", "", line)
+        result.append(line)
+        fence = update_fence(line, fence)
+    return "\n".join(result).replace("\x00", "").strip()
+
+
+def get_sections(body: str) -> list[dict[str, Any]]:
+    """Заголовки Markdown (вне кода) + полный путь H1 > H2 > ... ."""
+    sections = []
+    parents: list[tuple[int, str]] = []
+    current = {"path": ["Введение"], "heading": "Введение", "anchor": "", "lines": []}
+    fence = None
+    slug_counts: dict[str, int] = {}
+
+    for line in body.splitlines():
+        m = HEADING_RE.match(line) if fence is None else None
+        if m:
+            if current["lines"]:
+                sections.append(current)
+            level = len(m.group(1))
+            raw_title = re.sub(r"\s+#+\s*$", "", m.group(2)).strip()
+            explicit_match = EXPLICIT_ID_RE.search(raw_title)
+            title = EXPLICIT_ID_RE.sub("", raw_title).strip()
+            while parents and parents[-1][0] >= level:
+                parents.pop()
+            parents.append((level, title))
+            auto_slug = slugify(title, allow_unicode=True)
+            count = slug_counts.get(auto_slug, 0)
+            slug_counts[auto_slug] = count + 1
+            anchor = (explicit_match.group(1) if explicit_match else
+                      (f"{auto_slug}-{count}" if count else auto_slug))
+            current = {"path": [name for _, name in parents],
+                       "heading": title, "anchor": anchor, "lines": []}
+        else:
+            current["lines"].append(line)
+            fence = update_fence(line, fence)
+
+    if current["lines"]:
+        sections.append(current)
+    return sections
+
+
+def get_blocks(text: str) -> list[str]:
+    """Абзацы/примеры; пустые строки внутри ``` ... ``` не делят блок."""
+    blocks, lines = [], []
+    fence = None
+    for line in text.splitlines():
+        if not line.strip() and fence is None:
+            if lines:
+                blocks.append("\n".join(lines).strip())
+                lines = []
+        else:
+            lines.append(line)
+            fence = update_fence(line, fence)
+    if lines:
+        blocks.append("\n".join(lines).strip())
+    return [b for b in blocks if b]
+
+
+def join_examples(blocks: list[str], budget: int) -> list[str]:
+    """Короткое пояснение и следующий код — единый смысловой блок."""
+    result: list[str] = []
+    for block in blocks:
+        if (result and block.startswith(("```", "~~~"))
+                and not result[-1].startswith(("```", "~~~"))
+                and len(result[-1]) <= 600
+                and len(result[-1]) + len(block) + 2 <= budget):
+            result[-1] += "\n\n" + block
+        else:
+            result.append(block)
+    return result
+
+
+def split_plain(text: str, limit: int) -> list[str]:
+    """Разделение длинного текста по предложениям, затем пробелам."""
+    if len(text) <= limit:
+        return [text]
+    sentences = re.split(r"(?<=[.!?])\s+(?=[A-ZА-ЯЁ0-9#`])", text)
+    pieces = []
+    for sentence in sentences:
+        if len(sentence) <= limit:
+            pieces.append(sentence)
+        else:
+            pieces.extend(textwrap.wrap(
+                sentence, width=limit, break_long_words=False,
+                break_on_hyphens=False, replace_whitespace=False,
+            ))
+    result, current = [], ""
+    for piece in pieces:
+        if current and len(current) + len(piece) + 1 > limit:
+            result.append(current)
+            current = ""
+        current = (current + " " + piece).strip()
+    if current:
+        result.append(current)
+    return result
+
+
+def split_long_block(block: str, limit: int) -> list[str]:
+    if len(block) <= limit:
+        return [block]
+
+    # В длинном fenced code block режем по строкам и закрываем каждый фрагмент.
+    m = re.search(r"(?m)^(`{3,}|~{3,})[^\n]*\n", block)
+    if not m:
+        return split_plain(block, limit)
+    prefix = block[:m.start()].strip()
+    opener, closing = m.group(0).rstrip("\n"), m.group(1)
+    rest = block[m.end():]
+    end = re.search(rf"(?m)^\s*{re.escape(closing)}\s*$", rest)
+    if not end:
+        return split_plain(block, limit)
+    code, suffix = rest[:end.start()].strip("\n"), rest[end.end():].strip()
+    capacity = limit - len(opener) - len(closing) - 3
+    if capacity < 100:
+        return [block]  # не портим пример ради формального лимита
+
+    groups, group, size = [], [], 0
+    for line in code.splitlines():
+        if group and size + len(line) + 1 > capacity:
+            groups.append("\n".join(group))
+            group, size = [], 0
+        group.append(line)
+        size += len(line) + 1
+    if group:
+        groups.append("\n".join(group))
+
+    result = split_plain(prefix, limit) if prefix else []
+    result.extend(f"{opener}\n{g}\n{closing}" for g in groups)
+    result.extend(split_plain(suffix, limit) if suffix else [])
+    return result
+
+
+def pack_blocks(blocks: list[str], limit: int, overlap: int) -> list[str]:
+    pieces = [p for b in join_examples(blocks, limit)
+              for p in split_long_block(b, limit)]
+    chunks, current, size = [], [], 0
+    for piece in pieces:
+        addition = len(piece) + (2 if current else 0)
+        if current and size + addition > limit:
+            chunks.append("\n\n".join(current))
+            # Только полный предыдущий блок, не 250 символов из середины кода.
+            carry = current[-1] if len(current[-1]) <= overlap else None
+            if carry and len(carry) + len(piece) + 2 <= limit:
+                current, size = [carry], len(carry)
+            else:
+                current, size = [], 0
+        size += len(piece) + (2 if current else 0)
+        current.append(piece)
+    if current:
+        chunks.append("\n\n".join(current))
+    return chunks
+
+
+def chunk_document(file_path: str | Path, rel_path: str | Path,
+                   max_chars: int = MAX_CHUNK_CHARS,
+                   overlap: int = CHUNK_OVERLAP) -> list[dict[str, Any]]:
+    """Возвращает чанки с полями для LanceDB и URL разделов."""
+    if max_chars < 500:
+        raise ValueError("max_chars должен быть >= 500")
+    if not 0 <= overlap < max_chars:
+        raise ValueError("overlap должен быть >= 0 и < max_chars")
+
+    raw = Path(file_path).read_text(encoding="utf-8")
+    fm, body = parse_frontmatter(raw)
+    doc_title = str(fm.get("title") or Path(file_path).stem)
+    description = str(fm.get("description") or "").strip()
+    rel = str(rel_path).replace("\\", "/")
+    route = re.sub(r"\.(md|mdx)$", "", rel, flags=re.I)
+    if route.endswith("/index"):
+        route = route[:-6]
+    elif route == "index":
+        route = ""
+    doc_url = f"{BASE_SITE_URL.rstrip('/')}/{route}".rstrip("/")
+
+    chunks: list[dict[str, Any]] = []
+    for section in get_sections(normalize_mdx(body)):
+        content = "\n".join(section["lines"]).strip()
+        if not content:
+            continue
+        path = section["path"]
+        header = f"Документ: {doc_title} > " + " > ".join(path)
+        if description and path == ["Введение"]:
+            header += "\nОписание: " + description
+        budget = max_chars - len(header) - 1
+        if budget < 200:
+            raise ValueError(f"Заголовок слишком длинный: {rel} — {header[:100]}")
+        parts = pack_blocks(get_blocks(content), budget, overlap)
+        url = doc_url + ("#" + section["anchor"] if section["anchor"] else "")
+        for idx, part in enumerate(parts):
+            full_text = header + "\n" + part
+            chunk_id = hashlib.sha256(
+                f"{rel}\0{header}\0{idx}\0{part}".encode("utf-8")
+            ).hexdigest()[:20]
+            chunks.append({
+                "chunk_id": chunk_id,
+                "title": doc_title,
+                "section": section["heading"],
+                "heading_path": " > ".join(path),
+                "part_index": idx + 1,
+                "parts_total": len(parts),
+                "url": url,
+                "text": full_text,
+                "source": rel,
+            })
+    return chunks
 
 
 def load_cache() -> dict[str, list[float]]:
-    """Загружает сохраненные эмбеддинги с диска."""
-    cache = {}
-    if CACHE_FILE.exists():
-        with open(CACHE_FILE, "r", encoding="utf-8") as f:
-            for line in f:
-                if line.strip():
-                    item = json.loads(line)
-                    cache[item["hash"]] = item["vector"]
+    cache: dict[str, list[float]] = {}
+    if not CACHE_FILE.exists():
+        return cache
+    with CACHE_FILE.open("r", encoding="utf-8") as file:
+        for line in file:
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+                cache[item["hash"]] = item["vector"]
+            except (ValueError, KeyError, TypeError):
+                continue
     return cache
 
 
-def save_to_cache(text_hash: str, vector: list[float]):
-    """Сохраняет один вектор в файл кэша."""
-    with open(CACHE_FILE, "a", encoding="utf-8") as f:
-        f.write(json.dumps({"hash": text_hash, "vector": vector}) + "\n")
+def save_to_cache(hash_value: str, vector: list[float]) -> None:
+    with CACHE_FILE.open("a", encoding="utf-8") as file:
+        file.write(json.dumps({"hash": hash_value, "vector": vector}) + "\n")
 
 
-def parse_frontmatter(content: str):
-    if content.startswith("---"):
-        parts = content.split("---", 2)
-        if len(parts) >= 3:
-            try:
-                fm = yaml.safe_load(parts[1])
-                return fm or {}, parts[2].strip()
-            except Exception:
-                pass
-    return {}, content.strip()
-
-
-def clean_mdx_content(text: str) -> str:
-    # Достаем полезный код из кастомных компонентов TypstRender
-    text = re.sub(
-        r'<TypstRender[\s\S]*?code=\{`([\s\S]*?)`\}[\s\S]*?/>',
-        r'```typst\n\1\n```',
-        text,
-    )
-    # Удаляем JSX и HTML теги
-    text = re.sub(r'<[^>]+>', '', text)
-    # Удаляем нулевые байты
-    text = text.replace('\x00', '')
-    text = re.sub(r'\n{3,}', '\n\n', text)
-    return text.strip()
-
-
-def create_slug(title: str) -> str:
-    return slugify(title, allow_unicode=True)
-
-
-def split_text_into_chunks(text: str, max_chars: int = MAX_CHUNK_CHARS, overlap: int = CHUNK_OVERLAP) -> list[str]:
-    """
-    Разбивает длинный текст на части по параграфам и строкам
-    с сохранением смысловых блоков и перекрытием.
-    """
-    text = text.strip()
-    if len(text) <= max_chars:
-        return [text]
-
-    # Сначала пробуем разделить по двойному переносу строки (абзацы)
-    paragraphs = [p.strip() for p in re.split(r'\n{2,}', text) if p.strip()]
-    if not paragraphs:
-        paragraphs = [text]
-
-    chunks = []
-    current_parts = []
-    current_len = 0
-
-    for p in paragraphs:
-        p_len = len(p)
-
-        # Если один абзац сам по себе больше max_chars (например, большая таблица или листинг кода)
-        if p_len > max_chars:
-            if current_parts:
-                chunks.append("\n\n".join(current_parts))
-                current_parts = []
-                current_len = 0
-
-            step = max_chars - overlap
-            for start in range(0, p_len, step):
-                sub = p[start:start + max_chars].strip()
-                if sub:
-                    chunks.append(sub)
-            continue
-
-        if current_len + p_len + 2 > max_chars and current_parts:
-            chunk_str = "\n\n".join(current_parts)
-            chunks.append(chunk_str)
-
-            # Берем хвост для overlap
-            tail = chunk_str[-overlap:] if len(chunk_str) > overlap else chunk_str
-            current_parts = [tail, p]
-            current_len = len(tail) + p_len + 2
-        else:
-            current_parts.append(p)
-            current_len += p_len + 2
-
-    if current_parts:
-        chunks.append("\n\n".join(current_parts))
-
-    return chunks
-
-
-def chunk_document(file_path: str, rel_path: str) -> list[dict]:
-    """Разбивает MDX-документ на чанки по заголовкам с поддержкой деления длинных секций."""
-    with open(file_path, "r", encoding="utf-8") as f:
-        raw_content = f.read()
-
-    frontmatter, body = parse_frontmatter(raw_content)
-    doc_title = frontmatter.get("title", os.path.splitext(os.path.basename(file_path))[0])
-    doc_desc = frontmatter.get("description", "")
-
-    clean_route = os.path.splitext(rel_path)[0]
-    if clean_route.endswith("/index"):
-        clean_route = clean_route[:-6]
-
-    heading_pattern = re.compile(r'^(#{1,4})\s+(.+)$', re.MULTILINE)
-    chunks = []
-    matches = list(heading_pattern.finditer(body))
-
-    def add_section_chunks(section_title: str, anchor: str, raw_text: str):
-        """Вспомогательная функция для нарезки и добавления секции."""
-        cleaned = clean_mdx_content(raw_text)
-        if len(cleaned) < 20:
-            return
-
-        sub_chunks = split_text_into_chunks(cleaned)
-        total_parts = len(sub_chunks)
-        url = f"{BASE_SITE_URL}/{clean_route}" + (f"#{anchor}" if anchor else "")
-
-        for idx, sub_text in enumerate(sub_chunks, start=1):
-            if total_parts > 1:
-                section_name = f"{section_title} (часть {idx} из {total_parts})"
-                header = f"Документ: {doc_title} > {section_title} (часть {idx} из {total_parts})"
-            else:
-                section_name = section_title
-                header = f"Документ: {doc_title} > {section_title}"
-
-            full_text = f"{header}\n{sub_text}".strip()
-
-            chunks.append({
-                "title": doc_title,
-                "section": section_name,
-                "url": url,
-                "text": full_text,
-                "source": rel_path,
-            })
-
-    # Если в файле нет заголовков
-    if not matches:
-        desc_prefix = f"Описание: {doc_desc}\n\n" if doc_desc else ""
-        add_section_chunks(doc_title, "", desc_prefix + body)
-        return chunks
-
-    # Контент до первого заголовка (введение)
-    first_heading_start = matches[0].start()
-    intro = body[:first_heading_start]
-    if len(intro.strip()) >= 20:
-        desc_prefix = f"Описание: {doc_desc}\n\n" if doc_desc else ""
-        add_section_chunks("Введение", "", desc_prefix + intro)
-
-    # Контент по каждому заголовку
-    for i, match in enumerate(matches):
-        heading_text = match.group(2).strip()
-        clean_heading = re.sub(r'\{#.*?\}', '', heading_text).strip()
-        anchor = create_slug(clean_heading)
-
-        start = match.end()
-        end = matches[i + 1].start() if i + 1 < len(matches) else len(body)
-        section_content = body[start:end]
-
-        add_section_chunks(clean_heading, anchor, section_content)
-
-    return chunks
-
-
-def fetch_embeddings_safe(texts: list[str]) -> list[list[float] | None]:
-    """Отправляет батч, а при ошибке 400 отправляет поштучно с логированием."""
+def fetch_embeddings_safe(client: Any, texts: list[str]) -> list[list[float] | None]:
+    """Если batch вернул 400, поштучно определяем проблемные входы."""
+    from openai import BadRequestError
     try:
-        response = client.embeddings.create(
-            model=EMBEDDING_MODEL,
-            input=texts,
-        )
-        return [item.embedding for item in response.data]
-    except BadRequestError as e:
-        print(f"\n⚠️ Ошибка в батче ({e.message}). Пробую поштучно...")
-        results = []
-        for single_text in texts:
-            if not single_text.strip():
-                results.append(None)
-                continue
+        response = client.embeddings.create(model=EMBEDDING_MODEL, input=texts)
+        vectors: list[list[float] | None] = [None] * len(texts)
+        for item in response.data:
+            vectors[item.index] = item.embedding
+        return vectors
+    except BadRequestError as exc:
+        print(f"⚠️ Ошибка в батче: {exc}. Проверяю по одному...")
+        vectors = []
+        for t in texts:
             try:
-                res = client.embeddings.create(
-                    model=EMBEDDING_MODEL,
-                    input=[single_text],
-                )
-                results.append(res.data[0].embedding)
-            except Exception as single_err:
-                print(f"❌ Пропуск ошибочного чанка: {single_err}")
-                print(f"Текст чанка: {repr(single_text[:120])}")
-                results.append(None)
-        return results
+                result = client.embeddings.create(model=EMBEDDING_MODEL, input=[t])
+                vectors.append(result.data[0].embedding)
+            except BadRequestError as error:
+                print(f"❌ Не удалось получить embedding: {error}; начало: {t[:120]!r}")
+                vectors.append(None)
+        return vectors
 
 
-def build_vector_db():
-    print(f"🔍 Сканирование папки: {DOCS_DIR}")
+def build_vector_db(dry_run: bool = False) -> None:
+    print(f"🔍 Документы: {DOCS_DIR}")
     if not DOCS_DIR.exists():
-        print(f"❌ Папка {DOCS_DIR} не найдена!")
+        raise FileNotFoundError(f"Папка документации не найдена: {DOCS_DIR}")
+
+    all_chunks: list[dict[str, Any]] = []
+    for file_path in sorted(DOCS_DIR.rglob("*")):
+        if file_path.is_file() and file_path.suffix.lower() in (".md", ".mdx"):
+            all_chunks.extend(chunk_document(file_path, file_path.relative_to(DOCS_DIR)))
+
+    print(f"📊 Создано чанков: {len(all_chunks)}")
+    if not all_chunks:
+        print("⚠️ Нет чанков — существующая таблица НЕ изменена.")
+        return
+    if dry_run:
+        for c in all_chunks[:5]:
+            print(f"\n{c['url']} [{c['part_index']}/{c['parts_total']}]\n{c['text'][:500]}")
         return
 
-    all_chunks = []
-    for root, _, files in os.walk(DOCS_DIR):
-        for file in files:
-            if file.endswith((".md", ".mdx")):
-                full_path = os.path.join(root, file)
-                rel_path = os.path.relpath(full_path, DOCS_DIR)
-                chunks = chunk_document(full_path, rel_path)
-                all_chunks.extend(chunks)
-
-    print(f"📊 Всего сформировано чанков с учетом разбивки: {len(all_chunks)}")
-
-    # 1. Загрузка дискового кэша
+    load_dotenv(CURRENT_DIR / ".env")
+    api_key = os.getenv("POLZA_AI_API_KEY")
+    if not api_key:
+        raise ValueError("Не найден POLZA_AI_API_KEY (.env или переменные окружения)")
+    from openai import OpenAI  # не требуется для --dry-run
+    client = OpenAI(base_url=BASE_URL, api_key=api_key)
     cache = load_cache()
-    print(f"💾 Загружено из кэша: {len(cache)} уже готовых векторов")
+    print(f"💾 Векторов в кэше: {len(cache)}")
 
-    # 2. Фильтруем то, что ещё не посчитано
-    chunks_to_embed = []
+    # Уникальные входы: один и тот же текст не отправляется повторно.
+    missing = {text_hash(c["text"]): c["text"] for c in all_chunks
+               if text_hash(c["text"]) not in cache}
+    print(f"🚀 Требуется эмбеддингов: {len(missing)}")
+    items = list(missing.items())
+    for i in range(0, len(items), BATCH_SIZE):
+        batch = items[i:i + BATCH_SIZE]
+        embeddings = fetch_embeddings_safe(client, [t for _, t in batch])
+        for (h, _), vector in zip(batch, embeddings):
+            if vector is not None:
+                cache[h] = vector
+                save_to_cache(h, vector)
+        print(f"  Готово {min(i + BATCH_SIZE, len(items))}/{len(items)}")
+
+    rows = []
     for c in all_chunks:
-        h = get_text_hash(c["text"])
-        if h not in cache:
-            chunks_to_embed.append((h, c["text"]))
-
-    print(f"🚀 Требуется досчитать новых эмбеддингов: {len(chunks_to_embed)}")
-
-    batch_size = 16
-    for i in range(0, len(chunks_to_embed), batch_size):
-        batch = chunks_to_embed[i:i + batch_size]
-        hashes = [item[0] for item in batch]
-        texts = [item[1] for item in batch]
-
-        vectors = fetch_embeddings_safe(texts)
-
-        for h, vec in zip(hashes, vectors):
-            if vec is not None:
-                cache[h] = vec
-                save_to_cache(h, vec)
-
-        processed = min(i + batch_size, len(chunks_to_embed))
-        print(f"  Готово: {processed}/{len(chunks_to_embed)} новых чанков")
-
-    # 3. Сохранение в LanceDB
-    print("\n📦 Запись в векторную базу LanceDB...")
-    data_to_insert = []
-    for c in all_chunks:
-        h = get_text_hash(c["text"])
-        if h in cache:
-            data_to_insert.append({
-                "title": c["title"],
-                "section": c["section"],
-                "url": c["url"],
-                "text": c["text"],
-                "source": c["source"],
-                "vector": cache[h],
-            })
-
+        vector = cache.get(text_hash(c["text"]))
+        if vector is not None:
+            rows.append({**c, "vector": vector})
+    if not rows:
+        print("❌ Нет эмбеддингов — таблица не перезаписывается.")
+        return
+    print(f"📦 Записываю {len(rows)} записей в LanceDB...")
+    import lancedb  # не требуется для --dry-run
     db = lancedb.connect(str(DB_PATH))
-    table = db.create_table("docs", data=data_to_insert, mode="overwrite")
-    print(f"✅ База готова в {DB_PATH}!")
-    print(f"📊 Всего записей в LanceDB: {table.count_rows()}")
+    table = db.create_table("docs", data=rows, mode="overwrite")
+    print(f"✅ Готово: {table.count_rows()} чанков, база {DB_PATH}")
 
 
 if __name__ == "__main__":
-    build_vector_db()
+    parser = argparse.ArgumentParser(description="Индексация документации Typst в LanceDB")
+    parser.add_argument("--dry-run", action="store_true", help="Нарезать, но не вызывать API и не писать БД")
+    args = parser.parse_args()
+    build_vector_db(dry_run=args.dry_run)
