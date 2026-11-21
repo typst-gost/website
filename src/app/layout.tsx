@@ -44,18 +44,16 @@ export const metadata: Metadata = {
 };
 
 const { provider } = defineI18nUI(i18n, {
-  translations: {
-    ru: {
-      displayName: 'Русский',
-      search: 'Поиск',
-      searchNoResult: 'Ничего не найдено',
-      toc: 'На этой странице',
-      lastUpdate: 'Последнее обновление',
-      chooseLanguage: 'Выбрать язык',
-      chooseTheme: 'Выбрать тему',
-      nextPage: "Следующая страница",
-      previousPage: "Предыдущая страница",
-    },
+  ru: {
+    displayName: 'Русский',
+    search: 'Поиск',
+    searchNoResult: 'Ничего не найдено',
+    toc: 'На этой странице',
+    lastUpdate: 'Последнее обновление',
+    chooseLanguage: 'Выбрать язык',
+    chooseTheme: 'Выбрать тему',
+    nextPage: "Следующая страница",
+    previousPage: "Предыдущая страница",
   },
 });
 
