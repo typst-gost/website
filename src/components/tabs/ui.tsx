@@ -94,8 +94,7 @@ export function Tabs({
     _value === undefined
       ? // eslint-disable-next-line react-hooks/rules-of-hooks -- not supposed to change controlled/uncontrolled
         useState(defaultValue)
-      : // eslint-disable-next-line react-hooks/rules-of-hooks -- not supposed to change controlled/uncontrolled
-        [_value, (v: string) => _onValueChange?.(v)];
+      : [_value, (v: string) => _onValueChange?.(v)];
 
   const onChange = useEffectEvent((v: string) => {
     if (triggers.has(v)) setValue(v);
@@ -106,9 +105,9 @@ export function Tabs({
     if (!hash) return;
 
     // hash points to a tab's own anchor id
-    for (const [value, id] of valueToIdMap.entries()) {
+    for (const [val, id] of valueToIdMap.entries()) {
       if (id === hash) {
-        setValue(value);
+        setValue(val);
         tabsRef.current?.scrollIntoView();
         return;
       }
@@ -119,10 +118,10 @@ export function Tabs({
     const target = document.getElementById(hash);
     if (!target) return;
 
-    for (const [value, panel] of panels.entries()) {
+    for (const [val, panel] of panels.entries()) {
       if (!panel.contains(target)) continue;
 
-      setValue(value);
+      setValue(val);
       requestAnimationFrame(() => target.scrollIntoView());
       return;
     }

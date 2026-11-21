@@ -21,6 +21,54 @@ const polza = createOpenAI({
   apiKey: POLZA_API_KEY,
 });
 
+// --- ТИПЫ ДАННЫХ ---
+interface ClientContextData {
+  title?: string;
+  location?: string;
+}
+
+interface MessagePart {
+  type: string;
+  text?: string;
+  data?: ClientContextData;
+}
+
+interface ContentObject {
+  type?: string;
+  text?: string;
+}
+
+interface IncomingMessage {
+  role?: string;
+  content?: string | ContentObject[];
+  parts?: MessagePart[];
+}
+
+interface CleanChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+interface DocChunk {
+  title: string;
+  section: string;
+  url: string;
+  text: string;
+}
+
+interface SourceItem {
+  label: string;
+  url: string;
+  title: string;
+  texts: string[];
+}
+
+interface EmbeddingApiResponse {
+  data: Array<{
+    embedding: number[];
+  }>;
+}
+
 // --- In-memory Rate Limiter ---
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -59,7 +107,7 @@ function getDocsTable(): Promise<lancedb.Table> {
     tablePromise = lancedb
       .connect(dbPath)
       .then((db) => db.openTable('docs'))
-      .catch((err) => {
+      .catch((err: unknown) => {
         tablePromise = null;
         throw err;
       });
@@ -67,40 +115,40 @@ function getDocsTable(): Promise<lancedb.Table> {
   return tablePromise;
 }
 
-async function searchLanceDB(vector: number[], topK = 6) {
+async function searchLanceDB(vector: number[], topK = 6): Promise<DocChunk[]> {
   const table = await getDocsTable();
   const results = await table.vectorSearch(vector).limit(topK).toArray();
-  return results as Array<{
-    title: string;
-    section: string;
-    url: string;
-    text: string;
-  }>;
+  return results as unknown as DocChunk[];
 }
 
-function extractMessageText(message: any): string {
+function extractMessageText(message: IncomingMessage | undefined): string {
   if (!message) return '';
   if (typeof message.content === 'string') return message.content;
+
   if (Array.isArray(message.parts)) {
     return message.parts
-      .filter((p: any) => p.type === 'text' && typeof p.text === 'string')
-      .map((p: any) => p.text)
+      .filter((p): p is MessagePart & { text: string } => p.type === 'text' && typeof p.text === 'string')
+      .map((p) => p.text)
       .join('\n');
   }
+
   if (Array.isArray(message.content)) {
     return message.content
-      .filter((c: any) => c.type === 'text' && typeof c.text === 'string')
-      .map((c: any) => c.text)
+      .filter((c): c is ContentObject & { text: string } => typeof c.text === 'string')
+      .map((c) => c.text)
       .join('\n');
   }
+
   return '';
 }
 
-function extractClientContext(message: any): string {
+function extractClientContext(message: IncomingMessage | undefined): string {
   if (!Array.isArray(message?.parts)) return '';
-  const clientPart = message.parts.find((p: any) => p.type === 'data-client');
+  const clientPart = message.parts.find((p) => p.type === 'data-client');
   if (!clientPart?.data) return '';
+
   const { title, location } = clientPart.data;
+  if (!title || !location) return '';
   return `\nПользователь сейчас читает страницу: «${title}» (${location})`;
 }
 
@@ -122,7 +170,7 @@ async function getQueryEmbedding(text: string): Promise<number[]> {
     throw new Error(`Embedding API error: ${res.status} - ${errorText}`);
   }
 
-  const data = await res.json();
+  const data = (await res.json()) as EmbeddingApiResponse;
   return data.data[0].embedding;
 }
 
@@ -143,20 +191,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
-    const rawMessages = body.messages || [];
+    const body = (await req.json()) as { messages?: IncomingMessage[] };
+    const rawMessages: IncomingMessage[] = body.messages || [];
 
-    const rawUserMessages = rawMessages.filter((m: any) => m.role === 'user');
+    const rawUserMessages = rawMessages.filter((m) => m.role === 'user');
     const lastRawUserMsg = rawUserMessages.at(-1);
 
-    const cleanMessages = rawMessages
-      .map((m: any) => ({
+    const cleanMessages: CleanChatMessage[] = rawMessages
+      .map((m) => ({
         role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
         content: extractMessageText(m).trim(),
       }))
-      .filter((m: { content: string }) => m.content.length > 0);
+      .filter((m) => m.content.length > 0);
 
-    const lastUserMessage = cleanMessages.filter((m: any) => m.role === 'user').pop();
+    const lastUserMessage = cleanMessages.filter((m) => m.role === 'user').pop();
     if (!lastUserMessage) {
       return new NextResponse('Сообщение пользователя не найдено', { status: 400 });
     }
@@ -171,13 +219,9 @@ export async function POST(req: NextRequest) {
     const rawChunks = await searchLanceDB(queryVector, 6);
 
     // 2. Дедуплицируем по URL и присваиваем номера [1], [2]...
-    const groupedByUrl = new Map<
-      string,
-      { label: string; url: string; title: string; texts: string[] }
-    >();
+    const groupedByUrl = new Map<string, SourceItem>();
 
     for (const chunk of rawChunks) {
-      // Переводим абсолютный URL в относительный (/docs/...), чтобы работала быстрая SPA-навигация
       const localUrl = chunk.url.replace(/^https?:\/\/(www\.)?typst-gost\.ru/, '');
       const cleanSection = chunk.section.replace(/\s*\(часть \d+ из \d+\)$/, '');
 
@@ -186,7 +230,8 @@ export async function POST(req: NextRequest) {
           ? chunk.title
           : `${chunk.title} · ${cleanSection}`;
 
-      if (!groupedByUrl.has(localUrl)) {
+      const existing = groupedByUrl.get(localUrl);
+      if (!existing) {
         groupedByUrl.set(localUrl, {
           label: String(groupedByUrl.size + 1),
           url: localUrl,
@@ -194,7 +239,7 @@ export async function POST(req: NextRequest) {
           texts: [chunk.text],
         });
       } else {
-        groupedByUrl.get(localUrl)!.texts.push(chunk.text);
+        existing.texts.push(chunk.text);
       }
     }
 
@@ -249,15 +294,16 @@ ${contextText}`;
 
         writer.merge(result.toUIMessageStream({ sendStart: false }));
       },
-      onError: (error) => {
+      onError: (error: unknown) => {
         console.error('Stream error:', error);
         return error instanceof Error ? error.message : 'Ошибка генерации ответа';
       },
     });
 
     return createUIMessageStreamResponse({ stream });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Chat route error:', error);
-    return new NextResponse(error.message || 'Internal Server Error', { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }

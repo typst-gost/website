@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Maximize2 } from "lucide-react";
@@ -13,6 +13,8 @@ interface ScreenshotWindowProps {
   stepTitle: string;
 }
 
+const emptySubscribe = () => () => {};
+
 export function ScreenshotWindow({
   activeTool,
   activeIndex,
@@ -23,11 +25,11 @@ export function ScreenshotWindow({
   const bgColor = step?.bg || (activeTool === "typst" ? "#e3e3e3" : "#181818");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   useEffect(() => {
     if (isModalOpen) {

@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useState, useSyncExternalStore } from "react"
 
 interface HeroBackgroundProps {
   gridColor?: string
@@ -13,26 +13,22 @@ interface HeroBackgroundProps {
   fadeStart?: number
 }
 
-function Particle({ color }: { color: string }) {
-  const [mounted, setMounted] = useState(false)
-  const [params, setParams] = useState({
-    left: 0,
-    top: 0,
-    duration: 10,
-    delay: 0,
-    jump: 0,
-  })
+const emptySubscribe = () => () => {}
 
-  useEffect(() => {
-    setParams({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      duration: 10 + Math.random() * 5,
-      delay: Math.random() * -20,
-      jump: (Math.random() - 0.5) * 150,
-    })
-    setMounted(true)
-  }, [])
+function Particle({ color }: { color: string }) {
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  )
+
+  const [params] = useState(() => ({
+    left: Math.random() * 100,
+    top: Math.random() * 100,
+    duration: 10 + Math.random() * 5,
+    delay: Math.random() * -20,
+    jump: (Math.random() - 0.5) * 150,
+  }))
 
   if (!mounted) return null
 

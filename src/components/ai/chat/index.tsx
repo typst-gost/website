@@ -278,10 +278,12 @@ export function AIChatInput({ className }: { className?: string }) {
     localStorage.setItem(StorageKey, value);
   }
 
-  // read after hydration, as the server has no drafts
+  // read after hydration without triggering cascading renders synchronously
   useEffect(() => {
     const draft = localStorage.getItem(StorageKey);
-    if (draft) setInput(draft);
+    if (draft) {
+      setTimeout(() => setInput(draft), 0);
+    }
   }, []);
 
   useEffect(() => {
@@ -374,7 +376,7 @@ export function AIChatTrigger({ className }: { className?: string }) {
       aria-expanded={open}
       className={cn(
         buttonVariants({ variant: 'secondary' }),
-        'fixed inset-e-[calc(--spacing(4)+var(--removed-body-scroll-bar-size,0px))] bottom-4 z-20 gap-2 rounded-2xl text-fd-muted-foreground shadow-lg transition-[translate,opacity] motion-reduce:transition-none',
+        'fixed inset-e-[calc(--spacing(4)+var(--removed-body-scroll-bar-size,0))] bottom-4 z-20 gap-2 rounded-2xl text-fd-muted-foreground shadow-lg transition-[translate,opacity] motion-reduce:transition-none',
         open && 'translate-y-10 opacity-0',
         className,
       )}
@@ -508,8 +510,12 @@ const Message = memo(function Message({
   // 1. Извлекаем источники, пришедшие с сервера в data-sources
   const allSources: { url: string; title?: string | null; label?: string | null }[] = [];
   for (const part of message.parts) {
-    if (part.type === 'data-sources' && Array.isArray((part as any).data)) {
-      allSources.push(...(part as any).data);
+    const dataPart = part as unknown as {
+      type: string;
+      data?: { url: string; title?: string | null; label?: string | null }[];
+    };
+    if (dataPart.type === 'data-sources' && Array.isArray(dataPart.data)) {
+      allSources.push(...dataPart.data);
     }
   }
 

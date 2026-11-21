@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { isValidElement, memo, useMemo, type ComponentProps } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -40,7 +40,7 @@ function injectCitationLinks(text: string, sources: SourceItem[]): string {
       // Меняем [1] (если после него нет скобки ссылки `(`) на [[1]](url)
       return part.replace(/\[(\d+)\](?!\()/g, (match, num) => {
         const url = sourceMap.get(num);
-        return url ? `[\[${num}\]](${url})` : match;
+        return url ? `[\\[${num}\\]](${url})` : match;
       });
     })
     .join('');
@@ -57,7 +57,7 @@ export const Markdown = memo(function Markdown({ text, sources = [] }: MarkdownP
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          a: ({ node, href, children, ...props }) => {
+          a: ({   href, children, ...props }) => {
             const localPath = href?.replace(/^https?:\/\/(www\.)?typst-gost\.ru/, '');
             const isInternal = localPath?.startsWith('/');
             const textContent = String(children ?? '').trim();
@@ -66,7 +66,7 @@ export const Markdown = memo(function Markdown({ text, sources = [] }: MarkdownP
             const linkClass = isCitation
               ? 'no-underline! text-blue-400 hover:text-blue-300 font-mono text-[12px] font-semibold mx-0.5 transition-colors'
               : 'text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors font-medium';
-            
+
             if (isInternal && localPath) {
               return (
                 <Link href={localPath} className={linkClass}>
@@ -88,10 +88,12 @@ export const Markdown = memo(function Markdown({ text, sources = [] }: MarkdownP
             );
           },
           pre: ({ children }) => {
-            const codeProps = (children as any)?.props;
-            const codeContent = codeProps?.children;
-            if (typeof codeContent === 'string') {
-              const lang = /language-(\S+)/.exec(codeProps?.className ?? '')?.[1] ?? 'text';
+            if (
+              isValidElement<ComponentProps<'code'>>(children) &&
+              typeof children.props.children === 'string'
+            ) {
+              const codeContent = children.props.children;
+              const lang = /language-(\S+)/.exec(children.props.className ?? '')?.[1] ?? 'text';
               return (
                 <DynamicCodeBlock
                   lang={lang === 'mdx' ? 'md' : lang}
@@ -99,6 +101,7 @@ export const Markdown = memo(function Markdown({ text, sources = [] }: MarkdownP
                 />
               );
             }
+
             return (
               <CodeBlock className="my-2">
                 <CodePre>{children}</CodePre>
