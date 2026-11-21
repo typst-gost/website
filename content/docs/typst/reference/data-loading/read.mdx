@@ -1,0 +1,58 @@
+---
+title: "Read"
+description: "Документация для функции `read`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Читает обычный текст или данные из файла.
+
+По умолчанию файл читается как UTF-8 и возвращается в виде [строки](/docs/typst/reference/foundations/str).
+
+Если указать `encoding: none`, вместо этого возвращаются необработанные [байты](/docs/typst/reference/foundations/bytes).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  An example for a HTML file: \\
+  #let text = read("example.html")
+  #raw(text, block: true, lang: "html")
+
+  Raw bytes:
+  #read("tiger.jpg", encoding: none)
+`}
+  image="/typst_docs_assets/images/NQUNgwa0fgWkQYOPiJ0YpQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+read(
+  str | path,
+  encoding: none | str,
+) -> bytes
+```
+
+### `path` [#parameters-path]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) · **Модификаторы:** Обязательный, Позиционный
+
+Путь к файлу.
+
+### `encoding` [#parameters-encoding]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"utf8"`
+
+Кодировка, с которой следует читать файл.
+
+Если задано значение `none`, эта функция возвращает необработанные байты.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"utf8"` | Кодировка Unicode UTF-8. |

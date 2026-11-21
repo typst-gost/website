@@ -1,0 +1,42 @@
+---
+title: "0.2.0"
+description: "Изменения в Typst 0.2.0"
+---
+
+## Ломающие изменения [#breaking-changes]
+
+- Удалена поддержка итерации по индексу и значению в [циклах for](/docs/typst/reference/scripting#loops). Теперь это реализуется через распаковку и перечисление. То же касается метода [`map`](/docs/typst/reference/foundations/array#definitions-map).
+- [Словари](/docs/typst/reference/foundations/dictionary) теперь перебираются в порядке вставки, а не в алфавитном порядке.
+
+## Новые возможности [#new-features]
+
+- Добавлен [синтаксис распаковки](/docs/typst/reference/scripting#bindings) для привязок let, что позволяет писать, например, `let (1, 2) = array`
+- Добавлен метод [`enumerate`](/docs/typst/reference/foundations/array#definitions-enumerate)
+- Добавлена функция `path` для рисования кривых Безье
+- Добавлена функция [`layout`](/docs/typst/reference/layout/layout) для доступа к размеру окружающей страницы или контейнера
+- Добавлен параметр `key` в метод [`sorted`](/docs/typst/reference/foundations/array#definitions-sorted)
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Исправлено блокирование программы флагом `--open`
+- Шрифт New Computer Modern теперь встроен в бинарный файл
+- Дополнения для оболочки и man-страницы теперь можно генерировать, задав переменную окружения `GEN_ARTIFACTS` с целевым каталогом и затем собрав Typst
+
+## Прочие улучшения [#miscellaneous-improvements]
+
+- Исправлена нумерация страниц в оглавлении
+- Добавлена базовая интернационализация ещё для нескольких языков (AR, NB, CS, NN, PL, SL, ES, UA, VI)
+- Добавлено несколько шаблонов нумерации (ироха, китайская)
+- Добавлен [оператор](/docs/typst/reference/math/op) `sinc`
+- Исправлена ошибка, из-за которой математику нельзя было скрыть с помощью [`hide`](/docs/typst/reference/layout/hide)
+- Исправлены проблемы с размерами у box, block и фигур
+- Исправлены некоторые переводы
+- Исправлена инверсия «R» в стилях [`cal`](/docs/typst/reference/math/variants#functions-cal) и [`frak`](/docs/typst/reference/math/variants#functions-frak)
+- Исправлены некоторые проблемы со стилями в математике
+- Исправлены дополнения ссылок на заголовки
+- Исправлена подсветка синтаксиса идентификаторов в некоторых сценариях
+- [Отношения](/docs/typst/reference/layout/ratio) теперь можно умножать на большее число типов и преобразовывать в [числа с плавающей точкой](/docs/typst/reference/foundations/float) с помощью функции [`float`](/docs/typst/reference/foundations/float)
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

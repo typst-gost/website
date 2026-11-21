@@ -1,0 +1,291 @@
+---
+title: "Block"
+description: "Документация для функции `block`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Появился: всегда*
+
+Контейнер блочного уровня.
+
+Такой контейнер можно использовать для разделения контента, для задания его [размера](#parameters-width) или [обрезки](#parameters-clip), а также для придания ему [фона](#parameters-fill) или [рамки](#parameters-stroke).
+
+Блоки также являются основным способом управления тем, становится ли текст частью абзаца или нет. Подробнее см. в [документации по абзацам](/docs/typst/reference/model/par#what-becomes-a-paragraph).
+
+## Примеры [#examples]
+
+С помощью блока можно задать фон контенту, при этом позволяя ему разрываться на несколько страниц.
+
+<TypstRender
+  code={`
+  #set page(height: 100pt)
+  #block(
+    fill: luma(230),
+    inset: 8pt,
+    radius: 4pt,
+    lorem(30),
+  )
+`}
+  image="/typst_docs_assets/images/zL5XAg5Xu_mxH_WS0rBwRQ.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/ujNK2Z-Q2HuqukMU2Pd8aA.png" alt="" width="480" height="200" />
+
+Блоки также полезны для принудительного преобразования элементов, которые иначе были бы строчными, в блочные, особенно при написании правил show.
+
+<TypstRender
+  code={`
+  #show heading: it => it.body
+  = Blockless
+  More text.
+
+  #show heading: it => block(it.body)
+  = Blocky
+  More text.
+`}
+  image="/typst_docs_assets/images/_DaCZ7lGI5DlfI5nIQIVGw.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+block(
+  width: auto | relative,
+  height: auto | relative | fraction,
+  breakable: bool,
+  fill: none | color | gradient | tiling,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  radius: relative | dictionary,
+  inset: relative | dictionary,
+  outset: relative | dictionary,
+  spacing: auto | relative | fraction,
+  above: auto | relative | fraction,
+  below: auto | relative | fraction,
+  clip: bool,
+  sticky: bool,
+  none | content,
+)
+```
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Ширина блока.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set align(center)
+  #block(
+    width: 60%,
+    inset: 8pt,
+    fill: silver,
+    lorem(10),
+  )
+`}
+  image="/typst_docs_assets/images/maa0iWtEvgjFqHgCRCY0eg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Высота блока. Если высота больше оставшегося пространства на странице и [`breakable`](#parameters-breakable) равен `true`, блок продолжится на следующей странице с оставшейся высотой.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 80pt)
+  #set align(center)
+  #block(
+    width: 80%,
+    height: 150%,
+    fill: aqua,
+  )
+`}
+  image="/typst_docs_assets/images/ZaEjHhBPlk42J3aIzCRGrA.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/l3UjazCFsZ_yOgiDU45K8w.png" alt="" width="480" height="160" />
+
+</details>
+
+### `breakable` [#parameters-breakable]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Может ли блок разрываться и продолжаться на следующей странице.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 80pt)
+  The following block will
+  jump to its own page.
+  #block(
+    breakable: false,
+    lorem(15),
+  )
+`}
+  image="/typst_docs_assets/images/qortG0LFFICAzArsECDE5Q.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/dDlDSQPRiy5GGpX5NejVlQ.png" alt="" width="480" height="160" />
+
+</details>
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Цвет фона блока. Подробнее см. в [документации по прямоугольникам](/docs/typst/reference/visualize/rect#parameters-fill).
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Цвет рамки блока. Подробнее см. в [документации по прямоугольникам](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+### `radius` [#parameters-radius]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько скруглить углы блока. Подробнее см. в [документации по прямоугольникам](/docs/typst/reference/visualize/rect#parameters-radius).
+
+### `inset` [#parameters-inset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько добавить внутренние отступы вокруг содержимого блока. Подробнее см. в [документации по блокам box](/docs/typst/reference/layout/box#parameters-inset).
+
+### `outset` [#parameters-outset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько расширить размер блока, не влияя на макет. Подробнее см. в [документации по блокам box](/docs/typst/reference/layout/box#parameters-outset).
+
+### `spacing` [#parameters-spacing]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **По умолчанию:** `1.2em`
+
+Отступы вокруг блока. При значении `auto` наследуется [`spacing`](/docs/typst/reference/model/par#parameters-spacing) абзаца.
+
+Для двух соседних блоков побеждает большее из значений `below` первого блока и `above` второго блока. Кроме того, отступы блока имеют приоритет над [`spacing`](/docs/typst/reference/model/par#parameters-spacing) абзаца.
+
+Обратите внимание, что это лишь сокращение для установки `above` и `below` в одно и то же значение. Поскольку значения `above` и `below` могут различаться, [контекстный](/docs/typst/reference/context) блок предоставляет доступ только к `block.above` и `block.below`, но не к `block.spacing` напрямую.
+
+Это свойство можно использовать в сочетании с правилом show для настройки отступов вокруг произвольных элементов блочного уровня.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set align(center)
+  #show math.equation: set block(above: 8pt, below: 16pt)
+
+  This sum of $x$ and $y$:
+  $ x + y = z $
+  A second paragraph.
+`}
+  image="/typst_docs_assets/images/o_F9UHRnW9bZTZS4FKgUuw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `above` [#parameters-above]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Отступ между этим блоком и его предшественником.
+
+### `below` [#parameters-below]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Отступ между этим блоком и его последователем.
+
+### `clip` [#parameters-clip]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Обрезать ли содержимое внутри блока.
+
+Обрезка полезна, когда содержимое блока больше самого блока, так как любой контент, выходящий за границы блока, будет скрыт.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #block(
+    width: 50pt,
+    height: 50pt,
+    clip: true,
+    image("tiger.jpg", width: 100pt, height: 100pt)
+  )
+`}
+  image="/typst_docs_assets/images/AHoPEpIEqEY7LeZ8ycoaRg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `sticky` [#parameters-sticky]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Должен ли этот блок прилипать к следующему, без разрыва между ними.
+
+По умолчанию это установлено для блоков заголовков, чтобы предотвратить оторванные заголовки внизу страницы.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // Disable stickiness of headings.
+  #show heading: set block(sticky: false)
+  #lorem(20)
+
+  = Chapter
+  #lorem(10)
+`}
+  image="/typst_docs_assets/images/457NqQCNiy4zMLyy5J3bJQ.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/ZRi6nWb5zQ39rFl8PTEw-Q.png" alt="" width="480" height="280" />
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Positional, Settable · **По умолчанию:** `none`
+
+Содержимое блока.

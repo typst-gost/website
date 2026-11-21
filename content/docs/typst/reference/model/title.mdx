@@ -1,0 +1,66 @@
+---
+title: "Title"
+description: "Documentation for the `title` function."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступен с: 0.14.0*
+
+Заголовок документа.
+
+Его следует использовать для отображения основного заголовка всего документа, и он должен встречаться только один раз на документ. В отличие от него, [заголовки](/docs/typst/reference/model/heading) уровня 1 предназначены для использования в качестве заголовков разделов верхнего уровня документа.
+
+Обратите внимание, что дополнительная frontmatter-информация (например, список авторов), которая должна отображаться вместе с заголовком, не должна находиться в его теле.
+
+При экспорте в HTML это отображается как элемент `h1`, тогда как заголовки уровня 1 отображаются как элементы `h2`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set document(
+    title: [Interstellar Mail Delivery]
+  )
+
+  #title()
+
+  = Introduction
+  In recent years, ...
+`}
+  image="/typst_docs_assets/images/2RefCFMXdvKNZLo1l5MZ_g.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+title(auto | content)
+```
+
+### `body` [#parameters-body]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `auto`
+
+Содержимое заголовка.
+
+Если не указано (или указано `auto`), по умолчанию будет использоваться [`document.title`](/docs/typst/reference/model/document#parameters-title). В этом случае заголовок документа должен быть предварительно задан с помощью `set document(title: [..])`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set document(title: [Course ABC, Homework 1])
+  #title[Homework 1]
+
+  ...
+`}
+  image="/typst_docs_assets/images/0GtdOqeAgLQBJ46jpgf6iQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

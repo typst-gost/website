@@ -1,0 +1,12 @@
+{
+  "title": "Документация Typst",
+  "description": "Узнайте, как использовать Typst для более быстрого создания документов.",
+  "pages": [
+    "index",
+    "tutorial",
+    "reference",
+    "guides",
+    "changelog"
+  ],
+  "root": true
+}

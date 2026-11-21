@@ -1,0 +1,38 @@
+---
+title: "Разрыв абзаца"
+description: "Документация для функции `parbreak`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Разрыв абзаца.
+
+Начинает новый абзац. Особенно полезен при использовании в коде, например в [циклах for](/docs/typst/reference/scripting#loops). Несколько последовательных разрывов абзаца схлопываются в один.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #for i in range(3) {
+    [Blind text #i: ]
+    lorem(5)
+    parbreak()
+  }
+`}
+  image="/typst_docs_assets/images/SOprgogIIzGmSr7PLroNtg.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Вместо вызова этой функции вы можете вставить пустую строку в разметку, чтобы создать разрыв абзаца.
+
+## Параметры [#parameters]
+
+```typst
+parbreak() -> content
+```

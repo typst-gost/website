@@ -1,0 +1,94 @@
+---
+title: "Line"
+description: "Документация для функции `line`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Линия из одной точки в другую.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set page(height: 100pt)
+
+  #line(length: 100%)
+  #line(end: (50%, 50%))
+  #line(
+    length: 4cm,
+    stroke: 2pt + maroon,
+  )
+`}
+  image="/typst_docs_assets/images/_1r-lE6UK66FgRXkZNKsaw.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+line(
+  start: array,
+  end: none | array,
+  length: relative,
+  angle: angle,
+  stroke: length | color | gradient | stroke | tiling | dictionary,
+) -> content
+```
+
+### `start` [#parameters-start]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `(0% + 0pt, 0% + 0pt)`
+
+Начальная точка линии.
+
+Должна быть массивом ровно из двух относительных длин.
+
+### `end` [#parameters-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Точка, в которой заканчивается линия.
+
+### `length` [#parameters-length]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 30pt`
+
+Длина линии. Учитывается только в том случае, если `end` равен `none`.
+
+### `angle` [#parameters-angle]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Settable · **По умолчанию:** `0deg`
+
+Угол, под которым линия направлена от начала координат. Учитывается только в том случае, если `end` равен `none`.
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `stroke()`
+
+Как [обвести](/docs/typst/reference/visualize/stroke) линию.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set line(length: 100%)
+  #stack(
+    spacing: 1em,
+    line(stroke: 2pt + red),
+    line(stroke: (paint: blue, thickness: 4pt, cap: "round")),
+    line(stroke: (paint: blue, thickness: 1pt, dash: "dashed")),
+    line(stroke: (paint: blue, thickness: 1pt, dash: ("dot", 2pt, 4pt, 2pt))),
+  )
+`}
+  image="/typst_docs_assets/images/alBTEuww0ctRi2SlRRWH1w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

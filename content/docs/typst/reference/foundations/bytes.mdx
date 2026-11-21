@@ -1,0 +1,141 @@
+---
+title: "Bytes"
+description: "Документация для типа `bytes`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.7.0*
+
+Последовательность байтов.
+
+Концептуально это похоже на массив [целых чисел](/docs/typst/reference/foundations/int) от `0` до `255`, но представлено гораздо более эффективно. По нему можно итерироваться с помощью [цикла for](/docs/typst/reference/scripting#loops).
+
+Вы можете преобразовать
+
+- [строку](/docs/typst/reference/foundations/str) или [массив](/docs/typst/reference/foundations/array) целых чисел в байты с помощью конструктора [`bytes`](/docs/typst/reference/foundations/bytes)
+- байты в строку с помощью конструктора [`str`](/docs/typst/reference/foundations/str) с кодировкой UTF-8
+- байты в массив целых чисел с помощью конструктора [`array`](/docs/typst/reference/foundations/array)
+
+При [чтении](/docs/typst/reference/data-loading/read) данных из файла вы можете решить, загружать их как строку или как необработанные байты.
+
+<TypstRender
+  code={`
+  #bytes((123, 160, 22, 0)) \\
+  #bytes("Hello 😃")
+
+  #let data = read(
+    "rhino.png",
+    encoding: none,
+  )
+
+  // Magic bytes.
+  #array(data.slice(0, 4)) \\
+  #str(data.slice(1, 4))
+`}
+  image="/typst_docs_assets/images/VsfcfwtzmIT9HbhakuIxzA.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Преобразует значение в байты.
+
+- Строки кодируются в UTF-8.
+- Массивы целых чисел от `0` до `255` преобразуются напрямую. Специализированное байтовое представление гораздо эффективнее представления в виде массива и поэтому обычно используется для больших байтовых буферов (например, данных изображений).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #bytes("Hello 😃") \\
+  #bytes((123, 160, 22, 0))
+`}
+  image="/typst_docs_assets/images/jLJP-h4sm1bkkpPJwiS5pQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+bytes(str | bytes | array)
+```
+
+### `value` [#constructor-value]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [bytes](/docs/typst/reference/foundations/bytes) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое следует преобразовать в байты.
+
+## Функции [#functions]
+
+### `len` [#definitions-len]
+
+*Добавлено в версии: 0.7.0*
+
+Длина в байтах.
+
+```typst
+self.len() -> int
+```
+
+### `at` [#definitions-at]
+
+*Добавлено в версии: 0.7.0*
+
+Возвращает байт по указанному индексу. Возвращает значение по умолчанию, если индекс выходит за границы, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.at(
+  int,
+  default: any,
+)
+```
+
+#### `index` [#definitions-at-index]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Индекс, по которому нужно получить байт.
+
+#### `default` [#definitions-at-default]
+
+**Тип:** `any`
+
+Значение по умолчанию, возвращаемое, если индекс выходит за границы.
+
+### `slice` [#definitions-slice]
+
+*Добавлено в версии: 0.7.0*
+
+Извлекает подпоследовательность байтов. Завершается с ошибкой, если начальный или конечный индекс выходит за границы.
+
+```typst
+self.slice(
+  int,
+  none | int,
+  count: int,
+) -> bytes
+```
+
+#### `start` [#definitions-slice-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Начальный индекс (включительно).
+
+#### `end` [#definitions-slice-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Позиционный · **По умолчанию:** `none`
+
+Конечный индекс (не включая). Если не указан, извлекается вся подпоследовательность до конца.
+
+#### `count` [#definitions-slice-count]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество элементов для извлечения. Эквивалентно передаче `start + count` в качестве позиции `end`. Взаимоисключающе с `end`.

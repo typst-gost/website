@@ -1,0 +1,154 @@
+---
+title: "Underline"
+description: "Документация для функции `underline`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Подчёркивает текст.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  This is #underline[important].
+`}
+  image="/typst_docs_assets/images/gpenmq5P0QrsU57toa4VNA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+underline(
+  stroke: auto | length | color | gradient | stroke | tiling | dictionary,
+  offset: auto | length,
+  extent: length,
+  evade: bool,
+  background: bool,
+  content,
+)
+```
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как [обвести](/docs/typst/reference/visualize/stroke) линию.
+
+Если задано значение `auto`, используется цвет текста и толщина, определённая текущим шрифтом.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Take #underline(
+    stroke: 1.5pt + red,
+    offset: 2pt,
+    [care],
+  )
+`}
+  image="/typst_docs_assets/images/X4ZGHfeAxNu-__Xhd02wqw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `offset` [#parameters-offset]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Положение линии относительно базовой линии, считываемое из таблиц шрифта, если задано `auto`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #underline(offset: 5pt)[
+    The Tale Of A Faraway Line I
+  ]
+`}
+  image="/typst_docs_assets/images/A6wgeYOxsFgr81FnFGd-_Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `extent` [#parameters-extent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Величина, на которую линия выходит за пределы содержимого (или внутрь, если значение отрицательное).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #align(center,
+    underline(extent: 2pt)[Chapter 1]
+  )
+`}
+  image="/typst_docs_assets/images/2FrLRf9R05ouXAbPdKd68A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `evade` [#parameters-evade]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Пропускает ли линия участки, на которых она пересекалась бы с глифами.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  This #underline(evade: true)[is great].
+  This #underline(evade: false)[is less great].
+`}
+  image="/typst_docs_assets/images/76wZwpLS4Tad-H9Qy2u5TA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `background` [#parameters-background]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Размещается ли линия позади подчёркиваемого содержимого.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set underline(stroke: aqua + 5pt, evade: false)
+  #underline(background: true)[Fully visible.] \\
+  #underline(background: false)[Partially hidden.]
+`}
+  image="/typst_docs_assets/images/9UmWZWMFlKYtFJzgZKuWaw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, которое нужно подчеркнуть.

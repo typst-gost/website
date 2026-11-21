@@ -1,0 +1,39 @@
+---
+title: "Система"
+description: "Документация по модулю `sys` для системных взаимодействий."
+---
+
+
+Модуль для системных взаимодействий.
+
+## Константы [#constants]
+
+### `version` [#constants-version]
+
+*С версии: 0.9.0* · **Тип:** [version](/docs/typst/reference/foundations/version)
+
+Текущая активная версия компилятора Typst.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #sys.version
+`}
+  image="/typst_docs_assets/images/K4yEeMy2N8XvJVUHgczy8Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `inputs` [#constants-inputs]
+
+*С версии: 0.11.0* · **Тип:** [dictionary](/docs/typst/reference/foundations/dictionary)
+
+Делает внешние входные данные доступными для проекта.
+
+Входные данные, указанные в командной строке как `--input key=value`, становятся доступны через `sys.inputs.key` как `"value"`. Чтобы включить в значение пробелы, его можно заключить в одинарные или двойные кавычки.
+
+Значение всегда имеет тип [string](/docs/typst/reference/foundations/str). Более сложные данные можно разобрать вручную с помощью таких функций, как [`json`](/docs/typst/reference/data-loading/json).

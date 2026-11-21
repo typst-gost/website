@@ -1,0 +1,1096 @@
+---
+title: "Text"
+description: "Документация для функции `text`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Настраивает внешний вид и расположение текста различными способами.
+
+Эта функция используется часто — как с правилами set, так и напрямую. Хотя правило set зачастую является более простым выбором, прямой вызов функции `text` может быть полезен, когда текст передаётся в качестве аргумента другой функции.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set text(18pt)
+  With a set rule.
+
+  #emph(text(blue)[
+    With a function call.
+  ])
+`}
+  image="/typst_docs_assets/images/Hs6n8WYPwUgyGXvYIfQ68Q.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+text(
+  font: str | array | dictionary,
+  fallback: bool,
+  style: str,
+  weight: int | str,
+  stretch: ratio,
+  size: length,
+  fill: color | gradient | tiling,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  tracking: length,
+  spacing: relative,
+  cjk-latin-spacing: none | auto,
+  baseline: length,
+  overhang: bool,
+  top-edge: length | str,
+  bottom-edge: length | str,
+  lang: str,
+  region: none | str,
+  script: auto | str,
+  dir: auto | direction,
+  hyphenate: auto | bool,
+  costs: dictionary,
+  kerning: bool,
+  alternates: bool | int,
+  stylistic-set: none | int | array,
+  ligatures: bool,
+  discretionary-ligatures: bool,
+  historical-ligatures: bool,
+  number-type: auto | str,
+  number-width: auto | str,
+  slashed-zero: bool,
+  fractions: bool,
+  features: array | dictionary,
+  variations: dictionary,
+  content,
+  str,
+)
+```
+
+### `font` [#parameters-font]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `"libertinus serif"`
+
+Дескриптор семейства шрифтов или список приоритетов дескрипторов семейств шрифтов.
+
+Дескриптор семейства шрифтов может быть простой строкой, представляющей имя семейства, или словарём со следующими ключами:
+
+- `name` (обязательный): имя семейства шрифтов.
+- `covers` (необязательный): определяет кодовые точки Unicode, для которых должно использоваться семейство. Это может быть:
+  - Предопределённый набор покрытия:
+    - `"latin-in-cjk"` покрывает все кодовые точки, кроме тех, которые существуют в латинских шрифтах, но предпочтительно должны браться из CJK-шрифтов.
+  - [Регулярное выражение](/docs/typst/reference/foundations/regex), которое точно определяет, какие кодовые точки должны быть покрыты. Принимает только подмножество регулярных выражений, состоящее ровно из одной точки, буквы или класса символов.
+
+При обработке текста Typst перебирает все указанные семейства шрифтов по порядку, пока не найдёт шрифт с необходимыми глифами. В примере ниже предпочтителен шрифт `Inria Serif`, но поскольку он не содержит арабских глифов, арабский текст использует `Noto Sans Arabic`.
+
+Typst стремится объединить различные шрифты одного семейства под единым именем семейства. Для этого он автоматически отсекает распространённые стилевые суффиксы, такие как «Bold» или «Condensed», из имён семейств шрифтов. Вместо выбора их через имя, обращайтесь к ним через встроенные механизмы Typst (например, параметры [`weight`](#parameters-weight) и [`stretch`](#parameters-stretch)). Аналогично, при использовании вариативного шрифта с Typst суффиксы «Variable», «Var» и «VF» следует опускать, поскольку Typst отсекает их, чтобы объединить статические и вариативные шрифты в одно семейство.
+
+Среди шрифтов одного семейства Typst выбирает тот, который наиболее близко соответствует настроенным [`style`](#parameters-style), [`weight`](#parameters-weight) и [`stretch`](#parameters-stretch) текста. Если конкретную конфигурацию поддерживают как статический, так и вариативный шрифт, предпочтение отдаётся вариативному.
+
+Набор доступных шрифтов зависит от платформы:
+
+- В веб-приложении вы можете увидеть список доступных шрифтов, нажав на кнопку «Ag». Вы можете добавить дополнительные шрифты, загрузив файлы `.ttf` или `.otf` в свой проект. Они будут обнаружены автоматически. Приоритет: шрифты проекта \> серверные шрифты.
+- Локально Typst использует установленные системные шрифты или встроенные шрифты в CLI, а именно `Libertinus Serif`, `New Computer Modern`, `New Computer Modern Math` и `DejaVu Sans Mono`. Кроме того, вы можете использовать аргумент `--font-path` или переменную окружения `TYPST_FONT_PATHS`, чтобы добавить каталоги, которые следует просканировать на наличие шрифтов. Приоритет: `--font-path` \> системные шрифты \> встроенные шрифты. Запустите `typst fonts`, чтобы увидеть шрифты, которые Typst обнаружил в вашей системе. Обратите внимание, что вы можете передать параметр `--ignore-system-fonts` в CLI, чтобы Typst не искал системные шрифты.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "PT Sans")
+  This is sans-serif.
+
+  #set text(font: (
+    "Inria Serif",
+    "Noto Sans Arabic",
+  ))
+
+  This is Latin. \\
+  هذا عربي.
+
+  // Change font only for numbers.
+  #set text(font: (
+    (name: "PT Sans", covers: regex("[0-9]")),
+    "Libertinus Serif"
+  ))
+
+  The number 123.
+
+  // Mix Latin and CJK fonts.
+  #set text(font: (
+    (name: "Inria Serif", covers: "latin-in-cjk"),
+    "Noto Serif CJK SC"
+  ))
+  分别设置“中文”和English字体
+`}
+  image="/typst_docs_assets/images/NU1pqwPKZuRl_4pvtmJdPQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `fallback` [#parameters-fallback]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Разрешать ли резервный шрифт последней инстанции, когда основной список шрифтов не содержит совпадений. Это позволяет Typst искать среди всех доступных шрифтов наиболее похожий, который имеет необходимые глифы.
+
+_Примечание:_ В настоящее время предупреждения не выдаются, когда резервный шрифт отключён и глифы не найдены. Вместо этого ваш текст отображается в виде «тофу»: небольших прямоугольников, указывающих на отсутствие подходящего глифа. В будущем вы сможете указать Typst выдавать предупреждения, чтобы знать о проблеме.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "Inria Serif")
+  هذا عربي
+
+  #set text(fallback: false)
+  هذا عربي
+`}
+  image="/typst_docs_assets/images/og1Zz45Vg_Mzfqzph5zuYw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `style` [#parameters-style]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"normal"`
+
+Желаемый стиль шрифта.
+
+Когда запрашивается курсивный стиль, а доступен только наклонный, используется он. Аналогично, наоборот, курсивный стиль может заменить наклонный. Когда недоступен ни курсивный, ни наклонный стиль, Typst выбирает обычный стиль. Поскольку большинство шрифтов доступны только в курсивном или наклонном стиле, разница между курсивным и наклонным стилем редко заметна.
+
+При использовании с подходящим вариативным шрифтом Typst автоматически настроит [вариацию шрифта](#parameters-variations) `ital` (для курсивного стиля) или `slnt` (для наклонного стиля) на основе этого свойства.
+
+_Примечание:_ Если вы хотите выделить текст, вам следует использовать для этого функцию [emph](/docs/typst/reference/model/emph). Это упрощает последующую адаптацию стиля, если вы передумаете относительно того, как обозначать выделение.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #text(font: "Libertinus Serif", style: "italic")[Italic]
+  #text(font: "DejaVu Sans", style: "oblique")[Oblique]
+`}
+  image="/typst_docs_assets/images/XQXGerx05P502-rUxtE8rg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"normal"` | По умолчанию, обычно прямой стиль. |
+| `"italic"` | Курсивный стиль с особым начертанием букв. |
+| `"oblique"` | Просто наклонная версия обычного стиля. |
+
+### `weight` [#parameters-weight]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"regular"`
+
+Желаемая толщина глифов шрифта. Принимает целое число от `100` до `900` или одно из предопределённых имён насыщенности. Когда желаемая насыщенность недоступна, Typst выбирает из семейства шрифт, наиболее близкий по насыщенности.
+
+При использовании с подходящим вариативным шрифтом Typst автоматически настроит [вариацию шрифта](#parameters-variations) `wght` на основе этого свойства.
+
+_Примечание:_ Если вы хотите сильно выделить текст, вам следует использовать для этого функцию [strong](/docs/typst/reference/model/strong). Это упрощает последующую адаптацию стиля, если вы передумаете относительно того, как обозначать сильное выделение.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "IBM Plex Sans")
+
+  #text(weight: "light")[Light] \\
+  #text(weight: "regular")[Regular] \\
+  #text(weight: "medium")[Medium] \\
+  #text(weight: 500)[Medium] \\
+  #text(weight: "bold")[Bold]
+`}
+  image="/typst_docs_assets/images/a22CIW38xJt3HtcxLyIVkg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"thin"` | Тонкая насыщенность (100). |
+| `"extralight"` | Сверхлёгкая насыщенность (200). |
+| `"light"` | Лёгкая насыщенность (300). |
+| `"regular"` | Обычная насыщенность (400). |
+| `"medium"` | Средняя насыщенность (500). |
+| `"semibold"` | Полужирная насыщенность (600). |
+| `"bold"` | Жирная насыщенность (700). |
+| `"extrabold"` | Сверхжирная насыщенность (800). |
+| `"black"` | Чёрная насыщенность (900). |
+
+### `stretch` [#parameters-stretch]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Settable · **По умолчанию:** `100%`
+
+Желаемая ширина глифов. Принимает отношение от `50%` до `200%`. Когда желаемая ширина недоступна, Typst выбирает из семейства шрифт, наиболее близкий по растяжению. Текст будет растянут только в том случае, если доступна сжатая или расширенная версия шрифта.
+
+При использовании с подходящим вариативным шрифтом Typst автоматически настроит [вариацию шрифта](#parameters-variations) `wdth` на основе этого свойства.
+
+Если вы хотите настроить величину пространства между символами, а не растягивать сами глифы, используйте вместо этого свойство [`tracking`](#parameters-tracking).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "IBM Plex Sans")
+  #text(stretch: 75%)[Condensed] \\
+  #text(stretch: 100%)[Normal]
+`}
+  image="/typst_docs_assets/images/CKIMof7gsYfFIPSQgA6kGA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `size` [#parameters-size]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `11pt`
+
+Размер глифов. Это значение составляет основу единицы `em`: `1em` эквивалентен размеру шрифта.
+
+Вы также можете задать сам размер шрифта в единицах `em`. Тогда он будет относительным к предыдущему размеру шрифта.
+
+При использовании с подходящим вариативным шрифтом Typst автоматически настроит [вариацию шрифта](#parameters-variations) `opsz` (оптический размер) на основе этого свойства, оптимизируя читаемость для конкретного размера.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(size: 20pt)
+  very #text(1.5em)[big] text
+`}
+  image="/typst_docs_assets/images/t2o_KxLDxqiLK8qtigOjzw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `fill` [#parameters-fill]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `luma(0%)`
+
+Краска заливки глифов.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(fill: red)
+  This text is red.
+`}
+  image="/typst_docs_assets/images/1NKMEh_79xG9Sn-s7xi3kQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как обводить текст.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #text(stroke: 0.5pt + red)[Stroked]
+`}
+  image="/typst_docs_assets/images/wfKVGrny2npNlJZ0iv9juA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `tracking` [#parameters-tracking]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Величина пространства, которое следует добавить между символами.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(tracking: 1.5pt)
+  Distant text.
+`}
+  image="/typst_docs_assets/images/cmStcgz-GFMjBg5o5ISW0A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `spacing` [#parameters-spacing]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `100% + 0pt`
+
+Величина пространства между словами.
+
+Может быть задана как абсолютная длина, но также и относительно ширины символа пробела в шрифте.
+
+Если вы хотите настроить величину пространства между символами, а не словами, используйте вместо этого свойство [`tracking`](#parameters-tracking).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(spacing: 200%)
+  Text with distant words.
+`}
+  image="/typst_docs_assets/images/Ija_FwzSp5QavRxyVzGwpQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `cjk-latin-spacing` [#parameters-cjk-latin-spacing]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Следует ли автоматически вставлять пробелы между CJK- и латинскими символами.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(cjk-latin-spacing: auto)
+  第4章介绍了基本的API。
+
+  #set text(cjk-latin-spacing: none)
+  第4章介绍了基本的API。
+`}
+  image="/typst_docs_assets/images/Nv3z8BMBQOo3EjrHvfHU5w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `baseline` [#parameters-baseline]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Величина, на которую следует сдвинуть базовую линию текста.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  A #text(baseline: 3pt)[lowered]
+  word.
+`}
+  image="/typst_docs_assets/images/6OUdns7GwNJCbYXpD2FYiQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `overhang` [#parameters-overhang]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Могут ли определённые глифы выступать в поле при выравнивании по ширине. Это может сделать выравнивание визуально более приятным.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(width: 220pt)
+
+  #set par(justify: true)
+  This justified text has a hyphen in
+  the paragraph's second line. Hanging
+  the hyphen slightly into the margin
+  results in a clearer paragraph edge.
+
+  #set text(overhang: false)
+  This justified text has a hyphen in
+  the paragraph's second line. Hanging
+  the hyphen slightly into the margin
+  results in a clearer paragraph edge.
+`}
+  image="/typst_docs_assets/images/M5DKFSMo0yZtjrqaRwexQg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `top-edge` [#parameters-top-edge]
+
+**Тип:** [length](/docs/typst/reference/layout/length) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"cap-height"`
+
+Верхний край концептуальной рамки вокруг текста, используемой для компоновки и позиционирования. Это влияет на размер контейнеров, содержащих текст.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(inset: 0pt)
+  #set text(size: 20pt)
+
+  #set text(top-edge: "ascender")
+  #rect(fill: aqua)[Typst]
+
+  #set text(top-edge: "cap-height")
+  #rect(fill: aqua)[Typst]
+`}
+  image="/typst_docs_assets/images/zusHSGx7mLwJ9DzEaSpk7A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"ascender"` | Верхний выносной элемент шрифта, который обычно превышает высоту всех глифов. |
+| `"cap-height"` | Приблизительная высота заглавных букв. |
+| `"x-height"` | Приблизительная высота строчных букв без выносных элементов. |
+| `"baseline"` | Базовая линия, на которой покоятся буквы. |
+| `"bounds"` | Верхний край ограничивающего прямоугольника глифа. |
+
+### `bottom-edge` [#parameters-bottom-edge]
+
+**Тип:** [length](/docs/typst/reference/layout/length) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"baseline"`
+
+Нижний край концептуальной рамки вокруг текста, используемой для компоновки и позиционирования. Это влияет на размер контейнеров, содержащих текст.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(inset: 0pt)
+  #set text(size: 20pt)
+
+  #set text(bottom-edge: "baseline")
+  #rect(fill: aqua)[Typst]
+
+  #set text(bottom-edge: "descender")
+  #rect(fill: aqua)[Typst]
+`}
+  image="/typst_docs_assets/images/YqE0mlMqz8pTnXUy5DF_Fg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"baseline"` | Базовая линия, на которой покоятся буквы. |
+| `"descender"` | Нижний выносной элемент шрифта, который обычно превышает глубину всех глифов. |
+| `"bounds"` | Нижний край ограничивающего прямоугольника глифа. |
+
+### `lang` [#parameters-lang]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"en"`
+
+[Код языка ISO 639-1/2/3.](https://en.wikipedia.org/wiki/ISO_639)
+
+Установка правильного языка влияет на различные части Typst:
+
+- Конвейер обработки текста может принимать более обоснованные решения.
+- Переносы будут использовать правильные шаблоны для языка.
+- [Умные кавычки](/docs/typst/reference/text/smartquote) превращаются в правильные кавычки для языка.
+- И все остальные вещи, учитывающие язык.
+
+Выбор правильного языка важен для доступности. Например, программы чтения с экрана будут использовать его для выбора голоса, соответствующего языку текста. Если ваш документ на языке, отличном от английского (по умолчанию), вам следует установить язык текста в начале документа, до любого другого содержимого. Вы можете, например, поместить его сразу после правила `#set document(/* ... */)`, которое [устанавливает заголовок документа](/docs/typst/reference/model/document#parameters-title).
+
+Если ваш документ содержит фрагменты на языке, отличном от основного, вам следует локально изменить язык текста только для этих частей — либо с помощью правила set, [ограниченного блоком](/docs/typst/reference/scripting#blocks), либо с помощью прямого вызова функции text, например `#text(lang: "de")[...]`.
+
+Если для вашего языка доступно несколько кодов, следует предпочесть двухбуквенный код (ISO 639-1) трёхбуквенным кодам (ISO 639-2/3). Когда вам приходится использовать трёхбуквенный код и ваш язык различается между ISO 639-2 и ISO 639-3, используйте ISO 639-2 для PDF 1.7 (значение по умолчанию Typst для экспорта в PDF) и ниже, а ISO 639-3 — для PDF 2.0 и экспорта в HTML.
+
+Код языка нечувствителен к регистру и будет приведён к нижнему регистру при доступе через [context](/docs/typst/reference/context).
+
+<details>
+<summary>Показать пример: установка языка текста на немецкий</summary>
+
+<TypstRender
+  code={`
+  #set text(lang: "de")
+  #outline()
+
+  = Einleitung
+  In diesem Dokument, ...
+`}
+  image="/typst_docs_assets/images/DH20jsQcSJ9rQhLxcqIJXQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `region` [#parameters-region]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+[Код региона ISO 3166-1 alpha-2.](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+
+Это позволяет конвейеру обработки текста принимать более обоснованные решения.
+
+Код региона нечувствителен к регистру и будет приведён к верхнему регистру при доступе через [context](/docs/typst/reference/context).
+
+### `script` [#parameters-script]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Письменность OpenType.
+
+Сочетание `lang` и `script` определяет, как реализуются возможности шрифта, такие как подстановка глифов. Часто значение представляет собой модифицированный (в нижнем регистре) идентификатор письменности ISO 15924, а письменность `math` используется для возможностей, подходящих для математических символов.
+
+При значении `auto` — настройке по умолчанию и рекомендуемой — для каждого блока символов, разделяющих общее свойство письменности Unicode, выбирается подходящая письменность.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(
+    font: "IBM Plex Sans",
+    size: 20pt,
+  )
+
+  #let scedilla = [Ş]
+  #scedilla // S with a cedilla
+  #set text(lang: "ro", script: "latn")
+  #scedilla // S with a subscript comma
+  #set text(lang: "ro", script: "grek")
+  #scedilla // S with a cedilla
+`}
+  image="/typst_docs_assets/images/UsU9Gky5oD4cbjtb_xqlww.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `dir` [#parameters-dir]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [direction](/docs/typst/reference/layout/direction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Доминирующее направление для текста и встроенных объектов. Возможные значения:
+
+- `auto`: автоматически определять направление из свойства `lang`.
+- `ltr`: располагать текст слева направо.
+- `rtl`: располагать текст справа налево.
+
+При письме на языках с письмом справа налево, таких как арабский или иврит, вам следует установить [язык текста](#parameters-lang) или направление. Хотя отдельные фрагменты текста автоматически располагаются в правильном направлении, установка доминирующего направления даёт алгоритму двунаправленной переупорядочивания необходимую информацию для правильного размещения знаков препинания и встроенных объектов. Кроме того, установка направления влияет на значения выравнивания `start` и `end`, которые эквивалентны `left` и `right` в тексте `ltr` и наоборот в тексте `rtl`.
+
+Если вы установите это значение в `rtl` и столкнётесь с ошибками или каким-либо образом плохо выглядящим выводом, пожалуйста, свяжитесь с нами через [Форум](https://forum.typst.app/), [сервер Discord](https://discord.gg/2uDybryKPe) или нашу [контактную форму](https://typst.app/contact).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(dir: rtl)
+  هذا عربي.
+`}
+  image="/typst_docs_assets/images/aoh5SWkzX2GjkciP7J6QKw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `hyphenate` [#parameters-hyphenate]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Следует ли переносить текст для улучшения разбиения на строки. При значении `auto` текст будет переноситься тогда и только тогда, когда включено выравнивание по ширине.
+
+Установка [языка текста](#parameters-lang) гарантирует использование правильных шаблонов переноса.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(width: 200pt)
+
+  #set par(justify: true)
+  This text illustrates how
+  enabling hyphenation can
+  improve justification.
+
+  #set text(hyphenate: false)
+  This text illustrates how
+  enabling hyphenation can
+  improve justification.
+`}
+  image="/typst_docs_assets/images/UIEjlMUQERinZKGwvzfrfw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `costs` [#parameters-costs]
+
+**Тип:** [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable
+
+**По умолчанию:**
+
+```typst
+(
+ hyphenation: 100%,
+ runt: 100%,
+ widow: 100%,
+ orphan: 100%,
+)
+```
+
+«Стоимость» различных вариантов при компоновке текста. Более высокая стоимость означает, что движок компоновки будет выбирать этот вариант реже. Стоимости задаются как отношение к стоимости по умолчанию, поэтому `50%` сделает компоновку текста вдвое более склонной к выбору данного варианта, а `200%` — вдвое менее склонной.
+
+В настоящее время можно настроить следующие стоимости:
+
+- `hyphenation`: разбиение слова на несколько строк
+- `runt`: завершение абзаца строкой с одним словом
+- `widow`: оставление одной строки абзаца на следующей странице
+- `orphan`: оставление одной строки абзаца на предыдущей странице
+
+Переносов обычно избегают, помещая всё слово на следующую строку, поэтому более высокая стоимость переноса может привести к некрасивым пробелам при выравнивании. Примечание: стоимости переноса применяются только тогда, когда [`linebreaks`](/docs/typst/reference/model/par#parameters-linebreaks) установлены в «optimized». (Например, по умолчанию это подразумевается параметром [`justify`](/docs/typst/reference/model/par#parameters-justify).)
+
+Висячие строки в конце абзаца (runt) избегаются путём размещения большего или меньшего числа слов на предыдущих строках, поэтому более высокая стоимость runt может привести к более некрасивым пробелам при выравнивании.
+
+Компоновка текста по умолчанию предотвращает висячие строки в начале и конце абзаца (widows и orphans), поскольку они обычно не одобряются руководствами по стилю. Однако в некоторых контекстах они допускаются, потому что метод предотвращения, который переносит строку на следующую страницу, может привести к неравномерному числу строк между страницами. Стоимости `widow` и `orphan` позволяют отключить эти модификации. (В настоящее время `0%` допускает widows/orphans; любое другое значение, включая значение по умолчанию `100%`, предотвращает их. Более тонкая спецификация стоимости для этих модификаций запланирована на будущее.)
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(hyphenate: true, size: 11.4pt)
+  #set par(justify: true)
+
+  #lorem(10)
+
+  // Set hyphenation to ten times the normal cost.
+  #set text(costs: (hyphenation: 1000%))
+
+  #lorem(10)
+`}
+  image="/typst_docs_assets/images/iyjRMtlPwhyqO62Z0yhOzQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `kerning` [#parameters-kerning]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Следует ли применять кернинг.
+
+Когда он включён, определённые пары букв сближаются или отдаляются для более приятного визуального результата. Пример ниже демонстрирует, как уменьшение промежутка между «T» и «o» приводит к более естественному виду. Установка значения `false` отключает кернинг путём выключения возможности шрифта OpenType `kern`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(size: 25pt)
+  Totally
+
+  #set text(kerning: false)
+  Totally
+`}
+  image="/typst_docs_assets/images/VR8Ffy9RT0bvSXtcjY2j9A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `alternates` [#parameters-alternates]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `0`
+
+Следует ли применять стилистические альтернативы.
+
+Иногда шрифты содержат альтернативные глифы для одной и той же кодовой точки. Установка значения `true` переключает на них путём включения возможности шрифта OpenType `salt`. Целое число может использоваться для выбора между несколькими альтернативами.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(
+    font: "IBM Plex Sans",
+    size: 20pt,
+  )
+
+  0, a, g, ß
+
+  #set text(alternates: true)
+  0, a, g, ß
+`}
+  image="/typst_docs_assets/images/UXDQHURowstA-OHJIHLSwA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `stylistic-set` [#parameters-stylistic-set]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Какие стилистические наборы применять. Дизайнеры шрифтов могут категоризировать альтернативные формы глифов в стилистические наборы. Поскольку это значение сильно зависит от шрифта, вам нужно обратиться к вашему шрифту, чтобы узнать, какие наборы доступны.
+
+Это может быть установлено в целое число или массив целых чисел, все из которых должны быть от `1` до `20`, включая соответствующую возможность (возможности) OpenType от `ss01` до `ss20`. Установка значения `none` отключит все стилистические наборы.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "IBM Plex Serif")
+  ß vs #text(stylistic-set: 5)[ß] \\
+  10 years ago vs #text(stylistic-set: (1, 2, 3))[10 years ago]
+`}
+  image="/typst_docs_assets/images/7759PUxD48BGZF1MeGFLNw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `ligatures` [#parameters-ligatures]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Активны ли стандартные лигатуры.
+
+Определённые сочетания букв, такие как «fi», часто отображаются как один объединённый глиф, называемый _лигатурой._ Установка значения `false` отключает эти лигатуры путём выключения возможностей шрифта OpenType `liga` и `clig`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(size: 20pt)
+  A fine ligature.
+
+  #set text(ligatures: false)
+  A fine ligature.
+`}
+  image="/typst_docs_assets/images/c_Re9oo-_bYiN4lOkZIlkA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Обратите внимание, что некоторые программистские шрифты используют другие возможности шрифта OpenType для реализации «лигатур», включая возможность контекстных альтернатив (`calt`), которая также включена по умолчанию. Используйте общий параметр [`features`](#parameters-features) для управления такими возможностями.
+
+### `discretionary-ligatures` [#parameters-discretionary-ligatures]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Активны ли лигатуры, которые следует использовать умеренно. Установка значения `true` включает возможность шрифта OpenType `dlig`.
+
+### `historical-ligatures` [#parameters-historical-ligatures]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Активны ли исторические лигатуры. Установка значения `true` включает возможность шрифта OpenType `hlig`.
+
+### `number-type` [#parameters-number-type]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Какой вид цифр / чисел выбрать. При значении `auto` используются цифры шрифта по умолчанию.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "Noto Sans", 20pt)
+  #set text(number-type: "lining")
+  Lining: 0123456789.
+
+  #set text(number-type: "old-style")
+  Old style: 0123456789.
+`}
+  image="/typst_docs_assets/images/kzfjqk4-Y8CmlYXgyUmnvw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"lining"` | Цифры, которые хорошо сочетаются с заглавным текстом (возможность шрифта OpenType `lnum`). |
+| `"old-style"` | Цифры, которые хорошо вписываются в поток текста из заглавных и строчных букв (возможность шрифта OpenType `onum`). |
+
+### `number-width` [#parameters-number-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Ширина цифр / чисел. При значении `auto` используются цифры шрифта по умолчанию.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "Noto Sans", 20pt)
+  #set text(number-width: "proportional")
+  A 12 B 34. \\
+  A 56 B 78.
+
+  #set text(number-width: "tabular")
+  A 12 B 34. \\
+  A 56 B 78.
+`}
+  image="/typst_docs_assets/images/9qi-eTKsJrb-8WDrXemZzw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"proportional"` | Цифры с шириной, специфичной для глифа (возможность шрифта OpenType `pnum`). |
+| `"tabular"` | Цифры одинаковой ширины (возможность шрифта OpenType `tnum`). |
+
+### `slashed-zero` [#parameters-slashed-zero]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Следует ли перечёркивать глиф нуля. Установка значения `true` включает возможность шрифта OpenType `zero`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  0, #text(slashed-zero: true)[0]
+`}
+  image="/typst_docs_assets/images/T5jweaOr8rMHeKdhVkJRjQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `fractions` [#parameters-fractions]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Следует ли превращать числа в дроби. Установка значения `true` включает возможность шрифта OpenType `frac`.
+
+Не рекомендуется включать это свойство глобально, так как это испортит все появления чисел после косой черты (например, в URL-адресах). Вместо этого включайте его локально, когда вам нужна дробь.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  1/2 \\
+  #text(fractions: true)[1/2]
+`}
+  image="/typst_docs_assets/images/xPGn72_WfdJfCewM-w6wfA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `features` [#parameters-features]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Необработанные возможности OpenType для применения.
+
+- Если задан массив строк, устанавливает возможности, идентифицированные строками, в `1`.
+- Если задан словарь, сопоставляющий числа, устанавливает возможности, идентифицированные ключами, в значения. Это позволяет взаимодействовать с небулевыми возможностями, такими как `swsh`.
+
+<details>
+<summary>Показать пример: задать массив строк</summary>
+
+<TypstRender
+  code={`
+  // Enable the \`frac\` feature manually.
+  #set text(features: ("frac",))
+  1/2
+`}
+  image="/typst_docs_assets/images/AkDjBPzHLW0fm5X7FIBVwg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Показать пример: задать словарь, сопоставляющий числа</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "Cascadia Code")
+  =>
+  // Disable the contextual alternates (\`calt\`) feature.
+  #set text(features: (calt: 0))
+  =>
+`}
+  image="/typst_docs_assets/images/VxRnVT2j2kAYSqT9o1hWUw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `variations` [#parameters-variations]
+
+**Тип:** [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Необработанные вариации шрифта OpenType для применения.
+
+В то время как классические статические шрифты требуют отдельного файла шрифта для каждого сочетания стилей, вариативные шрифты имеют _оси вариаций_, из которых можно создать множество различных стилей. Оси вариаций идентифицируются четырёхбуквенными строками, чувствительными к регистру.
+
+Есть несколько хорошо известных осей вариаций, для которых Typst автоматически установит подходящие значения на основе [`weight`](#parameters-weight), [`stretch`](#parameters-stretch), [`style`](#parameters-style) и [`size`](#parameters-size) текста. К ним относятся:
+
+- `wght`: насыщенность (например, 400 для обычной, 700 для жирной)
+- `wdth`: ширина (в процентах, например, 100 для нормальной)
+- `slnt`: наклон (в градусах, отрицательный для наклона вправо)
+- `ital`: курсив (0 для прямого, 1 для курсивного)
+- `opsz`: оптический размер (в пунктах)
+
+Шрифты также могут определять пользовательские оси вариаций для реализации произвольных визуальных эффектов. Например, внешний вид шрифта может становиться более причудливым с увеличением значения определённой оси.
+
+С помощью параметра `variations` вы можете напрямую задавать значения для осей, поддерживаемых активным шрифтом. Он действует только при использовании с подходящим вариативным шрифтом, поддерживающим указанные оси. Вы можете использовать параметр как для переопределения автоматически установленных значений для хорошо известных осей, так и для установки значений для пользовательских осей.
+
+Значение должно быть словарём, сопоставляющим теги осей (четырёхбуквенные [строки](/docs/typst/reference/foundations/str)) с их значениями ([числами с плавающей точкой](/docs/typst/reference/foundations/float)).
+
+<details>
+<summary>Показать пример: установка значений для пользовательских осей</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "Fraunces", size: 60pt)
+
+  #text(variations: (SOFT: 0))[Soft? No.] \\
+  #text(variations: (SOFT: 100))[Soft? Yes.]
+`}
+  image="/typst_docs_assets/images/kcgEAvl3VERHG9-TFQnggg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Показать пример: переопределение автоматически установленных значений</summary>
+
+<TypstRender
+  code={`
+  #set text(
+    font: "Roboto Flex",
+    weight: 900,
+    stretch: 150%,
+  )
+
+  Wide and Heavy
+
+  #text(variations: (wght: 400))[
+    Forced back to normal,
+    but still wide.
+  ]
+`}
+  image="/typst_docs_assets/images/RuSQScy61RDKFoAnR5ddQQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, в котором весь текст оформляется в соответствии с другими аргументами.
+
+Этот параметр доступен только в конструкторе `text` (а не в существующих элементах `text`), потому что конструктор `text` не обязательно создаёт один элемент `text`. Вместо этого он применяет стили ко всем элементам text внутри переданного body.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #text(red)[
+    The \`body\` can be _arbitrary_
+  #underline[content].
+  ]
+`}
+  image="/typst_docs_assets/images/GZfU47it4TZ-O3Rqt4vmYg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `text` [#parameters-text]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Required, Positional
+
+Текст, содержащийся в элементе `text`.
+
+Этот параметр недоступен в конструкторе. Вместо этого вы можете получить к нему доступ в существующем элементе `text`. Это связано с тем, что конструктор `text` принимает произвольное содержимое в качестве своего body (см. [`text.body`](#parameters-body)).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #show regex("i.+n"): it => {
+    "i" + str(it.text.len() - 2) + "n"
+  }
+  internationalization
+`}
+  image="/typst_docs_assets/images/Ep2cmz4OvlyuM6H9I7cADg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

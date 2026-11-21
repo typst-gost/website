@@ -1,24 +1,25 @@
 import type { ReactNode } from 'react';
 import { source } from '@/lib/source';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayoutWithAI } from '@/components/ai/layout';
 
 import { baseOptions } from '@/lib/layout.shared';
 import { QuoteProvider } from '@/contexts/quote-context';
 
 import '@/styles/typst-render.css';
+import 'katex/dist/katex.css';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <DocsLayout
+    <DocsLayoutWithAI
       tree={source.pageTree}
       containerProps={{
-        className: "mx-(--fd-layout-offset)",
+        className: 'mx-(--fd-layout-offset)',
       }}
       {...baseOptions()}
     >
       <QuoteProvider>
         {children}
       </QuoteProvider>
-    </DocsLayout>
+    </DocsLayoutWithAI>
   );
 }

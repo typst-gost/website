@@ -1,0 +1,738 @@
+---
+title: "Table"
+description: "Документация для функции `table`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Таблица элементов.
+
+Таблицы используются для упорядочивания содержимого в ячейках. Ячейки могут содержать произвольное содержимое, включая несколько абзацев, и задаются в порядке построчного заполнения. Подробное объяснение всех способов использования и настройки таблиц в Typst см. в [руководстве по таблицам](/docs/typst/guides/tables).
+
+Поскольку таблицы — это просто сетки с другими значениями по умолчанию для некоторых свойств ячеек (в частности, `stroke` и `inset`), обратитесь к [документации по сеткам](/docs/typst/reference/layout/grid#track-size) для получения дополнительной информации о том, как задавать размеры дорожек таблицы и указывать свойства внешнего вида ячеек.
+
+Если вы не уверены, стоит ли использовать таблицу или сетку, подумайте, принадлежит ли содержимое, которое вы упорядочиваете, семантически к одному набору связанных точек данных или подобному, или вы просто хотите улучшить презентацию, расположив несвязанное содержимое в сетке. В первом случае таблица — правильный выбор, а во втором более уместна сетка. Кроме того, вспомогательные технологии (AT), такие как программы чтения с экрана, будут объявлять содержимое `table` как табличное, тогда как содержимое сетки будет объявляться так же, как несколько блоков содержимого в потоке документа. Пользователи AT смогут перемещаться по таблицам в двух измерениях по ячейкам.
+
+Обратите внимание, что для переопределения свойств конкретной ячейки или применения правил show к ячейкам таблицы можно использовать элемент [`table.cell`](#definitions-cell). Дополнительную информацию см. в его документации.
+
+Хотя `table` и `grid` имеют большинство общих свойств, правила set и show для одного из них не влияют на другой. Рекомендуется размещать большую часть стилизации в правилах set и show, так как это сохраняет фактическое использование таблицы чистым и легко читаемым. Это также позволяет легко изменять внешний вид всех таблиц в одном месте.
+
+Чтобы добавить таблице подпись и сделать её [доступной для ссылок](/docs/typst/reference/model/ref), поместите её в [figure](/docs/typst/reference/model/figure).
+
+## Пример [#example]
+
+В приведённом ниже примере демонстрируются некоторые из наиболее распространённых параметров таблицы.
+
+<TypstRender
+  code={`
+  #table(
+    columns: (1fr, auto, auto),
+    inset: 10pt,
+    align: horizon,
+    table.header(
+      [], [*Volume*], [*Parameters*],
+    ),
+    image("cylinder.svg"),
+    $ pi h (D^2 - d^2) / 4 $,
+    [
+      $h$: height \\
+  $D$: outer radius \\
+  $d$: inner radius
+    ],
+    image("tetrahedron.svg"),
+    $ sqrt(2) / 12 a^3 $,
+    [$a$: edge length]
+  )
+`}
+  image="/typst_docs_assets/images/ee0c9tk5F5wjuOHPpFQeyg.png"
+  alt=""
+  editable={true}
+/>
+
+Подобно сеткам, вы можете использовать [`table.cell`](#definitions-cell) для настройки внешнего вида и положения каждой ячейки.
+
+<TypstRender
+  code={`
+  #set table(
+    stroke: none,
+    gutter: 0.2em,
+    fill: (x, y) =>
+  if x == 0 or y == 0 { gray },
+    inset: (right: 1.5em),
+  )
+
+  #show table.cell: it => {
+    if it.x == 0 or it.y == 0 {
+      set text(white)
+      strong(it)
+    } else if it.body == [] {
+      // Replace empty cells with 'N/A'
+  pad(..it.inset)[_N/A_]
+    } else {
+      it
+    }
+  }
+
+  #let a = table.cell(
+    fill: green.lighten(60%),
+  )[A]
+  #let b = table.cell(
+    fill: aqua.lighten(60%),
+  )[B]
+
+  #table(
+    columns: 4,
+    [], [Exam 1], [Exam 2], [Exam 3],
+
+    [John], [], a, [],
+    [Mary], [], a, a,
+    [Robert], b, a, b,
+  )
+`}
+  image="/typst_docs_assets/images/BlH4nZTonumivoBhHKgrrw.png"
+  alt=""
+  editable={true}
+/>
+
+## Доступность [#accessibility]
+
+Таблицы сложны для восприятия пользователями вспомогательных технологий (AT). Чтобы облегчить жизнь пользователям AT, мы настоятельно рекомендуем использовать [`table.header`](#definitions-header) и [`table.footer`](#definitions-footer) для разметки секций заголовка и нижнего колонтитула таблицы. Это позволит AT объявлять метки столбцов для каждой ячейки.
+
+Поскольку навигация по таблице по ячейкам более громоздка, чем визуальное чтение, вам следует рассмотреть возможность сделать основную информацию вашей таблицы доступной также в виде текста. Вы можете сделать это, обернув таблицу в [figure](/docs/typst/reference/model/figure) и используя её подпись для обобщения содержимого таблицы.
+
+## Параметры [#parameters]
+
+```typst
+table(
+  columns: auto | int | relative | fraction | array,
+  rows: auto | int | relative | fraction | array,
+  gutter: auto | int | relative | fraction | array,
+  column-gutter: auto | int | relative | fraction | array,
+  row-gutter: auto | int | relative | fraction | array,
+  inset: relative | array | dictionary | function,
+  align: auto | array | function | alignment,
+  fill: none | color | gradient | tiling | array | function,
+  stroke: none | length | color | gradient | stroke | tiling | array | dictionary | function,
+  ..content,
+)
+```
+
+### `columns` [#parameters-columns]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Размеры столбцов. Дополнительную информацию о задании размеров дорожек см. в [документации по сеткам](/docs/typst/reference/layout/grid#track-size).
+
+### `rows` [#parameters-rows]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Размеры строк. Дополнительную информацию о задании размеров дорожек см. в [документации по сеткам](/docs/typst/reference/layout/grid#track-size).
+
+### `gutter` [#parameters-gutter]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `()`
+
+Промежутки между строками и столбцами. Это сокращение для установки `column-gutter` и `row-gutter` в одно и то же значение. Дополнительную информацию о промежутках см. в [документации по сеткам](/docs/typst/reference/layout/grid#parameters-gutter).
+
+### `column-gutter` [#parameters-column-gutter]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Промежутки между столбцами. Имеет приоритет над `gutter`. Дополнительную информацию о промежутках см. в [документации по сеткам](/docs/typst/reference/layout/grid#parameters-gutter).
+
+### `row-gutter` [#parameters-row-gutter]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `()`
+
+Промежутки между строками. Имеет приоритет над `gutter`. Дополнительную информацию о промежутках см. в [документации по сеткам](/docs/typst/reference/layout/grid#parameters-gutter).
+
+### `inset` [#parameters-inset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `0% + 5pt`
+
+Насколько заполнить отступом содержимое ячеек.
+
+Чтобы задать одинаковый inset для всех ячеек, используйте единую длину для всех сторон или словарь длин для отдельных сторон. Дополнительные сведения см. в [документации по box](/docs/typst/reference/layout/box#parameters-inset).
+
+Чтобы задать разный inset для разных ячеек, вы можете:
+
+- использовать единый, одинаковый inset для всех ячеек
+- использовать массив inset для каждого столбца
+- использовать функцию, которая отображает позицию ячейки по X/Y (обе начинаются с нуля) в её inset
+
+Дополнительные сведения см. в [документации по сеткам](/docs/typst/reference/layout/grid#styling).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #table(
+    columns: 2,
+    inset: 10pt,
+    [Hello],
+    [World],
+  )
+
+  #table(
+    columns: 2,
+    inset: (x: 20pt, y: 10pt),
+    [Hello],
+    [World],
+  )
+`}
+  image="/typst_docs_assets/images/eupPrP1ZeWgt__247pk0bg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `align` [#parameters-align]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [array](/docs/typst/reference/foundations/array) или [function](/docs/typst/reference/foundations/function) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как выравнивать содержимое ячеек.
+
+Если установлено `auto`, используется внешнее выравнивание.
+
+Вы можете задать выравнивание любым из следующих способов:
+
+- использовать единое выравнивание для всех ячеек
+- использовать массив выравниваний, соответствующих каждому столбцу
+- использовать функцию, которая отображает позицию ячейки по X/Y (обе начинаются с нуля) в её выравнивание
+
+Подробности см. в [руководстве по таблицам](/docs/typst/guides/tables#alignment).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #table(
+    columns: 3,
+    align: (left, center, right),
+    [Hello], [Hello], [Hello],
+    [A], [B], [C],
+  )
+`}
+  image="/typst_docs_assets/images/Jt6G_YM5ObwZubZ-UTXdZg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) или [array](/docs/typst/reference/foundations/array) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как заполнять ячейки.
+
+Это может быть:
+
+- единая заливка для всех ячеек
+- массив заливок, соответствующих каждому столбцу
+- функция, которая отображает позицию ячейки в её заливку
+
+Наиболее примечательно, что массивы и функции полезны для создания полосатых таблиц. Дополнительные сведения см. в [руководстве по таблицам](/docs/typst/guides/tables#fills).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #table(
+    fill: (x, _) =>
+  if calc.odd(x) { luma(240) }
+      else { white },
+    align: (x, y) =>
+  if y == 0 { center }
+      else if x == 0 { left }
+      else { right },
+    columns: 4,
+    [], [*Q1*], [*Q2*], [*Q3*],
+    [Revenue:], [1000 €], [2000 €], [3000 €],
+    [Expenses:], [500 €], [1000 €], [1500 €],
+    [Profit:], [500 €], [1000 €], [1500 €],
+  )
+`}
+  image="/typst_docs_assets/images/YDdEzPG8ASjJ5dtv_c_m4A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `stroke()`
+
+Как [обводить](/docs/typst/reference/visualize/stroke) ячейки.
+
+Обводки можно отключить, установив для этого параметра значение `none`.
+
+Если необходимо разместить линии, которые могут пересекать промежутки между ячейками, созданные параметром [`gutter`](#parameters-gutter), или переопределить обводку между несколькими конкретными ячейками, рассмотрите возможность указания одного или нескольких из [`table.hline`](#definitions-hline) и [`table.vline`](#definitions-vline) вместе с ячейками таблицы.
+
+Чтобы задать одинаковую обводку для всех ячеек, используйте единую [обводку](/docs/typst/reference/visualize/stroke) для всех сторон или словарь [обводок](/docs/typst/reference/visualize/stroke) для отдельных сторон. Дополнительные сведения см. в [документации по rectangle](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+Чтобы задать разные обводки для разных ячеек, вы можете:
+
+- использовать единую обводку для всех ячеек
+- использовать массив обводок, соответствующих каждому столбцу
+- использовать функцию, которая отображает позицию ячейки в её обводку
+
+Дополнительные сведения см. в [руководстве по таблицам](/docs/typst/guides/tables#strokes).
+
+### `children` [#parameters-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Содержимое ячеек таблицы, а также любые дополнительные линии таблицы, заданные элементами [`table.hline`](#definitions-hline) и [`table.vline`](#definitions-vline).
+
+## Функции [#functions]
+
+### `cell` [#definitions-cell]
+
+*Элемент* · *Since: 0.11.0*
+
+Ячейка в таблице. Используйте её для ручного позиционирования ячейки или для применения стилизации. Для последнего вы можете либо использовать функцию для переопределения свойств конкретной ячейки, либо использовать её в правилах show для применения определённых стилей к нескольким ячейкам сразу.
+
+Пожалуй, наиболее важный вариант использования `table.cell` — сделать ячейку охватывающей несколько столбцов и/или строк с помощью полей `colspan` и `rowspan`.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #show table.cell.where(y: 0): strong
+  #set table(
+    stroke: (x, y) => if y == 0 {
+      (bottom: 0.7pt + black)
+    },
+    align: (x, y) => (
+      if x > 0 { center }
+      else { left }
+    )
+  )
+
+  #table(
+    columns: 3,
+    table.header(
+      [Substance],
+      [Subcritical °C],
+      [Supercritical °C],
+    ),
+    [Hydrochloric Acid],
+    [12.0], [92.1],
+    [Sodium Myreth Sulfate],
+    [16.6], [104],
+    [Potassium Hydroxide],
+    table.cell(colspan: 2)[24.7],
+  )
+`}
+  image="/typst_docs_assets/images/DrNpMYBQGhONM7Cqes2DBg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Например, вы можете переопределить заливку, выравнивание или inset для отдельной ячейки:
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  // You can also import those.
+  #import table: cell, header
+
+  #table(
+    columns: 2,
+    align: center,
+    header(
+      [*Trip progress*],
+      [*Itinerary*],
+    ),
+    cell(
+      align: right,
+      fill: fuchsia.lighten(80%),
+      [🚗],
+    ),
+    [Get in, folks!],
+    [🚗], [Eat curbside hotdog],
+    cell(align: left)[🌴🚗],
+    cell(
+      inset: 0.06em,
+      text(1.62em)[🏝️🌅🌊],
+    ),
+  )
+`}
+  image="/typst_docs_assets/images/fZR2HTvr3cYamGVaRZrRTg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Вы также можете применить правило show к `table.cell`, чтобы стилизовать все ячейки сразу. В сочетании с селекторами это позволяет применять стили в зависимости от позиции ячейки:
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #show table.cell.where(x: 0): strong
+  #table(
+    columns: 3,
+    gutter: 3pt,
+    [Name], [Age], [Strength],
+    [Hannes], [36], [Grace],
+    [Irma], [50], [Resourcefulness],
+    [Vikram], [49], [Perseverance],
+  )
+`}
+  image="/typst_docs_assets/images/UPAjgm33aL_Qv6kfYdYk4Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+table.cell(
+  content,
+  x: auto | int,
+  y: auto | int,
+  colspan: int,
+  rowspan: int,
+  inset: auto | relative | dictionary,
+  align: auto | alignment,
+  fill: none | auto | color | gradient | tiling,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  breakable: auto | bool,
+)
+```
+
+#### `body` [#definitions-cell-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Тело ячейки.
+
+#### `x` [#definitions-cell-x]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Столбец ячейки (с нулевым индексом). Функционирует идентично полю `x` в [`grid.cell`](/docs/typst/reference/layout/grid#definitions-cell).
+
+#### `y` [#definitions-cell-y]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Строка ячейки (с нулевым индексом). Функционирует идентично полю `y` в [`grid.cell`](/docs/typst/reference/layout/grid#definitions-cell).
+
+#### `colspan` [#definitions-cell-colspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Количество столбцов, охватываемых этой ячейкой.
+
+#### `rowspan` [#definitions-cell-rowspan]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Количество строк, охватываемых этой ячейкой.
+
+#### `inset` [#definitions-cell-inset]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Переопределение [inset](#parameters-inset) для ячейки.
+
+#### `align` [#definitions-cell-align]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Переопределение [выравнивания](#parameters-align) для ячейки.
+
+#### `fill` [#definitions-cell-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Переопределение [заливки](#parameters-fill) для ячейки.
+
+#### `stroke` [#definitions-cell-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Переопределение [обводки](#parameters-stroke) для ячейки.
+
+#### `breakable` [#definitions-cell-breakable]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Могут ли строки, охватываемые этой ячейкой, размещаться на разных страницах. Если равно `auto`, ячейка, охватывающая только строки фиксированного размера, является неразрывной, тогда как ячейка, охватывающая хотя бы одну строку размером `auto`, является разрывной.
+
+### `hline` [#definitions-hline]
+
+*Элемент* · *Since: 0.11.0*
+
+Горизонтальная линия в таблице.
+
+Переопределяет любую обводку отдельных ячеек, включая обводку, заданную через поле `stroke` таблицы. Может пересекать промежутки между ячейками, созданные параметром [`column-gutter`](#parameters-column-gutter) таблицы.
+
+Используйте эту функцию вместо поля `stroke` таблицы, если вы хотите вручную разместить горизонтальную линию в определённой позиции в отдельной таблице. Рассмотрите возможность использования [поля `stroke` таблицы](#parameters-stroke) или [поля `stroke` у `table.cell`](#definitions-cell-stroke) вместо этого, если линия, которую вы хотите разместить, является частью дизайна всех ваших таблиц.
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set table.hline(stroke: .6pt)
+
+  #table(
+    stroke: none,
+    columns: (auto, 1fr),
+    [09:00], [Badge pick up],
+    [09:45], [Opening Keynote],
+    [10:30], [Talk: Typst's Future],
+    [11:15], [Session: Good PRs],
+    table.hline(start: 1),
+    [Noon], [_Lunch break_],
+    table.hline(start: 1),
+    [14:00], [Talk: Tracked Layout],
+    [15:00], [Talk: Automations],
+    [16:00], [Workshop: Tables],
+    table.hline(),
+    [19:00], [Day 1 Attendee Mixer],
+  )
+`}
+  image="/typst_docs_assets/images/gfTL6Ow5EVYLVuFDpk2MwA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+table.hline(
+  y: auto | int,
+  start: int,
+  end: none | int,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  position: alignment,
+) -> content
+```
+
+#### `y` [#definitions-hline-y]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Строка, над которой размещается горизонтальная линия (с нулевым индексом). Функционирует идентично полю `y` в [`grid.hline`](/docs/typst/reference/layout/grid#definitions-hline-y).
+
+#### `start` [#definitions-hline-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `0`
+
+Столбец, с которого начинается горизонтальная линия (с нулевым индексом, включительно).
+
+#### `end` [#definitions-hline-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Столбец, перед которым заканчивается горизонтальная линия (с нулевым индексом, исключительно).
+
+#### `stroke` [#definitions-hline-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `stroke()`
+
+Обводка линии.
+
+Указание `none` удаляет любые линии, ранее размещённые в диапазоне этой линии, включая hline или обводку отдельных ячеек под ней.
+
+#### `position` [#definitions-hline-position]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `top`
+
+Позиция, в которой размещается линия, относительно её строки (`y`) — либо `top`, чтобы нарисовать над ней, либо `bottom`, чтобы нарисовать под ней.
+
+Этот параметр актуален только при включённом промежутке между строками (и не должен использоваться в противном случае — предпочтительнее просто увеличить поле `y` на единицу), поскольку тогда позиция под строкой становится отличной от позиции над следующей строкой из-за промежутка между ними.
+
+### `vline` [#definitions-vline]
+
+*Элемент* · *Since: 0.11.0*
+
+Вертикальная линия в таблице. Дополнительную информацию о том, как использовать поля этого элемента, см. в документации по [`grid.vline`](/docs/typst/reference/layout/grid#definitions-vline).
+
+Переопределяет любую обводку отдельных ячеек, включая обводку, заданную через поле `stroke` таблицы. Может пересекать промежутки между ячейками, созданные параметром [`row-gutter`](#parameters-row-gutter) таблицы.
+
+Подобно [`table.hline`](#definitions-hline), используйте эту функцию, если вы хотите вручную разместить вертикальную линию в определённой позиции в отдельной таблице, и используйте [поле `stroke` таблицы](#parameters-stroke) или [поле `stroke` у `table.cell`](#definitions-cell-stroke) вместо этого, если линия, которую вы хотите разместить, является частью дизайна всех ваших таблиц.
+
+```typst
+table.vline(
+  x: auto | int,
+  start: int,
+  end: none | int,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  position: alignment,
+) -> content
+```
+
+#### `x` [#definitions-vline-x]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Столбец, перед которым размещается вертикальная линия (с нулевым индексом). Функционирует идентично полю `x` в [`grid.vline`](/docs/typst/reference/layout/grid#definitions-vline).
+
+#### `start` [#definitions-vline-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `0`
+
+Строка, с которой начинается вертикальная линия (с нулевым индексом, включительно).
+
+#### `end` [#definitions-vline-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Строка, на которой заканчивается вертикальная линия (с нулевым индексом, исключительно).
+
+#### `stroke` [#definitions-vline-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `stroke()`
+
+Обводка линии.
+
+Указание `none` удаляет любые линии, ранее размещённые в диапазоне этой линии, включая vline или обводку отдельных ячеек под ней.
+
+#### `position` [#definitions-vline-position]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `start`
+
+Позиция, в которой размещается линия, относительно её столбца (`x`) — либо `start`, чтобы нарисовать перед ним, либо `end`, чтобы нарисовать после него.
+
+Значения `left` и `right` также принимаются, но не рекомендуются, так как они приводят к несогласованности вашей таблицы между документами с письмом слева направо и справа налево.
+
+Этот параметр актуален только при включённом промежутке между столбцами (и не должен использоваться в противном случае — предпочтительнее просто увеличить поле `x` на единицу), поскольку тогда позиция после столбца становится отличной от позиции перед следующим столбцом из-за промежутка между ними.
+
+### `header` [#definitions-header]
+
+*Элемент* · *Since: 0.11.0*
+
+Повторяемый заголовок таблицы.
+
+Вам следует обернуть строки заголовка ваших таблиц в эту функцию, даже если вы не планируете разбивать таблицу по страницам, потому что Typst использует эту функцию для прикрепления метаданных доступности к таблицам и обеспечения [универсального доступа](/docs/typst/guides/accessibility#basics) к вашему документу.
+
+Вы можете использовать параметр `repeat`, чтобы управлять тем, будет ли заголовок вашей таблицы повторяться на разных страницах.
+
+В настоящее время эта функция не подходит для создания столбца заголовка или отдельных ячеек заголовка. Используйте обычные ячейки или, если вы экспортируете PDF, вы также можете использовать функцию [`pdf.header-cell`](/docs/typst/reference/format/pdf/header-cell), чтобы пометить ячейку как ячейку заголовка. Аналогично, вы можете использовать [`pdf.data-cell`](/docs/typst/reference/format/pdf/data-cell), чтобы пометить ячейки в этой функции как ячейки данных. Обратите внимание, что эти функции не являются окончательными и поэтому доступны только при включении функции `a11y-extras` (подробности см. в [документации по формату PDF](/docs/typst/reference/format/pdf)).
+
+<details open>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(height: 11.5em)
+  #set table(
+    fill: (x, y) =>
+  if x == 0 or y == 0 {
+        gray.lighten(40%)
+      },
+    align: right,
+  )
+
+  #show table.cell.where(x: 0): strong
+  #show table.cell.where(y: 0): strong
+  #table(
+    columns: 4,
+    table.header(
+      [], [Blue chip],
+      [Fresh IPO], [Penny st'k],
+    ),
+    table.cell(
+      rowspan: 6,
+      align: horizon,
+      rotate(-90deg, reflow: true)[
+        *USD / day*
+      ],
+    ),
+    [0.20], [104], [5],
+    [3.17], [108], [4],
+    [1.59], [84],  [1],
+    [0.26], [98],  [15],
+    [0.01], [195], [4],
+    [7.34], [57],  [2],
+  )
+`}
+  image="/typst_docs_assets/images/VaKl1D4LUQctU2xIZeeMBg.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/YJjMmkPwYAP2CWYZEdo5VA.png" alt="" width="480" height="253" />
+
+</details>
+
+```typst
+table.header(
+  repeat: bool,
+  level: int,
+  ..content,
+)
+```
+
+#### `repeat` [#definitions-header-repeat]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Должен ли этот заголовок повторяться на разных страницах.
+
+#### `level` [#definitions-header-level]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Уровень заголовка. Не должен быть нулевым.
+
+Это позволяет повторять несколько заголовков одновременно. Заголовки с разными уровнями могут повторяться вместе, если их уровни возрастают.
+
+Примечательно, что когда заголовок с более низким уровнем начинает повторяться, все заголовки более высокого или равного уровня перестают повторяться (они «заменяются» новым заголовком).
+
+#### `children` [#definitions-header-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Ячейки и линии внутри заголовка.
+
+### `footer` [#definitions-footer]
+
+*Элемент* · *Since: 0.11.0*
+
+Повторяемый нижний колонтитул таблицы.
+
+Подобно элементу [`table.header`](#definitions-header), нижний колонтитул может повторяться на каждой странице таблицы. Это полезно для улучшения читаемости путём добавления меток столбцов как в заголовке, так и в нижнем колонтитуле большой таблицы, итогов или другой информации, которая должна быть видна на каждой странице.
+
+После нижнего колонтитула не может быть размещено никаких других ячеек таблицы.
+
+```typst
+table.footer(
+  repeat: bool,
+  ..content,
+)
+```
+
+#### `repeat` [#definitions-footer-repeat]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Должен ли этот нижний колонтитул повторяться на разных страницах.
+
+#### `children` [#definitions-footer-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Ячейки и линии внутри нижнего колонтитула.

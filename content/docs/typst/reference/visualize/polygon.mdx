@@ -1,0 +1,137 @@
+---
+title: "Polygon"
+description: "Документация для функции `polygon`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: 0.1.0*
+
+Замкнутый многоугольник.
+
+Многоугольник задаётся координатами своих угловых точек и замыкается автоматически.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #polygon(
+    fill: blue.lighten(80%),
+    stroke: blue,
+    (20%, 0pt),
+    (60%, 0pt),
+    (80%, 2cm),
+    (0%,  2cm),
+  )
+`}
+  image="/typst_docs_assets/images/n_pmvoVZ5rlaGAyp9Aixcg.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+polygon(
+  fill: none | color | gradient | tiling,
+  fill-rule: str,
+  stroke: none | auto | length | color | gradient | stroke | tiling | dictionary,
+  ..array,
+) -> content
+```
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как заливать многоугольник.
+
+При установке заливки обводка по умолчанию исчезает. Чтобы создать прямоугольник одновременно с заливкой и обводкой, необходимо настроить оба параметра.
+
+### `fill-rule` [#parameters-fill-rule]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"non-zero"`
+
+Правило отрисовки, используемое для заливки многоугольника.
+
+Пример см. в [документации для curve](/docs/typst/reference/visualize/curve#parameters-fill-rule).
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"non-zero"` | Указывает, что «внутренняя область» вычисляется по ненулевой сумме знаковых пересечений рёбер. |
+| `"even-odd"` | Указывает, что «внутренняя область» вычисляется по нечётному числу пересечений рёбер. |
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как [обводить](/docs/typst/reference/visualize/stroke) многоугольник.
+
+Можно установить `none`, чтобы отключить обводку, или `auto` для обводки чёрным цветом толщиной `1pt` тогда и только тогда, когда заливка не задана.
+
+### `vertices` [#parameters-vertices]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional, Variadic
+
+Вершины многоугольника. Каждая точка задаётся как массив из двух [относительных длин](/docs/typst/reference/layout/relative).
+
+## Функции [#functions]
+
+### `regular` [#definitions-regular]
+
+*Доступно с: 0.8.0*
+
+Правильный многоугольник, задаваемый своим размером и числом вершин.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #polygon.regular(
+    fill: blue.lighten(80%),
+    stroke: blue,
+    size: 30pt,
+    vertices: 3,
+  )
+`}
+  image="/typst_docs_assets/images/ehHnRmH_3IclkKnLeJa_ng.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+polygon.regular(
+  fill: none | color | gradient | tiling,
+  stroke: none | auto | length | color | gradient | stroke | tiling | dictionary,
+  size: length,
+  vertices: int,
+) -> content
+```
+
+#### `fill` [#definitions-regular-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling)
+
+Как заливать многоугольник. Подробнее см. в общей [документации для polygon](#parameters-fill).
+
+#### `stroke` [#definitions-regular-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary)
+
+Как обводить многоугольник. Подробнее см. в общей [документации для polygon](#parameters-stroke).
+
+#### `size` [#definitions-regular-size]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **По умолчанию:** `1em`
+
+Диаметр [описанной окружности](https://en.wikipedia.org/wiki/Circumcircle) правильного многоугольника.
+
+#### `vertices` [#definitions-regular-vertices]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `3`
+
+Число вершин многоугольника.

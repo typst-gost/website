@@ -1,0 +1,182 @@
+---
+title: "Attach"
+description: "Документация по функциям, которые позволяют точно прикреплять нижние и верхние индексы, а также пределы к частям уравнения."
+---
+
+
+Нижние индексы, верхние индексы и пределы.
+
+Присоединённые элементы могут отображаться либо как нижние/верхние индексы, либо как пределы. Typst автоматически решает, какой вариант подходит лучше, в зависимости от основания, но вы также можете управлять этим вручную с помощью функций `scripts` и `limits`.
+
+Если вы хотите, чтобы основание растягивалось под длинные верхние и нижние присоединённые элементы (например, стрелка с текстом над ней), используйте функцию [`stretch`](/docs/typst/reference/math/stretch).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ sum_(i=0)^n a_i = 2^(1+i) $
+`}
+  image="/typst_docs_assets/images/gHrNdQ2y-ZU1A6kS0mt3kg.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Эта функция также имеет специальный синтаксис для присоединённых элементов после основания: используйте символ подчёркивания (`_`) для обозначения нижнего индекса, то есть нижнего присоединённого элемента, и символ крышки (`^`) для обозначения верхнего индекса, то есть верхнего присоединённого элемента.
+
+## Функции [#functions]
+
+### `attach` [#functions-attach]
+
+*Элемент* · *Доступно: всегда*
+
+Основание с необязательными присоединёнными элементами.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ attach(
+    Pi, t: alpha, b: beta,
+    tl: 1, tr: 2+3, bl: 4+5, br: 6,
+  ) $
+`}
+  image="/typst_docs_assets/images/xgpPH99wPsco_1jYySUifQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Если вы хотите добавить акценты (крышки, тильды, стрелки и т. д.) вместо индексов или угловых присоединённых элементов, используйте вместо этого функцию [`accent`](/docs/typst/reference/math/accent).
+
+```typst
+math.attach(
+  content,
+  t: none | content,
+  b: none | content,
+  tl: none | content,
+  bl: none | content,
+  tr: none | content,
+  br: none | content,
+)
+```
+
+#### `base` [#functions-attach-base]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Основание, к которому присоединяются элементы.
+
+#### `t` [#functions-attach-t]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Верхний присоединённый элемент, разумно позиционируемый справа сверху или над основанием.
+
+Вы можете обернуть основание в `limits()` или `scripts()`, чтобы переопределить разумное позиционирование.
+
+#### `b` [#functions-attach-b]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Нижний присоединённый элемент, разумно позиционируемый справа снизу или под основанием.
+
+Вы можете обернуть основание в `limits()` или `scripts()`, чтобы переопределить разумное позиционирование.
+
+#### `tl` [#functions-attach-tl]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Верхний левый присоединённый элемент (перед основанием).
+
+#### `bl` [#functions-attach-bl]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Нижний левый присоединённый элемент (перед основанием).
+
+#### `tr` [#functions-attach-tr]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Верхний правый присоединённый элемент (после основания).
+
+#### `br` [#functions-attach-br]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Нижний правый присоединённый элемент (после основания).
+
+### `scripts` [#functions-scripts]
+
+*Элемент* · *Доступно: всегда*
+
+Заставляет основание отображать присоединённые элементы как индексы.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ scripts(sum)_1^2 != sum_1^2 $
+`}
+  image="/typst_docs_assets/images/J7twv-aBS7WuSa-BBzlYIg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.scripts(content)
+```
+
+#### `body` [#functions-scripts-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Основание, к которому присоединяются индексы.
+
+### `limits` [#functions-limits]
+
+*Элемент* · *Доступно: всегда*
+
+Заставляет основание отображать присоединённые элементы как пределы.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ limits(A)_1^2 != A_1^2 $
+`}
+  image="/typst_docs_assets/images/A4gTkKDFTcouM1dCFAKg9w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.limits(
+  content,
+  inline: bool,
+)
+```
+
+#### `body` [#functions-limits-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Основание, к которому присоединяются пределы.
+
+#### `inline` [#functions-limits-inline]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `true`
+
+Принудительно ли использовать пределы также во встроенных уравнениях.
+
+При глобальном применении пределов (например, через правило show) обычно рекомендуется отключить этот параметр.

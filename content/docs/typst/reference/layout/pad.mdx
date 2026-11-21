@@ -1,0 +1,91 @@
+---
+title: "Отступы"
+description: "Документация для функции `pad`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Добавляет отступы вокруг содержимого.
+
+Отступы можно задать для каждой стороны отдельно или сразу для всех сторон, указав позиционный аргумент.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set align(center)
+
+  #pad(x: 16pt, image("typing.jpg"))
+  _Typing speeds can be
+   measured in words per minute._
+`}
+  image="/typst_docs_assets/images/NJc0UzrDS0g-mjE6CgzEsA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+pad(
+  left: relative,
+  top: relative,
+  right: relative,
+  bottom: relative,
+  x: relative,
+  y: relative,
+  rest: relative,
+  content,
+)
+```
+
+### `left` [#parameters-left]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Отступ с левой стороны.
+
+### `top` [#parameters-top]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Отступ с верхней стороны.
+
+### `right` [#parameters-right]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Отступ с правой стороны.
+
+### `bottom` [#parameters-bottom]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Отступ с нижней стороны.
+
+### `x` [#parameters-x]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **По умолчанию:** `0% + 0pt`
+
+Сокращение для установки `left` и `right` в одно и то же значение.
+
+### `y` [#parameters-y]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **По умолчанию:** `0% + 0pt`
+
+Сокращение для установки `top` и `bottom` в одно и то же значение.
+
+### `rest` [#parameters-rest]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **По умолчанию:** `0% + 0pt`
+
+Сокращение для установки всех четырёх сторон в одно и то же значение.
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, для которого задаются отступы по сторонам.

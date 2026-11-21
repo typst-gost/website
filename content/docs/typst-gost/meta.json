@@ -1,0 +1,11 @@
+{
+    "title": "Документация Typst Gost",
+    "description": "Узнайте, как использовать modern-g7-32 для создания документов по ГОСТ 7.32-2017.",
+    "root": true,
+    "pages": [
+        "index",
+        "quick-start.mdx",
+        "reference",
+        "advanced_usage"
+    ]
+}

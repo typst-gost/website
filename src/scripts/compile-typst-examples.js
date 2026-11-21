@@ -180,9 +180,18 @@ async function processMdxFile(filePath, relativePath) {
       continue;
     }
 
+    if (props.image.startsWith('/')) {
+      continue;
+    }
+
     const fullCode = buildFullCode(props.code, props.hiddenPrefix, props.hiddenSuffix);
     
     const outputPath = path.join(outputDir, props.image);
+
+    const targetDir = path.dirname(outputPath);
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
 
     const success = await compileTypstToImage(fullCode, outputPath, props.assets);
     if (!success) {

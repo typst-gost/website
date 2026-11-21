@@ -1,0 +1,119 @@
+---
+title: "Assert"
+description: "Документация для функции `assert`."
+---
+
+<span id="summary" />
+
+*Since: forever*
+
+Проверяет, что условие выполнено.
+
+Завершается с ошибкой, если условие не выполнено. Не создаёт никакого вывода в документе.
+
+Если вы хотите проверить равенство двух значений, см. [`assert.eq`](#definitions-eq) и [`assert.ne`](#definitions-ne).
+
+## Пример [#example]
+
+```typst
+#assert(1 < 2, message: "math broke")
+```
+
+## Параметры [#parameters]
+
+```typst
+assert(
+  bool,
+  message: str,
+) -> none
+```
+
+### `condition` [#parameters-condition]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Обязательный, Позиционный
+
+Условие, которое должно быть истинным, чтобы проверка прошла успешно.
+
+### `message` [#parameters-message]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Сообщение об ошибке при неудачной проверке.
+
+## Функции [#functions]
+
+### `eq` [#definitions-eq]
+
+*Since: 0.4.0*
+
+Проверяет, что два значения равны.
+
+Завершается с ошибкой, если первое значение не равно второму. Не создаёт никакого вывода в документе.
+
+```typst
+#assert.eq(10, 10)
+```
+
+```typst
+assert.eq(
+  any,
+  any,
+  message: str,
+) -> none
+```
+
+#### `left` [#definitions-eq-left]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Первое значение для сравнения.
+
+#### `right` [#definitions-eq-right]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Второе значение для сравнения.
+
+#### `message` [#definitions-eq-message]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Необязательное сообщение, отображаемое при ошибке вместо представлений сравниваемых значений.
+
+### `ne` [#definitions-ne]
+
+*Since: 0.4.0*
+
+Проверяет, что два значения не равны.
+
+Завершается с ошибкой, если первое значение равно второму. Не создаёт никакого вывода в документе.
+
+```typst
+#assert.ne(3, 4)
+```
+
+```typst
+assert.ne(
+  any,
+  any,
+  message: str,
+) -> none
+```
+
+#### `left` [#definitions-ne-left]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Первое значение для сравнения.
+
+#### `right` [#definitions-ne-right]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Второе значение для сравнения.
+
+#### `message` [#definitions-ne-message]
+
+**Тип:** [str](/docs/typst/reference/foundations/str)
+
+Необязательное сообщение, отображаемое при ошибке вместо представлений сравниваемых значений.

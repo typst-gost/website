@@ -1,0 +1,155 @@
+---
+title: "Функция"
+description: "Документация для типа `function`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Отображение значений аргументов в возвращаемое значение.
+
+Вы можете вызвать функцию, записав список _аргументов_ функции через запятую, заключённый в круглые скобки, непосредственно после имени функции. Кроме того, вы можете передать функции любое количество завершающих аргументов-блоков содержимого _после_ обычного списка аргументов. Если обычный список аргументов оказался бы пустым, его можно опустить. Typst поддерживает позиционные и именованные аргументы. Первые определяются по позиции и типу, а вторые записываются как `name: value`.
+
+В математическом режиме вызовы функций имеют особое поведение. Подробнее см. в [документации по математике](/docs/typst/reference/math).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  // Call a function.
+  #list([A], [B])
+
+  // Named arguments and trailing
+  // content blocks.
+  #enum(start: 2)[A][B]
+
+  // Version without parentheses.
+  #list[A][B]
+`}
+  image="/typst_docs_assets/images/JyLQfy2BWCY_pE5soGYeKQ.png"
+  alt=""
+  editable={true}
+/>
+
+Функции — это фундаментальный строительный блок Typst. Typst предоставляет функции для самых разных задач вёрстки. Более того, разметка, которую вы пишете, опирается на функции, и всё оформление происходит через функции. В этом справочнике перечислены все доступные функции и способы их использования. Также обратитесь к документации о правилах [set](/docs/typst/reference/styling#set-rules) и [show](/docs/typst/reference/styling#show-rules), чтобы узнать о дополнительных способах работы с функциями в Typst.
+
+## Функции-элементы [#element-functions]
+
+Некоторые функции связаны с _элементами_, такими как [заголовки](/docs/typst/reference/model/heading) или [таблицы](/docs/typst/reference/model/table). При вызове они создают элемент соответствующего вида. В отличие от обычных функций, их можно дополнительно использовать в [правилах set](/docs/typst/reference/styling#set-rules), [правилах show](/docs/typst/reference/styling#show-rules) и [селекторах](/docs/typst/reference/foundations/selector).
+
+## Области видимости функций [#function-scopes]
+
+Функции могут содержать связанные определения в собственной области видимости, подобно [модулю](/docs/typst/reference/scripting#modules). Примерами этого являются [`assert.eq`](/docs/typst/reference/foundations/assert#definitions-eq) или [`list.item`](/docs/typst/reference/model/list#definitions-item). Однако в настоящее время эта возможность доступна только для встроенных функций.
+
+## Определение функций [#defining-functions]
+
+Вы можете определить собственную функцию с помощью [привязки let](/docs/typst/reference/scripting#bindings), после имени которой следует список параметров. Список параметров может содержать обязательные позиционные параметры, именованные параметры со значениями по умолчанию и [приёмники аргументов](/docs/typst/reference/foundations/arguments).
+
+Правая часть привязки функции — это тело функции, которое может быть блоком или любым другим выражением. Оно определяет возвращаемое значение функции и может зависеть от параметров. Если тело функции является [блоком кода](/docs/typst/reference/scripting#blocks), возвращаемое значение — это результат объединения значений каждого выражения в блоке.
+
+Внутри тела функции ключевое слово `return` можно использовать для досрочного выхода и, при необходимости, указания возвращаемого значения. Если явное возвращаемое значение не задано, тело вычисляется в результат объединения всех выражений, предшествующих `return`.
+
+Функции, которые не возвращают никакого осмысленного значения, вместо этого возвращают [`none`](/docs/typst/reference/foundations/none). Тип возвращаемого значения таких функций явно не указывается в документации. (Примером этого является [`array.push`](/docs/typst/reference/foundations/array#definitions-push)).
+
+<TypstRender
+  code={`
+  #let alert(body, fill: red) = {
+    set text(white)
+    set align(center)
+    rect(
+      fill: fill,
+      inset: 8pt,
+      radius: 4pt,
+      [*Warning:\\ #body*],
+    )
+  }
+
+  #alert[
+    Danger is imminent!
+  ]
+
+  #alert(fill: blue)[
+    KEEP OFF TRACKS
+  ]
+`}
+  image="/typst_docs_assets/images/X7oh6BroLALV3MExy9LbUA.png"
+  alt=""
+  editable={true}
+/>
+
+## Импорт функций [#importing-functions]
+
+Функции можно импортировать из одного файла ([`module`](/docs/typst/reference/scripting#modules)) в другой с помощью `import`. Например, предположим, что мы определили функцию `alert` из предыдущего примера в файле с именем `foo.typ`. Мы можем импортировать её в другой файл, написав `import "foo.typ": alert`.
+
+## Безымянные функции [#unnamed]
+
+Вы также можете создать безымянную функцию без создания привязки, указав список параметров, за которым следуют `=>` и тело функции. Если ваша функция имеет только один параметр, круглые скобки вокруг списка параметров необязательны. Безымянные функции в основном полезны для правил show, а также в качестве аргументов других функций, таких как [`array.position`](/docs/typst/reference/foundations/array#definitions-position).
+
+<TypstRender
+  code={`
+  #show "once?": it => [#it #it]
+  once?
+`}
+  image="/typst_docs_assets/images/HWCjy48gpYsnWFzzz7vFwg.png"
+  alt=""
+  editable={true}
+/>
+
+## Замечание о чистоте функций [#note-on-function-purity]
+
+В Typst все функции _чистые._ Это означает, что для одних и тех же аргументов они всегда возвращают один и тот же результат. Они не могут «запоминать» что-либо, чтобы выдать другое значение при повторном вызове.
+
+Единственное исключение — встроенные методы, такие как [`array.push(value)`](/docs/typst/reference/foundations/array#definitions-push). Они могут изменять значения, к которым применяются.
+
+## Функции [#functions]
+
+### `with` [#definitions-with]
+
+*Since: forever*
+
+Возвращает новую функцию, к которой уже применены заданные аргументы.
+
+```typst
+self.with(..any) -> function
+```
+
+#### `arguments` [#definitions-with-arguments]
+
+**Type:** `any` · **Modifiers:** Required, Positional, Variadic
+
+Аргументы, применяемые к функции.
+
+### `where` [#definitions-where]
+
+*Since: forever*
+
+Возвращает селектор, который фильтрует элементы, принадлежащие этой функции, поля которых имеют значения заданных аргументов.
+
+<details open>
+<summary>View example</summary>
+
+<TypstRender
+  code={`
+  #show heading.where(level: 2): set text(blue)
+  = Section
+  == Subsection
+  === Sub-subsection
+`}
+  image="/typst_docs_assets/images/6GN6usLf0lPi5N6kg6Xzhg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.where(..any) -> selector
+```
+
+#### `fields` [#definitions-where-fields]
+
+**Type:** `any` · **Modifiers:** Required, Positional, Variadic
+
+Поля, по которым выполняется фильтрация.

@@ -1,0 +1,103 @@
+---
+title: "TOML"
+description: "Документация для функции `toml`."
+---
+
+
+<span id="summary" />
+
+*Добавлено в версии: 0.3.0*
+
+Считывает структурированные данные из файла TOML.
+
+Файл должен содержать корректную таблицу TOML. Значения TOML будут преобразованы в соответствующие значения Typst, как указано в [таблице ниже](#conversion).
+
+Функция возвращает словарь, представляющий таблицу TOML.
+
+Файл TOML в примере состоит из таблицы с ключами `title`, `version` и `authors`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let details = toml("details.toml")
+
+  Title: #details.title \\
+  Version: #details.version \\
+  Authors: #(details.authors
+    .join(", ", last: " and "))
+`}
+  image="/typst_docs_assets/images/Do4LOVaRpjM6oEkywxOU-Q.png"
+  alt=""
+  editable={true}
+/>
+
+## Детали преобразования [#conversion]
+
+Прежде всего, документы TOML — это таблицы. Другие значения должны быть помещены в таблицу, чтобы быть закодированными или декодированными.
+
+| **Значение TOML** | **Преобразуется в Typst** |
+| --- | --- |
+| string | [`str`](/docs/typst/reference/foundations/str) |
+| integer | [`int`](/docs/typst/reference/foundations/int) |
+| float | [`float`](/docs/typst/reference/foundations/float) |
+| boolean | [`bool`](/docs/typst/reference/foundations/bool) |
+| datetime | [`datetime`](/docs/typst/reference/foundations/datetime) |
+| array | [`array`](/docs/typst/reference/foundations/array) |
+| table | [`dictionary`](/docs/typst/reference/foundations/dictionary) |
+
+| **Значение Typst** | **Преобразуется в TOML** |
+| --- | --- |
+| типы, которые можно преобразовать из TOML | соответствующее значение TOML |
+| `none` | игнорируется |
+| [`bytes`](/docs/typst/reference/foundations/bytes) | строка через [`repr`](/docs/typst/reference/foundations/repr) |
+| [`symbol`](/docs/typst/reference/foundations/symbol) | строка |
+| [`content`](/docs/typst/reference/foundations/content) | таблица, описывающая содержимое |
+| другие типы ([`length`](/docs/typst/reference/layout/length) и т. д.) | строка через [`repr`](/docs/typst/reference/foundations/repr) |
+
+### Примечания [#notes]
+
+- Учтите, что целые числа TOML, превышающие $2^{63} - 1$ или меньшие, чем $- 2^{63}$, не могут быть представлены в Typst без потерь, и в соответствии со [спецификацией](https://toml.io/en/v1.0.0#integer) будет выдана ошибка.
+- Байты не кодируются как массивы TOML по соображениям производительности и читаемости. Для двоичных данных рассмотрите использование [`cbor.encode`](/docs/typst/reference/data-loading/cbor#definitions-encode).
+- Функция `repr` [предназначена только для отладки](/docs/typst/reference/foundations/repr#debugging-only), и её вывод не гарантируется стабильным между версиями Typst.
+
+## Параметры [#parameters]
+
+```typst
+toml(str | path | bytes) -> dictionary
+```
+
+### `source` [#parameters-source]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Путь к файлу TOML или необработанные байты TOML.
+
+## Функции [#functions]
+
+### `encode` [#definitions-encode]
+
+*Добавлено в версии: 0.8.0*
+
+Кодирует структурированные данные в строку TOML.
+
+```typst
+toml.encode(
+  dictionary,
+  pretty: bool,
+) -> str
+```
+
+#### `value` [#definitions-encode-value]
+
+**Тип:** [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Обязательный, Позиционный
+
+Значение для кодирования.
+
+Документы TOML — это таблицы. Поэтому подходят только словари.
+
+#### `pretty` [#definitions-encode-pretty]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Следует ли форматировать результирующий TOML для удобочитаемости.

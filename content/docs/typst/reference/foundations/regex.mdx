@@ -1,0 +1,79 @@
+---
+title: "Regex"
+description: "Документация для типа `regex`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Регулярное выражение.
+
+Может использоваться как [селектор правила show](/docs/typst/reference/styling#show-rules) или со [строковыми методами](/docs/typst/reference/foundations/str).
+
+Полную спецификацию поддерживаемого синтаксиса см. на [этом сайте](https://docs.rs/regex/latest/regex/#syntax).
+
+## Со строковыми методами [#string-methods]
+
+Регулярные выражения можно использовать со строковыми методами, такими как [`find`](/docs/typst/reference/foundations/str#definitions-find), [`split`](/docs/typst/reference/foundations/str#definitions-split), [`replace`](/docs/typst/reference/foundations/str#definitions-replace), [`match`](/docs/typst/reference/foundations/str#definitions-match) или [`matches`](/docs/typst/reference/foundations/str#definitions-matches). Подробнее см. в документации этих методов.
+
+<TypstRender
+  code={`
+  #"a,b;c".split(regex("[,;]"))
+`}
+  image="/typst_docs_assets/images/zd97GjPa148E6slQn5w4Gg.png"
+  alt=""
+  editable={true}
+/>
+
+## С правилами show [#show-rules]
+
+Регулярные выражения также можно использовать с [правилами show](/docs/typst/reference/styling#show-rules), чтобы находить и преобразовывать текст в документе. Например, ниже мы делаем все числа красными.
+
+<TypstRender
+  code={`
+  #show regex("\\\\d+"): set text(red)
+
+  The numbers 1 to 10.
+`}
+  image="/typst_docs_assets/images/ZhbhnEk1xIYjSRwyyldSuQ.png"
+  alt=""
+  editable={true}
+/>
+
+Иногда также может потребоваться объединить оба способа: сначала найти текст с помощью правила show, а затем повторно сопоставить его, чтобы извлечь определённую [группу захвата](https://docs.rs/regex/latest/regex/#grouping-and-flags). В этом случае удобно сохранить регулярное выражение в переменной, а не повторять его дважды.
+
+<TypstRender
+  code={`
+  #let pattern = regex("\\|([^|]*)\\|")
+  #show pattern: it => {
+    let m = it.text.match(pattern)
+    let inner = m.captures.first()
+    highlight(inner)
+  }
+
+  A |handy-dandy| highlighter!
+`}
+  image="/typst_docs_assets/images/ZtnkfsdG_SOE84rl4VX07Q.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Создаёт регулярное выражение из строки.
+
+```typst
+regex(str) -> regex
+```
+
+### `regex` [#constructor-regex]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Регулярное выражение в виде строки.
+
+Как строки Typst, так и регулярные выражения используют обратную косую черту для экранирования. Чтобы получить escape-последовательность регулярного выражения, которая также допустима в Typst, нужно экранировать саму обратную косую черту (например, записать `regex("\\\\")` для регулярного выражения `\\`). Escape-последовательности регулярных выражений, не являющиеся допустимыми escape-последовательностями Typst (например, `\d` и `\b`), можно вводить в строки напрямую, но хорошей практикой считается всё же экранировать их во избежание неоднозначности (то есть `regex("\\b\\d")`). См. [список допустимых escape-последовательностей строк](/docs/typst/reference/foundations/str#escapes).
+
+Если вам нужно много escape-последовательностей, можно также создать raw-элемент и извлечь его текст, чтобы использовать его для регулярных выражений: `` regex(`\d+\.\d+\.\d+`.text) ``.

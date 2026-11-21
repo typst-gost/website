@@ -1,0 +1,116 @@
+---
+title: "Rotate"
+description: "Документация для функции `rotate`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Поворачивает содержимое, не влияя на макет.
+
+Поворачивает элемент на заданный угол. Макет будет вести себя так, как если бы элемент не был повёрнут, если только вы не укажете `reflow: true`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 1fr,
+    ..range(16)
+      .map(i => rotate(24deg * i)[X]),
+  )
+`}
+  image="/typst_docs_assets/images/nOIAq9rzvkvBawipYFr69Q.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+rotate(
+  angle,
+  origin: alignment,
+  reflow: bool,
+  content,
+)
+```
+
+### `angle` [#parameters-angle]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `0deg`
+
+Величина поворота.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #rotate(-1.571rad)[Space!]
+`}
+  image="/typst_docs_assets/images/Tbhy3ePDBL6a56Yi06tomA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `origin` [#parameters-origin]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `center + horizon`
+
+Точка начала поворота.
+
+Если, например, вы хотите, чтобы нижний левый угол повёрнутого элемента оставался выровненным по базовой линии, вместо этого следует установить значение `bottom + left`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set text(spacing: 8pt)
+  #let square = square.with(width: 8pt)
+
+  #box(square())
+  #box(rotate(30deg, origin: center, square()))
+  #box(rotate(30deg, origin: top + left, square()))
+  #box(rotate(30deg, origin: bottom + right, square()))
+`}
+  image="/typst_docs_assets/images/Fou-P6xbvjkvUWK026vvdg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `reflow` [#parameters-reflow]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `false`
+
+Влияет ли поворот на макет.
+
+Если установлено значение `false`, повёрнутое содержимое сохранит ограничивающую рамку исходного содержимого. Если установлено значение `true`, ограничивающая рамка будет учитывать поворот содержимого и соответствующим образом корректировать макет.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  Hello #rotate(90deg, reflow: true)[World]!
+`}
+  image="/typst_docs_assets/images/WxBWBiLfUOVFTFj0DoXfRQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое для поворота.

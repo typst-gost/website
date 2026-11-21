@@ -1,0 +1,553 @@
+---
+title: "Абзац"
+description: "Документация для функции `par`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Логическое подразделение текстового содержимого.
+
+Typst автоматически собирает элементы _строчного уровня_ в абзацы. К элементам строчного уровня относятся [текст](/docs/typst/reference/text/text), [горизонтальный отступ](/docs/typst/reference/layout/h), [блоки-контейнеры](/docs/typst/reference/layout/box) и [строчные формулы](/docs/typst/reference/math/equation).
+
+Чтобы разделить абзацы, используйте пустую строку (или явный [`parbreak`](/docs/typst/reference/model/parbreak)). Абзацы также автоматически прерываются любым элементом блочного уровня (например, [`block`](/docs/typst/reference/layout/block), [`place`](/docs/typst/reference/layout/place) или любым другим, который отображается как один из них).
+
+Элемент `par` в основном используется в правилах set для настройки свойств абзаца, но его также можно использовать для явного отображения его аргумента как отдельного абзаца. В этом случае тело абзаца не может содержать блочного содержимого.
+
+## Блоки-контейнеры и блочные элементы [#boxes-and-blocks]
+
+Как объяснено выше, обычно абзацы содержат только содержимое строчного уровня. Однако вы можете интегрировать в абзац содержимое любого блочного уровня, обернув его в [`box`](/docs/typst/reference/layout/box).
+
+И наоборот, вы можете отделить содержимое строчного уровня от абзаца, обернув его в [`block`](/docs/typst/reference/layout/block). В этом случае оно вообще не станет частью какого-либо абзаца. Прочитайте следующий раздел, чтобы понять, почему это важно и чем это отличается от простого добавления разрывов абзацев вокруг содержимого.
+
+## Что становится абзацем? [#what-becomes-a-paragraph]
+
+Когда вы добавляете в документ содержимое строчного уровня, Typst автоматически оборачивает его в абзацы. Однако типичный документ также содержит некоторый текст, который семантически не является частью абзаца, например, в заголовке или подписи.
+
+Правила, по которым Typst оборачивает содержимое строчного уровня в абзац, следующие:
+
+- Весь текст в корне документа оборачивается в абзацы.
+- Текст в контейнере (например, в `block`) оборачивается в абзац только в том случае, если контейнер содержит какое-либо содержимое блочного уровня. Если всё содержимое имеет строчный уровень, абзац не создаётся.
+
+В свёрстанном документе не сразу видно, стал ли текст частью абзаца. Однако это важно по нескольким причинам:
+
+- Некоторые стили абзаца, такие как `first-line-indent`, применяются только к настоящим абзацам, а не к любому тексту. Аналогично, правила show для `par`, конечно же, срабатывают только на абзацах.
+- Правильное различие между абзацами и другим текстом помогает людям, использующим вспомогательные технологии (AT) (например, экранные дикторы), правильно перемещаться по документу и понимать его.
+- При экспорте в PDF тег `P` создаётся только для абзацев.
+- При экспорте в HTML тег `<p>` создаётся только для абзацев.
+
+При создании пользовательских переиспользуемых компонентов вы можете и должны контролировать, создаёт ли Typst абзацы. Обернув текст в [`block`](/docs/typst/reference/layout/block) вместо простого добавления разрывов абзацев вокруг него, вы можете принудительно избежать создания абзаца. И наоборот, добавив [`parbreak`](/docs/typst/reference/model/parbreak) после некоторого содержимого в контейнере, вы можете заставить его стать абзацем, даже если это всего одно слово. Именно так, например, поступают [не-`tight`](/docs/typst/reference/model/list#parameters-tight) списки, чтобы их элементы становились абзацами.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set par(
+    first-line-indent: 1em,
+    spacing: 0.65em,
+    justify: true,
+  )
+
+  We proceed by contradiction.
+  Suppose that there exists a set
+  of positive integers $a$, $b$, and
+  $c$ that satisfies the equation
+  $a^n + b^n = c^n$ for some
+  integer value of $n > 2$.
+
+  Without loss of generality,
+  let $a$ be the smallest of the
+  three integers. Then, we ...
+`}
+  image="/typst_docs_assets/images/jkNkeiDO5yu7S7iYG474vQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+par(
+  leading: length,
+  spacing: length,
+  justify: bool,
+  justification-limits: dictionary,
+  linebreaks: auto | str,
+  first-line-indent: length | dictionary,
+  hanging-indent: length,
+  content,
+)
+```
+
+### `leading` [#parameters-leading]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0.65em`
+
+Расстояние между строками.
+
+Интерлиньяж определяет расстояние между [нижней границей](/docs/typst/reference/text/text#parameters-bottom-edge) одной строки и [верхней границей](/docs/typst/reference/text/text#parameters-top-edge) следующей строки. По умолчанию эти два свойства определяются шрифтом, но их также можно настроить вручную с помощью правила set для текста.
+
+Задавая верхнюю границу, нижнюю границу и интерлиньяж, вы также можете настроить согласованное расстояние между базовыми линиями. Например, вы можете установить интерлиньяж `1em`, верхнюю границу `0.8em` и нижнюю границу `-0.2em`, чтобы получить расстояние между базовыми линиями ровно `2em`. Точное распределение значений верхней и нижней границ влияет на границы первой и последней строк.
+
+<img src="/typst_docs_assets/images/lkvrajZJae3pMhvI5hXJLQ.png" alt="" width="700" height="358" />
+
+### `spacing` [#parameters-spacing]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `1.2em`
+
+Расстояние между абзацами.
+
+Как и интерлиньяж, это определяет расстояние между нижней границей последней строки абзаца и верхней границей первой строки следующего абзаца. Отступ действует как сверху, так и снизу, схлопываясь до большего из значений, определённых соседними абзацами.
+
+Когда абзац соседствует с [`block`](/docs/typst/reference/layout/block), свойство [`above`](/docs/typst/reference/layout/block#parameters-above) или [`below`](/docs/typst/reference/layout/block#parameters-below) этого блока имеет приоритет над отступом абзаца. Например, заголовки по умолчанию уменьшают отступ под ними для лучшего внешнего вида.
+
+### `justify` [#parameters-justify]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Выравнивать ли текст по ширине строки.
+
+Переносы будут включены для выровненных по ширине абзацев, если [свойство `hyphenate` функции text](/docs/typst/reference/text/text#parameters-hyphenate) установлено в `auto` и текущий язык известен.
+
+Обратите внимание, что текущее [выравнивание](/docs/typst/reference/layout/align#parameters-alignment) всё ещё влияет на размещение последней строки, за исключением случаев, когда она заканчивается [выровненным разрывом строки](/docs/typst/reference/text/linebreak#parameters-justify).
+
+По умолчанию Typst изменяет только расстояние между словами для достижения выравнивания по ширине. Однако вы также можете разрешить ему корректировать расстояние между отдельными символами с помощью [свойства `justification-limits`](#parameters-justification-limits).
+
+### `justification-limits` [#parameters-justification-limits]
+
+**Тип:** [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable
+
+**По умолчанию:**
+
+```typst
+(
+ spacing: (min: 66.67% + 0pt, max: 150% + 0pt),
+ tracking: (min: 0pt, max: 0pt),
+)
+```
+
+Насколько можно корректировать расстояние между словами и символами при выравнивании по ширине.
+
+При выравнивании текста по ширине Typst необходимо растянуть или сжать строку до полной ширины полосы набора. Для этого по умолчанию он корректирует расстояние между словами. Кроме того, он также может корректировать расстояние между отдельными символами. Это свойство позволяет настроить нижнюю и верхнюю границы для таких корректировок.
+
+Свойство принимает словарь с двумя записями, `spacing` и `tracking`, каждая из которых содержит словарь с ключами `min` и `max`. Ключи `min` определяют, до какой нижней границы можно сжимать промежутки, а ключи `max` определяют, до какой верхней границы их можно растягивать.
+
+- Запись `spacing` определяет, насколько можно корректировать ширину пробелов между словами. Она тесно связана с [`text.spacing`](/docs/typst/reference/text/text#parameters-spacing), и её ключи `min` и `max` принимают [относительные длины](/docs/typst/reference/layout/relative), так же как и свойство `spacing`.
+
+  Значение `min`, равное `100%`, означает, что пробелы должны сохранять свой нормальный размер (т. е. не сжиматься), а значение `90% - 0.01em` указывало бы, что пробел можно сжать до ширины 90% от его нормальной ширины минус 0.01× текущего размера шрифта. Аналогично, значение `max`, равное `100% + 0.02em`, означает, что ширину пробела можно увеличить на 0.02× текущего размера шрифта. Часть-отношение всегда должна быть положительной. Часть-длина, в свою очередь, не должна быть положительной для `min` и не должна быть отрицательной для `max`.
+
+  Обратите внимание, что пробелы всё равно могут быть расширены сверх значения `max`, если иным способом выровнять строку невозможно. Однако другие средства выравнивания (например, разрядка символов, если запись `tracking` настроена соответствующим образом) сначала используются до своего максимума.
+- Запись `tracking` определяет, насколько можно корректировать расстояние между буквами. Она тесно связана с [`text.tracking`](/docs/typst/reference/text/text#parameters-tracking), и её ключи `min` и `max` принимают [длины](/docs/typst/reference/layout/length), так же как и свойство `tracking`. В отличие от `spacing`, она не принимает относительные длины, поскольку база относительной длины различалась бы для каждого символа, что привело бы к неравномерному визуальному восприятию. Поведение по сравнению с `spacing` такое, как если бы база была равна `100%`.
+
+  В остальном значения `min` и `max` работают так же, как для `spacing`. Значение `max`, равное `0.01em`, означает, что между каждой парой символов может быть вставлен дополнительный интервал, составляющий 0.01× текущего размера шрифта. Обратите внимание, что это также включает промежутки между пробелами и символами, поэтому для пробелов значения `tracking` действуют в дополнение к значениям `spacing`.
+
+Если вы укажете только одно из значений `spacing` или `tracking`, другое сохранит своё ранее установленное значение (или значение по умолчанию, если оно не было установлено ранее).
+
+Если вы хотите включить выравнивание на уровне символов, хорошим значением для ключей `min` и `max` будет примерно от `0.01em` до `0.02em` (с отрицанием для `min`). Использование одного и того же значения для обоих даёт хорошую базовую настройку, но индивидуальная настройка двух значений может дать более сбалансированные результаты, как показано в примере ниже. Будьте осторожны, не задавайте границы слишком широкими, так как это быстро выглядит неестественно.
+
+Использование выравнивания на уровне символов — это эффективный микротипографический приём, который может улучшить внешний вид выровненного по ширине текста, особенно в узких колонках. Однако учтите, что выравнивание на уровне символов работает не со всеми шрифтами и языками. Например, рукописные шрифты соединяют буквы. Использование выравнивания на уровне символов привело бы к неровным соединениям.
+
+<details>
+<summary>Посмотреть пример: выравнивание на уровне символов</summary>
+
+<TypstRender
+  code={`
+  #let example(name) = columns(2, gutter: 10pt)[
+    #place(top, float: true, scope: "parent", strong(name))
+    /* Text from https://en.wikipedia.org/wiki/Anne_Bayley */
+  ]
+
+  #set page(width: 440pt, height: 21em, margin: 15pt)
+  #set par(justify: true)
+  #set text(size: 0.8em)
+
+  #grid(
+    columns: (1fr, 1fr),
+    gutter: 20pt,
+    {
+      // These are Typst's default limits.
+  set par(justification-limits: (
+        spacing: (min: 100% * 2 / 3, max: 150%),
+        tracking: (min: 0em, max: 0em),
+      ))
+      example[Word-level justification]
+    },
+    {
+      // These are our custom character-level limits.
+  set par(justification-limits: (
+        tracking: (min: -0.01em, max: 0.02em),
+      ))
+      example[Character-level justification]
+    },
+  )
+`}
+  image="/typst_docs_assets/images/56-iuBbdgXsIGaF72tl6hQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `linebreaks` [#parameters-linebreaks]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как определять разрывы строк.
+
+Когда это свойство установлено в `auto` (значение по умолчанию), для выровненных по ширине абзацев используются оптимизированные разрывы строк. Включение оптимизированных разрывов строк для невыровненных абзацев также может быть полезным для улучшения внешнего вида текста.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(width: 207pt)
+  #set par(linebreaks: "simple")
+  Some texts feature many longer
+  words. Those are often exceedingly
+  challenging to break in a visually
+  pleasing way.
+
+  #set par(linebreaks: "optimized")
+  Some texts feature many longer
+  words. Those are often exceedingly
+  challenging to break in a visually
+  pleasing way.
+`}
+  image="/typst_docs_assets/images/LkBwQV8cKepsxjKgo-wshA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"simple"` | Определять разрывы строк простым способом «первого подходящего». |
+| `"optimized"` | Оптимизировать разрывы строк для всего абзаца. <br /> Typst будет стараться создавать более равномерно заполненные строки текста, учитывая весь абзац при вычислении разрывов строк. |
+
+### `first-line-indent` [#parameters-first-line-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(amount: 0pt, all: false)`
+
+Отступ, который должна иметь первая строка абзаца.
+
+По умолчанию отступ получает только первая строка последующего абзаца (не первого в документе или контейнере и не абзацев, непосредственно следующих за другими элементами блочного уровня).
+
+Если вы хотите вместо этого сделать отступ у всех абзацев, вы можете передать словарь, содержащий `amount` отступа в виде длины и пару `all: true`. Если `all` опущено в словаре, оно по умолчанию равно `false`.
+
+Согласно типографической традиции, разрывы абзацев обозначаются либо некоторым пространством между абзацами, либо отступами первых строк. Рассмотрите возможность
+
+- уменьшения [отступа абзаца `spacing`](#parameters-spacing) до значения [`leading`](#parameters-leading) с помощью `set par(spacing: 0.65em)`
+- увеличения [отступа блока `spacing`](/docs/typst/reference/layout/block#parameters-spacing) (который по умолчанию наследует отступ абзаца) до исходного отступа абзаца с помощью `set block(spacing: 1.2em)`
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set block(spacing: 1.2em)
+  #set par(
+    first-line-indent: 1.5em,
+    spacing: 0.65em,
+  )
+
+  The first paragraph is not affected
+  by the indent.
+
+  But the second paragraph is.
+
+  #line(length: 100%)
+
+  #set par(first-line-indent: (
+    amount: 1.5em,
+    all: true,
+  ))
+
+  Now all paragraphs are affected
+  by the first line indent.
+
+  Even the first one.
+`}
+  image="/typst_docs_assets/images/7VXz-LksynkCbWs1EQuZhw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `hanging-indent` [#parameters-hanging-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Отступ, который должны иметь все строки абзаца, кроме первой.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par(hanging-indent: 1em)
+
+  #lorem(15)
+`}
+  image="/typst_docs_assets/images/v_r-0gFkc-dXB_w9EFxghA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое абзаца.
+
+## Функции [#functions]
+
+### `line` [#definitions-line]
+
+*Элемент* · *Locatable* · *Since: 0.12.0*
+
+Строка абзаца.
+
+Этот элемент используется исключительно для настройки нумерации строк через правила set и не может быть размещён.
+
+Опция [`numbering`](#definitions-line-numbering) используется для включения нумерации строк путём указания формата нумерации.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par.line(numbering: "1")
+
+  Roses are red. \\
+  Violets are blue. \\
+  Typst is there for you.
+`}
+  image="/typst_docs_assets/images/KQW6pSp1WMVIkrsshPE2XA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Опция `numbering` принимает либо предопределённый [шаблон нумерации](/docs/typst/reference/model/numbering), либо функцию, возвращающую стилизованное содержимое. Вы можете отключить нумерацию строк для текста внутри определённых элементов, установив нумерацию в `none` с помощью правил show-set.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // Styled red line numbers.
+  #set par.line(
+    numbering: n => text(red)[#n]
+  )
+
+  // Disable numbers inside figures.
+  #show figure: set par.line(
+    numbering: none
+  )
+
+  Roses are red. \\
+  Violets are blue.
+
+  #figure(
+    caption: [Without line numbers.]
+  )[
+    Lorem ipsum \\
+    dolor sit amet
+  ]
+
+  The text above is a sample \\
+  originating from distant times.
+`}
+  image="/typst_docs_assets/images/3UD68-DF6CkEpUDqueAC7Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Этот элемент предоставляет дополнительные опции, которые можно использовать для управления другими аспектами нумерации строк, такими как её [выравнивание](#definitions-line-number-align) или [поле](#definitions-line-number-margin). Кроме того, вы можете управлять тем, сбрасывается ли нумерация на каждой странице, с помощью опции [`numbering-scope`](#definitions-line-numbering-scope).
+
+```typst
+par.line(
+  numbering: none | str | function,
+  number-align: auto | alignment,
+  number-margin: alignment,
+  number-clearance: auto | length,
+  numbering-scope: str,
+) -> content
+```
+
+#### `numbering` [#definitions-line-numbering]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как нумеровать каждую строку. Принимает [шаблон нумерации или функцию](/docs/typst/reference/model/numbering), принимающую одно число.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par.line(numbering: "I")
+
+  Roses are red. \\
+  Violets are blue. \\
+  Typst is there for you.
+`}
+  image="/typst_docs_assets/images/e7t3o6hYh0ZSad84LtuOkQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par.line(
+    numbering: i => if calc.rem(i, 5) == 0 or i == 1 { i },
+  )
+
+  #lorem(60)
+`}
+  image="/typst_docs_assets/images/l1fpwItohuYOPBuzka-p9Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `number-align` [#definitions-line-number-align]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Выравнивание номеров строк, связанных с каждой строкой.
+
+Значение по умолчанию `auto` указывает на разумное поведение по умолчанию, при котором номера растут горизонтально в сторону от текста с учётом поля, в котором они находятся, и текущего направления текста.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par.line(
+    numbering: "I",
+    number-align: left,
+  )
+
+  Hello world! \\
+  Today is a beautiful day \\
+  For exploring the world.
+`}
+  image="/typst_docs_assets/images/p-5vH1jer2iXGgSvpsPQ2w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `number-margin` [#definitions-line-number-margin]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `start`
+
+Поле, на котором появляются номера строк.
+
+_Примечание:_ В многоколоночном документе номера строк для абзацев в последней колонке всегда будут появляться на поле `end` (правое поле для текста слева направо и левое поле для текста справа налево), независимо от этой настройки. Это поведение на данный момент изменить нельзя.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par.line(
+    numbering: "1",
+    number-margin: right,
+  )
+
+  = Report
+  - Brightness: Dark, yet darker
+  - Readings: Negative
+`}
+  image="/typst_docs_assets/images/YTPdcjoKmBP4Kb_R5AQR6g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `number-clearance` [#definitions-line-number-clearance]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Расстояние между номерами строк и текстом.
+
+Значение по умолчанию `auto` даёт зазор, адаптирующийся к ширине страницы и дающий разумные результаты в большинстве случаев.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par.line(
+    numbering: "1",
+    number-clearance: 4pt,
+  )
+
+  Typesetting \\
+  Styling \\
+  Layout
+`}
+  image="/typst_docs_assets/images/K5VQWD-XPuCfGTfhiKOoPQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `numbering-scope` [#definitions-line-numbering-scope]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"document"`
+
+Управляет тем, когда сбрасывать нумерацию строк.
+
+_Примечание:_ Область нумерации строк должна быть одинаковой в пределах каждого прогона страниц (прогон страниц — это последовательность страниц без явного разрыва страницы между ними). По этой причине правила set для неё следует определять до любого содержимого страницы, как правило, в самом начале документа.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set par.line(
+    numbering: "1",
+    numbering-scope: "page",
+  )
+
+  First line \\
+  Second line
+  #pagebreak()
+  First line again \\
+  Second line again
+`}
+  image="/typst_docs_assets/images/Zc3MDgjZJsJc4FDEqQwnGA.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/2aNwFPI8Xiiy1rp8PW3pGA.png" alt="" width="480" height="103" />
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"document"` | Указывает, что счётчик номеров строк охватывает весь документ, т. е. он никогда не сбрасывается автоматически. |
+| `"page"` | Указывает, что счётчик номеров строк должен сбрасываться в начале каждой новой страницы. |

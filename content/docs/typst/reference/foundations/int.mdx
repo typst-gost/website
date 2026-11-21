@@ -1,0 +1,479 @@
+---
+title: "Integer"
+description: "Документация для типа `int`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Целое число: положительное целое число, отрицательное целое число или ноль.
+
+Typst хранит знаковые целые числа в [дополнительном коде](https://en.wikipedia.org/wiki/Two%27s_complement) в 64 битах. Это позволяет хранить числа до $2^{63} - 1$ ([`int.max`](#definitions-max)) и до $- 2^{63}$ ([`int.min`](#definitions-min)).
+
+Целые числа также можно задавать в шестнадцатеричной, восьмеричной или двоичной системе, начиная с префиксов: `0x`, `0o` или `0b`.
+
+Вы можете преобразовать значение в целое число с помощью конструктора этого типа.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #(1 + 2) \\
+  #(2 - 5) \\
+  #(3 + 4 < 8)
+
+  #0xff \\
+  #0o10 \\
+  #0b1001
+
+  #(int(3.8) + int("26"))
+
+  / Max: #int.max
+  / Min: #int.min
+`}
+  image="/typst_docs_assets/images/d-HMyCm4ZYVp6FfOQoP_OA.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+Целые числа Typst можно вводить в режиме кода, используя десятичные цифры 0–9. Кроме того, если одиночная цифра 0 сопровождается `x`, `o` или `b` (`0x`, `0o`, `0b`), Typst будет рассматривать следующие за ней цифры как [шестнадцатеричное](https://en.wikipedia.org/wiki/Hexadecimal) (основание 16), [восьмеричное](https://en.wikipedia.org/wiki/Octal) (основание 8) или [двоичное](https://en.wikipedia.org/wiki/Binary_number) (основание 2) число.
+
+Шестнадцатеричные числа используют буквы a–f или A–F для значений 10–15.
+
+Typst выдаст ошибку, если будет записано целое число, превышающее [`int.max`](#definitions-max). В этом случае вы можете вместо этого использовать [число с плавающей точкой](/docs/typst/reference/foundations/float), добавив точку в конец числа.
+
+Typst отличается от некоторых других языков программирования тем, что не рассматривает отрицательные целые числа как отдельные токены в своём синтаксисе. Вместо этого ввод вроде `-6` рассматривается как оператор отрицания, применённый к положительному целому числу `6`. Это может вызвать проблему при попытке записать минимальное отрицательное целое число `-9223372036854775808`, поскольку `9223372036854775808` больше [`int.max`](#definitions-max). Чтобы записать минимальное отрицательное целое число, используйте вместо этого [`int.min`](#definitions-min).
+
+Это также означает, что если вы хотите встроить отрицательное целое число в разметку, вам нужно будет использовать круглые скобки для группировки оператора отрицания: `#(-6)`.
+
+## Конструктор [#constructor]
+
+Преобразует значение в целое число. Выдаёт ошибку при попытке разобрать недопустимую строку или получить целое число, не помещающееся в 64-битное знаковое целое.
+
+- Логические значения преобразуются в `0` или `1`.
+- Числа с плавающей точкой и десятичные числа округляются к ближайшему 64-битному целому в сторону нуля.
+- Строки по умолчанию разбираются в системе счисления с основанием 10.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #int(false) \\
+  #int(true) \\
+  #int(2.7) \\
+  #int(decimal("3.8")) \\
+  #(int("27") + int("4")) \\
+  #int("beef", base: 16)
+`}
+  image="/typst_docs_assets/images/yDOLkR54Xy6HTuR9qunRjw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+int(
+  bool | int | float | decimal | str,
+  base: int,
+)
+```
+
+### `value` [#constructor-value]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) или [int](/docs/typst/reference/foundations/int) или [float](/docs/typst/reference/foundations/float) или [decimal](/docs/typst/reference/foundations/decimal) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое должно быть преобразовано в целое число.
+
+### `base` [#constructor-base]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `10`
+
+Основание системы счисления для разбора строк, от 2 до 36.
+
+Для оснований выше 10 Typst принимает буквы a–z или A–Z для значений 10–35.
+
+## Константы [#constants]
+
+### `max` [#definitions-max]
+
+*Since: forever* · **Тип:** [int](/docs/typst/reference/foundations/int)
+
+Максимальное значение, которое может быть представлено как целое число Typst: $2^{63} - 1$.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #int.max \\
+  // In hexadecimal:
+  #0x7FFFFFFFFFFFFFFF
+`}
+  image="/typst_docs_assets/images/2GVlGJHHBN503kIdJAKH1g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `min` [#definitions-min]
+
+*Since: forever* · **Тип:** [int](/docs/typst/reference/foundations/int)
+
+Минимальное значение, которое может быть представлено как целое число Typst: $- 2^{63}$.
+
+Попытка записать это целое число явно как `-9223372036854775808` вместо использования `int.min` приведёт к ошибке. Для получения дополнительной информации прочитайте раздел [Синтаксис](#syntax).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #int.min
+`}
+  image="/typst_docs_assets/images/8d5kO1zn3f53l7HsmAd0oQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `signum` [#definitions-signum]
+
+*Since: 0.11.0*
+
+Вычисляет знак целого числа.
+
+- Если число положительное, возвращает `1`.
+- Если число отрицательное, возвращает `-1`.
+- Если число равно нулю, возвращает `0`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(5).signum() \\
+  #(-5).signum() \\
+  #(0).signum()
+`}
+  image="/typst_docs_assets/images/cE2D0edLkXdNrN4yXic06Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.signum() -> int
+```
+
+### `bit-not` [#definitions-bit-not]
+
+*Since: 0.11.0*
+
+Вычисляет побитовое НЕ целого числа.
+
+Для целей этой функции операнд рассматривается как знаковое целое число из 64 бит.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #4.bit-not() \\
+  #(-1).bit-not()
+`}
+  image="/typst_docs_assets/images/WcJGoVkeRgzdMgkQOGStow.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.bit-not() -> int
+```
+
+### `bit-and` [#definitions-bit-and]
+
+*Since: 0.11.0*
+
+Вычисляет побитовое И между двумя целыми числами.
+
+Для целей этой функции операнды рассматриваются как знаковые целые числа из 64 бит.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #128.bit-and(192)
+`}
+  image="/typst_docs_assets/images/G1QiR-56ogYi2uyoJy3tKQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.bit-and(int)
+```
+
+#### `rhs` [#definitions-bit-and-rhs]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Правый операнд побитового И.
+
+### `bit-or` [#definitions-bit-or]
+
+*Since: 0.11.0*
+
+Вычисляет побитовое ИЛИ между двумя целыми числами.
+
+Для целей этой функции операнды рассматриваются как знаковые целые числа из 64 бит.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #64.bit-or(32)
+`}
+  image="/typst_docs_assets/images/H7rvtiqk-40pkB8dHWpJMw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.bit-or(int)
+```
+
+#### `rhs` [#definitions-bit-or-rhs]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Правый операнд побитового ИЛИ.
+
+### `bit-xor` [#definitions-bit-xor]
+
+*Since: 0.11.0*
+
+Вычисляет побитовое исключающее ИЛИ между двумя целыми числами.
+
+Для целей этой функции операнды рассматриваются как знаковые целые числа из 64 бит.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #64.bit-xor(96)
+`}
+  image="/typst_docs_assets/images/RApL3tQyjuT2u5yuRv-Nng.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.bit-xor(int)
+```
+
+#### `rhs` [#definitions-bit-xor-rhs]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Правый операнд побитового исключающего ИЛИ.
+
+### `bit-lshift` [#definitions-bit-lshift]
+
+*Since: 0.11.0*
+
+Сдвигает биты операнда влево на указанное количество.
+
+Для целей этой функции операнд рассматривается как знаковое целое число из 64 бит. Если результат слишком велик, чтобы поместиться в 64-битное целое, возникнет ошибка.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #33.bit-lshift(2) \\
+  #(-1).bit-lshift(3)
+`}
+  image="/typst_docs_assets/images/Rx8HffniBMGM3NZaIARrMw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.bit-lshift(int)
+```
+
+#### `shift` [#definitions-bit-lshift-shift]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Количество битов для сдвига. Не должно быть отрицательным.
+
+### `bit-rshift` [#definitions-bit-rshift]
+
+*Since: 0.11.0*
+
+Сдвигает биты операнда вправо на указанное количество. По умолчанию выполняет арифметический сдвиг (расширяет знаковый бит влево, так что отрицательные числа остаются отрицательными), но это можно изменить с помощью параметра `logical`.
+
+Для целей этой функции операнд рассматривается как знаковое целое число из 64 бит.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #64.bit-rshift(2) \\
+  #(-8).bit-rshift(2) \\
+  #(-8).bit-rshift(2, logical: true)
+`}
+  image="/typst_docs_assets/images/wLd_UMkBb3zkZz_HJ9DrDw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.bit-rshift(
+  int,
+  logical: bool,
+)
+```
+
+#### `shift` [#definitions-bit-rshift-shift]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Количество битов для сдвига. Не должно быть отрицательным.
+
+Сдвиги больше 63 допустимы и приведут к насыщению возвращаемого значения. Для неотрицательных чисел возвращаемое значение насыщается на `0`, а для отрицательных чисел — на `-1`, если `logical` установлен в `false`, или на `0`, если он равен `true`. Такое поведение согласуется с простым многократным применением этой операции. Поэтому сдвиг всегда будет успешным.
+
+#### `logical` [#definitions-bit-rshift-logical]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Переключает, должен ли выполняться логический (беззнаковый) сдвиг вправо вместо арифметического сдвига вправо. Если это `true`, отрицательные операнды не сохранят свой знаковый бит, и биты, появившиеся слева после сдвига, будут `0`. Этот параметр не влияет на неотрицательные операнды.
+
+### `from-bytes` [#definitions-from-bytes]
+
+*Since: 0.12.0*
+
+Преобразует байты в целое число.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #int.from-bytes(bytes((0, 0, 0, 0, 0, 0, 0, 1))) \\
+  #int.from-bytes(bytes((1, 0, 0, 0, 0, 0, 0, 0)), endian: "big")
+`}
+  image="/typst_docs_assets/images/EZu0QSOTsX4uR3BEhFeq_g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+int.from-bytes(
+  bytes,
+  endian: str,
+  signed: bool,
+) -> int
+```
+
+#### `bytes` [#definitions-from-bytes-bytes]
+
+**Тип:** [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Байты, которые должны быть преобразованы в целое число.
+
+Длина должна быть не более 8, чтобы результат помещался в 64-битное знаковое целое.
+
+#### `endian` [#definitions-from-bytes-endian]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"little"`
+
+Порядок байтов при преобразовании.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"big"` | Порядок байтов от старшего к младшему: байт с наибольшим значением находится в начале байтов. |
+| `"little"` | Порядок байтов от младшего к старшему: байт с наименьшим значением находится в начале байтов. |
+
+#### `signed` [#definitions-from-bytes-signed]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Должны ли байты рассматриваться как знаковое целое число. Если это `true` и старший значащий бит установлен, результирующее число будет отрицательным.
+
+### `to-bytes` [#definitions-to-bytes]
+
+*Since: 0.12.0*
+
+Преобразует целое число в байты.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #array(10000.to-bytes(endian: "big")) \\
+  #array(10000.to-bytes(size: 4))
+`}
+  image="/typst_docs_assets/images/AbZiivX9M-GVPdUSB-Ns-Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.to-bytes(
+  endian: str,
+  size: int,
+) -> bytes
+```
+
+#### `endian` [#definitions-to-bytes-endian]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"little"`
+
+Порядок байтов при преобразовании.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"big"` | Порядок байтов от старшего к младшему: байт с наибольшим значением находится в начале байтов. |
+| `"little"` | Порядок байтов от младшего к старшему: байт с наименьшим значением находится в начале байтов. |
+
+#### `size` [#definitions-to-bytes-size]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `8`
+
+Размер результирующих байтов в байтах (должен быть не меньше нуля). Если целое число слишком велико, чтобы поместиться в указанный размер, преобразование усечёт оставшиеся байты в зависимости от порядка байтов. Чтобы сохранить то же результирующее значение, если порядок байтов от старшего к младшему, усечение произойдёт по крайним правым байтам. В противном случае, если порядок байтов от младшего к старшему, усечение произойдёт по крайним левым байтам.
+
+Учтите, что если целое число отрицательное и размера недостаточно для того, чтобы число поместилось, при передаче результирующих байтов в `int.from-bytes` результирующее число может оказаться положительным, поскольку старший значащий бит может быть не установлен в 1.

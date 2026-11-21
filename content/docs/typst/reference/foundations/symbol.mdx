@@ -1,0 +1,85 @@
+---
+title: "Symbol"
+description: "Документация для типа `symbol`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Символ Unicode.
+
+Typst определяет общие символы, чтобы их можно было легко вводить со стандартных клавиатур. Символы определены в модулях, из которых к ним можно обращаться с помощью [нотации доступа к полям](/docs/typst/reference/scripting#fields):
+
+- Общие символы определены в [модуле `sym`](/docs/typst/reference/symbols/sym) и доступны без префикса `sym.` в математическом режиме.
+- Эмодзи определены в [модуле `emoji`](/docs/typst/reference/symbols/emoji)
+
+Кроме того, вы можете определять собственные символы с помощью конструктора этого типа.
+
+<TypstRender
+  code={`
+  #sym.arrow.r \\
+  #sym.gt.eq.not \\
+  $gt.eq.not$ \\
+  #emoji.face.halo
+`}
+  image="/typst_docs_assets/images/9Ji5vmGltRU7CsKNxRbfJg.png"
+  alt=""
+  editable={true}
+/>
+
+У многих символов есть различные варианты, которые можно выбрать, добавляя модификаторы через точечную нотацию. Порядок модификаторов не имеет значения. Посетите страницы документации модулей символов и нажмите на символ, чтобы увидеть его доступные варианты.
+
+<TypstRender
+  code={`
+  $arrow.l$ \\
+  $arrow.r$ \\
+  $arrow.t.quad$
+`}
+  image="/typst_docs_assets/images/ESm5n4cD6oJxNMOJ7kQjNQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Создаёт пользовательский символ с модификаторами.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let envelope = symbol(
+    "🖂",
+    ("stamped", "🖃"),
+    ("stamped.pen", "🖆"),
+    ("lightning", "🖄"),
+    ("fly", "🖅"),
+  )
+
+  #envelope
+  #envelope.stamped
+  #envelope.stamped.pen
+  #envelope.lightning
+  #envelope.fly
+`}
+  image="/typst_docs_assets/images/9REpNxIPMx1kKiSfuwlWVA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+symbol(..str | array) -> symbol
+```
+
+### `variants` [#constructor-variants]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional, Variadic
+
+Варианты символа.
+
+Может быть просто строкой, состоящей из одного символа, для варианта без модификаторов, либо массивом из двух строк, задающих модификаторы и символ. Отдельные модификаторы должны разделяться точками. При отображении символа Typst выбирает первый из вариантов, у которого присутствуют все указанные модификаторы и минимальное число других модификаторов.

@@ -1,0 +1,218 @@
+---
+title: "Selector"
+description: "Документация для типа `selector`."
+---
+
+
+<span id="summary" />
+
+*С версии: 0.3.0*
+
+Фильтр для выбора элементов в документе.
+
+Чтобы создать селектор, вы можете:
+
+- использовать [функцию элемента](/docs/typst/reference/foundations/function#element-functions)
+- отфильтровать функцию элемента по [определённым полям](/docs/typst/reference/foundations/function#definitions-where)
+- использовать [строку](/docs/typst/reference/foundations/str) или [регулярное выражение](/docs/typst/reference/foundations/regex)
+- использовать [`<label>`](/docs/typst/reference/foundations/label)
+- использовать [`location`](/docs/typst/reference/introspection/location)
+- вызвать конструктор [`selector`](/docs/typst/reference/foundations/selector), чтобы преобразовать любой из вышеперечисленных типов в значение селектора, и использовать приведённые ниже методы для его уточнения
+
+Селекторы используются для [применения правил стилизации](/docs/typst/reference/styling#show-rules) к элементам. Вы также можете использовать селекторы для [запроса](/docs/typst/reference/introspection/query) к документу определённых типов элементов.
+
+Кроме того, вы можете передать селектор в некоторые встроенные функции Typst, чтобы настроить их поведение. Один из таких примеров — [оглавление](/docs/typst/reference/model/outline), где селектор можно использовать, чтобы изменить, какие элементы перечисляются в оглавлении.
+
+Несколько селекторов можно объединить с помощью методов, показанных ниже. Однако на данный момент не все виды селекторов поддерживаются во всех местах.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #context query(
+    heading.where(level: 1)
+      .or(heading.where(level: 2))
+  )
+
+  = This will be found
+  == So will this
+  === But this will not.
+`}
+  image="/typst_docs_assets/images/TXGGI_uCp660yCf0CW0hlw.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Преобразует значение в селектор. Принимаются следующие значения:
+
+- Функция элемента, например `heading` или `figure`.
+- [Строка](/docs/typst/reference/foundations/str) или [регулярное выражение](/docs/typst/reference/foundations/regex).
+- `<label>`.
+- [`location`](/docs/typst/reference/introspection/location).
+- Более сложный селектор, например `heading.where(level: 1)`.
+
+```typst
+selector(str | regex | label | selector | location | function)
+```
+
+### `target` [#constructor-target]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [regex](/docs/typst/reference/foundations/regex) или [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Может быть функцией элемента, например `heading` или `figure`, `<label>` или более сложным селектором, например `heading.where(level: 1)`.
+
+## Функции [#functions]
+
+### `or` [#definitions-or]
+
+*С версии: 0.3.0*
+
+Выбирает все элементы, соответствующие этому или любому из других селекторов.
+
+```typst
+self.or(..str | regex | label | selector | location | function)
+```
+
+#### `others` [#definitions-or-others]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [regex](/docs/typst/reference/foundations/regex) или [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Другие селекторы для сопоставления.
+
+### `and` [#definitions-and]
+
+*С версии: 0.3.0*
+
+Выбирает все элементы, соответствующие этому и всем другим селекторам.
+
+```typst
+self.and(..str | regex | label | selector | location | function)
+```
+
+#### `others` [#definitions-and-others]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [regex](/docs/typst/reference/foundations/regex) или [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Другие селекторы для сопоставления.
+
+### `before` [#definitions-before]
+
+*С версии: 0.3.0*
+
+Возвращает изменённый селектор, который будет соответствовать только элементам, встречающимся до первого совпадения с `end`.
+
+_Примечание:_ В настоящее время этот селектор поддерживается только с функциями интроспекции, но не в правилах show.
+
+```typst
+self.before(
+  label | selector | location | function,
+  inclusive: bool,
+)
+```
+
+#### `end` [#definitions-before-end]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Исходный выбор завершится на первом совпадении с `end`.
+
+#### `inclusive` [#definitions-before-inclusive]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Должен ли `end` сам по себе совпадать или нет. Это имеет значение только в том случае, если оба селектора соответствуют одному и тому же типу элемента. По умолчанию — `true`.
+
+### `after` [#definitions-after]
+
+*С версии: 0.3.0*
+
+Возвращает изменённый селектор, который будет соответствовать только элементам, встречающимся после первого совпадения с `start`.
+
+_Примечание:_ В настоящее время этот селектор поддерживается только с функциями интроспекции, но не в правилах show.
+
+```typst
+self.after(
+  label | selector | location | function,
+  inclusive: bool,
+)
+```
+
+#### `start` [#definitions-after-start]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Исходный выбор начнётся с первого совпадения с `start`.
+
+#### `inclusive` [#definitions-after-inclusive]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Должен ли `start` сам по себе совпадать или нет. Это имеет значение только в том случае, если оба селектора соответствуют одному и тому же типу элемента. По умолчанию — `true`.
+
+### `within` [#definitions-within]
+
+*С версии: 0.15.0*
+
+Возвращает изменённый селектор, который будет соответствовать только элементам, содержащимся внутри любых элементов, соответствующих селектору `ancestor`.
+
+<details>
+<summary>Посмотреть пример: поиск strong-элементов в списках</summary>
+
+<TypstRender
+  code={`
+  *Strong emphasis* that does not count.
+
+  - An *important* word
+  - Another *key* word
+
+  Strong elements in lists:
+  #context {
+    query(selector(strong).within(list))
+      .map(it => it.body)
+      .join[, ]
+  }
+`}
+  image="/typst_docs_assets/images/DcnYx1qOXtsqv9E2Wz9C0Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Это также можно использовать в сочетании с [`here`](/docs/typst/reference/introspection/here), чтобы найти все совпадения селектора внутри выражения [context](/docs/typst/reference/context). Это может быть весьма полезно, чтобы интроспекция возвращала результаты, локальные для некоторого создаваемого вами компонента.
+
+<details>
+<summary>Посмотреть пример: локальный подсчёт элементов в блоке context</summary>
+
+<TypstRender
+  code={`
+  #let count(sel, body) = context {
+    let n = query(selector(sel).within(here())).len()
+    [#body (#n matches)]
+  }
+
+  - #count(emph)[Has _two_ matching _elements_]
+  - #count(strong)[Has *one* matching element]
+`}
+  image="/typst_docs_assets/images/dPMxYCJPAqoFupdhWijlzg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+_Примечание:_ В настоящее время этот селектор поддерживается только с функциями интроспекции, но не в правилах show.
+
+```typst
+self.within(label | selector | location | function)
+```
+
+#### `ancestor` [#definitions-within-ancestor]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+В вывод будут включены только совпадения с `self`, являющиеся потомками любого элемента, соответствующего этому селектору.
+
+Элемент не считается собственным предком.

@@ -1,0 +1,201 @@
+---
+title: "Столбцы"
+description: "Документация для функции `columns`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Разделяет область на несколько столбцов одинакового размера.
+
+Функция `columns` позволяет разделить содержимое любого контейнера на несколько столбцов. По умолчанию столбцы занимают высоту своего контейнера или оставшуюся высоту страницы и заполняются один за другим. Используйте [`colbreak`](/docs/typst/reference/layout/colbreak), чтобы явно завершить столбец и продолжить в следующем. Используйте [параметр `balanced`](#parameters-balanced), чтобы автоматически выровнять высоту столбцов.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #columns(2, gutter: 8pt)[
+    This text is in the
+    first column.
+
+    #colbreak()
+
+    This text is in the
+    second column.
+  ]
+`}
+  image="/typst_docs_assets/images/Tl5I0-uolAduraFZ630Z_g.png"
+  alt=""
+  editable={true}
+/>
+
+## Столбцы на уровне страницы [#page-level]
+
+Если вам нужно вставить столбцы по всему документу, используйте вместо этого [параметр `columns`](/docs/typst/reference/layout/page#parameters-columns) функции `page`. Это создаст столбцы непосредственно на уровне страницы, а не обернёт всё ваше содержимое в контейнер компоновки. В результате такие элементы, как [разрывы страниц](/docs/typst/reference/layout/pagebreak), [сноски](/docs/typst/reference/model/footnote) и [номера строк](/docs/typst/reference/model/par#definitions-line), продолжат работать как ожидается. Для получения дополнительной информации также прочитайте [соответствующий раздел руководства по настройке страницы](/docs/typst/guides/page-setup#columns).
+
+## Выход за пределы столбцов [#breaking-out]
+
+Чтобы временно выйти за пределы столбцов (например, для заголовка статьи), используйте плавающее размещение с родительской областью видимости:
+
+<TypstRender
+  code={`
+  #set page(columns: 2, height: 150pt)
+
+  #place(
+    top + center,
+    scope: "parent",
+    float: true,
+    text(1.4em, weight: "bold")[
+      My document
+    ],
+  )
+
+  #lorem(40)
+`}
+  image="/typst_docs_assets/images/Z8ZNPK63hYVpB-lOuErsdw.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+columns(
+  int,
+  gutter: relative,
+  balanced: bool,
+  separator: none | content,
+  content,
+)
+```
+
+### `count` [#parameters-count]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `2`
+
+Количество столбцов.
+
+### `gutter` [#parameters-gutter]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `4% + 0pt`
+
+Размер промежутка между столбцами.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(columns: 2, height: 5cm)
+  #set par(justify: true)
+  #set columns(gutter: 15mm)
+  #lorem(30)
+`}
+  image="/typst_docs_assets/images/n7glkkSU3QAIFA2SUCNDxg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `balanced` [#parameters-balanced]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `false`
+
+Следует ли выравнивать высоту столбцов путём досрочного завершения столбцов.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(columns: 2, height: 5cm)
+  #set par(justify: true)
+  #set columns(balanced: true)
+  #lorem(30)
+`}
+  image="/typst_docs_assets/images/538haDzFp5KVz2rinnQe0w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `separator` [#parameters-separator]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Разделитель, размещаемый между каждой парой непустых столбцов.
+
+По умолчанию содержимое центрируется, а [линии](/docs/typst/reference/visualize/line) используют длину `100%` и угол `90deg`, если не указано иное.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(columns: 2, height: 5cm)
+  #set par(justify: true)
+  #set columns(
+    gutter: 2em,
+    separator: line(),
+  )
+  #lorem(35)
+`}
+  image="/typst_docs_assets/images/ChvUFyWVKUwW1vC7W5M7Hw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: разделитель с удлинённой пунктирной линией</summary>
+
+<TypstRender
+  code={`
+  #set page(columns: 2, height: 5cm)
+  #set par(justify: true)
+  #set columns(
+    gutter: 2em,
+    separator: line(
+      stroke: (dash: "dotted"),
+      length: 100% + 2 * 4pt,
+    ),
+  )
+  #lorem(35)
+`}
+  image="/typst_docs_assets/images/x0rHoFT3ap4nOKLSS54woQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: пользовательский орнамент-разделитель</summary>
+
+<TypstRender
+  code={`
+  #set page(columns: 3, width: 15cm, height: 3cm)
+  #set par(justify: true)
+  #set columns(
+    gutter: 30pt,
+    separator: curve(curve.cubic((-8pt, 0%), (8pt, 50%), (0pt, 50%))
+  ))
+  #lorem(36)
+`}
+  image="/typst_docs_assets/images/lDfhoZobWOhOfI5MHw3BqA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, которое должно быть размещено в столбцах.

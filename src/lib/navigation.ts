@@ -1,7 +1,7 @@
 export const NAVIGATION_LINKS = {
   // Внутренние ссылки
   HOME: "/",
-  DOCS: "/docs",
+  DOCS: "/docs/typst-gost",
   EXAMPLES_INTERNAL: "/examples",
   ABOUT: "/authors",
 

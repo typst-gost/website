@@ -1,0 +1,38 @@
+---
+title: "0.15.1"
+description: "Изменения в Typst 0.15.1"
+---
+
+## Библиотека [#library]
+
+### Текст [#text]
+
+- Шрифты New Computer Modern обновлены до версии 8.1.1, что исправляет ошибку, при которой обычное начертание математического шрифта всё ещё использовало старые [каллиграфические формы букв](/docs/typst/reference/math/variants#functions-cal), которые должны были находиться в [стилистическом наборе](/docs/typst/reference/text/text#parameters-stylistic-set) 6 [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8552)
+
+### Математика [#math]
+
+- Исправлена регрессия, при которой точки выравнивания не работали корректно при размещении внутри [`lr`](/docs/typst/reference/math/lr#functions-lr) / парных разделителей [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8566)
+- Исправлена регрессия, при которой элементы [`op`](/docs/typst/reference/math/op) могли быть вертикально смещены [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8546)
+
+### Вёрстка [#layout]
+
+- Исправлена ошибка, при которой в многостраничных списках могли появляться промежутки, если для [`number-align`](/docs/typst/reference/model/enum#parameters-number-align) / [`marker-align`](/docs/typst/reference/model/list#parameters-marker-align) было задано выравнивание с вертикальной составляющей [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8649)
+
+## Экспорт [#export]
+
+### SVG [#svg]
+
+- Исправлено, что встроенные SVG, получаемые из элементов [`html.frame`](/docs/typst/reference/format/html/frame), не соблюдали форматирование с отступами [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8535)
+
+### Bundle [#bundle]
+
+- В сервере отслеживания автоматический выбор подходящих заголовков `Content-Type` на основе расширений файлов был расширен, чтобы охватить больше часто используемых типов файлов (например, файлы `json`) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8650)
+- Ошибка для PNG/SVG-документов с несколькими страницами теперь возникает только в том случае, если она сохраняется до финальной итерации документа [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8618)
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Подкоманда `typst eval` теперь завершается с кодом 1, если предоставленное выражение не удаётся вычислить [<img src="/typst_docs_assets/icons/16-link.svg" alt="Ссылка" width="16" height="16" />](https://github.com/typst/typst/pull/8623)
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

@@ -1,0 +1,67 @@
+---
+title: "Сильное выделение"
+description: "Документация для функции `strong`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступно с: всегда*
+
+Сильно выделяет содержимое, увеличивая насыщенность шрифта.
+
+Увеличивает текущую насыщенность шрифта на заданную величину `delta`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  This is *strong.* \\
+  This is #strong[too.] \\
+  #show strong: set text(red)
+  And this is *evermore.*
+`}
+  image="/typst_docs_assets/images/sxFFBjA30guqO2Cf1wypJw.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+У этой функции также есть специальный синтаксис: чтобы сильно выделить содержимое, просто заключите его в звёздочки (`*`). Обратите внимание, что это работает только на границах слов. Чтобы сильно выделить часть слова, необходимо использовать функцию.
+
+## Параметры [#parameters]
+
+```typst
+strong(
+  delta: int,
+  content,
+)
+```
+
+### `delta` [#parameters-delta]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `300`
+
+Приращение насыщенности шрифта.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set strong(delta: 0)
+  No *effect!*
+`}
+  image="/typst_docs_assets/images/pdst8f7j7QTpoLKnvZ6tYw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, которое нужно сильно выделить.

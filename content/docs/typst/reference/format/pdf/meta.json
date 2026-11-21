@@ -1,0 +1,11 @@
+{
+  "title": "PDF",
+  "description": "Документация для функции `pdf`.",
+  "pages": [
+    "artifact",
+    "attach",
+    "data-cell",
+    "header-cell",
+    "table-summary"
+  ]
+}

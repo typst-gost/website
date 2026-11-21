@@ -1,0 +1,41 @@
+---
+title: "Метаданные"
+description: "Документация для функции `metadata`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступно с: 0.7.0*
+
+Предоставляет значение системе запросов, не создавая видимого содержимого.
+
+Этот элемент можно получить с помощью функции [`query`](/docs/typst/reference/introspection/query) и из командной строки с помощью [`typst query`](/docs/typst/reference/introspection/query#command-line-queries). Его назначение — предоставить произвольное значение системе интроспекции. Чтобы отличить значение метаданных от других, вы можете прикрепить к нему [`label`](/docs/typst/reference/foundations/label) и выполнять запрос по этой метке.
+
+Элемент `metadata` особенно полезен для запросов из командной строки, поскольку позволяет предоставлять произвольные значения внешнему миру.
+
+<TypstRender
+  code={`
+  // Put metadata somewhere.
+  #metadata("This is a note") <note>
+  // And find it from anywhere else.
+  #context {
+    query(<note>).first().value
+  }
+`}
+  image="/typst_docs_assets/images/UXN8UIX7DNfbsQu2_wjuYg.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+metadata(any) -> content
+```
+
+### `value` [#parameters-value]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое нужно встроить в документ.

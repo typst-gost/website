@@ -1,0 +1,495 @@
+---
+title: "Curve"
+description: "Документация для функции `curve`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: 0.13.0*
+
+Кривая, состоящая из перемещений, линий и сегментов Безье.
+
+В любой момент времени существует концептуальное перо или курсор.
+
+- Элементы перемещения перемещают курсор без рисования.
+- Элементы Line/Quadratic/Cubic рисуют сегмент от курсора до новой позиции, возможно, с контрольной точкой для кривой Безье.
+- Элементы Close рисуют прямую или плавную линию обратно к началу кривой или к последнему предшествующему сегменту перемещения.
+
+Для целей вёрстки ограничивающий прямоугольник кривой — это плотный прямоугольник, содержащий все сегменты, а также точку `(0pt, 0pt)`.
+
+Позиции могут задаваться абсолютно (то есть относительно `(0pt, 0pt)`) или относительно текущей позиции пера/курсора, то есть позиции, где закончился предыдущий сегмент.
+
+Контрольные точки кривой Безье можно пропустить, передав `none`, или автоматически отразить от предыдущего сегмента, передав `auto`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #curve(
+    fill: blue.lighten(80%),
+    stroke: blue,
+    curve.move((0pt, 50pt)),
+    curve.line((100pt, 50pt)),
+    curve.cubic(none, (90pt, 0pt), (50pt, 0pt)),
+    curve.close(),
+  )
+`}
+  image="/typst_docs_assets/images/cayuEC121uphMaq95apljA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+curve(
+  fill: none | color | gradient | tiling,
+  fill-rule: str,
+  stroke: none | auto | length | color | gradient | stroke | tiling | dictionary,
+  ..content,
+)
+```
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как заливать кривую.
+
+При установке заливки обводка по умолчанию исчезает. Чтобы создать кривую одновременно с заливкой и обводкой, необходимо настроить обе.
+
+### `fill-rule` [#parameters-fill-rule]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"non-zero"`
+
+Правило рисования, используемое для заливки кривой.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // We use \`.with\` to get a new
+  // function that has the common
+  // arguments pre-applied.
+  #let star = curve.with(
+    fill: red,
+    curve.move((25pt, 0pt)),
+    curve.line((10pt, 50pt)),
+    curve.line((50pt, 20pt)),
+    curve.line((0pt, 20pt)),
+    curve.line((40pt, 50pt)),
+    curve.close(),
+  )
+
+  #star(fill-rule: "non-zero")
+  #star(fill-rule: "even-odd")
+`}
+  image="/typst_docs_assets/images/qj6XwtISqUpdF5bv2cbgKQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"non-zero"` | Указывает, что «внутренняя область» вычисляется по ненулевой сумме знаковых пересечений рёбер. |
+| `"even-odd"` | Указывает, что «внутренняя область» вычисляется по нечётному числу пересечений рёбер. |
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как [обводить](/docs/typst/reference/visualize/stroke) кривую.
+
+Может быть установлено в `none`, чтобы отключить обводку, или в `auto` для обводки чёрным цветом толщиной `1pt` тогда и только тогда, когда заливка не задана.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let down = curve.line((40pt, 40pt), relative: true)
+  #let up = curve.line((40pt, -40pt), relative: true)
+
+  #curve(
+    stroke: 4pt + gradient.linear(red, blue),
+    down, up, down, up, down,
+  )
+`}
+  image="/typst_docs_assets/images/ZHTKL_7QCkzh6crWlvrNqw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `components` [#parameters-components]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Компоненты кривой в виде перемещений, сегментов линий и Безье, а также замыканий.
+
+## Функции [#functions]
+
+### `move` [#definitions-move]
+
+*Элемент* · *Доступно с: 0.13.0*
+
+Начинает новый компонент кривой.
+
+Если элемент `curve.move` не передан, кривая будет начинаться в `(0pt, 0pt)`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #curve(
+    fill: blue.lighten(80%),
+    fill-rule: "even-odd",
+    stroke: blue,
+    curve.line((50pt, 0pt)),
+    curve.line((50pt, 50pt)),
+    curve.line((0pt, 50pt)),
+    curve.close(),
+    curve.move((10pt, 10pt)),
+    curve.line((40pt, 10pt)),
+    curve.line((40pt, 40pt)),
+    curve.line((10pt, 40pt)),
+    curve.close(),
+  )
+`}
+  image="/typst_docs_assets/images/nTVtOTo_wKmchZC5TSCjcA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+curve.move(
+  array,
+  relative: bool,
+) -> content
+```
+
+#### `start` [#definitions-move-start]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional
+
+Начальная точка для нового компонента.
+
+#### `relative` [#definitions-move-relative]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Являются ли координаты относительными предыдущей точки.
+
+### `line` [#definitions-line]
+
+*Элемент* · *Доступно с: 0.13.0*
+
+Добавляет прямую линию от текущей точки к следующей.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #curve(
+    stroke: blue,
+    curve.line((50pt, 0pt)),
+    curve.line((50pt, 50pt)),
+    curve.line((100pt, 50pt)),
+    curve.line((100pt, 0pt)),
+    curve.line((150pt, 0pt)),
+  )
+`}
+  image="/typst_docs_assets/images/aKYtlD8DnuZQe1TZvBhkbg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+curve.line(
+  array,
+  relative: bool,
+) -> content
+```
+
+#### `end` [#definitions-line-end]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional
+
+Точка, в которой должна закончиться линия.
+
+#### `relative` [#definitions-line-relative]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Являются ли координаты относительными предыдущей точки.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #curve(
+    stroke: blue,
+    curve.line((50pt, 0pt), relative: true),
+    curve.line((0pt, 50pt), relative: true),
+    curve.line((50pt, 0pt), relative: true),
+    curve.line((0pt, -50pt), relative: true),
+    curve.line((50pt, 0pt), relative: true),
+  )
+`}
+  image="/typst_docs_assets/images/aKYtlD8DnuZQe1TZvBhkbg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `quad` [#definitions-quad]
+
+*Элемент* · *Доступно с: 0.13.0*
+
+Добавляет сегмент квадратичной кривой Безье от последней точки до `end`, используя `control` в качестве контрольной точки.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // Function to illustrate where the control point is.
+  #let mark((x, y)) = place(
+    dx: x - 1pt, dy: y - 1pt,
+    circle(fill: aqua, radius: 2pt),
+  )
+
+  #mark((20pt, 20pt))
+
+  #curve(
+    stroke: blue,
+    curve.move((0pt, 100pt)),
+    curve.quad((20pt, 20pt), (100pt, 0pt)),
+  )
+`}
+  image="/typst_docs_assets/images/SMcObU2ekxPmX0msSe3q4w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+curve.quad(
+  none | auto | array,
+  array,
+  relative: bool,
+) -> content
+```
+
+#### `control` [#definitions-quad-control]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional
+
+Контрольная точка квадратичной кривой Безье.
+
+- Если `auto` и этот сегмент следует за другой квадратичной кривой Безье, предыдущая контрольная точка будет отражена.
+- Если `none`, контрольная точка по умолчанию равна `end`, и кривая будет прямой линией.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #curve(
+    stroke: 2pt,
+    curve.quad((20pt, 40pt), (40pt, 40pt), relative: true),
+    curve.quad(auto, (40pt, -40pt), relative: true),
+  )
+`}
+  image="/typst_docs_assets/images/Y2G471mehKUmOAjcaXbRdA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `end` [#definitions-quad-end]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional
+
+Точка, в которой должен закончиться сегмент.
+
+#### `relative` [#definitions-quad-relative]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Являются ли координаты `control` и `end` относительными предыдущей точки.
+
+### `cubic` [#definitions-cubic]
+
+*Элемент* · *Доступно с: 0.13.0*
+
+Добавляет сегмент кубической кривой Безье от последней точки до `end`, используя `control-start` и `control-end` в качестве контрольных точек.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // Function to illustrate where the control points are.
+  #let handle(start, end) = place(
+    line(stroke: red, start: start, end: end)
+  )
+
+  #handle((0pt, 80pt), (10pt, 20pt))
+  #handle((90pt, 60pt), (100pt, 0pt))
+
+  #curve(
+    stroke: blue,
+    curve.move((0pt, 80pt)),
+    curve.cubic((10pt, 20pt), (90pt, 60pt), (100pt, 0pt)),
+  )
+`}
+  image="/typst_docs_assets/images/NbZPv1KtsNfQnQ6cV9zyoA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+curve.cubic(
+  none | auto | array,
+  none | array,
+  array,
+  relative: bool,
+) -> content
+```
+
+#### `control-start` [#definitions-cubic-control-start]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional
+
+Контрольная точка, выходящая из начала сегмента кривой.
+
+- Если `auto` и этот элемент следует за другим элементом `curve.cubic`, последняя контрольная точка будет отражена. В терминах SVG это заставляет `curve.cubic` вести себя как оператор `S` вместо оператора `C`.
+- Если `none`, у кривой нет первой контрольной точки, или, что эквивалентно, контрольная точка по умолчанию равна начальной точке кривой.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #curve(
+    stroke: blue,
+    curve.move((0pt, 50pt)),
+    // - No start control point
+  // - End control point at \`(20pt, 0pt)\`
+  // - End point at \`(50pt, 0pt)\`
+    curve.cubic(none, (20pt, 0pt), (50pt, 0pt)),
+    // - No start control point
+  // - No end control point
+  // - End point at \`(50pt, 0pt)\`
+    curve.cubic(none, none, (100pt, 50pt)),
+  )
+
+  #curve(
+    stroke: blue,
+    curve.move((0pt, 50pt)),
+    curve.cubic(none, (20pt, 0pt), (50pt, 0pt)),
+    // Passing \`auto\` instead of \`none\` means the start control point
+  // mirrors the end control point of the previous curve. Mirror of
+  // \`(20pt, 0pt)\` w.r.t \`(50pt, 0pt)\` is \`(80pt, 0pt)\`.
+    curve.cubic(auto, none, (100pt, 50pt)),
+  )
+
+  #curve(
+    stroke: blue,
+    curve.move((0pt, 50pt)),
+    curve.cubic(none, (20pt, 0pt), (50pt, 0pt)),
+    // \`(80pt, 0pt)\` is the same as \`auto\` in this case.
+    curve.cubic((80pt, 0pt), none, (100pt, 50pt)),
+  )
+`}
+  image="/typst_docs_assets/images/iz17ov0ulkFSzx0nU_pY-w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `control-end` [#definitions-cubic-control-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional
+
+Контрольная точка, входящая в конечную точку сегмента кривой.
+
+Если установлено в `none`, у кривой нет конечной контрольной точки, или, что эквивалентно, контрольная точка по умолчанию равна конечной точке кривой.
+
+#### `end` [#definitions-cubic-end]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Required, Positional
+
+Точка, в которой должен закончиться сегмент кривой.
+
+#### `relative` [#definitions-cubic-relative]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Являются ли координаты `control-start`, `control-end` и `end` относительными предыдущей точки.
+
+### `close` [#definitions-close]
+
+*Элемент* · *Доступно с: 0.13.0*
+
+Замкнуть кривую, добавив сегмент от последней точки к началу кривой (или к последней предшествующей точке `curve.move`).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // We define a function to show the same shape with
+  // both closing modes.
+  #let shape(mode: "smooth") = curve(
+    fill: blue.lighten(80%),
+    stroke: blue,
+    curve.move((0pt, 50pt)),
+    curve.line((100pt, 50pt)),
+    curve.cubic(auto, (90pt, 0pt), (50pt, 0pt)),
+    curve.close(mode: mode),
+  )
+
+  #shape(mode: "smooth")
+  #shape(mode: "straight")
+`}
+  image="/typst_docs_assets/images/Tu2sc2XqqWjhOZRJZyzy8A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+curve.close(mode: str) -> content
+```
+
+#### `mode` [#definitions-close-mode]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"smooth"`
+
+Как замыкать кривую.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"smooth"` | Замыкает кривую плавным сегментом, который учитывает контрольную точку, противоположную начальной точке. |
+| `"straight"` | Замыкает кривую прямой линией. |

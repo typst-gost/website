@@ -1,0 +1,26 @@
+---
+title: "Загрузка данных"
+description: "Документация по функциональности загрузки данных."
+---
+
+<span id="summary" />
+
+Загрузка данных из внешних файлов.
+
+Эти функции помогают загружать и встраивать данные, например из результатов эксперимента.
+
+## Кодирование [#encoding]
+
+Некоторые из функций также способны выполнять кодирование, например [`cbor.encode`](/docs/typst/reference/data-loading/cbor#definitions-encode). Они упрощают передачу структурированных данных в [плагины](/docs/typst/reference/foundations/plugin).
+
+Однако каждый формат данных имеет собственные нативные типы. Поэтому для произвольного значения Typst цикл «кодирование — декодирование» может привести к потере данных. Как правило, числа, строки, а также [массивы](/docs/typst/reference/foundations/array) или [словари](/docs/typst/reference/foundations/dictionary), составленные из них, преобразуются надёжно, тогда как другие типы могут сводиться к строкам через [`repr`](/docs/typst/reference/foundations/repr), который [предназначен только для отладки](/docs/typst/reference/foundations/repr#debugging-only). Подробности см. на странице каждого формата данных.
+
+## Определения [#definitions]
+
+- [`cbor`](/docs/typst/reference/data-loading/cbor)Читает структурированные данные из файла CBOR.
+- [`csv`](/docs/typst/reference/data-loading/csv)Читает структурированные данные из файла CSV.
+- [`json`](/docs/typst/reference/data-loading/json)Читает структурированные данные из файла JSON.
+- [`read`](/docs/typst/reference/data-loading/read)Читает обычный текст или данные из файла.
+- [`toml`](/docs/typst/reference/data-loading/toml)Читает структурированные данные из файла TOML.
+- [`xml`](/docs/typst/reference/data-loading/xml)Читает структурированные данные из файла XML.
+- [`yaml`](/docs/typst/reference/data-loading/yaml)Читает структурированные данные из файла YAML.

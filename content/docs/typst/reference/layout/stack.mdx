@@ -1,0 +1,117 @@
+---
+title: "Stack"
+description: "Документация для функции `stack`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Располагает содержимое и отступы по горизонтали или по вертикали.
+
+Stack размещает список элементов вдоль оси с необязательными отступами между каждым элементом.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ttb,
+    rect(width: 40pt),
+    rect(width: 120pt),
+    rect(width: 90pt),
+  )
+`}
+  image="/typst_docs_assets/images/1812bOHwcFqNcL5Pdd6vhA.png"
+  alt=""
+  editable={true}
+/>
+
+## Доступность [#accessibility]
+
+Stack не несёт никакой особой семантики. Содержимое stack читается вспомогательными технологиями (AT) в том порядке, в котором оно было передано в эту функцию.
+
+## Параметры [#parameters]
+
+```typst
+stack(
+  dir: direction,
+  spacing: none | relative | fraction,
+  ..relative | fraction | content,
+)
+```
+
+### `dir` [#parameters-dir]
+
+**Тип:** [direction](/docs/typst/reference/layout/direction) · **Модификаторы:** Settable · **По умолчанию:** `ttb`
+
+Направление, вдоль которого располагаются элементы.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(dir: ltr, "A", "B", "C")
+
+  #stack(dir: btt, "A", "B", "C")
+`}
+  image="/typst_docs_assets/images/qoYuA9J9C7vYjnWJnMnd9w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `spacing` [#parameters-spacing]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Отступ, вставляемый между элементами там, где явный отступ не был задан.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 1fr,
+    [A], [B], [C],
+  )
+`}
+  image="/typst_docs_assets/images/imzHG7-q_uowVQtheBsrOA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `children` [#parameters-children]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Дочерние элементы, располагаемые вдоль оси.
+
+Каждый дочерний элемент может быть либо содержимым, либо явным отступом, который заменяет отступ из параметра `spacing`.
+
+Обратите внимание, что явный отступ также можно задать как элемент [`h`](/docs/typst/reference/layout/h) или [`v`](/docs/typst/reference/layout/v) в зависимости от направления stack.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 10pt,
+    [A], [B], 0pt, [C],
+  )
+`}
+  image="/typst_docs_assets/images/bfPVtwqBRzXZdZ5zN_qhnA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

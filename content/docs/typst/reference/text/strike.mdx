@@ -1,0 +1,132 @@
+---
+title: "Зачёркивание"
+description: "Документация для функции `strike`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступно с: всегда*
+
+Зачёркивает текст.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  This is #strike[not] relevant.
+`}
+  image="/typst_docs_assets/images/2XSewSICDEYEBLuCRbe8CQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+strike(
+  stroke: auto | length | color | gradient | stroke | tiling | dictionary,
+  offset: auto | length,
+  extent: length,
+  background: bool,
+  content,
+)
+```
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как [обвести](/docs/typst/reference/visualize/stroke) линию.
+
+Если задано значение `auto`, используется цвет текста и толщина, определённая в текущем шрифте.
+
+_Примечание:_ Пожалуйста, не используйте это для настоящей редактуры, так как текст всё ещё можно скопировать и вставить.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  This is #strike(stroke: 1.5pt + red)[very stricken through]. \\
+  This is #strike(stroke: 10pt)[redacted].
+`}
+  image="/typst_docs_assets/images/WLZs5pHnIF4ouFJ9r2aNAw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `offset` [#parameters-offset]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Положение линии относительно базовой линии. Считывается из таблиц шрифта, если задано `auto`.
+
+Это полезно, если вас не устраивает смещение, которое предоставляет ваш шрифт.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(font: "Inria Serif")
+  This is #strike(offset: auto)[low-ish]. \\
+  This is #strike(offset: -3.5pt)[on-top].
+`}
+  image="/typst_docs_assets/images/R1fTXrTFzlMtFfGSpKJ-_w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `extent` [#parameters-extent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Величина, на которую линия выходит за пределы содержимого (или внутрь, если значение отрицательное).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  This #strike(extent: -2pt)[skips] parts of the word.
+  This #strike(extent: 2pt)[extends] beyond the word.
+`}
+  image="/typst_docs_assets/images/6saQ1QE0lekP93JSQRbbgw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `background` [#parameters-background]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Размещается ли линия позади содержимого.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set strike(stroke: red + 2pt)
+  #strike(background: true)[This is behind.] \\
+  #strike(background: false)[This is in front.]
+`}
+  image="/typst_docs_assets/images/Bs6MKpV7OnZU4M4hPMSm_Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, которое нужно зачеркнуть.

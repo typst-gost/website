@@ -1,0 +1,279 @@
+---
+title: "Словарь"
+description: "Документация для типа `dictionary`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Отображение строковых ключей в значения.
+
+Вы можете создать словарь, заключив разделённые запятыми пары `key: value` в круглые скобки. Значения не обязаны быть одного типа. Поскольку пустые круглые скобки уже дают пустой массив, для создания пустого словаря нужно использовать специальный синтаксис `(:)`.
+
+Словарь концептуально похож на [массив](/docs/typst/reference/foundations/array), но индексируется строками, а не целыми числами. Вы можете получать доступ к элементам словаря и создавать их с помощью метода `.at()`. Если ключ известен статически, вы можете вместо этого использовать [нотацию доступа к полям](/docs/typst/reference/scripting#fields) (`.key`) для получения значения. Чтобы проверить, присутствует ли ключ в словаре, используйте ключевое слово `in`.
+
+Вы можете перебирать пары в словаре с помощью [цикла for](/docs/typst/reference/scripting#loops). Перебор происходит в порядке, в котором пары были изначально вставлены / объявлены.
+
+Словари можно складывать с помощью оператора `+` и [объединять](/docs/typst/reference/scripting#blocks). Их также можно [распаковывать](/docs/typst/reference/foundations/arguments#spreading) в вызов функции или в другой словарь<sup>[1](#loc-2)</sup> с помощью оператора `..spread`. В каждом случае, если ключ встречается несколько раз, последнее значение переопределяет остальные.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let dict = (
+    name: "Typst",
+    born: 2019,
+  )
+
+  #dict.name \\
+  #(dict.launch = 20)
+  #dict.len() \\
+  #dict.keys() \\
+  #dict.values() \\
+  #dict.at("born") \\
+  #dict.insert("city", "Berlin")
+  #("name" in dict)
+`}
+  image="/typst_docs_assets/images/7CttH6UkH0auE4qC_Gcepg.png"
+  alt=""
+  editable={true}
+/>
+
+1. <sup>[1](#loc-1)</sup>При распаковке в словарь, если все элементы между круглыми скобками распаковываются, контейнер нужно начинать с `(:`, как в `(: ..dict, ..other_dict)`. В противном случае контейнер выводится как массив, и возникает ошибка.
+
+## Конструктор [#constructor]
+
+Преобразует значение в словарь.
+
+Обратите внимание, что эта функция предназначена только для преобразования словареподобного значения в словарь, а не для создания словаря из отдельных пар. Вместо этого используйте синтаксис словаря `(key: value)`. Также см. [`array.to-dict`](/docs/typst/reference/foundations/array#definitions-to-dict) для преобразования массивов в словари.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #dictionary(sys).at("version")
+`}
+  image="/typst_docs_assets/images/K4yEeMy2N8XvJVUHgczy8Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+dictionary(module) -> dictionary
+```
+
+### `value` [#constructor-value]
+
+**Type:** [module](/docs/typst/reference/foundations/module) · **Modifiers:** Required, Positional
+
+Значение, которое следует преобразовать в словарь.
+
+## Функции [#functions]
+
+### `len` [#definitions-len]
+
+*Since: forever*
+
+Количество пар в словаре.
+
+```typst
+self.len() -> int
+```
+
+### `at` [#definitions-at]
+
+*Since: forever*
+
+Возвращает значение, связанное с указанным ключом в словаре.
+
+Может использоваться в левой части присваивания, если ключ уже присутствует в словаре. Возвращает значение по умолчанию, если ключ не является частью словаря, или завершается с ошибкой, если значение по умолчанию не указано.
+
+Значения также можно получать с помощью синтаксиса полей (например, `(key: 42).key`), если значение по умолчанию не требуется.
+
+```typst
+self.at(
+  str,
+  default: any,
+)
+```
+
+#### `key` [#definitions-at-key]
+
+**Type:** [str](/docs/typst/reference/foundations/str) · **Modifiers:** Required, Positional
+
+Ключ, по которому следует получить элемент.
+
+#### `default` [#definitions-at-default]
+
+**Type:** `any`
+
+Значение по умолчанию, возвращаемое, если ключ не является частью словаря.
+
+### `insert` [#definitions-insert]
+
+*Since: forever*
+
+Вставляет новую пару в словарь. Если словарь уже содержит этот ключ, значение обновляется.
+
+Чтобы вставить несколько пар сразу, вы можете вместо этого добавить другой словарь с помощью оператора `+=`.
+
+```typst
+self.insert(
+  str,
+  any,
+) -> none
+```
+
+#### `key` [#definitions-insert-key]
+
+**Type:** [str](/docs/typst/reference/foundations/str) · **Modifiers:** Required, Positional
+
+Ключ пары, которую следует вставить.
+
+#### `value` [#definitions-insert-value]
+
+**Type:** `any` · **Modifiers:** Required, Positional
+
+Значение пары, которую следует вставить.
+
+### `remove` [#definitions-remove]
+
+*Since: forever*
+
+Удаляет пару из словаря по ключу и возвращает значение.
+
+```typst
+self.remove(
+  str,
+  default: any,
+)
+```
+
+#### `key` [#definitions-remove-key]
+
+**Type:** [str](/docs/typst/reference/foundations/str) · **Modifiers:** Required, Positional
+
+Ключ пары, которую следует удалить.
+
+#### `default` [#definitions-remove-default]
+
+**Type:** `any`
+
+Значение по умолчанию, возвращаемое, если ключ не существует.
+
+### `keys` [#definitions-keys]
+
+*Since: forever*
+
+Возвращает ключи словаря в виде массива в порядке вставки.
+
+```typst
+self.keys() -> array
+```
+
+### `values` [#definitions-values]
+
+*Since: forever*
+
+Возвращает значения словаря в виде массива в порядке вставки.
+
+```typst
+self.values() -> array
+```
+
+### `pairs` [#definitions-pairs]
+
+*Since: forever*
+
+Возвращает ключи и значения словаря в виде массива пар. Каждая пара представлена как массив длиной два.
+
+```typst
+self.pairs() -> array
+```
+
+### `filter` [#definitions-filter]
+
+*Since: 0.15.0*
+
+Создаёт новый словарь, содержащий только те пары из исходного, для которых заданная функция возвращает `true`.
+
+<details>
+<summary>Посмотреть пример: Базовое использование</summary>
+
+<TypstRender
+  code={`
+  #{
+    (a: 0, b: 1, c: 2)
+      .filter(v => v > 0)
+  }
+`}
+  image="/typst_docs_assets/images/ANU2c1rPOPC-gdWevTgCxA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: Фильтрация по ключу вместо значения</summary>
+
+<TypstRender
+  code={`
+  #{
+    (a: 0, b: 1, c: 2)
+      .pairs()
+      .filter(((k, v)) => k != "a")
+      .to-dict()
+  }
+`}
+  image="/typst_docs_assets/images/ANU2c1rPOPC-gdWevTgCxA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.filter(function) -> dictionary
+```
+
+#### `test` [#definitions-filter-test]
+
+**Type:** [function](/docs/typst/reference/foundations/function) · **Modifiers:** Required, Positional
+
+Функция, применяемая к каждому значению. Должна возвращать логическое значение.
+
+### `map` [#definitions-map]
+
+*Since: 0.15.0*
+
+Создаёт новый словарь, в котором ключи те же, но значения преобразованы заданной функцией.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(a: 0, b: 1, c: 2).map(v => v + 1)
+`}
+  image="/typst_docs_assets/images/-X6__ZE1S8cogtEEItTeJw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.map(function) -> dictionary
+```
+
+#### `mapper` [#definitions-map-mapper]
+
+**Type:** [function](/docs/typst/reference/foundations/function) · **Modifiers:** Required, Positional
+
+Функция, применяемая к каждому значению.

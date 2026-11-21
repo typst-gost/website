@@ -48,13 +48,4 @@ export const authors: Author[] = [
     avatarPath: "https://github.com/benzlokzik.png",
     tags: [TAGS.website, TAGS.infrastructure, TAGS.template],
   },
-  {
-    name: "imCatCatcher",
-    role: "Разработчик",
-    github: "https://github.com/imCatCatcher",
-    telegram: "https://t.me/imcatcatcher",
-    avatarPath: "https://github.com/imCatCatcher.png",
-    isInactive: true,
-    tags: [TAGS.template, TAGS.docs],
-  }
 ]

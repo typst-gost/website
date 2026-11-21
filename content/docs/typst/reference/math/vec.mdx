@@ -1,0 +1,109 @@
+---
+title: "Вектор"
+description: "Документация для функции `vec`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Вектор-столбец.
+
+Содержимое элементов вектора можно выровнять с помощью параметра [`align`](#parameters-align) или символа `&`.
+
+Эта функция предназначена для вёрстки компонентов вектора. Для вёрстки символа, обозначающего вектор, обычно используются [`arrow`](/docs/typst/reference/math/accent) и [`bold`](/docs/typst/reference/math/styles#functions-bold).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ vec(a, b, c) dot vec(1, 2, 3)
+      = a + 2b + 3c $
+`}
+  image="/typst_docs_assets/images/HT6ZicV0R7n4mOf5JGBf0w.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+math.vec(
+  delim: none | str | symbol | array,
+  align: alignment,
+  gap: relative,
+  ..content,
+)
+```
+
+### `delim` [#parameters-delim]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [symbol](/docs/typst/reference/foundations/symbol) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Settable · **По умолчанию:** `("(", ")")`
+
+Разделитель, который следует использовать.
+
+Может быть одиночным символом, задающим левый разделитель, — в этом случае правый разделитель выводится автоматически. В противном случае может быть массивом, содержащим левый и правый разделители.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.vec(delim: "[")
+  $ vec(1, 2) $
+`}
+  image="/typst_docs_assets/images/Vsh3Bvsr51-xSIu2dzJC5g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `align` [#parameters-align]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `center`
+
+Горизонтальное выравнивание, которое должен иметь каждый элемент.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.vec(align: right)
+  $ vec(-1, 1, -1) $
+`}
+  image="/typst_docs_assets/images/zDukVmAnTgIEGC9VOgTJ1w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `gap` [#parameters-gap]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0.2em`
+
+Промежуток между элементами.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set math.vec(gap: 1em)
+  $ vec(1, 2) $
+`}
+  image="/typst_docs_assets/images/9hN3KOaHXeVYR4ITwgP-KQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `children` [#parameters-children]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional, Variadic
+
+Элементы вектора.

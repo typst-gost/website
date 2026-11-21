@@ -1,0 +1,11 @@
+{
+  "title": "Форматы",
+  "description": "Документация по форматам экспорта Typst.",
+  "pages": [
+    "bundle",
+    "html",
+    "pdf",
+    "png",
+    "svg"
+  ]
+}

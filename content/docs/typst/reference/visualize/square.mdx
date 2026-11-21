@@ -1,0 +1,105 @@
+---
+title: "Square"
+description: "Документация для функции `square`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Квадрат с необязательным содержимым.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  // Without content.
+  #square(size: 40pt)
+
+  // With content.
+  #square[
+    Automatically \\
+    sized to fit.
+  ]
+`}
+  image="/typst_docs_assets/images/SHx0WmucWaUzKwYXSSGpEA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+square(
+  size: auto | length,
+  width: auto | relative,
+  height: auto | relative | fraction,
+  fill: none | color | gradient | tiling,
+  stroke: none | auto | length | color | gradient | stroke | tiling | dictionary,
+  radius: relative | dictionary,
+  inset: relative | dictionary,
+  outset: relative | dictionary,
+  none | content,
+)
+```
+
+### `size` [#parameters-size]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **По умолчанию:** `auto`
+
+Длина стороны квадрата. Взаимоисключающий с `width` и `height`.
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Ширина квадрата. Взаимоисключающий с `size` и `height`.
+
+В отличие от `size`, может быть относительной к ширине родительского контейнера.
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Высота квадрата. Взаимоисключающий с `size` и `width`.
+
+В отличие от `size`, может быть относительной к высоте родительского контейнера.
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как заливать квадрат. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-fill).
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как обводить квадрат. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+### `radius` [#parameters-radius]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько скруглять углы квадрата. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-radius).
+
+### `inset` [#parameters-inset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `0% + 5pt`
+
+Насколько добавлять внутренние отступы вокруг содержимого квадрата. Подробнее см. в [документации блока](/docs/typst/reference/layout/box#parameters-inset).
+
+### `outset` [#parameters-outset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько расширять размер квадрата, не влияя на макет. Подробнее см. в [документации блока](/docs/typst/reference/layout/box#parameters-outset).
+
+### `body` [#parameters-body]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Positional, Settable · **По умолчанию:** `none`
+
+Содержимое, размещаемое внутри квадрата. Квадрат расширяется, чтобы вместить это содержимое, сохраняя соотношение сторон 1:1.
+
+Если этот параметр опущен, квадрат принимает размер по умолчанию, не превышающий `30pt`.

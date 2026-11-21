@@ -1,0 +1,18 @@
+{
+  "title": "Визуализация",
+  "description": "Документация по функциональности рисования и визуализации данных.",
+  "pages": [
+    "circle",
+    "color",
+    "curve",
+    "ellipse",
+    "gradient",
+    "image",
+    "line",
+    "polygon",
+    "rect",
+    "square",
+    "stroke",
+    "tiling"
+  ]
+}

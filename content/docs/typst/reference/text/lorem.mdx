@@ -1,0 +1,40 @@
+---
+title: "Lorem"
+description: "Документация для функции `lorem`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Создаёт текст-заполнитель.
+
+Эта функция создаёт латинообразный текст-заполнитель _Lorem Ipsum_ с заданным числом слов. Последовательность слов, генерируемая функцией, всегда одна и та же, но выбрана случайным образом. Как обычно для текстов-заполнителей, он не имеет никакого смысла. Используйте его как заполнитель, чтобы опробовать макеты.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  = Blind Text
+  #lorem(30)
+
+  = More Blind Text
+  #lorem(15)
+`}
+  image="/typst_docs_assets/images/7eh-qmQQmPJilpwmwToYyQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+lorem(int) -> str
+```
+
+### `words` [#parameters-words]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Длина текста-заполнителя в словах.

@@ -1,0 +1,133 @@
+---
+title: "Smartquote"
+description: "Документация для функции `smartquote`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Кавычка, учитывающая язык и реагирующая на контекст.
+
+Автоматически превращается в подходящую открывающую или закрывающую кавычку в зависимости от активного [языка текста](/docs/typst/reference/text/text#parameters-lang).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  "This is in quotes."
+
+  #set text(lang: "de")
+  "Das ist in Anführungszeichen."
+
+  #set text(lang: "fr")
+  "C'est entre guillemets."
+`}
+  image="/typst_docs_assets/images/YGwHG8BNHJNNVsSP0mFW9A.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+У этой функции также есть специальный синтаксис: обычные символы кавычек (`'` и `"`). Typst автоматически делает ваши кавычки «умными».
+
+## Параметры [#parameters]
+
+```typst
+smartquote(
+  double: bool,
+  enabled: bool,
+  alternative: bool,
+  quotes: auto | str | array | dictionary,
+) -> content
+```
+
+### `double` [#parameters-double]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Должна ли это быть двойная кавычка.
+
+### `enabled` [#parameters-enabled]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `true`
+
+Включены ли «умные» кавычки.
+
+Чтобы отключить «умность» для отдельной кавычки, вы также можете экранировать её с помощью обратной косой черты.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set smartquote(enabled: false)
+
+  These are "dumb" quotes.
+`}
+  image="/typst_docs_assets/images/jaIUl5jAbcaOrXmXkUEDyw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `alternative` [#parameters-alternative]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Использовать ли альтернативные кавычки.
+
+Ничего не делает для языков, в которых нет альтернативных кавычек, или если были заданы явные кавычки.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(lang: "de")
+  #set smartquote(alternative: true)
+
+  "Das ist in anderen Anführungszeichen."
+`}
+  image="/typst_docs_assets/images/p1067szjBPCHjFfd2CleLQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `quotes` [#parameters-quotes]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Используемые кавычки.
+
+- Если задано `auto`, будут использоваться подходящие одинарные кавычки для [языка текста](/docs/typst/reference/text/text#parameters-lang). Это значение по умолчанию.
+- Пользовательские кавычки можно передать в виде строки, массива или словаря одного из следующих видов:
+  - [string](/docs/typst/reference/foundations/str): строка, состоящая из двух символов, содержащая открывающую и закрывающую двойные кавычки (под символами здесь понимаются кластеры графем Unicode)
+  - [array](/docs/typst/reference/foundations/array): массив, содержащий открывающую и закрывающую двойные кавычки
+  - [dictionary](/docs/typst/reference/foundations/dictionary): словарь, содержащий двойные и одинарные кавычки, каждая из которых задана как `auto`, строка или массив
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(lang: "de")
+  'Das sind normale Anführungszeichen.'
+
+  #set smartquote(quotes: "()")
+  "Das sind eigene Anführungszeichen."
+
+  #set smartquote(quotes: (single: ("[[", "]]"),  double: auto))
+  'Das sind eigene Anführungszeichen.'
+`}
+  image="/typst_docs_assets/images/RzLAV4bGyTbYvHFyWTLGGA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

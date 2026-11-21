@@ -1,0 +1,227 @@
+---
+title: "Document"
+description: "Документация для функции `document`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Управляет метаданными и используется для добавления файла документа в пакет.
+
+## Метаданные [#metadata-1]
+
+Элемент document является единственным источником истины для метаданных документа. С его помощью вы можете указать заголовок документа, авторов, дату и т. д. в одном месте. Обычно элемент используется с [правилом set](/docs/typst/reference/styling#set-rules) следующим образом:
+
+<TypstRender
+  code={`
+  #set document(title: [My doc])
+
+  Title is _not_ rendered, but
+  embedded in PDF metadata.
+`}
+  image="/typst_docs_assets/images/W420ICzbxDL2Axe9dIbXCA.png"
+  alt=""
+  editable={true}
+/>
+
+По умолчанию метаданные встраиваются в вывод, но не отображаются визуально в документе. Однако они становятся [контекстно доступными](/docs/typst/reference/context) для всего документа и могут использоваться элементами и шаблонами. Например, встроенный элемент [`title`](/docs/typst/reference/model/title) автоматически подхватывает настроенный заголовок документа:
+
+<TypstRender
+  code={`
+  #set document(title: [My doc])
+
+  #title()
+  Title is now rendered _and_
+  embedded in PDF metadata.
+`}
+  image="/typst_docs_assets/images/6dCPqmjLnYDGRteZRQ-_5A.png"
+  alt=""
+  editable={true}
+/>
+
+Подобно элементу `title`, вы также можете обращаться к метаданным самостоятельно с помощью [контекстного выражения](/docs/typst/reference/context).
+
+<TypstRender
+  code={`
+  // In the document.
+  #set document(
+    keywords: ("Typst", "Metadata")
+  )
+
+  // Somewhere in your template.
+  _Keywords:_
+  #context document.keywords.join(", ")
+`}
+  image="/typst_docs_assets/images/EYCynl_HdIcMn6CK8-rdGg.png"
+  alt=""
+  editable={true}
+/>
+
+В форматах экспорта одного документа эта функция используется только с [правилами set](/docs/typst/reference/styling#set-rules). Такие правила set должны находиться только на верхнем уровне, а не внутри какого-либо контейнера компоновки. Вы также можете явно создать элемент `document`, но [это актуально только при экспорте пакета](#documents-in-bundle-export).
+
+### Особенности, зависящие от формата [#format-specific-considerations]
+
+Метаданные встраиваются в вывод в разной степени:
+
+- Экспорт в PDF поддерживает весь спектр метаданных и помещает их в _словарь информации о документе_ PDF, а также в метаданные XMP.
+- Экспорт в HTML поддерживает только свойства `title`, `description`, `author` и `keywords`. Свойство `date` не поддерживается, так как стандарт HTML не предусматривает его.
+- Экспорт в SVG и PNG вообще не поддерживает метаданные.
+
+## Документы при экспорте пакета [#documents-in-bundle-export]
+
+При [экспорте пакета](/docs/typst/reference/format/bundle) элемент document представляет отдельный файл в выводе пакета в одном из других форматов экспорта Typst. При создании документа вы должны указать путь вывода и некоторое содержимое. Typst скомпилирует и экспортирует предоставленное содержимое в соответствующем формате. По умолчанию формат выводится из расширения файла указанного вами пути, но вы также можете явно настроить [`format`](#parameters-format).
+
+```typst
+#document("index.html", title: [Home])[
+  #title()
+  View #link(<list>)[my famous list].
+]
+
+#document("list.html", title: [My Famous List])[
+  #title()
+  - My
+  - Famous
+  - List
+] <list>
+```
+
+### Метаданные [#metadata-2]
+
+Элементы document подхватывают метаданные из правил `set document` верхнего уровня внутри них. Это означает, что документы, написанные для экспорта одного документа, можно использовать с явными элементами `document`, при этом метаданные корректно сохраняются.
+
+```typst
+// Will pick up the title defined in `paper.typ`.
+#document("paper.pdf", include "paper.typ")
+```
+
+```typst
+// paper.typ
+#set document(title: [My Paper])
+...
+```
+
+Обратите внимание, что правила set для document внутри `document` переопределяют явные аргументы, переданные элементу `document`.
+
+Более того, свойства, настроенные как явные аргументы `document`, становятся контекстно доступными:
+
+```typst
+#document("index.html", title: [My title])[
+  // Both of these will pick up `[My title]`
+#title()
+  #context document.title
+]
+```
+
+### Настройки экспорта [#export-settings]
+
+Как и с метаданными документа, вы можете использовать правила set для [элементов формата](/docs/typst/reference/format), чтобы настроить параметры экспорта для конкретного документа.
+
+```typst
+// Pretty-print all HTML.
+#set format.html(pretty: true)
+
+#document("index.html")[
+  ...
+]
+
+#document("archive.pdf")[
+  // And use a specific PDF standard
+// for `archive.pdf`.
+#set pdf(standard: "a-2a")
+  ...
+]
+```
+
+## Параметры [#parameters]
+
+```typst
+document(
+  str,
+  format: auto | str,
+  title: none | content,
+  author: str | array,
+  description: none | content,
+  keywords: str | array,
+  date: none | auto | datetime,
+  content,
+)
+```
+
+### `path` [#parameters-path]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Путь в пакете, по которому будет размещён экспортируемый документ.
+
+Может содержать внутренние слэши, в этом случае промежуточные каталоги будут созданы автоматически.
+
+Это свойство поддерживается только в цели [bundle](/docs/typst/reference/format/bundle).
+
+### `format` [#parameters-format]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Настраиваемый · **По умолчанию:** `auto`
+
+Формат, в котором выполнять экспорт.
+
+Если `auto`, Typst пытается определить формат экспорта по расширению файла в [`path`](#parameters-path).
+
+Это свойство поддерживается только в цели [bundle](/docs/typst/reference/format/bundle).
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"pdf"` | Высокоточный формат документов и графики с упором на точное воспроизведение при печати. |
+| `"png"` | Растровый формат для иллюстраций и прозрачной графики. |
+| `"svg"` | Векторный графический формат веба. |
+| `"html"` | Документный формат веба. |
+
+### `title` [#parameters-title]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Настраиваемый · **По умолчанию:** `none`
+
+Заголовок документа. Он отображается как заголовок окна просмотрщика PDF или вкладки браузера страницы.
+
+По умолчанию настроенный заголовок не отображается визуально в документе. Вы можете добавить заголовок в содержимое документа с помощью элемента [`title`](/docs/typst/reference/model/title). Он автоматически подхватит заголовок, настроенный здесь.
+
+Добавление заголовка важно для доступности, так как облегчает навигацию к вашему документу и его идентификацию среди других открытых документов. При экспорте в PDF/UA заголовок обязателен.
+
+Хотя это может быть произвольное содержимое, просмотрщики PDF поддерживают только заголовки в виде простого текста, поэтому преобразование может быть с потерями.
+
+### `author` [#parameters-author]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Настраиваемый · **По умолчанию:** `()`
+
+Авторы документа.
+
+### `description` [#parameters-description]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Настраиваемый · **По умолчанию:** `none`
+
+Описание документа.
+
+### `keywords` [#parameters-keywords]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Настраиваемый · **По умолчанию:** `()`
+
+Ключевые слова документа.
+
+### `date` [#parameters-date]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [datetime](/docs/typst/reference/foundations/datetime) · **Модификаторы:** Настраиваемый · **По умолчанию:** `auto`
+
+Дата создания документа.
+
+Если это `auto` (по умолчанию), Typst использует текущую дату и время. Установка значения `none` предотвращает встраивание Typst какой-либо даты создания в метаданные PDF.
+
+Компонент года должен быть не меньше нуля, чтобы быть встроенным в PDF.
+
+Если вы хотите создавать побайтово воспроизводимые PDF, установите это значение в что-то отличное от `auto`.
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, из которого состоит документ.
+
+Это свойство поддерживается только в цели [bundle](/docs/typst/reference/format/bundle).

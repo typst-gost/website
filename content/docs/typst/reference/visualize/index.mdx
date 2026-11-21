@@ -1,0 +1,31 @@
+---
+title: "Визуализация"
+description: "Документация по функциональности рисования и визуализации данных."
+---
+
+<span id="summary" />
+
+Рисование и визуализация данных.
+
+Если вы хотите создавать более сложные рисунки или графики, также обратите внимание на пакет [CeTZ](https://github.com/johannes-wolf/cetz), а также на более специализированные [пакеты](https://typst.app/universe) для вашего случая использования.
+
+## Доступность [#accessibility]
+
+Все фигуры и пути, нарисованные Typst, автоматически помечаются как [артефакты](/docs/typst/reference/format/pdf/artifact), чтобы сделать их невидимыми для вспомогательных технологий (AT) при экспорте в PDF. Однако их содержимое (если оно есть) остаётся доступным.
+
+Если вы используете функции из этой категории для создания иллюстрации со смысловой нагрузкой, сделайте её доступной, обернув в вызов функции [`figure`](/docs/typst/reference/model/figure). Используйте её [параметр `alt`](/docs/typst/reference/model/figure#parameters-alt), чтобы предоставить [альтернативное описание](/docs/typst/guides/accessibility#textual-representations).
+
+## Определения [#definitions]
+
+- [`circle`](/docs/typst/reference/visualize/circle)Круг с необязательным содержимым.
+- [`color`](/docs/typst/reference/visualize/color)Цвет в определённом цветовом пространстве.
+- [`curve`](/docs/typst/reference/visualize/curve)Кривая, состоящая из перемещений, линий и сегментов Безье.
+- [`ellipse`](/docs/typst/reference/visualize/ellipse)Эллипс с необязательным содержимым.
+- [`gradient`](/docs/typst/reference/visualize/gradient)Цветовой градиент.
+- [`image`](/docs/typst/reference/visualize/image)Растровая или векторная графика.
+- [`line`](/docs/typst/reference/visualize/line)Линия от одной точки к другой.
+- [`polygon`](/docs/typst/reference/visualize/polygon)Замкнутый многоугольник.
+- [`rect`](/docs/typst/reference/visualize/rect)Прямоугольник с необязательным содержимым.
+- [`square`](/docs/typst/reference/visualize/square)Квадрат с необязательным содержимым.
+- [`stroke`](/docs/typst/reference/visualize/stroke)Определяет, как рисовать линию.
+- [`tiling`](/docs/typst/reference/visualize/tiling)Повторяющаяся заливка мозаикой.

@@ -1,0 +1,260 @@
+---
+title: "Image"
+description: "Документация для функции `image`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Начиная с: всегда*
+
+Растровое или векторное изображение.
+
+Вы можете обернуть изображение в [`figure`](/docs/typst/reference/model/figure), чтобы задать ему номер и подпись.
+
+Как и большинство элементов, изображения по умолчанию являются _блочными_ и поэтому не встраиваются в соседние абзацы. Чтобы сделать изображение строчным, поместите его в [`box`](/docs/typst/reference/layout/box).
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #figure(
+    image("molecular.jpg", width: 80%),
+    caption: [
+      A step in the molecular testing
+      pipeline of our lab.
+    ],
+  )
+`}
+  image="/typst_docs_assets/images/9-5JP4OTlReprDGT6SFHEQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Обрезка [#clipping]
+
+Вы можете обернуть изображение в [`block`](/docs/typst/reference/layout/block) или [`box`](/docs/typst/reference/layout/box)<sup>[1](#loc-2)</sup> с отрицательным [`inset`](/docs/typst/reference/layout/block#parameters-inset) и `clip: true`, чтобы обрезать его. Обратите внимание, что обрезанные части скрыты только визуально. Полные данные изображения по-прежнему встраиваются в вывод (кроме случаев экспорта в PNG). Поэтому этот подход не подходит для редактирования частей изображения.
+
+<TypstRender
+  code={`
+  #let lynx = image("lynx.jpg", height: 150pt, fit: "cover")
+  #grid(
+    columns: 2,
+    column-gutter: 1fr,
+    // The full image on the left.
+    lynx,
+    // Two cropped parts on the right: One cropped by 80pt
+  // from the bottom and one cropped by 75pt from the top.
+  stack(
+      spacing: 5pt,
+      block(lynx, clip: true, inset: (bottom: -80pt)),
+      block(lynx, clip: true, inset: (top: -75pt)),
+    )
+  )
+`}
+  image="/typst_docs_assets/images/loQiNyEpBMnhATsEaLEOfQ.png"
+  alt=""
+  editable={true}
+/>
+
+1. <sup>[1](#loc-1)</sup>Использовать box следует только в том случае, если изображение должно отображаться строчно как часть абзаца. В противном случае предпочтителен block.
+
+## Параметры [#parameters]
+
+```typst
+image(
+  str | path | bytes,
+  format: auto | str | dictionary,
+  width: auto | relative,
+  height: auto | relative | fraction,
+  alt: none | str,
+  page: int,
+  fit: str,
+  scaling: auto | str,
+  icc: auto | str | path | bytes,
+) -> content
+```
+
+### `source` [#parameters-source]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Путь к файлу изображения или необработанные байты, составляющие изображение в одном из поддерживаемых [форматов](#parameters-format).
+
+Байты можно использовать для указания необработанных пиксельных данных в порядке построчного следования слева направо, сверху вниз.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let original = read("diagram.svg")
+  #let changed = original.replace(
+    "#2B80FF", // blue
+    green.to-hex(),
+  )
+
+  #image(bytes(original))
+  #image(bytes(changed))
+`}
+  image="/typst_docs_assets/images/ofhbWXJqtQBRN2Uhcq4pOA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `format` [#parameters-format]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+Формат изображения.
+
+По умолчанию формат определяется автоматически. Обычно вам нужно указывать его только при передаче необработанных байтов в качестве [`source`](#parameters-source) (даже в этом случае Typst попытается определить формат автоматически, но это не всегда возможно).
+
+Поддерживаемые форматы: `"png"`, `"jpg"`, `"gif"`, `"svg"`, `"pdf"`, `"webp"`, а также необработанные пиксельные данные.
+
+Обратите внимание, что при использовании PDF-файлов в качестве изображений действует ряд ограничений:
+
+- При экспорте в PDF любой используемый PDF-файл изображения должен иметь версию, равную или ниже [целевой версии PDF для экспорта](/docs/typst/reference/format/pdf#pdf-versions).
+- PDF-файлы в качестве изображений в настоящее время не поддерживаются при экспорте с определённым стандартом PDF, например PDF/A-3 или PDF/UA-1. В этих случаях вместо них можно использовать SVG для встраивания векторных изображений.
+- Файл изображения не должен быть защищён паролем.
+- Теги в вашем PDF-изображении не сохраняются. Вместо этого необходимо предоставить [альтернативное описание](#parameters-alt), чтобы сделать изображение доступным.
+
+При передаче необработанных пиксельных данных в качестве `source` необходимо указать словарь со следующими ключами в качестве `format`:
+
+- `encoding` ([str](/docs/typst/reference/foundations/str)): Кодировка пиксельных данных. Одна из:
+  - `"rgb8"` (три 8-битных канала: красный, зелёный, синий)
+  - `"rgba8"` (четыре 8-битных канала: красный, зелёный, синий, альфа)
+  - `"luma8"` (один 8-битный канал)
+  - `"lumaa8"` (два 8-битных канала: яркость и альфа)
+- `width` ([int](/docs/typst/reference/foundations/int)): Ширина изображения в пикселях.
+- `height` ([int](/docs/typst/reference/foundations/int)): Высота изображения в пикселях.
+
+Ширина в пикселях, умноженная на высоту и умноженная на количество каналов для указанной кодировки, должна соответствовать данным `source`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #image(
+    read(
+      "tetrahedron.svg",
+      encoding: none,
+    ),
+    format: "svg",
+    width: 2cm,
+  )
+
+  #image(
+    bytes(range(16).map(x => x * 16)),
+    format: (
+      encoding: "luma8",
+      width: 4,
+      height: 4,
+    ),
+    width: 2cm,
+  )
+`}
+  image="/typst_docs_assets/images/2I9lgyYcQA2OYl5bhtSMlA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"png"` | Растровый формат для иллюстраций и прозрачной графики. |
+| `"jpg"` | Растровый формат с потерями, подходящий для фотографий. |
+| `"gif"` | Растровый формат, обычно используемый для коротких анимированных клипов. Typst может загружать GIF-файлы, но они становятся статичными. |
+| `"webp"` | Растровый формат, поддерживающий как сжатие с потерями, так и без потерь. |
+| `"svg"` | Векторный графический формат веба. |
+| `"pdf"` | Высокоточный формат документов и графики с акцентом на точное воспроизведение при печати. |
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+Ширина изображения.
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+Высота изображения.
+
+### `alt` [#parameters-alt]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Альтернативное описание изображения.
+
+Этот текст используется вспомогательными технологиями (AT), такими как программы чтения с экрана, для описания изображения пользователям с нарушениями зрения.
+
+Когда изображение обёрнуто в [`figure`](/docs/typst/reference/model/figure), используйте этот параметр вместо [параметра `alt` у figure](/docs/typst/reference/model/figure#parameters-alt) для описания изображения. Единственное исключение из этого правила — когда изображение и другое содержимое figure образуют единую смысловую единицу. В этом случае используйте параметр `alt` у figure для описания всей композиции и не используйте этот параметр.
+
+О том, как писать хорошие альтернативные описания, вы можете узнать в [руководстве по доступности](/docs/typst/guides/accessibility#textual-representations).
+
+### `page` [#parameters-page]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `1`
+
+Номер страницы, которая должна быть встроена как изображение. Этот атрибут действует только для PDF-файлов.
+
+### `fit` [#parameters-fit]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `"cover"`
+
+Как изображение должно подстраиваться под заданную область (область определяется полями `width` и `height`). Обратите внимание, что `fit` визуально ничего не меняет, если соотношение сторон области совпадает с соотношением сторон изображения.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set page(width: 300pt, height: 50pt, margin: 10pt)
+  #image("tiger.jpg", width: 100%, fit: "cover")
+  #image("tiger.jpg", width: 100%, fit: "contain")
+  #image("tiger.jpg", width: 100%, fit: "stretch")
+`}
+  image="/typst_docs_assets/images/dSyJ-MmpRyCVJhFbiwtSxA.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/QFpYvebmPKQk6hhH2IpyXg.png" alt="" width="600" height="100" />
+
+<img src="/typst_docs_assets/images/GP1ov9nAra9ps8T39pZb1w.png" alt="" width="600" height="100" />
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"cover"` | Изображение должно полностью покрывать область (сохраняет соотношение сторон, обрезая изображение только по горизонтали или вертикали). Это значение по умолчанию. |
+| `"contain"` | Изображение должно полностью помещаться в области (сохраняет соотношение сторон; не обрезает изображение; один из размеров может быть меньше указанного). |
+| `"stretch"` | Изображение должно быть растянуто так, чтобы точно заполнить область, даже если это означает, что изображение будет искажено (не сохраняет соотношение сторон и не обрезает изображение). |
+
+### `scaling` [#parameters-scaling]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+Подсказка программам просмотра о том, как им следует масштабировать изображение.
+
+Если задано значение `auto`, выбор по умолчанию остаётся за программой просмотра. При экспорте в PNG Typst по умолчанию использует сглаженное масштабирование, как и большинство программ просмотра PDF и SVG.
+
+_Примечание:_ Точный вид может различаться в разных программах просмотра PDF.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"smooth"` | Масштабирование с помощью алгоритма сглаживания, например билинейной интерполяции. |
+| `"pixelated"` | Масштабирование методом ближайшего соседа или аналогичным алгоритмом для сохранения пиксельного вида изображения. |
+
+### `icc` [#parameters-icc]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+ICC-профиль для изображения.
+
+ICC-профили определяют, как интерпретировать цвета на изображении. Если задано значение `auto`, Typst попытается извлечь ICC-профиль из изображения.

@@ -1,0 +1,151 @@
+---
+title: "Accent"
+description: "Документация для функции `accent`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Прикрепляет диакритический знак к базовому символу.
+
+В математическом режиме общие диакритические знаки также доступны как именованные [символы](/docs/typst/reference/foundations/symbol), которые можно вызывать напрямую (как [функции](/docs/typst/reference/foundations/function)), чтобы прикрепить их к некоторому содержимому.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $grave(a) = accent(a, \`)$ \\
+  $arrow(a) = accent(a, arrow)$ \\
+  $tilde(a) = accent(a, \\u{0303})$
+`}
+  image="/typst_docs_assets/images/REorgQ9fvEwWXmtTiWPKIg.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+math.accent(
+  content,
+  str | content,
+  size: relative,
+  dotless: bool,
+)
+```
+
+### `base` [#parameters-base]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+База, к которой применяется диакритический знак. Может состоять из нескольких букв.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $arrow(A B C)$
+`}
+  image="/typst_docs_assets/images/c9rW3v-HxA2YwKplC37jTQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `accent` [#parameters-accent]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Диакритический знак, применяемый к базе.
+
+Поддерживаемые диакритические знаки включают:
+
+| **Знак** | **Имя** | **Кодовая точка** |
+| --- | --- | --- |
+| Grave | `grave` | `` ` `` |
+| Acute | `acute` | `´` |
+| Circumflex | `hat` | `^` |
+| Tilde | `tilde` | `~` |
+| Macron | `macron` | `¯` |
+| Dash | `dash` | `‾` |
+| Breve | `breve` | `˘` |
+| Dot | `dot` | `.` |
+| Double dot, Diaeresis | `dot.double`, `diaer` | `¨` |
+| Triple dot | `dot.triple` | `\u{20db}` |
+| Quadruple dot | `dot.quad` | `\u{20dc}` |
+| Circle | `circle` | `∘` |
+| Double acute | `acute.double` | `˝` |
+| Caron | `caron` | `ˇ` |
+| Right arrow | `arrow`, `->` | `→` |
+| Left arrow | `arrow.l`, `<-` | `←` |
+| Left/Right arrow | `arrow.l.r` | `↔` |
+| Right harpoon | `harpoon` | `⇀` |
+| Left harpoon | `harpoon.lt` | `↼` |
+
+### `size` [#parameters-size]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `100% + 0pt`
+
+Размер диакритического знака относительно ширины базы.
+
+<details>
+<summary>Посмотреть пример: Базовое использование</summary>
+
+<TypstRender
+  code={`
+  $dash(A, size: #150%)$
+`}
+  image="/typst_docs_assets/images/D-gIrLqweBnNtNLf2z9Bug.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+Обратите внимание, что итоговый диакритический знак может не иметь точно желаемого размера. Например, стрелка может быть либо предопределённым коротким глифом, либо длинным глифом, собранным из составных частей (наконечник стрелки + линия), предоставляемых шрифтом. Размеры этих двух вариантов могут не покрывать весь диапазон. Следовательно, стрелки некоторых промежуточных размеров невозможно построить.
+
+<details>
+<summary>Посмотреть пример: Размер стрелки, растущий скачкообразно</summary>
+
+<TypstRender
+  code={`
+  #for i in range(6) {
+    $ arrow(#box(
+      width: 0.4em + 0.3em * i,
+      fill: aqua,
+      height: 0.4em,
+    )) $
+  }
+`}
+  image="/typst_docs_assets/images/JqCsYeDMyKubRe3LP1B7PQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `dotless` [#parameters-dotless]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `true`
+
+Удалять ли точку над строчными буквами i и j при добавлении верхнего диакритического знака.
+
+Это включает функцию OpenType `dtls`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $hat(dotless: #false, i)$
+`}
+  image="/typst_docs_assets/images/t-Nk8cBNOOhouoWk8nezIQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

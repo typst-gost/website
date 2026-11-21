@@ -1,0 +1,190 @@
+---
+title: "Highlight"
+description: "Документация для функции `highlight`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступно с: 0.8.0*
+
+Выделяет текст цветом фона.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  This is #highlight[important].
+`}
+  image="/typst_docs_assets/images/gKCKZEQAFaMXS3-CDY9huw.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+highlight(
+  fill: none | color | gradient | tiling,
+  stroke: none | length | color | gradient | stroke | tiling | dictionary,
+  top-edge: length | str,
+  bottom-edge: length | str,
+  extent: length,
+  radius: relative | dictionary,
+  content,
+)
+```
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `rgb("#fffd11a1")`
+
+Цвет, которым выделяется текст.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  This is #highlight(
+    fill: blue
+  )[highlighted with blue].
+`}
+  image="/typst_docs_assets/images/w2JFe30vKNpl_9hKmqkJ6Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Цвет границы выделения. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  This is a #highlight(
+    stroke: fuchsia
+  )[stroked highlighting].
+`}
+  image="/typst_docs_assets/images/HL9WivCRDVinuKvrzxnbwA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `top-edge` [#parameters-top-edge]
+
+**Тип:** [length](/docs/typst/reference/layout/length) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"ascender"`
+
+Верхняя граница фонового прямоугольника.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set highlight(top-edge: "ascender")
+  #highlight[a] #highlight[aib]
+
+  #set highlight(top-edge: "x-height")
+  #highlight[a] #highlight[aib]
+`}
+  image="/typst_docs_assets/images/F9JmoRiv6J1YwfYmAp_ciw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"ascender"` | Верхняя граница строчных букв шрифта, которая обычно превышает высоту всех глифов. |
+| `"cap-height"` | Приблизительная высота заглавных букв. |
+| `"x-height"` | Приблизительная высота строчных букв без верхних выносных элементов. |
+| `"baseline"` | Базовая линия, на которой располагаются буквы. |
+| `"bounds"` | Верхняя граница ограничивающего прямоугольника глифа. |
+
+### `bottom-edge` [#parameters-bottom-edge]
+
+**Тип:** [length](/docs/typst/reference/layout/length) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `"descender"`
+
+Нижняя граница фонового прямоугольника.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set highlight(bottom-edge: "descender")
+  #highlight[a] #highlight[ap]
+
+  #set highlight(bottom-edge: "baseline")
+  #highlight[a] #highlight[ap]
+`}
+  image="/typst_docs_assets/images/Q2tGy7Z9vl6Ykf1VpMW3CQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"baseline"` | Базовая линия, на которой располагаются буквы. |
+| `"descender"` | Нижняя граница строчных букв шрифта, которая обычно превышает глубину всех глифов. |
+| `"bounds"` | Нижняя граница ограничивающего прямоугольника глифа. |
+
+### `extent` [#parameters-extent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0pt`
+
+Величина, на которую фон расширяется в стороны за пределы содержимого (или внутрь, если значение отрицательное).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  A long #highlight(extent: 4pt)[background].
+`}
+  image="/typst_docs_assets/images/9ru3JPTmlAiemWM6YonZJw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `radius` [#parameters-radius]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько скруглить углы выделения. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-radius).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Listen #highlight(
+    radius: 5pt, extent: 2pt
+  )[carefully], it will be on the test.
+`}
+  image="/typst_docs_assets/images/bqDUOFZ-qfZ_OhEIT74mxw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, которое следует выделить.

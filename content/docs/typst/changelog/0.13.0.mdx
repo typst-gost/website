@@ -1,0 +1,252 @@
+---
+title: "0.13.0"
+description: "Изменения в Typst 0.13.0"
+---
+
+## Основные изменения [#highlights]
+
+- Теперь существует различие между [настоящими абзацами](/docs/typst/reference/model/par) и просто строчным содержимым. Это важно для будущей работы над доступностью и означает, что [отступ первой строки](/docs/typst/reference/model/par#parameters-first-line-indent) теперь можно включить для всех абзацев, а не только для последовательных.
+- У [`outline`](/docs/typst/reference/model/outline) улучшен внешний вид по умолчанию, и он стал более настраиваемым
+- Новая функция [`curve`](/docs/typst/reference/visualize/curve) (заменяющая функцию `path`) предоставляет более простой и гибкий интерфейс для создания кривых Безье
+- Функция `image` теперь поддерживает необработанные [пиксельные растровые форматы](/docs/typst/reference/visualize/image#parameters-format) для генерации изображений непосредственно в Typst
+- Функции, принимающие пути к файлам, теперь также принимают необработанные [байты](/docs/typst/reference/foundations/bytes) для полной гибкости
+- [Плагины](/docs/typst/reference/foundations/plugin) WebAssembly стали более гибкими и автоматически выполняются в многопоточном режиме
+- Исправлена давняя ошибка, из-за которой однобуквенные строки в математике (`$"a"$`) отображались курсивом
+- Теперь можно указать, какой набор символов должен [покрываться](/docs/typst/reference/text/text#parameters-font) каким семейством шрифтов
+- Функция [`pdf.embed`](/docs/typst/reference/format/pdf/attach) позволяет встраивать произвольные файлы в экспортируемый PDF
+- Экспорт в HTML в настоящее время активно разрабатывается. Функция всё ещё _очень_ неполная, но уже доступна для экспериментов за флагом функции.
+
+## Модель [#model]
+
+- Теперь существует различие между [настоящими абзацами](/docs/typst/reference/model/par) и просто строчным содержимым **(Критическое изменение)**
+  - Весь текст в корне документа оборачивается в абзацы. При этом текст в контейнере (например, в блоке) оборачивается в абзац только в том случае, если контейнер содержит какое-либо блочное содержимое. Если всё содержимое является строчным, абзац не создаётся.
+  - В свёрстанном документе не сразу видно, стал ли текст частью абзаца. Однако это по-прежнему важно для доступности, экспорта в HTML и для таких свойств, как `first-line-indent`.
+  - Правила show для `par` теперь влияют только на настоящие абзацы
+  - Свойства `first-line-indent` и `hanging-indent` также влияют только на настоящие абзацы
+  - Создание `par[..]` с содержимым, которое не является полностью строчным, приведёт к предупреждению
+  - Правила show по умолчанию для различных встроенных элементов, таких как списки, цитаты и т. д., были скорректированы, чтобы гарантировать, что они создают/не создают абзацы соответствующим образом
+  - Удалена поддержка логических значений и содержимого в [`outline.indent`](/docs/typst/reference/model/outline#parameters-indent)
+- Функция [`outline`](/docs/typst/reference/model/outline) была полностью переработана для улучшения её поведения по умолчанию **(Критическое изменение)**
+  - [Элементы оглавления](/docs/typst/reference/model/outline#definitions-entry) теперь являются [блоками](/docs/typst/reference/layout/block) и, следовательно, на них влияет блочный интервал
+  - Режим отступа `auto` теперь выравнивает нумерацию и заголовки по всему оглавлению для сеткообразного вида
+  - Автоматический отступ теперь также применяется к элементам без нумерации
+  - Заголовки, занимающие несколько строк, теперь имеют висячий отступ
+  - Номер страницы больше не будет отображаться отдельно на своей строке
+  - Ссылка теперь охватывает весь элемент, а не только заголовок и номер страницы
+  - Увеличено расстояние по умолчанию между точками-заполнителями оглавления
+  - Параметр [`fill`](/docs/typst/reference/model/outline#definitions-entry-fill) был перемещён из `outline` в `outline.entry` и, таким образом, может быть настроен через правила show-set
+  - Удалены поля `body` и `page` из элемента оглавления
+  - Добавлены методы `indented`, `prefix`, `inner`, `body` и `page` для элементов оглавления, чтобы упростить написание правил show
+- Добавлена конфигурация для [`par.first-line-indent`](/docs/typst/reference/model/par#parameters-first-line-indent) для отступа всех абзацев, а не только последовательных
+- Добавлен параметр [`form`](/docs/typst/reference/model/ref#parameters-form) в функцию `ref`. Установка формы в `"page"` создаст ссылку на страницу вместо текстовой.
+- Добавлено поле [`document.description`](/docs/typst/reference/model/document#parameters-description), которое приводит к соответствующей метаданным PDF и HTML
+- Добавлен параметр [`enum.reversed`](/docs/typst/reference/model/enum#parameters-reversed)
+- Добавлена поддержка греческой [нумерации](/docs/typst/reference/model/numbering)
+- Когда функция [`link`](/docs/typst/reference/model/link) оборачивает контейнер, такой как [блок](/docs/typst/reference/layout/block), теперь она будет генерировать только одну ссылку для всего блока вместо отдельных ссылок для всех видимых листовых элементов. Это значительно уменьшает размер PDF-файлов при комбинировании `link` и [`repeat`](/docs/typst/reference/layout/repeat).
+- Функция [`link`](/docs/typst/reference/model/link) теперь будет удалять только один префикс (например, `mailto:` или `tel:`), а не несколько
+- Функция link теперь подавляет перенос слов с помощью встроенного правила show-set, а не через своё правило show по умолчанию
+- Отображение счётчика страниц без указанной нумерации теперь будет учитывать нумерацию страниц
+
+## Визуализация [#visualization]
+
+- Добавлена новая функция [`curve`](/docs/typst/reference/visualize/curve), которая заменяет функцию `path` и предоставляет более простой и гибкий интерфейс. Функция `path` теперь устарела.
+- Функция `image` теперь поддерживает необработанные [пиксельные растровые форматы](/docs/typst/reference/visualize/image#parameters-format). Это можно использовать для генерации изображений непосредственно в Typst без необходимости кодирования в формат обмена изображениями.
+- Добавлен параметр [`image.scaling`](/docs/typst/reference/visualize/image#parameters-scaling) для настройки того, как изображение масштабируется при экспорте в PNG и просмотрщиками PDF (сглаженно или пиксельно)
+- Добавлен параметр [`image.icc`](/docs/typst/reference/visualize/image#parameters-icc) для предоставления или переопределения ICC-профиля изображения
+- Переименовано `pattern` в [`tiling`](/docs/typst/reference/visualize/tiling). Имя `pattern` остаётся устаревшим псевдонимом.
+- Добавлены методы [`gradient.center`](/docs/typst/reference/visualize/gradient#definitions-center), [`gradient.radius`](/docs/typst/reference/visualize/gradient#definitions-radius), [`gradient.focal-center`](/docs/typst/reference/visualize/gradient#definitions-focal-center) и [`gradient.focal-radius`](/docs/typst/reference/visualize/gradient#definitions-focal-radius)
+- Исправлено взаимодействие обрезки и выноса на [`box`](/docs/typst/reference/layout/box) и [`block`](/docs/typst/reference/layout/block)
+- Исправлена паника при `path` бесконечной длины
+- Исправлены несолидные (например, тайловые) заливки текста в обрезанных блоках
+- Исправлен сбой для изображений со значением DPI, равным нулю
+- Исправлена ошибка с плавающей запятой в [`gradient.repeat`](/docs/typst/reference/visualize/gradient#definitions-repeat)
+- Автоопределение форматов изображений из необработанного буфера теперь поддерживает SVG
+
+## Скриптинг [#scripting]
+
+- Функции, принимающие пути к файлам, теперь также принимают необработанные [байты](/docs/typst/reference/foundations/bytes)
+  - [`image`](/docs/typst/reference/visualize/image), [`cbor`](/docs/typst/reference/data-loading/cbor), [`csv`](/docs/typst/reference/data-loading/csv), [`json`](/docs/typst/reference/data-loading/json), [`toml`](/docs/typst/reference/data-loading/toml), [`xml`](/docs/typst/reference/data-loading/xml) и [`yaml`](/docs/typst/reference/data-loading/yaml) теперь поддерживают строку пути или байты, а их варианты `.decode` устарели
+  - [`plugin`](/docs/typst/reference/foundations/plugin), [`bibliography`](/docs/typst/reference/model/bibliography), [`bibliography.style`](/docs/typst/reference/model/bibliography#parameters-style), [`cite.style`](/docs/typst/reference/model/cite#parameters-style), [`raw.theme`](/docs/typst/reference/text/raw#parameters-theme) и [`raw.syntaxes`](/docs/typst/reference/text/raw#parameters-syntaxes) теперь принимают байты в дополнение к строкам пути. У них не было вариантов `.decode`, поэтому это добавляет новую гибкость.
+  - Аргумент/поле `path` у [`image`](/docs/typst/reference/visualize/image) и [`bibliography`](/docs/typst/reference/model/bibliography) было переименовано в `source` и `sources` соответственно **(Незначительное критическое изменение)**
+- Улучшены [плагины](/docs/typst/reference/foundations/plugin) WebAssembly
+  - Тип `plugin` заменён [функцией `plugin`](/docs/typst/reference/foundations/plugin), которая возвращает [модуль](/docs/typst/reference/foundations/module), содержащий обычные функции Typst. Этот модуль можно использовать с синтаксисом import. **(Критическое изменение)**
+  - Плагины теперь автоматически выполняются в нескольких потоках без каких-либо изменений со стороны авторов плагинов
+  - Введён новый API [`plugin.transition`](/docs/typst/reference/foundations/plugin#definitions-transition), который позволяет плагинам выполнять нечистую инициализацию таким образом, чтобы не нарушать гарантии чистоты Typst
+- Имя переменной, связываемое голым импортом (без переименования, без списка импорта), теперь определяется статически, а динамические импорты без переименования через `as` (например, `import "ot" + "her.typ"`) являются жёсткой ошибкой **(Критическое изменение)**
+- Значения типа [`arguments`](/docs/typst/reference/foundations/arguments) теперь можно добавлять с помощью `+` и [объединять](/docs/typst/reference/scripting#blocks) в блоках кода в фигурных скобках
+- Функции в области видимости функции-элемента теперь можно вызывать с синтаксисом метода, что сближает элементы и типы (в ожидании будущего полного объединения двух). В настоящее время это полезно только для [`outline.entry`](/docs/typst/reference/model/outline#definitions-entry), так как никакая другая функция-элемент не определяет методы.
+- Добавлена функция [`calc.norm`](/docs/typst/reference/foundations/calc#functions-norm)
+- Добавлена поддержка 32-битных чисел с плавающей запятой в [`float.from-bytes`](/docs/typst/reference/foundations/float#definitions-from-bytes) и [`float.to-bytes`](/docs/typst/reference/foundations/float#definitions-to-bytes)
+- Конструктор [`decimal`](/docs/typst/reference/foundations/decimal) теперь также принимает десятичные значения
+- Улучшен `repr` для [символов](/docs/typst/reference/foundations/symbol), [аргументов](/docs/typst/reference/foundations/arguments) и [типов](/docs/typst/reference/foundations/type)
+- Дублирующиеся варианты и модификаторы [символов](/docs/typst/reference/foundations/symbol) теперь являются жёсткой ошибкой **(Критическое изменение)**
+
+## Математика [#math]
+
+- Исправлена ошибка, из-за которой однобуквенные строки в математике (`$"a"$`) отображались курсивом
+- Вызовы математических функций теперь могут иметь именованные аргументы с дефисом и поддерживают [распространение аргументов](/docs/typst/reference/foundations/arguments#spreading)
+- Более красивые акценты благодаря поддержке функций OpenType `flac` (Flattened Accent Forms) и `dtls` (Dotless Forms)
+- Добавлен [текстовый оператор](/docs/typst/reference/math/op) `lcm`
+- Функция [`bold`](/docs/typst/reference/math/styles#functions-bold) теперь работает с ϝ и Ϝ
+- Функция [`italic`](/docs/typst/reference/math/styles#functions-italic) теперь работает с ħ
+- Исправлена ошибка, из-за которой на размер математического уравнения неправильно влияли внутренние метаданные
+- Исправлено взаимодействие [`lr`](/docs/typst/reference/math/lr#functions-lr) и выражений [context](/docs/typst/reference/context)
+- Исправлено безусловное игнорирование слабого интервала в [`lr`](/docs/typst/reference/math/lr#functions-lr)
+- Исправлено неправильное положение верхних/нижних индексов в [`lr`](/docs/typst/reference/math/lr#functions-lr)
+- Исправлено изменение базовой линии математики многострочными аннотациями (например, overbrace)
+- Исправлено слияние вложений, когда базой является вложенное уравнение
+- Исправлено разрешение контекстных (на основе em) размеров текста в математике
+- Исправлен интервал вокруг верхних так (⊥)
+
+## Библиография [#bibliography]
+
+- Прозаические и авторские цитаты теперь используют имена редакторов, если имена авторов недоступны
+- Некоторые нестандартные, но широко используемые `editortype` BibLaTeX, такие как `producer`, `writer`, `scriptwriter` и `none` (определённые широко распространённым стилем `biblatex-chicago` для обозначения исполнителей в записях `music` и `video`), теперь распознаются
+- Стили CSL теперь могут отображать аффиксы вокруг библиографии
+- Для записей BibTeX с `eprinttype = {pubmed}` идентификатор PubMed теперь будет корректно обрабатываться
+- Улучшена обработка пробелов для строк, разделяющих инициализированные имена
+- Теперь возможно написание заглавных букв после апострофов, используемых в качестве кавычек
+- Исправлены ошибки в обработке разделительных символов CSL
+- Исправлена проблема с разбором многобайтовых символов в диапазонах страниц, которая могла препятствовать разбору Hayagriva некоторых диапазонов страниц BibTeX
+- Обновлён стиль CSL APA
+- Обновлены локали CSL для финского, швейцарского немецкого, австрийского немецкого, немецкого и арабского языков
+
+## Текст [#text]
+
+- Добавлена поддержка указания того, какой набор символов должен [покрываться](/docs/typst/reference/text/text#parameters-font) каким семейством шрифтов
+- Добавлен параметр [`all`](/docs/typst/reference/text/smallcaps#parameters-all) в функцию `smallcaps`, который также включает капитель для заглавных букв
+- Добавлена базовая интернационализация для баскского и болгарского языков
+- [Выравнивание](/docs/typst/reference/model/par#parameters-justify) больше не влияет на блоки [raw](/docs/typst/reference/text/raw)
+- [Интервал CJK-латиница](/docs/typst/reference/text/text#parameters-cjk-latin-spacing) больше не влияет на текст [raw](/docs/typst/reference/text/raw)
+- Исправлены неправильные языковые коды для греческого и украинского языков
+- Исправлены кавычки по умолчанию для хорватского и болгарского языков
+- Исправлен сбой при обработке текста RTL
+- Добавлена поддержка подсветки синтаксиса [`raw`](/docs/typst/reference/text/raw) для нескольких новых языков: CFML, NSIS и WGSL
+- Новое исключение метаданных шрифта для New Computer Modern Sans Math
+- Встроенные шрифты New Computer Modern обновлены до версии 7.0.1
+
+## Вёрстка [#layout]
+
+- Исправлены различные ошибки со сносками
+  - Исправлена потеря сносок, когда несколько сносок были вложены в другую сноску
+  - Исправлены бесконечные циклы с пустыми и слишком большими сносками
+  - Исправлен сбой с слишком большими сносками внутри плавающего размещения
+- Исправлен размер квадратичных фигур ([`square`](/docs/typst/reference/visualize/square) и [`circle`](/docs/typst/reference/visualize/circle))
+- Исправлена работа [`block.sticky`](/docs/typst/reference/layout/block#parameters-sticky) в верхней части контейнера
+- Исправлен сбой из-за последовательных слабых интервалов
+- Исправлен сбой, когда [блок](/docs/typst/reference/layout/block) или текст имеют отрицательные размеры
+- Исправлены ненужные переносы слов, возникающие в редких сценариях из-за плохого взаимодействия отступов и оптимизации абзацев
+- Исправлено, что одиночные [цитаты](/docs/typst/reference/model/cite) в [`align`](/docs/typst/reference/layout/align) не становились отдельным абзацем
+
+## Синтаксис [#syntax]
+
+- Закрывающие квадратные скобки верхнего уровня, не имеющие соответствующей открывающей квадратной скобки, теперь являются жёсткой ошибкой **(Незначительное критическое изменение)**
+- Добавление пробела между идентификатором и круглыми скобками в правиле set больше не допускается **(Незначительное критическое изменение)**
+- Числа с единицей измерения больше не могут иметь префикс основания, например, `0b100000pt` больше не допускается. Ранее это было синтаксически допустимо, но всегда разрешалось в значение ноль. **(Незначительное критическое изменение)**
+- Использование `is` в качестве идентификатора теперь будет выдавать предупреждение, так как в будущем оно может стать ключевым словом
+- Исправлены незначительные ошибки обработки пробелов
+  - в списках аргументов в математическом режиме
+  - в конце заголовков
+  - между термином и описанием списка терминов
+- Исправлен разбор пустых однострочных блоков raw с 3+ обратными кавычками и языковым тегом
+- Исправлена незначительная ошибка с разбором круглых скобок в математике
+- Разметка, которая может появляться только в начале строки (заголовки, списки), теперь также может появляться в начале элемента списка
+- Shebang `#!` в самом начале файла теперь игнорируется
+
+## Экспорт в PDF [#pdf-export]
+
+- Добавлена функция [`pdf.embed`](/docs/typst/reference/format/pdf/attach) для встраивания произвольных файлов в экспортируемый PDF
+- Добавлена поддержка экспорта в PDF/A-3b
+- Временная метка PDF теперь по умолчанию содержит часовой пояс
+
+## Экспорт в HTML [#html-export]
+
+**Примечание:** Экспорт в HTML в настоящее время активно разрабатывается. Функция всё ещё _очень_ неполная, но уже доступна для экспериментов за флагом функции.
+
+- Добавлена поддержка вывода в HTML для некоторых (но не всех) встроенных элементов
+- Добавлена функция [`html.elem`](/docs/typst/reference/format/html/elem) для вывода произвольного HTML-элемента
+- Добавлена функция [`html.frame`](/docs/typst/reference/format/html/frame) для интеграции содержимого, требующего вёрстки, в HTML (путём встраивания SVG)
+- Добавлена функция [`target`](/docs/typst/reference/foundations/target), которая возвращает либо `"paged"`, либо `"html"` в зависимости от цели экспорта
+
+## Инструменты и диагностика [#tooling-and-diagnostics]
+
+- Улучшения автодополнения
+  - Добавлено автодополнение для путей к файлам
+  - Более умное автодополнение переменных: дополнение `rect(fill: |)` теперь будет показывать только переменные, содержащие допустимую заливку (либо напрямую, либо вложенно, например, словарь, содержащий допустимую заливку)
+  - Разные функции теперь будут автодополняться разными скобками (круглыми или квадратными) в зависимости от того, какой тип полезнее
+  - Позиционные параметры, которые уже предоставлены, больше не автодополняются повторно
+  - Исправлено, что автодополнение переменных не учитывало параметры
+  - Добавлены фрагменты автодополнения для распространённых случаев использования figure
+  - Исправлено автодополнение после наполовину завершённого элемента импорта
+  - Исправлено автодополнение для функции `cite`
+- Добавлено предупреждение, когда безусловный return в блоке кода отбрасывает объединённое содержимое
+- Исправлено сообщение об ошибке при доступе к несуществующей метке
+- Исправлена обработка вложенных импортов в функциональности IDE
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Добавлен аргумент `--features` и переменная окружения `TYPST_FEATURES` для включения экспериментальных функций. Единственная функция на данный момент — `html`.
+- Добавлен HTTP-сервер с живой перезагрузкой в `typst watch` при нацеливании на HTML
+- Исправлено, что самообновление не знало о некоторых целевых архитектурах
+- Исправлен сбой при передаче вывода `typst fonts` в другую команду через конвейер
+- Исправлена обработка относительных путей в выводе `--make-deps`
+- Исправлена обработка многостраничного экспорта SVG и PNG в выводе `--make-deps`
+- Двоеточия в именах файлов теперь корректно экранируются в выводе `--make-deps`
+
+## Символы [#symbols]
+
+- Новые
+  - `inter`, `inter.and`, `inter.big`, `inter.dot`, `inter.double`, `inter.sq`, `inter.sq.big`, `inter.sq.double`, `integral.inter`
+  - `asymp`, `asymp.not`
+  - `mapsto`, `mapsto.long`
+  - `divides.not.rev`, `divides.struck`
+  - `interleave`, `interleave.big`, `interleave.struck`
+  - `eq.triple.not`, `eq.dots`, `eq.dots.down`, `eq.dots.up`
+  - `smt`, `smt.eq`, `lat`, `lat.eq`
+  - `colon.tri`, `colon.tri.op`
+  - `dagger.triple`, `dagger.l`, `dagger.r`, `dagger.inv`
+  - `hourglass.stroked`, `hourglass.filled`
+  - `die.six`, `die.five`, `die.four`, `die.three`, `die.two`, `die.one`
+  - `errorbar.square.stroked`, `errorbar.square.filled`, `errorbar.diamond.stroked`, `errorbar.diamond.filled`, `errorbar.circle.stroked`, `errorbar.circle.filled`
+  - `numero`
+- Переименованы **(Критическое изменение)**
+  - `ohm.inv` в `Omega.inv`
+- Изменена кодовая точка **(Критическое изменение)**
+  - `angle.l.double` с `《` на `⟪`
+  - `angle.r.double` с `》` на `⟫`
+  - `angstrom` с U+212B (`Å`) на U+00C5 (`Å`)
+- Устарели
+  - `sect` и все его варианты в пользу `inter`
+  - `integral.sect` в пользу `integral.inter`
+- Удалены **(Критическое изменение)**
+  - `degree.c` в пользу `°C` (`$upright(°C)$` или `$upright(degree C)$` в математике)
+  - `degree.f` в пользу `°F` (`$upright(°F)$` или `$upright(degree F)$` в математике)
+  - `kelvin` в пользу просто K (`$upright(K)$` в математике)
+  - `ohm` в пользу `Omega`
+
+## Устаревания [#deprecations]
+
+- Функция `path` в пользу функции [`curve`](/docs/typst/reference/visualize/curve)
+- Имя `pattern` для тайловых узоров в пользу нового имени [`tiling`](/docs/typst/reference/visualize/tiling)
+- `image.decode`, `cbor.decode`, `csv.decode`, `json.decode`, `toml.decode`, `xml.decode`, `yaml.decode` в пользу функций верхнего уровня, напрямую принимающих как пути, так и байты
+- `sect` и его варианты в пользу `inter`, а `integral.sect` в пользу `integral.inter`
+- Поведение совместимости сравнений type/str (например, `int == "integer"`), которое было временно введено в Typst 0.8, теперь выдаёт предупреждения. Оно будет удалено в Typst 0.14.
+
+## Удаления [#removals]
+
+- Удалена функция `style` и аргумент `styles` у [`measure`](/docs/typst/reference/layout/measure), используйте вместо этого выражение [context](/docs/typst/reference/context) **(Критическое изменение)**
+- Удалена функция `state.display`, используйте вместо неё [`state.get`](/docs/typst/reference/introspection/state#definitions-get) **(Критическое изменение)**
+- Удалён аргумент `location` у [`state.at`](/docs/typst/reference/introspection/state#definitions-at), [`counter.at`](/docs/typst/reference/introspection/counter#definitions-at) и [`query`](/docs/typst/reference/introspection/query) **(Критическое изменение)**
+- Удалено поведение совместимости, при котором [`counter.display`](/docs/typst/reference/introspection/counter#definitions-display) работал без [context](/docs/typst/reference/context) **(Критическое изменение)**
+- Удалено поведение совместимости [`locate`](/docs/typst/reference/introspection/locate) **(Критическое изменение)**
+
+## Разработка [#development]
+
+- Функция `typst::compile` теперь является обобщённой и может возвращать либо `PagedDocument`, либо `HtmlDocument`
+- `typst-timing` теперь поддерживает цели WebAssembly через `web-sys`, когда включена функция `wasm`
+- Минимальная поддерживаемая версия Rust увеличена до 1.80
+- Исправлен Docker-образ для linux/arm64
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

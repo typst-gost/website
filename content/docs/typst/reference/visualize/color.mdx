@@ -1,0 +1,1818 @@
+---
+title: "Цвет"
+description: "Документация для типа `color`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Цвет в определённом цветовом пространстве.
+
+Typst поддерживает:
+
+- sRGB через [функцию `rgb`](#definitions-rgb)
+- Device CMYK через [функцию `cmyk`](#definitions-cmyk)
+- D65 Gray через [функцию `luma`](#definitions-luma)
+- Oklab через [функцию `oklab`](#definitions-oklab)
+- Oklch через [функцию `oklch`](#definitions-oklch)
+- Linear RGB через [функцию `color.linear-rgb`](#definitions-linear-rgb)
+- HSL через [функцию `color.hsl`](#definitions-hsl)
+- HSV через [функцию `color.hsv`](#definitions-hsv)
+- Цветовые пространства, описываемые плашечными красителями, через [тип `color.spot`](#definitions-spot)
+
+Все цветовые пространства, кроме CMYK и плашечных красителей, имеют альфа-каналы.
+
+В документации мы используем термин _process color_ (триадный цвет) для цветов, которые можно смешивать друг с другом (в настоящее время все цвета, кроме плашечных). В этом термине _process_ означает, что оттенок создаётся в процессе печати, а не заранее.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #rect(fill: aqua)
+  #text(rgb("#265f02"))[Green]
+`}
+  image="/typst_docs_assets/images/68kzBD8F69aoRvRlt5X2vw.png"
+  alt=""
+  editable={true}
+/>
+
+## Предопределённые цвета [#predefined-colors]
+
+Typst определяет следующие встроенные цвета:
+
+| **Цвет** | **Определение** |
+| --- | --- |
+| `black` | `luma(0)` |
+| `gray` | `luma(170)` |
+| `silver` | `luma(221)` |
+| `white` | `luma(255)` |
+| `navy` | `rgb("#001f3f")` |
+| `blue` | `rgb("#0074d9")` |
+| `aqua` | `rgb("#7fdbff")` |
+| `teal` | `rgb("#39cccc")` |
+| `eastern` | `rgb("#239dad")` |
+| `purple` | `rgb("#b10dc9")` |
+| `fuchsia` | `rgb("#f012be")` |
+| `maroon` | `rgb("#85144b")` |
+| `red` | `rgb("#ff4136")` |
+| `orange` | `rgb("#ff851b")` |
+| `yellow` | `rgb("#ffdc00")` |
+| `olive` | `rgb("#3d9970")` |
+| `green` | `rgb("#2ecc40")` |
+| `lime` | `rgb("#01ff70")` |
+
+Предопределённые цвета и наиболее важные конструкторы цветов доступны глобально, а также в области видимости типа color, поэтому вы можете писать как `color.red`, так и просто `red`.
+
+<img src="/typst_docs_assets/images/KT6jLfIqBQxuGlK6B4OYmg.png" alt="" width="1120" height="280" />
+
+## Константы [#constants]
+
+### `map` [#definitions-map]
+
+*Since: 0.9.0* · **Тип:** [module](/docs/typst/reference/foundations/module)
+
+Набор предустановленных цветовых карт, которые можно использовать для [градиентов](/docs/typst/reference/visualize/gradient#stops). Это просто массивы цветов.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #circle(fill: gradient.linear(..color.map.crest))
+`}
+  image="/typst_docs_assets/images/xPjaEuxsNYx5_m83vIu5lw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+| **Карта** | **Подробности** |
+| --- | --- |
+| `turbo` | Перцептивно равномерная радужная цветовая карта. Подробнее читайте в [этом сообщении блога](https://ai.googleblog.com/2019/08/turbo-improved-rainbow-colormap-for.html). |
+| `cividis` | Цветовая карта от синего через серый к жёлтому. Подробнее см. в [этом сообщении блога](https://bids.github.io/colormap/). |
+| `rainbow` | Циклически проходит через весь цветовой спектр. Эту цветовую карту лучше всего использовать, установив цветовое пространство интерполяции в [HSL](#definitions-hsl). Радужный градиент **не подходит** для визуализации данных, поскольку он не является перцептивно равномерным, поэтому различия между значениями становятся неясными для ваших читателей. Его следует использовать только в декоративных целях. |
+| `spectral` | Цветовая карта от красного через жёлтый к синему. |
+| `viridis` | Цветовая карта от фиолетового через бирюзовый к жёлтому. |
+| `inferno` | Цветовая карта от чёрного через красный к жёлтому. |
+| `magma` | Цветовая карта от чёрного через фиолетовый к жёлтому. |
+| `plasma` | Цветовая карта от фиолетового через розовый к жёлтому. |
+| `rocket` | Цветовая карта от чёрного через красный к белому. |
+| `mako` | Цветовая карта от чёрного через бирюзовый к белому. |
+| `coolwarm` | Цветовая карта от синего через белый к красному с плавными переходами. |
+| `vlag` | Цветовая карта от светло-синего через белый к красному. |
+| `icefire` | Цветовая карта от светло-бирюзового через чёрный к оранжевому. |
+| `flare` | Перцептивно равномерная цветовая карта от оранжевого к фиолетовому. |
+| `crest` | Цветовая карта от светло-зелёного к синему. |
+
+Некоторые популярные предустановки не включены, поскольку они недоступны по бесплатной лицензии. Другие, например [Jet](https://jakevdp.github.io/blog/2014/10/16/how-bad-is-your-colormap/), не включены, поскольку они неудобны для людей с нарушениями цветового зрения. Не стесняйтесь использовать или создавать пакет с другими предустановками, которые вам полезны!
+
+<img src="/typst_docs_assets/images/VVpDud_5ngC5eJRM7E17lw.png" alt="" width="594" height="324" />
+
+## Функции [#functions]
+
+### `luma` [#definitions-luma]
+
+*Since: forever*
+
+Создаёт оттенок серого.
+
+Оттенок серого представляется компонентом светлоты и альфа-компонентом.
+
+Значения этих компонентов можно получить для существующего цвета luma с помощью метода [`components`](#definitions-components).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #for x in range(256, step: 50) {
+    box(square(fill: luma(x)))
+  }
+`}
+  image="/typst_docs_assets/images/0OoquJnqiYD5UzE4OQm97g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.luma(
+  int | ratio,
+  int | ratio,
+  color,
+)
+```
+
+#### `lightness` [#definitions-luma-lightness]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент светлоты.
+
+#### `alpha` [#definitions-luma-alpha]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Альфа-компонент.
+
+#### `color` [#definitions-luma-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в оттенок серого.
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let colors = (red, green, blue)
+
+  #for c in colors {
+    box(square(fill: c))
+  }
+
+  #for c in colors {
+    box(square(fill: luma(c)))
+  }
+`}
+  image="/typst_docs_assets/images/g2GRBxWa1vzPweVv1_2eiA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `oklab` [#definitions-oklab]
+
+*Since: 0.9.0*
+
+Создаёт цвет [Oklab](https://bottosson.github.io/posts/oklab/).
+
+Это цветовое пространство хорошо подходит для следующих случаев использования:
+
+- Манипуляции с цветом, например повышение насыщенности при сохранении воспринимаемого оттенка
+- Создание изображений в оттенках серого с равномерной воспринимаемой светлотой
+- Создание плавных и равномерных цветовых переходов и градиентов
+
+Линейный цвет Oklab представляется четырьмя компонентами: светлота ($L$), $a$, $b$ и альфа.
+
+Значения этих компонентов можно получить для существующего цвета Oklab с помощью метода [`components`](#definitions-components).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #square(
+    fill: oklab(27%, 20%, -3%, 50%)
+  )
+`}
+  image="/typst_docs_assets/images/cw8uSdfs8XdwilMBFpjRTA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.oklab(
+  ratio,
+  float | ratio,
+  float | ratio,
+  ratio,
+  color,
+)
+```
+
+#### `lightness` [#definitions-oklab-lightness]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент светлоты ($L$).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: oklab,
+    oklab(0%, -27%, -32%),
+    oklab(100%, -27%, -32%),
+  ))
+`}
+  image="/typst_docs_assets/images/MW2PJSn1ovdzP2yMzTf5pw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `a` [#definitions-oklab-a]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент $a$ («зелёный/красный»).
+
+Значения ratio относительны к `0.4`, то есть `50%` соответствует `0.2`, а `-100%` — `-0.4`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: oklab,
+    oklab(50%, -100%, 0%),
+    oklab(50%, 100%, 0%),
+  ))
+`}
+  image="/typst_docs_assets/images/98o1CcF-NlQfymAVebjzdw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `b` [#definitions-oklab-b]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент $b$ («синий/жёлтый»).
+
+Значения ratio относительны к `0.4`, то есть `50%` соответствует `0.2`, а `-100%` — `-0.4`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: oklab,
+    oklab(80%, 0%, -100%),
+    oklab(80%, 0%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/xyVZKxO05ahkjC6SHGpmRg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `alpha` [#definitions-oklab-alpha]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Альфа-компонент.
+
+#### `color` [#definitions-oklab-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в Oklab.
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+### `oklch` [#definitions-oklch]
+
+*Since: 0.10.0*
+
+Создаёт цвет [Oklch](https://bottosson.github.io/posts/oklab/).
+
+Это цветовое пространство хорошо подходит для следующих случаев использования:
+
+- Манипуляции с цветом, включающие светлоту, цветность и оттенок
+- Создание изображений в оттенках серого с равномерной воспринимаемой светлотой
+- Создание плавных и равномерных цветовых переходов и градиентов
+
+Линейный цвет Oklch представляется четырьмя компонентами: светлота ($L$), цветность ($C$), оттенок ($h$) и альфа.
+
+Значения этих компонентов можно получить для существующего цвета Oklch с помощью метода [`components`](#definitions-components).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #square(
+    fill: oklch(40%, 0.2, 160deg, 50%)
+  )
+`}
+  image="/typst_docs_assets/images/LAM_sqw9A367KQJJz2joog.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.oklch(
+  ratio,
+  float | ratio,
+  angle,
+  ratio,
+  color,
+)
+```
+
+#### `lightness` [#definitions-oklch-lightness]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент светлоты ($L$).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: oklch,
+    oklch(0%, 50%, 40deg),
+    oklch(100%, 50%, 40deg),
+  ))
+`}
+  image="/typst_docs_assets/images/-dhbsYUo6ryXs5fPn6rxww.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `chroma` [#definitions-oklch-chroma]
+
+**Тип:** [float](/docs/typst/reference/foundations/float) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент цветности ($C$).
+
+Значения ratio относительны к `0.4`, то есть `50%` соответствует `0.2`, а `-100%` — `-0.4`.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: oklch,
+    oklch(50%, -100%, 150deg),
+    oklch(50%, 100%, 150deg),
+  ))
+`}
+  image="/typst_docs_assets/images/_sshbCljWK6H2atFvnKbbw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `hue` [#definitions-oklch-hue]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент оттенка ($h$).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: oklch,
+    oklch(50%, 70%, 0deg),
+    oklch(50%, 70%, 90deg),
+    oklch(50%, 70%, 180deg),
+    oklch(50%, 70%, 270deg),
+    oklch(50%, 70%, 360deg),
+  ))
+`}
+  image="/typst_docs_assets/images/pqi1FZqwWgxf7QFtwWUQkw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `alpha` [#definitions-oklch-alpha]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Альфа-компонент.
+
+#### `color` [#definitions-oklch-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в Oklch.
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+### `linear-rgb` [#definitions-linear-rgb]
+
+*Since: 0.9.0*
+
+Создаёт цвет RGB(A) с линейной светлотой.
+
+Это цветовое пространство похоже на sRGB, но с тем отличием, что компоненты цвета не гамма-корректированы. Это упрощает выполнение цветовых операций, таких как смешивание и интерполяция. Тем не менее для этих целей предпочтительнее использовать [функцию `oklab`](#definitions-oklab).
+
+Линейный цвет RGB(A) представляется четырьмя компонентами: красный, зелёный, синий и альфа.
+
+Значения этих компонентов можно получить для существующего линейного цвета RGB(A) с помощью метода [`components`](#definitions-components).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #box(square(fill: color.linear-rgb(
+    30%, 50%, 10%,
+  )))
+  #box(square(fill: color.linear-rgb(
+    77, 128, 26,
+  )))
+`}
+  image="/typst_docs_assets/images/p7bGTaPjs1lbfYVyyP_Iaw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.linear-rgb(
+  int | ratio,
+  int | ratio,
+  int | ratio,
+  int | ratio,
+  color,
+)
+```
+
+#### `red` [#definitions-linear-rgb-red]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Красный компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.linear-rgb,
+    color.linear-rgb(0%, 0%, 0%),
+    color.linear-rgb(100%, 0%, 0%),
+  ))
+
+  For comparison:
+  #rect(fill: gradient.linear(
+    space: rgb,
+    rgb(0%, 0%, 0%),
+    rgb(100%, 0%, 0%),
+  ))
+`}
+  image="/typst_docs_assets/images/EmVP6xgbe8QW88UtWoXBTw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `green` [#definitions-linear-rgb-green]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Зелёный компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.linear-rgb,
+    color.linear-rgb(0%, 0%, 0%),
+    color.linear-rgb(0%, 100%, 0%),
+  ))
+
+  For comparison:
+  #rect(fill: gradient.linear(
+    space: rgb,
+    rgb(0%, 0%, 0%),
+    rgb(0%, 100%, 0%),
+  ))
+`}
+  image="/typst_docs_assets/images/9AeDBnL6yjb48bm7i-FrvQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `blue` [#definitions-linear-rgb-blue]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Синий компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.linear-rgb,
+    color.linear-rgb(0%, 0%, 0%),
+    color.linear-rgb(0%, 0%, 100%),
+  ))
+
+  For comparison:
+  #rect(fill: gradient.linear(
+    space: rgb,
+    rgb(0%, 0%, 0%),
+    rgb(0%, 0%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/Sm2t8rPC6acHHspn_ORYhQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `alpha` [#definitions-linear-rgb-alpha]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Альфа-компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+#### `color` [#definitions-linear-rgb-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в линейный RGB(A).
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+### `rgb` [#definitions-rgb]
+
+*Since: forever*
+
+Создаёт цвет RGB(A).
+
+Цвет задаётся в цветовом пространстве sRGB.
+
+Цвет RGB(A) представляется четырьмя компонентами: красный, зелёный, синий и альфа.
+
+Значения этих компонентов можно получить для существующего цвета RGB(A) с помощью метода [`components`](#definitions-components).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #box(square(fill: rgb("#b1f2eb")))
+  #box(square(fill: rgb(87, 127, 230)))
+  #box(square(fill: rgb(25%, 13%, 65%)))
+`}
+  image="/typst_docs_assets/images/mzdTaxuVKOexoxzlOM2niw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.rgb(
+  int | ratio,
+  int | ratio,
+  int | ratio,
+  int | ratio,
+  str,
+  color,
+)
+```
+
+#### `red` [#definitions-rgb-red]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Красный компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: rgb,
+    rgb(0%, 0%, 0%),
+    rgb(100%, 0%, 0%),
+  ))
+`}
+  image="/typst_docs_assets/images/ph7Y4tSvdeKkzfuiiZ-qjg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `green` [#definitions-rgb-green]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Зелёный компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: rgb,
+    rgb(0%, 0%, 0%),
+    rgb(0%, 100%, 0%),
+  ))
+`}
+  image="/typst_docs_assets/images/s4JCM3DA3qkdHSy1x7K42g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `blue` [#definitions-rgb-blue]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Синий компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: rgb,
+    rgb(0%, 0%, 0%),
+    rgb(0%, 0%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/E9wHMXiy5v8-BuEq4TpNMw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `alpha` [#definitions-rgb-alpha]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Альфа-компонент.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+#### `hex` [#definitions-rgb-hex]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет в шестнадцатеричной записи.
+
+Принимает три, четыре, шесть или восемь шестнадцатеричных цифр и, необязательно, ведущий символ решётки.
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+Обратите внимание, что шестнадцатеричный код для существующего цвета можно получить с помощью метода [`to-hex`](#definitions-to-hex).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #text(16pt, rgb("#239dad"))[
+    *Typst*
+  ]
+`}
+  image="/typst_docs_assets/images/u6MScg4VCDrRrGzr-FR7zQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `color` [#definitions-rgb-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в RGB(a).
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+### `cmyk` [#definitions-cmyk]
+
+*Since: forever*
+
+Создаёт цвет CMYK.
+
+Это полезно, если вы хотите настроить вывод для конкретного принтера. Преобразование в RGB для предварительного просмотра на экране может отличаться от того, как ваш принтер воспроизводит цвет.
+
+Цвет CMYK представляется четырьмя компонентами: голубой, пурпурный, жёлтый и ключевой (чёрный).
+
+Значения этих компонентов можно получить для существующего цвета CMYK с помощью метода [`components`](#definitions-components).
+
+Обратите внимание, что цвета CMYK в настоящее время не поддерживаются при включённом выводе PDF/A.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #square(
+    fill: cmyk(27%, 0%, 3%, 5%)
+  )
+`}
+  image="/typst_docs_assets/images/inzl8vBbo-e8NWu-EqzJNw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.cmyk(
+  ratio,
+  ratio,
+  ratio,
+  ratio,
+  color,
+)
+```
+
+#### `cyan` [#definitions-cmyk-cyan]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Голубой компонент.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: cmyk,
+    cmyk(0%, 0%, 0%, 20%),
+    cmyk(100%, 0%, 0%, 20%),
+  ))
+`}
+  image="/typst_docs_assets/images/aY3FuwV-juTUTaaxptYZdQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `magenta` [#definitions-cmyk-magenta]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Пурпурный компонент.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: cmyk,
+    cmyk(0%, 0%, 0%, 20%),
+    cmyk(0%, 100%, 0%, 20%),
+  ))
+`}
+  image="/typst_docs_assets/images/VTW_VNLvx6hdJ2xb-KMEpg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `yellow` [#definitions-cmyk-yellow]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Жёлтый компонент.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: cmyk,
+    cmyk(0%, 0%, 0%, 20%),
+    cmyk(0%, 0%, 100%, 20%),
+  ))
+`}
+  image="/typst_docs_assets/images/qqan1NhpmBG3AVeu5pcztg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `key` [#definitions-cmyk-key]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Ключевой компонент.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: cmyk,
+    cmyk(65%, 24%, 43%, 0%),
+    cmyk(65%, 24%, 43%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/trlls6DZ7MKzzWU6i6nwWQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `color` [#definitions-cmyk-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в CMYK.
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+### `hsl` [#definitions-hsl]
+
+*Since: 0.9.0*
+
+Создаёт цвет HSL.
+
+Это цветовое пространство полезно для задания цветов по оттенку, насыщенности и светлоте. Оно также полезно для манипуляций с цветом, например для повышения насыщенности при сохранении воспринимаемого оттенка.
+
+Цвет HSL представляется четырьмя компонентами: оттенок, насыщенность, светлота и альфа.
+
+Значения этих компонентов можно получить для существующего цвета CMYK с помощью метода [`components`](#definitions-components).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #box(square(
+    fill: color.hsl(30deg, 50%, 60%)
+  ))
+  #box(square(
+    fill: color.hsl(30deg, 128, 153)
+  ))
+`}
+  image="/typst_docs_assets/images/XQjh02rLjxN8tUgdJDLJNg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.hsl(
+  angle,
+  int | ratio,
+  int | ratio,
+  int | ratio,
+  color,
+)
+```
+
+#### `hue` [#definitions-hsl-hue]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент оттенка.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.hsl,
+    color.hsl(0deg, 100%, 50%),
+    color.hsl(90deg, 100%, 50%),
+    color.hsl(180deg, 100%, 50%),
+    color.hsl(270deg, 100%, 50%),
+    color.hsl(360deg, 100%, 50%),
+  ))
+`}
+  image="/typst_docs_assets/images/MclIjAV1YeFR6xizRjPtBg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `saturation` [#definitions-hsl-saturation]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент насыщенности.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.hsl,
+    color.hsl(50deg, 0%, 50%),
+    color.hsl(50deg, 100%, 50%),
+  ))
+`}
+  image="/typst_docs_assets/images/4cTtzqv63WKRpBCO7TYAMQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `lightness` [#definitions-hsl-lightness]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент светлоты.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.hsl,
+    color.hsl(-30deg, 100%, 0%),
+    color.hsl(-30deg, 100%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/3HnVL-j6V1aMTI8NRoQviQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `alpha` [#definitions-hsl-alpha]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Альфа-компонент.
+
+#### `color` [#definitions-hsl-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в HSL.
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+### `hsv` [#definitions-hsv]
+
+*Since: 0.9.0*
+
+Создаёт цвет HSV.
+
+Это цветовое пространство полезно для задания цветов по оттенку, насыщенности и значению. Оно также полезно для манипуляций с цветом, например для повышения насыщенности при сохранении воспринимаемого оттенка.
+
+Цвет HSV представляется четырьмя компонентами: оттенок, насыщенность, значение и альфа.
+
+Значения этих компонентов можно получить для существующего цвета CMYK с помощью метода [`components`](#definitions-components).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #box(square(
+    fill: color.hsv(30deg, 50%, 60%)
+  ))
+  #box(square(
+    fill: color.hsv(30deg, 128, 153)
+  ))
+`}
+  image="/typst_docs_assets/images/tucZf5OXKaOJ6D_AEmzcjQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.hsv(
+  angle,
+  int | ratio,
+  int | ratio,
+  int | ratio,
+  color,
+)
+```
+
+#### `hue` [#definitions-hsv-hue]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент оттенка.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.hsv,
+    color.hsv(0deg, 100%, 100%),
+    color.hsv(90deg, 100%, 100%),
+    color.hsv(180deg, 100%, 100%),
+    color.hsv(270deg, 100%, 100%),
+    color.hsv(360deg, 100%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/MclIjAV1YeFR6xizRjPtBg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `saturation` [#definitions-hsv-saturation]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент насыщенности.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.hsv,
+    color.hsv(50deg, 0%, 100%),
+    color.hsv(50deg, 100%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/-Fa7y_NSAb7q63vQXyDUtw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `value` [#definitions-hsv-value]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Компонент значения.
+
+Это должно быть значение между `0%` (или `0`) и `100%` (или `255`).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #rect(fill: gradient.linear(
+    space: color.hsv,
+    color.hsv(-30deg, 100%, 0%),
+    color.hsv(-30deg, 100%, 100%),
+  ))
+
+  In HSL for comparison:
+  #rect(fill: gradient.linear(
+    space: color.hsl,
+    color.hsl(-30deg, 100%, 0%),
+    color.hsl(-30deg, 100%, 100%),
+  ))
+`}
+  image="/typst_docs_assets/images/pnOYSkRdyGeTYgOQGM9Pzw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `alpha` [#definitions-hsv-alpha]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Позиционный · **По умолчанию:** `100%`
+
+Альфа-компонент.
+
+#### `color` [#definitions-hsv-color]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Альтернативно: цвет, который нужно преобразовать в HSL.
+
+Если указан этот аргумент, отдельные компоненты указывать не следует.
+
+### `components` [#definitions-components]
+
+*Since: 0.9.0*
+
+Извлекает компоненты цвета.
+
+Размер и значения этого массива зависят от цветового пространства. Цветовое пространство можно получить с помощью метода [`space`](#definitions-space). Ниже приведена таблица цветовых пространств и их компонентов.
+
+| **Цветовое пространство** | **C0** | **C1** | **C2** | **C3** |
+| --- | --- | --- | --- | --- |
+| [`luma`](#definitions-luma) | Светлота | Альфа |  |  |
+| [`oklab`](#definitions-oklab) | Светлота ($L$) | $a$ | $b$ | Альфа |
+| [`oklch`](#definitions-oklch) | Светлота ($L$) | Цветность ($C$) | Оттенок ($h$) | Альфа |
+| [`linear-rgb`](#definitions-linear-rgb) | Красный | Зелёный | Синий | Альфа |
+| [`rgb`](#definitions-rgb) | Красный | Зелёный | Синий | Альфа |
+| [`cmyk`](#definitions-cmyk) | Голубой | Пурпурный | Жёлтый | Ключевой |
+| [`hsl`](#definitions-hsl) | Оттенок | Насыщенность | Светлота | Альфа |
+| [`hsv`](#definitions-hsv) | Оттенок | Насыщенность | Значение | Альфа |
+| [`spot`](#definitions-spot) | Тинт |  |  |  |
+
+Значение и тип каждого отдельного значения см. в документации соответствующего цветового пространства. Альфа-компонент необязателен и включается, только если аргумент `alpha` равен `true` (по умолчанию). Длина возвращаемого массива зависит от количества компонентов и от того, включён ли альфа-компонент.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #rgb(40%, 60%, 80%).components()
+`}
+  image="/typst_docs_assets/images/MJwdmG42Bjg_mNuuLy8yRA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.components(alpha: bool) -> array
+```
+
+#### `alpha` [#definitions-components-alpha]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `true`
+
+Включать ли альфа-компонент.
+
+### `space` [#definitions-space]
+
+*Since: 0.9.0*
+
+Возвращает цветовое пространство, в котором определён этот цвет.
+
+Цветовое пространство выражается либо одной из функций-конструкторов цвета ([`luma`](#definitions-luma), [`oklab`](#definitions-oklab), [`oklch`](#definitions-oklch), [`linear-rgb`](#definitions-linear-rgb), [`rgb`](#definitions-rgb), [`cmyk`](#definitions-cmyk), [`hsl`](#definitions-hsl) или [`hsv`](#definitions-hsv)), либо [плашечным красителем](#definitions-spot).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let c = cmyk(1%, 2%, 3%, 4%)
+  #(c.space() == cmyk)
+`}
+  image="/typst_docs_assets/images/n4kM3a2xuUJokqNX2zkg9A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.space() -> spot | function
+```
+
+### `to-hex` [#definitions-to-hex]
+
+*Since: 0.9.0*
+
+Возвращает шестнадцатеричный код RGB(A) цвета.
+
+Альфа-компонент (последние две цифры) опускается, если он равен `100%`.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #rgb("FFAA32").to-hex() \\
+  #rgb("020304fe").to-hex()
+`}
+  image="/typst_docs_assets/images/c8d5WuDmKSb0o4aYSzOoPQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.to-hex() -> str
+```
+
+### `lighten` [#definitions-lighten]
+
+*Since: forever*
+
+Осветляет цвет на заданный коэффициент.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let c = rgb("#4ebf19")
+  #box(square(fill: c))
+  #box(square(fill: c.lighten(30%)))
+  #box(square(fill: c.lighten(60%)))
+  #box(square(fill: c.lighten(90%)))
+`}
+  image="/typst_docs_assets/images/zj1kdsLvt7_ICM4hLDeJAQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.lighten(ratio) -> color
+```
+
+#### `factor` [#definitions-lighten-factor]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Коэффициент, на который нужно осветлить цвет.
+
+### `darken` [#definitions-darken]
+
+*Since: forever*
+
+Затемняет цвет на заданный коэффициент.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let c = rgb("#fded0a")
+  #box(square(fill: c))
+  #box(square(fill: c.darken(30%)))
+  #box(square(fill: c.darken(60%)))
+  #box(square(fill: c.darken(90%)))
+`}
+  image="/typst_docs_assets/images/_ROiBxqM8-rtfqzHONDghQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.darken(ratio) -> color
+```
+
+#### `factor` [#definitions-darken-factor]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Коэффициент, на который нужно затемнить цвет.
+
+### `saturate` [#definitions-saturate]
+
+*Since: 0.9.0*
+
+Повышает насыщенность цвета на заданный коэффициент.
+
+Насыщать можно только триадные цвета. Если вы хотите повысить насыщенность плашечного цвета, сначала преобразуйте его в триадный цвет.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let c = rgb("#ac9eb4")
+  #box(square(fill: c))
+  #box(square(fill: c.saturate(30%)))
+  #box(square(fill: c.saturate(60%)))
+  #box(square(fill: c.saturate(90%)))
+`}
+  image="/typst_docs_assets/images/wa1E1EikoJm_S2CF_xEUkA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.saturate(ratio) -> color
+```
+
+#### `factor` [#definitions-saturate-factor]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Коэффициент, на который нужно повысить насыщенность цвета.
+
+### `desaturate` [#definitions-desaturate]
+
+*Since: 0.9.0*
+
+Понижает насыщенность цвета на заданный коэффициент.
+
+Понижать насыщенность можно только у триадных цветов. Если вы хотите понизить насыщенность плашечного цвета, сначала преобразуйте его в триадный цвет.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let c = rgb("#17cbd8")
+  #box(square(fill: c))
+  #box(square(fill: c.desaturate(30%)))
+  #box(square(fill: c.desaturate(60%)))
+  #box(square(fill: c.desaturate(90%)))
+`}
+  image="/typst_docs_assets/images/CgnhU96f1gclSJytC2UbOA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.desaturate(ratio) -> color
+```
+
+#### `factor` [#definitions-desaturate-factor]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Коэффициент, на который нужно понизить насыщенность цвета.
+
+### `negate` [#definitions-negate]
+
+*Since: forever*
+
+Создаёт дополнительный цвет, используя заданное цветовое пространство.
+
+Это можно представить как противоположную сторону цветового круга.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #box(square(fill: yellow))
+  #box(square(fill: yellow.negate()))
+`}
+  image="/typst_docs_assets/images/sx-3ueHRVkYKt6MvRlWIgA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.negate(space: auto | spot | function) -> color
+```
+
+#### `space` [#definitions-negate-space]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [spot](#definitions-spot) или [function](/docs/typst/reference/foundations/function) · **По умолчанию:** `auto`
+
+Цветовое пространство, используемое для преобразования. По умолчанию используется перцептивное цветовое пространство.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let sample(c) = box(square(fill: c))
+  #sample(red)
+  #sample(red.negate())
+  #sample(red.negate(space: rgb))
+`}
+  image="/typst_docs_assets/images/Fubn-Bh03c9T6cYiJ2gnAA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `rotate` [#definitions-rotate]
+
+*Since: 0.9.0*
+
+Поворачивает оттенок цвета на заданный угол.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let c = rgb("#15e24f")
+  #box(square(fill: c))
+  #box(square(fill: c.rotate(20deg)))
+  #box(square(fill: c.rotate(40deg)))
+  #box(square(fill: c.rotate(60deg)))
+`}
+  image="/typst_docs_assets/images/Ro70rx0GneZ_TVSz44bF5g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.rotate(
+  angle,
+  space: function,
+) -> color
+```
+
+#### `angle` [#definitions-rotate-angle]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Угол, на который нужно повернуть оттенок.
+
+#### `space` [#definitions-rotate-space]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **По умолчанию:** `oklch`
+
+Цветовое пространство, используемое для поворота. По умолчанию это происходит в перцептивном цветовом пространстве ([`oklch`](#definitions-oklch)).
+
+Это должно быть цветовое пространство с чётко определённым компонентом оттенка: либо [`oklch`](#definitions-oklch), либо [`color.hsl`](#definitions-hsl), либо [`color.hsv`](#definitions-hsv).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%)
+  #let c = rgb("#117be6")
+  Oklch:
+  #rect(fill: gradient.linear(
+    space: oklch,
+    c,
+    c.rotate(90deg),
+  ))
+  HSL:
+  #rect(fill: gradient.linear(
+    space: color.hsl,
+    c,
+    c.rotate(90deg, space: color.hsl),
+  ))
+`}
+  image="/typst_docs_assets/images/2P8d1JoYUrPD5My8WdX8_A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `transparentize` [#definitions-transparentize]
+
+*Since: 0.11.0*
+
+Делает цвет более прозрачным на заданный коэффициент.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let sample(c) = box(square(fill: c))
+  #set page(fill: tiling(line(),
+    size: (1cm, 0.2cm), angle: -45deg,
+  ))
+  #sample(red)
+  #sample(red.transparentize(50%))
+  #sample(red.transparentize(75%))
+`}
+  image="/typst_docs_assets/images/aX2oyr-O-HYuLT3LkfTAgg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.transparentize(ratio) -> color
+```
+
+#### `scale` [#definitions-transparentize-scale]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Коэффициент, на который нужно изменить значение альфа.
+
+Если положительный, вычисляется `alpha - alpha * scale`. Отрицательные значения ведут себя как `color.opacify(-scale)`.
+
+### `opacify` [#definitions-opacify]
+
+*Since: 0.11.0*
+
+Делает цвет более непрозрачным на заданный масштаб.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let half-red = red.transparentize(50%)
+  #block(fill: half-red.opacify(100%))[opaque]
+  #block(fill: half-red.opacify(50%))[three quarters red]
+  #block(fill: half-red.opacify(-50%))[one quarter red]
+`}
+  image="/typst_docs_assets/images/s5d6Ks4QFDlCnnxXOisWLw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.opacify(ratio) -> color
+```
+
+#### `scale` [#definitions-opacify-scale]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Масштаб, на который нужно изменить значение альфа.
+
+Если положительный, вычисляется `alpha + (1 - alpha) * scale`. Отрицательные значения ведут себя как `color.transparentize(-scale)`.
+
+### `mix` [#definitions-mix]
+
+*Since: 0.7.0*
+
+Создаёт цвет путём смешивания двух или более цветов.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #box(square(fill: red))
+  #box(square(fill: red.mix(blue)))
+  #box(square(fill: blue))
+`}
+  image="/typst_docs_assets/images/o3_lcMTkzLcPfxO03HA8pA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+color.mix(
+  ..color | array,
+  space: auto | spot | function,
+)
+```
+
+#### `colors` [#definitions-mix-colors]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Обязательный, Позиционный, Вариадический
+
+Цвета для смешивания, необязательно с весами, заданные как пара (массив длины два) из цвета и веса ([`float`](/docs/typst/reference/foundations/float) или [`ratio`](/docs/typst/reference/layout/ratio)).
+
+Веса не обязаны в сумме давать `100%`, они относительны суммы всех весов.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let sample(c) = box(square(fill: c))
+  #sample(color.mix(red, blue))
+  #sample(color.mix(red, blue, white))
+  #sample(color.mix(
+    (red, 70%), (blue, 30%),
+  ))
+`}
+  image="/typst_docs_assets/images/3jj6LQrAdca10uFsus4CjA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `space` [#definitions-mix-space]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [spot](#definitions-spot) или [function](/docs/typst/reference/foundations/function) · **По умолчанию:** `auto`
+
+Цветовое пространство для смешивания. По умолчанию это происходит в перцептивном цветовом пространстве ([`oklab`](#definitions-oklab)) или, если все цвета используют один и тот же плашечный краситель, с использованием этого красителя.
+
+Все цвета будут преобразованы в это цветовое пространство.
+
+Обратите внимание, что в цветовых пространствах с компонентом оттенка (Oklch, HSL, HSV) одновременно можно смешивать только два цвета. Смешивание более двух цветов в таком пространстве приведёт к ошибке!
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let sample(c) = box(square(fill: c))
+  #sample(red.mix(blue, space: oklab))
+  #sample(red.mix(blue, space: rgb))
+`}
+  image="/typst_docs_assets/images/3jzd1ivOfsJYoR2QXWaPDg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Типы [#types]
+
+### `spot` [#definitions-spot]
+
+*Since: 0.15.0*
+
+Плашечный краситель, из которого можно создавать плашечные цвета.
+
+Используйте плашечные цвета, чтобы запросить точный пигмент в профессиональной печатной среде. Создав плашечный краситель, вы можете создавать цвета с помощью его [метода `tint`](#definitions-spot-definitions-tint).
+
+#### Конструктор [#constructor]
+
+Создаёт новый плашечный краситель.
+
+```typst
+color.spot(
+  none | str,
+  color,
+) -> spot
+```
+
+##### `name` [#constructor-name]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Имя используемого плашечного красителя.
+
+В производстве это имя будет проверено вручную и сопоставлено с красителем, поэтому это значение должно быть однозначным. Лучше всего ссылаться на цвет из реестра, такого как PANTONE, HKS, RAL, Toyo & DIC и т. д.
+
+Значения здесь могут обрабатываться с учётом регистра во время производства: `"PANTONE 2221 C"` и `"PANTONE 2221 c"` могут считаться разными цветами. Убедитесь, что вы используете последовательное соглашение об именовании, либо ссылаясь на реестр, либо согласовав это с вашими экспертами по производственной печати.
+
+Если это значение равно `"all"` и ваша печать будет включать несколько [цветовых форм](https://en.wikipedia.org/wiki/Offset_printing#Plates), использование этого красителя приведёт к тому, что указанный тинт будет применён одинаково ко всем формам. Если вы выберете `none`, при использовании этого цвета краситель не будет применён. Это специальное значение часто используется для обозначения высечек или лаков. Обязательно обсудите это с вашим производственным принтером!
+
+Мы не рекомендуем использовать имена `"Cyan"`, `"Magenta"`, `"Yellow"`, `"Key"`, `"Black"` или их переводы на ваш местный язык. В зависимости от вашего принтера они могут или не могут интерпретироваться как триадные цвета CMYK.
+
+| **Вариант** | **Подробности** |
+| --- | --- |
+| `"all"` | Использовать все доступные цветовые формы вместо только конкретного красителя. |
+
+##### `fallback` [#constructor-fallback]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) · **Модификаторы:** Обязательный, Позиционный
+
+Как отображать этот цвет, если указанный краситель недоступен.
+
+Многие носители, такие как предварительный просмотр на экране и бытовые принтеры, не будут иметь этого конкретного плашечного красителя. Чтобы отобразить приближение предполагаемой печати, вместо него используется другой доступный цвет.
+
+#### Функции для `spot` [#definitions-spot-functions]
+
+##### `tint` [#definitions-spot-definitions-tint]
+
+*Since: 0.15.0*
+
+Создаёт плашечный цвет с определённым тинтом этого красителя.
+
+Тинт представляет, какой процент красителя применяется. Тинт `100%` означает, что краситель применяется в полную силу, а `0%` означает, что краситель не применяется.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let pantone = color.spot(
+    "PANTONE 2221 C",
+    rgb("#239dad")
+  )
+
+  #square(fill: pantone.tint(100%))
+  #square(fill: pantone.tint(70%))
+  #square(fill: pantone.tint(40%))
+`}
+  image="/typst_docs_assets/images/V8yRRhgwKSG3dsyofcatYw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.tint(ratio) -> color
+```
+
+###### `value` [#definitions-spot-definitions-tint-value]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Процент тинта, между `0%` и `100%`.

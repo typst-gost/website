@@ -1,0 +1,130 @@
+---
+title: "Skew"
+description: "Документация для функции `skew`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: 0.12.0*
+
+Наклоняет содержимое.
+
+Наклоняет элемент в горизонтальном и/или вертикальном направлении. Макет будет вести себя так, как если бы элемент не был наклонён, если только вы не укажете `reflow: true`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #skew(ax: -12deg)[
+    This is some fake italic text.
+  ]
+`}
+  image="/typst_docs_assets/images/tm0UBNG_PS22_74p0sz0Og.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+skew(
+  ax: angle,
+  ay: angle,
+  origin: alignment,
+  reflow: bool,
+  content,
+)
+```
+
+### `ax` [#parameters-ax]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Settable · **По умолчанию:** `0deg`
+
+Угол горизонтального наклона.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #skew(ax: 30deg)[Skewed]
+`}
+  image="/typst_docs_assets/images/SG553hgqVEfYVmxgNDGH_g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `ay` [#parameters-ay]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Settable · **По умолчанию:** `0deg`
+
+Угол вертикального наклона.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #skew(ay: 30deg)[Skewed]
+`}
+  image="/typst_docs_assets/images/H7znLRDlUGI_oajGUKEk7w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `origin` [#parameters-origin]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `center + horizon`
+
+Начало преобразования наклона.
+
+Начало остаётся неподвижным во время операции.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  X #box(skew(ax: -30deg, origin: center + horizon)[X]) X \\
+  X #box(skew(ax: -30deg, origin: bottom + left)[X]) X \\
+  X #box(skew(ax: -30deg, origin: top + right)[X]) X
+`}
+  image="/typst_docs_assets/images/nYflL87570ZeYbKea54gLA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `reflow` [#parameters-reflow]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Влияет ли преобразование наклона на макет.
+
+Если установлено значение `false`, наклонённое содержимое сохранит ограничивающую рамку исходного содержимого. Если установлено значение `true`, ограничивающая рамка будет учитывать преобразование содержимого и соответствующим образом корректировать макет.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  Hello #skew(ay: 30deg, reflow: true, "World")!
+`}
+  image="/typst_docs_assets/images/CDjCr0RcMEeqZlt76vc2Ug.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое для наклона.

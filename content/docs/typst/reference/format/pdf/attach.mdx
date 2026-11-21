@@ -1,0 +1,85 @@
+---
+title: "Attach"
+description: "Документация для функции `attach`."
+---
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Доступно с: 0.14.0*
+
+Файл, который будет прикреплён к выходному PDF.
+
+Это можно использовать для распространения дополнительных файлов, связанных с PDF, внутри него. Программы просмотра PDF будут отображать файлы в списке файлов.
+
+Некоторые международные стандарты используют этот механизм для прикрепления машиночитаемых данных (например, ZUGFeRD/Factur-X для счетов-фактур), которые отражают визуальное содержимое PDF.
+
+## Пример [#example]
+
+```typst
+#pdf.attach(
+  "experiment.csv",
+  relationship: "supplement",
+  mime-type: "text/csv",
+  description: "Raw Oxygen readings from the Arctic experiment",
+)
+```
+
+## Примечания [#notes]
+
+- Этот элемент игнорируется при экспорте в формат, отличный от PDF.
+- Вложения файлов в настоящее время не поддерживаются для PDF/A-2, даже если прикреплённый файл соответствует PDF/A-1 или PDF/A-2.
+
+## Параметры [#parameters]
+
+```typst
+pdf.attach(
+  str | path,
+  bytes,
+  relationship: none | str,
+  mime-type: none | str,
+  description: none | str,
+) -> content
+```
+
+### `path` [#parameters-path]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) · **Модификаторы:** Обязательный, Позиционный
+
+Путь к прикрепляемому файлу.
+
+Должен быть указан всегда, но читается только в том случае, если данные не предоставлены в следующем аргументе.
+
+### `data` [#parameters-data]
+
+**Тип:** [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Необработанные данные файла, опционально.
+
+Если опущено, данные читаются из указанного пути.
+
+### `relationship` [#parameters-relationship]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Связь прикреплённого файла с документом.
+
+Игнорируется, если экспорт не нацелен на PDF/A-3.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"source"` | PDF-документ был создан из исходного файла. |
+| `"data"` | Файл был использован для получения визуального представления в PDF. |
+| `"alternative"` | Альтернативное представление документа. |
+| `"supplement"` | Дополнительные ресурсы для документа. |
+
+### `mime-type` [#parameters-mime-type]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+MIME-тип прикреплённого файла.
+
+### `description` [#parameters-description]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Описание прикреплённого файла.

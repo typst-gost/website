@@ -1,0 +1,191 @@
+---
+title: "Синтаксис"
+description: "Краткий справочник по синтаксису Typst. Узнайте больше о языке в режимах разметки, математики и кода."
+---
+
+
+Typst — это язык разметки. Это означает, что вы можете использовать простой синтаксис для решения типичных задач вёрстки. Лёгкий синтаксис разметки дополняется правилами set и show, которые позволяют легко и автоматически стилизовать документ. Всё это опирается на тесно интегрированный язык сценариев со встроенными и пользовательскими функциями.
+
+## Режимы [#modes]
+
+В Typst есть три синтаксических режима: разметка, математика и код. Режим разметки используется в документе Typst по умолчанию, режим математики позволяет писать математические формулы, а режим кода даёт доступ к возможностям языка сценариев Typst.
+
+Вы можете переключиться в определённый режим в любой момент, обратившись к следующей таблице:
+
+| **Новый режим** | **Синтаксис** | **Пример** |
+| --- | --- | --- |
+| Код | Поставьте перед кодом `#` | `Number: #(1 + 2)` |
+| Математика | Окружите уравнение символами `$..$` | `$-x$ is the opposite of $x$` |
+| Разметка | Окружите разметку символами `[..]` | `let name = [*Typst!*]` |
+
+После того как вы вошли в режим кода с помощью `#`, дополнительные решётки не нужны, если только вы не переключились обратно в режим разметки или математики.
+
+## Разметка [#markup]
+
+Typst предоставляет встроенную разметку для наиболее распространённых элементов документа. Большинство синтаксических элементов — это просто сокращения для соответствующей функции. В таблице ниже перечислена вся доступная разметка и приведены ссылки на лучшие места, где можно узнать больше о её синтаксисе и использовании.
+
+| **Название** | **Пример** | **См.** |
+| --- | --- | --- |
+| Разрыв абзаца | Пустая строка | [`parbreak`](/docs/typst/reference/model/parbreak) |
+| Сильное выделение | `*strong*` | [`strong`](/docs/typst/reference/model/strong) |
+| Выделение | `_emphasis_` | [`emph`](/docs/typst/reference/model/emph) |
+| Неформатированный текст | `` `print(1)` `` | [`raw`](/docs/typst/reference/text/raw) |
+| Ссылка | `https://typst.app/` | [`link`](/docs/typst/reference/model/link) |
+| Метка | `<intro>` | [`label`](/docs/typst/reference/foundations/label) |
+| Перекрёстная ссылка | `@intro` | [`ref`](/docs/typst/reference/model/ref) |
+| Заголовок | `= Heading` | [`heading`](/docs/typst/reference/model/heading) |
+| Маркированный список | `- item` | [`list`](/docs/typst/reference/model/list) |
+| Нумерованный список | `+ item` | [`enum`](/docs/typst/reference/model/enum) |
+| Список терминов | `/ Term: description` | [`terms`](/docs/typst/reference/model/terms) |
+| Математика | `$x^2$` | [Математика](/docs/typst/reference/math) |
+| Разрыв строки | `\` | [`linebreak`](/docs/typst/reference/text/linebreak) |
+| Умная кавычка | `'single' or "double"` | [`smartquote`](/docs/typst/reference/text/smartquote) |
+| Сокращение для символа | `~`, `---` | [Символы](/docs/typst/reference/symbols#shorthands) |
+| Выражение кода | `#rect(width: 1cm)` | [Сценарии](/docs/typst/reference/scripting#expressions) |
+| Экранирование символа | `Tweet at us \#ad` | [Ниже](#escapes) |
+| Комментарий | `/* block */`, `// line` | [Ниже](#comments) |
+
+## Режим математики [#math]
+
+Режим математики — это специальный режим разметки, используемый для набора математических формул. В него входят, окружая уравнение символами `$`. Это работает как в разметке, так и в коде. Уравнение будет набрано отдельным блоком, если оно начинается и заканчивается хотя бы одним пробелом (например, `$ x^2 $`). Встроенную математику можно получить, опустив пробелы (например, `$x^2$`). Ниже приведён обзор синтаксиса, специфичного для режима математики:
+
+| **Название** | **Пример** | **См.** |
+| --- | --- | --- |
+| Встроенная математика | `$x^2$` | [Математика](/docs/typst/reference/math) |
+| Блочная математика | `$ x^2 $` | [Математика](/docs/typst/reference/math) |
+| Нижний индекс | `$x_1$` | [`attach`](/docs/typst/reference/math/attach) |
+| Верхний индекс | `$x^2$` | [`attach`](/docs/typst/reference/math/attach) |
+| Дробь | `$1 + (a+b)/5$` | [`frac`](/docs/typst/reference/math/frac) |
+| Разрыв строки | `$x \ y$` | [`linebreak`](/docs/typst/reference/text/linebreak) |
+| Точка выравнивания | `$x &= 2 \ &= 3$` | [Математика](/docs/typst/reference/math) |
+| Доступ к переменной | `$#x$, $pi$` | [Математика](/docs/typst/reference/math) |
+| Доступ к полю | `$arrow.r.long$` | [Сценарии](/docs/typst/reference/scripting#fields) |
+| Неявное умножение | `$x y$` | [Математика](/docs/typst/reference/math) |
+| Сокращение для символа | `$->$`, `$!=$` | [Символы](/docs/typst/reference/symbols#shorthands) |
+| Текст/строка в математике | `$a "is natural"$` | [Математика](/docs/typst/reference/math) |
+| Вызов математической функции | `$floor(x)$` | [Математика](/docs/typst/reference/math) |
+| Выражение кода | `$#rect(width: 1cm)$` | [Сценарии](/docs/typst/reference/scripting#expressions) |
+| Экранирование символа | `$x\^2$` | [Ниже](#escapes) |
+| Комментарий | `$/* comment */$` | [Ниже](#comments) |
+
+## Режим кода [#code]
+
+Внутри блоков кода и выражений новые выражения могут начинаться без ведущего символа `#`. Многие синтаксические элементы специфичны для выражений. Ниже приведена таблица со всем синтаксисом, доступным в режиме кода:
+
+| **Название** | **Пример** | **См.** |
+| --- | --- | --- |
+| None | `none` | [`none`](/docs/typst/reference/foundations/none) |
+| Auto | `auto` | [`auto`](/docs/typst/reference/foundations/auto) |
+| Логическое значение | `false`, `true` | [`bool`](/docs/typst/reference/foundations/bool) |
+| Целое число | `10`, `0xff` | [`int`](/docs/typst/reference/foundations/int) |
+| Число с плавающей точкой | `3.14`, `1e5` | [`float`](/docs/typst/reference/foundations/float) |
+| Длина | `2pt`, `3mm`, `1em`, .. | [`length`](/docs/typst/reference/layout/length) |
+| Угол | `90deg`, `1rad` | [`angle`](/docs/typst/reference/layout/angle) |
+| Доля | `2fr` | [`fraction`](/docs/typst/reference/layout/fraction) |
+| Отношение | `50%` | [`ratio`](/docs/typst/reference/layout/ratio) |
+| Строка | `"hello"` | [`str`](/docs/typst/reference/foundations/str) |
+| Метка | `<intro>` | [`label`](/docs/typst/reference/foundations/label) |
+| Математика | `$x^2$` | [Математика](/docs/typst/reference/math) |
+| Неформатированный текст | `` `print(1)` `` | [`raw`](/docs/typst/reference/text/raw) |
+| Доступ к переменной | `x` | [Сценарии](/docs/typst/reference/scripting#blocks) |
+| Блок кода | `{ let x = 1; x + 2 }` | [Сценарии](/docs/typst/reference/scripting#blocks) |
+| Блок содержимого | `[*Hello*]` | [Сценарии](/docs/typst/reference/scripting#blocks) |
+| Выражение в скобках | `(1 + 2)` | [Сценарии](/docs/typst/reference/scripting#blocks) |
+| Массив | `(1, 2, 3)` | [Массив](/docs/typst/reference/foundations/array) |
+| Словарь | `(a: "hi", b: 2)` | [Словарь](/docs/typst/reference/foundations/dictionary) |
+| Унарный оператор | `-x` | [Сценарии](/docs/typst/reference/scripting#operators) |
+| Бинарный оператор | `x + y` | [Сценарии](/docs/typst/reference/scripting#operators) |
+| Присваивание | `x = 1` | [Сценарии](/docs/typst/reference/scripting#operators) |
+| Доступ к полю | `x.y` | [Сценарии](/docs/typst/reference/scripting#fields) |
+| Вызов метода | `x.flatten()` | [Сценарии](/docs/typst/reference/scripting#methods) |
+| Вызов функции | `min(x, y)` | [Функция](/docs/typst/reference/foundations/function) |
+| Развёртывание аргументов | `min(..nums)` | [Аргументы](/docs/typst/reference/foundations/arguments) |
+| Безымянная функция | `(x, y) => x + y` | [Функция](/docs/typst/reference/foundations/function#unnamed) |
+| Привязка let | `let x = 1` | [Сценарии](/docs/typst/reference/scripting#bindings) |
+| Именованная функция | `let f(x) = 2 * x` | [Функция](/docs/typst/reference/foundations/function) |
+| Правило set | `set text(14pt)` | [Стилизация](/docs/typst/reference/styling#set-rules) |
+| Правило set-if | `set text(..) if ..` | [Стилизация](/docs/typst/reference/styling#set-rules) |
+| Правило show-set | `show heading: set block(..)` | [Стилизация](/docs/typst/reference/styling#show-rules) |
+| Правило show с функцией | `show raw: it => {..}` | [Стилизация](/docs/typst/reference/styling#show-rules) |
+| Правило show-everything | `show: template` | [Стилизация](/docs/typst/reference/styling#show-rules) |
+| Контекстное выражение | `context text.lang` | [Контекст](/docs/typst/reference/context) |
+| Условный оператор | `if x == 1 {..} else {..}` | [Сценарии](/docs/typst/reference/scripting#conditionals) |
+| Цикл for | `for x in (1, 2, 3) {..}` | [Сценарии](/docs/typst/reference/scripting#loops) |
+| Цикл while | `while x < 10 {..}` | [Сценарии](/docs/typst/reference/scripting#loops) |
+| Управление циклом | `break, continue` | [Сценарии](/docs/typst/reference/scripting#loops) |
+| Возврат из функции | `return x` | [Функция](/docs/typst/reference/foundations/function) |
+| Включение модуля | `include "bar.typ"` | [Сценарии](/docs/typst/reference/scripting#modules) |
+| Импорт модуля | `import "bar.typ"` | [Сценарии](/docs/typst/reference/scripting#modules) |
+| Импорт элементов из модуля | `import "bar.typ": a, b, c` | [Сценарии](/docs/typst/reference/scripting#modules) |
+| Комментарий | `/* block */`, `// line` | [Ниже](#comments) |
+
+## Комментарии [#comments]
+
+Комментарии игнорируются Typst и не попадают в вывод. Это полезно для исключения старых версий или добавления примечаний. Чтобы закомментировать одну строку, начните её с `//`:
+
+<TypstRender
+  code={`
+  // our data barely supports
+  // this claim
+
+  We show with $p < 0.05$
+  that the difference is
+  significant.
+`}
+  image="/typst_docs_assets/images/2vSMRhTdbtuvmsLAHeCYDw.png"
+  alt=""
+  editable={true}
+/>
+
+Комментарии также можно заключать между `/*` и `*/`. В этом случае комментарий может занимать несколько строк:
+
+<TypstRender
+  code={`
+  Our study design is as follows:
+  /* Somebody write this up:
+     - 1000 participants.
+     - 2x2 data design. */
+`}
+  image="/typst_docs_assets/images/-j-sFuh-fVEH2Y1E1L-rWw.png"
+  alt=""
+  editable={true}
+/>
+
+## Экранирующие последовательности [#escapes]
+
+Экранирующие последовательности используются для вставки специальных символов, которые трудно набрать или которые имеют особое значение в Typst. Чтобы экранировать символ, поставьте перед ним обратную косую черту. Чтобы вставить любую кодовую точку Unicode, можно записать шестнадцатеричную экранирующую последовательность: `\u{1f600}`. Такие же экранирующие последовательности работают и в [строках](/docs/typst/reference/foundations/str).
+
+<TypstRender
+  code={`
+  I got an ice cream for
+  \\$1.50! \\u{1f600}
+`}
+  image="/typst_docs_assets/images/0an6VAPRkuVJMLkedNHNhQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Идентификаторы [#identifiers]
+
+Имена переменных, функций и т. д. (_идентификаторы_) могут содержать буквы, цифры, дефисы (`-`) и подчёркивания (`_`). Они должны начинаться с буквы или подчёркивания.
+
+Более точно, синтаксис идентификаторов в Typst основан на [Unicode Standard Annex #31](https://www.unicode.org/reports/tr31/) с двумя расширениями: разрешено использовать `_` в качестве начального символа и разрешено использовать как `_`, так и `-` в качестве последующих символов.
+
+Для многословных идентификаторов рекомендуемое соглашение о регистре — [Kebab case](https://en.wikipedia.org/wiki/Letter_case#Kebab_case). В Kebab case слова пишутся строчными буквами и разделяются дефисами (как в `top-edge`). Это особенно важно при разработке модулей и пакетов для использования другими, поскольку обеспечивает предсказуемость.
+
+<TypstRender
+  code={`
+  #let kebab-case = [Using hyphen]
+  #let _schön = "😊"
+  #let 始料不及 = "😱"
+  #let π = calc.pi
+
+  #kebab-case
+  #if -π < 0 { _schön } else { 始料不及 }
+  // -π means -1 * π,
+  // so it's not a valid identifier
+`}
+  image="/typst_docs_assets/images/PZdVoQkwIUj6f5FbGua9uQ.png"
+  alt=""
+  editable={true}
+/>

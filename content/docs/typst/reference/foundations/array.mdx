@@ -1,0 +1,974 @@
+---
+title: "Array"
+description: "Документация для типа `array`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Последовательность значений.
+
+Вы можете создать массив, заключив разделённую запятыми последовательность значений в круглые скобки. Значения не обязаны иметь один и тот же тип.
+
+Вы можете получать доступ к элементам массива и изменять их с помощью метода `.at()`. Индексы начинаются с нуля, а отрицательные индексы отсчитываются от конца массива. Вы можете перебирать массив с помощью [цикла for](/docs/typst/reference/scripting#loops). Массивы можно складывать с помощью оператора `+`, [объединять](/docs/typst/reference/scripting#blocks) и умножать на целые числа.
+
+**Примечание:** Массив длины один требует завершающей запятой, как в `(1,)`. Это нужно, чтобы отличить его от простого выражения в скобках, например `(1 + 2) * 3`. Пустой массив записывается как `()`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #let values = (1, 7, 4, -3, 2)
+
+  #values.at(0) \\
+  #(values.at(0) = 3)
+  #values.at(-1) \\
+  #values.find(calc.even) \\
+  #values.filter(calc.odd) \\
+  #values.map(calc.abs) \\
+  #values.rev() \\
+  #(1, (2, 3)).flatten() \\
+  #(("A", "B", "C")
+      .join(", ", last: " and "))
+`}
+  image="/typst_docs_assets/images/YB8hyBS9rjWwWcDwFk-y8Q.png"
+  alt=""
+  editable={true}
+/>
+
+## Конструктор [#constructor]
+
+Преобразует значение в массив.
+
+Обратите внимание, что эта функция предназначена только для преобразования коллекционноподобного значения в массив, а не для создания массива из отдельных элементов. Вместо этого используйте синтаксис массива `(1, 2, 3)` (или `(1,)` для массива из одного элемента).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let hi = "Hello 😃"
+  #array(bytes(hi))
+`}
+  image="/typst_docs_assets/images/PX34Wmtusca4jA-34zMaXw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+array(bytes | array | version)
+```
+
+### `value` [#constructor-value]
+
+**Тип:** [bytes](/docs/typst/reference/foundations/bytes) или [array](/docs/typst/reference/foundations/array) или [version](/docs/typst/reference/foundations/version) · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое следует преобразовать в массив.
+
+## Функции [#functions]
+
+### `len` [#definitions-len]
+
+*Since: forever*
+
+Количество значений в массиве.
+
+```typst
+self.len() -> int
+```
+
+### `first` [#definitions-first]
+
+*Since: forever*
+
+Возвращает первый элемент массива. Может использоваться в левой части присваивания. Возвращает значение по умолчанию, если массив пуст, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.first(default: any)
+```
+
+#### `default` [#definitions-first-default]
+
+**Тип:** `any`
+
+Значение по умолчанию, возвращаемое, если массив пуст.
+
+### `last` [#definitions-last]
+
+*Since: forever*
+
+Возвращает последний элемент массива. Может использоваться в левой части присваивания. Возвращает значение по умолчанию, если массив пуст, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.last(default: any)
+```
+
+#### `default` [#definitions-last-default]
+
+**Тип:** `any`
+
+Значение по умолчанию, возвращаемое, если массив пуст.
+
+### `at` [#definitions-at]
+
+*Since: forever*
+
+Возвращает элемент по указанному индексу в массиве. Может использоваться в левой части присваивания. Возвращает значение по умолчанию, если индекс выходит за границы, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.at(
+  int,
+  default: any,
+)
+```
+
+#### `index` [#definitions-at-index]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Индекс, по которому извлекается элемент. Если отрицательный, отсчитывается от конца.
+
+#### `default` [#definitions-at-default]
+
+**Тип:** `any`
+
+Значение по умолчанию, возвращаемое, если индекс выходит за границы.
+
+### `push` [#definitions-push]
+
+*Since: forever*
+
+Добавляет значение в конец массива.
+
+```typst
+self.push(any) -> none
+```
+
+#### `value` [#definitions-push-value]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое нужно вставить в конец массива.
+
+### `pop` [#definitions-pop]
+
+*Since: forever*
+
+Удаляет последний элемент из массива и возвращает его. Завершается с ошибкой, если массив пуст.
+
+```typst
+self.pop() -> any
+```
+
+### `insert` [#definitions-insert]
+
+*Since: forever*
+
+Вставляет значение в массив по указанному индексу, сдвигая все последующие элементы вправо. Завершается с ошибкой, если индекс выходит за границы.
+
+Чтобы заменить элемент массива, используйте [`at`](#definitions-at).
+
+```typst
+self.insert(
+  int,
+  any,
+) -> none
+```
+
+#### `index` [#definitions-insert-index]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Индекс, по которому нужно вставить элемент. Если отрицательный, отсчитывается от конца.
+
+#### `value` [#definitions-insert-value]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое нужно вставить в массив.
+
+### `remove` [#definitions-remove]
+
+*Since: forever*
+
+Удаляет значение по указанному индексу из массива и возвращает его.
+
+```typst
+self.remove(
+  int,
+  default: any,
+)
+```
+
+#### `index` [#definitions-remove-index]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Индекс, по которому нужно удалить элемент. Если отрицательный, отсчитывается от конца.
+
+#### `default` [#definitions-remove-default]
+
+**Тип:** `any`
+
+Значение по умолчанию, возвращаемое, если индекс выходит за границы.
+
+### `slice` [#definitions-slice]
+
+*Since: forever*
+
+Извлекает подмассив из массива. Завершается с ошибкой, если начальный или конечный индекс выходит за границы.
+
+```typst
+self.slice(
+  int,
+  none | int,
+  count: int,
+) -> array
+```
+
+#### `start` [#definitions-slice-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Начальный индекс (включительно). Если отрицательный, отсчитывается от конца.
+
+#### `end` [#definitions-slice-end]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Позиционный · **По умолчанию:** `none`
+
+Конечный индекс (не включая его). Если не указан, извлекается весь подмассив до конца массива. Если отрицательный, отсчитывается от конца.
+
+#### `count` [#definitions-slice-count]
+
+**Тип:** [int](/docs/typst/reference/foundations/int)
+
+Количество элементов для извлечения. Это эквивалентно передаче `start + count` в качестве позиции `end`. Взаимоисключающе с `end`.
+
+### `contains` [#definitions-contains]
+
+*Since: forever*
+
+Содержит ли массив указанное значение.
+
+Этот метод также имеет специальный синтаксис: вы можете написать `2 in (1, 2, 3)` вместо `(1, 2, 3).contains(2)`.
+
+```typst
+self.contains(any) -> bool
+```
+
+#### `value` [#definitions-contains-value]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение для поиска.
+
+### `find` [#definitions-find]
+
+*Since: forever*
+
+Ищет элемент, для которого заданная функция возвращает `true`, и возвращает первое совпадение или `none`, если совпадений нет.
+
+```typst
+self.find(function) -> none | any
+```
+
+#### `searcher` [#definitions-find-searcher]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция, применяемая к каждому элементу. Должна возвращать логическое значение.
+
+### `position` [#definitions-position]
+
+*Since: forever*
+
+Ищет элемент, для которого заданная функция возвращает `true`, и возвращает индекс первого совпадения или `none`, если совпадений нет.
+
+```typst
+self.position(function) -> none | int
+```
+
+#### `searcher` [#definitions-position-searcher]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция, применяемая к каждому элементу. Должна возвращать логическое значение.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let values = (1, 7, 4, 6, 9)
+  #values.position(x => calc.even(x)) \\
+  // Or equivalently:
+  #values.position(calc.even)
+`}
+  image="/typst_docs_assets/images/Ag_ZVWBgitjtK1hKTV_xTA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `range` [#definitions-range]
+
+*Since: forever*
+
+Создаёт массив, состоящий из последовательности чисел.
+
+Если вы передаёте только один позиционный параметр, он интерпретируется как `end` диапазона. Если вы передаёте два, они описывают `start` и `end` диапазона.
+
+Эта функция доступна как в области видимости функции array, так и глобально.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #range(5) \\
+  #range(2, 5) \\
+  #range(20, step: 4) \\
+  #range(21, step: 4) \\
+  #range(5, 2, step: -1)
+`}
+  image="/typst_docs_assets/images/oB2xVsDy2GHGDUofddpkWQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+array.range(
+  int,
+  int,
+  inclusive: bool,
+  step: int,
+) -> array
+```
+
+#### `start` [#definitions-range-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Позиционный · **По умолчанию:** `0`
+
+Начало диапазона (включительно).
+
+#### `end` [#definitions-range-end]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Конец диапазона.
+
+#### `inclusive` [#definitions-range-inclusive]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Включается ли `end` в диапазон.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #range(0, inclusive: true) \\
+  #range(7, 10, inclusive: true) \\
+  #range(-8, -4, inclusive: true) \\
+  #range(-6, step: -2, inclusive: true)
+`}
+  image="/typst_docs_assets/images/ds-_HYYdEPDHITCZ3zreNA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `step` [#definitions-range-step]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `1`
+
+Расстояние между генерируемыми числами.
+
+### `filter` [#definitions-filter]
+
+*Since: forever*
+
+Создаёт новый массив только из тех элементов исходного массива, для которых заданная функция возвращает `true`.
+
+```typst
+self.filter(function) -> array
+```
+
+#### `test` [#definitions-filter-test]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция, применяемая к каждому элементу. Должна возвращать логическое значение.
+
+### `map` [#definitions-map]
+
+*Since: forever*
+
+Создаёт новый массив, в котором все элементы исходного массива были преобразованы заданной функцией.
+
+```typst
+self.map(function) -> array
+```
+
+#### `mapper` [#definitions-map-mapper]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция, применяемая к каждому элементу.
+
+### `enumerate` [#definitions-enumerate]
+
+*Since: 0.2.0*
+
+Возвращает новый массив со значениями вместе с их индексами.
+
+Возвращаемый массив состоит из пар `(index, value)` в виде массивов длины 2. Их можно [деструктурировать](/docs/typst/reference/scripting#bindings) с помощью привязки let или цикла for.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #for (i, value) in ("A", "B", "C").enumerate() {
+    [#i: #value \\ ]
+  }
+
+  #("A", "B", "C").enumerate(start: 1)
+`}
+  image="/typst_docs_assets/images/atia23AnuClbTB6yhuCESA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.enumerate(start: int) -> array
+```
+
+#### `start` [#definitions-enumerate-start]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **По умолчанию:** `0`
+
+Индекс, возвращаемый для первой пары возвращаемого списка.
+
+### `zip` [#definitions-zip]
+
+*Since: 0.3.0*
+
+Объединяет массив с другими массивами попарно.
+
+Возвращает массив массивов, где `i`-й внутренний массив содержит все `i`-е элементы из каждого исходного массива.
+
+Если объединяемые массивы имеют разную длину, они объединяются до последнего элемента самого короткого массива, а все оставшиеся элементы игнорируются.
+
+Эта функция вариативная, то есть вы можете объединить несколько массивов сразу: `(1, 2).zip(("A", "B"), (10, 20))` даёт `((1, "A", 10), (2, "B", 20))`.
+
+```typst
+self.zip(
+  exact: bool,
+  ..array,
+)
+```
+
+#### `exact` [#definitions-zip-exact]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Должны ли все массивы иметь одинаковую длину. Например, `(1, 2).zip((1, 2, 3), exact: true)` вызывает ошибку.
+
+#### `others` [#definitions-zip-others]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Массивы, с которыми нужно объединить.
+
+### `fold` [#definitions-fold]
+
+*Since: forever*
+
+Свёртывает все элементы в одно значение с помощью функции-аккумулятора.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let array = (1, 2, 3, 4)
+  #array.fold(0, (acc, x) => acc + x)
+`}
+  image="/typst_docs_assets/images/6xW4ZyXO8Em_mg5sdK0ZBw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.fold(
+  any,
+  function,
+)
+```
+
+#### `init` [#definitions-fold-init]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Начальное значение, с которого начинается свёртка.
+
+#### `folder` [#definitions-fold-folder]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция свёртки. Должна иметь два параметра: один для накопленного значения и один для элемента.
+
+### `sum` [#definitions-sum]
+
+*Since: 0.3.0*
+
+Суммирует все элементы (работает для всех типов, которые можно складывать).
+
+```typst
+self.sum(default: any)
+```
+
+#### `default` [#definitions-sum-default]
+
+**Тип:** `any`
+
+Что возвращать, если массив пуст. Должно быть задано, если массив может быть пустым.
+
+### `product` [#definitions-product]
+
+*Since: 0.3.0*
+
+Вычисляет произведение всех элементов (работает для всех типов, которые можно умножать).
+
+```typst
+self.product(default: any)
+```
+
+#### `default` [#definitions-product-default]
+
+**Тип:** `any`
+
+Что возвращать, если массив пуст. Должно быть задано, если массив может быть пустым.
+
+### `any` [#definitions-any]
+
+*Since: forever*
+
+Возвращает ли заданная функция `true` для какого-либо элемента массива.
+
+```typst
+self.any(function) -> bool
+```
+
+#### `test` [#definitions-any-test]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция, применяемая к каждому элементу. Должна возвращать логическое значение.
+
+### `all` [#definitions-all]
+
+*Since: forever*
+
+Возвращает ли заданная функция `true` для всех элементов массива.
+
+```typst
+self.all(function) -> bool
+```
+
+#### `test` [#definitions-all-test]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция, применяемая к каждому элементу. Должна возвращать логическое значение.
+
+### `flatten` [#definitions-flatten]
+
+*Since: forever*
+
+Объединяет все вложенные массивы в один плоский.
+
+```typst
+self.flatten() -> array
+```
+
+### `rev` [#definitions-rev]
+
+*Since: forever*
+
+Возвращает новый массив с теми же элементами, но в обратном порядке.
+
+```typst
+self.rev() -> array
+```
+
+### `split` [#definitions-split]
+
+*Since: forever*
+
+Разбивает массив по вхождениям указанного значения.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(1, 1, 2, 3, 2, 4, 5).split(2)
+`}
+  image="/typst_docs_assets/images/Xx2E0-0_g_jX0eyrVM8h5Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.split(any) -> array
+```
+
+#### `at` [#definitions-split-at]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение, по которому нужно разбить.
+
+### `join` [#definitions-join]
+
+*Since: forever*
+
+Объединяет все элементы массива в один.
+
+```typst
+self.join(
+  none | any,
+  last: any,
+  default: none | any,
+)
+```
+
+#### `separator` [#definitions-join-separator]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или `any` · **Модификаторы:** Позиционный · **По умолчанию:** `none`
+
+Значение, вставляемое между каждым элементом массива.
+
+#### `last` [#definitions-join-last]
+
+**Тип:** `any`
+
+Альтернативный разделитель между последними двумя элементами.
+
+#### `default` [#definitions-join-default]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или `any` · **По умолчанию:** `none`
+
+Что возвращать, если массив пуст.
+
+### `intersperse` [#definitions-intersperse]
+
+*Since: 0.8.0*
+
+Возвращает массив с копией значения-разделителя, размещённой между соседними элементами.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #("A", "B", "C").intersperse("-")
+`}
+  image="/typst_docs_assets/images/OXMhozoTObh-QBltoc2VsA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.intersperse(any) -> array
+```
+
+#### `separator` [#definitions-intersperse-separator]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение, которое будет размещено между каждым соседним элементом.
+
+### `chunks` [#definitions-chunks]
+
+*Since: 0.11.0*
+
+Разбивает массив на неперекрывающиеся фрагменты, начиная с начала и заканчивая единственным оставшимся фрагментом.
+
+Все фрагменты, кроме последнего, содержат `chunk-size` элементов. Если `exact` установлено в `true`, остаток отбрасывается, если он содержит меньше `chunk-size` элементов.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let array = (1, 2, 3, 4, 5, 6, 7, 8)
+  #array.chunks(3) \\
+  #array.chunks(3, exact: true)
+`}
+  image="/typst_docs_assets/images/qWtdWo3sUqdTdOaR9M3F5w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.chunks(
+  int,
+  exact: bool,
+) -> array
+```
+
+#### `chunk-size` [#definitions-chunks-chunk-size]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Сколько элементов может содержать каждый фрагмент как максимум.
+
+#### `exact` [#definitions-chunks-exact]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Отбрасывать ли остаток, если его размер меньше `chunk-size`.
+
+### `windows` [#definitions-windows]
+
+*Since: 0.12.0*
+
+Возвращает скользящие окна из `window-size` элементов по массиву.
+
+Если длина массива меньше `window-size`, возвращается пустой массив.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let array = (1, 2, 3, 4, 5, 6, 7, 8)
+  #array.windows(5)
+`}
+  image="/typst_docs_assets/images/v-wMlNISI9Ei3xYY6L2sYQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.windows(int) -> array
+```
+
+#### `window-size` [#definitions-windows-window-size]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Сколько элементов будет содержать каждое окно.
+
+### `sorted` [#definitions-sorted]
+
+*Since: forever*
+
+Возвращает отсортированную версию этого массива, при необходимости по заданной ключевой функции. Используемый алгоритм сортировки является стабильным.
+
+Возвращает ошибку, если пару значений, выбранных для сравнения, невозможно сравнить, или если ключевая функция или функция сравнения (если задана) выдают ошибку.
+
+Чтобы сортировать сразу по нескольким критериям, например в случае равенства по некоторым критериям, ключевая функция может возвращать массив. Результаты упорядочиваются лексикографически.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let array = (
+    (a: 2, b: 4),
+    (a: 1, b: 5),
+    (a: 2, b: 3),
+  )
+  #array.sorted(key: it => (it.a, it.b))
+`}
+  image="/typst_docs_assets/images/_1wkN8_pDnCHVCZrzW-fhg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.sorted(
+  key: function,
+  by: function,
+) -> array
+```
+
+#### `key` [#definitions-sorted-key]
+
+**Тип:** [function](/docs/typst/reference/foundations/function)
+
+Если задана, применяет эту функцию к каждому элементу массива для определения ключей сортировки.
+
+#### `by` [#definitions-sorted-by]
+
+**Тип:** [function](/docs/typst/reference/foundations/function)
+
+Если задана, использует эту функцию для сравнения каждых двух элементов массива.
+
+Функция получает два элемента массива для сравнения и должна возвращать логическое значение, указывающее их порядок: `true` означает, что элементы упорядочены, а `false` означает, что их следует поменять местами. Чтобы сохранить стабильность сортировки, если два элемента равны, функция должна возвращать `true`.
+
+Если эта функция не упорядочивает элементы должным образом (например, возвращая `false` как для `(x, y)`, так и для `(y, x)`, или для `(x, x)`), результирующий массив будет в неопределённом порядке.
+
+При использовании вместе с `key` в `by` будут передаваться ключи вместо элементов.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(
+    "sorted",
+    "by",
+    "decreasing",
+    "length",
+  ).sorted(
+    key: s => s.len(),
+    by: (l, r) => l >= r,
+  )
+`}
+  image="/typst_docs_assets/images/jsrrrmFgenSiQxfGvSHFew.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `dedup` [#definitions-dedup]
+
+*Since: 0.7.0*
+
+Удаляет дубликаты всех элементов в массиве.
+
+Возвращает новый массив со всеми удалёнными дубликатами. Сохраняется только первый элемент каждого дубликата.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(3, 3, 1, 2, 3).dedup()
+`}
+  image="/typst_docs_assets/images/ezl0CG8jmR8PPP8eF8KOfg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.dedup(key: function) -> array
+```
+
+#### `key` [#definitions-dedup-key]
+
+**Тип:** [function](/docs/typst/reference/foundations/function)
+
+Если задана, применяет эту функцию к каждому элементу массива для определения ключей дедупликации.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #("apple", "banana", " apple ").dedup(key: s => s.trim())
+`}
+  image="/typst_docs_assets/images/loltAku4NrlmgjAbhJDNGg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `to-dict` [#definitions-to-dict]
+
+*Since: 0.12.0*
+
+Преобразует массив пар в словарь. Первое значение каждой пары — это ключ, второе — значение.
+
+Если один и тот же ключ встречается несколько раз, выбирается последнее значение.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #(
+    ("apples", 2),
+    ("peaches", 3),
+    ("apples", 5),
+  ).to-dict()
+`}
+  image="/typst_docs_assets/images/cDwXg5BzlWoBxY-livMXUQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.to-dict() -> dictionary
+```
+
+### `reduce` [#definitions-reduce]
+
+*Since: 0.12.0*
+
+Сводит элементы к одному, многократно применяя операцию свёртки.
+
+Если массив пуст, возвращает `none`, иначе возвращает результат свёртки.
+
+Функция свёртки — это замыкание с двумя аргументами: «аккумулятором» и элементом.
+
+Для массивов с хотя бы одним элементом это то же самое, что [`array.fold`](#definitions-fold) с первым элементом массива в качестве начального значения аккумулятора, в который свёртывается каждый последующий элемент.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #let array = (2, 1, 4, 3)
+  #array.reduce((acc, x) => calc.max(acc, x))
+`}
+  image="/typst_docs_assets/images/L5nGrxmiyb0LqWF4IjiBAg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.reduce(function) -> any
+```
+
+#### `reducer` [#definitions-reduce-reducer]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция свёртки. Должна иметь два параметра: один для накопленного значения и один для элемента.

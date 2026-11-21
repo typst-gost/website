@@ -1,0 +1,149 @@
+---
+title: "Query"
+description: "Документация для функции `query`."
+---
+
+
+<span id="summary" />
+
+*Контекстная* · *Доступна: всегда*
+
+Находит элементы в документе.
+
+Функция `query` позволяет искать в документе элементы определённого типа или с определённой меткой. Чтобы её использовать, сначала необходимо убедиться, что доступен [контекст](/docs/typst/reference/context).
+
+## Поиск элементов [#finding-elements]
+
+В примере ниже мы вручную создаём оглавление вместо использования функции [`outline`](/docs/typst/reference/model/outline).
+
+Для этого мы сначала запрашиваем все заголовки в документе уровня 1, у которых `outlined` имеет значение true. Запрос только заголовков уровня 1 гарантирует, что в рамках этого примера подзаголовки не будут включены в оглавление. Поле `outlined` используется, чтобы исключить сам заголовок «Table of Contents».
+
+Обратите внимание, что мы открываем `context`, чтобы иметь возможность использовать функцию `query`.
+
+<TypstRender
+  code={`
+  #set page(numbering: "1")
+
+  #heading(outlined: false)[
+    Table of Contents
+  ]
+  #context {
+    let chapters = query(
+      heading.where(
+        level: 1,
+        outlined: true,
+      )
+    )
+    for chapter in chapters {
+      let loc = chapter.location()
+      let nr = counter(page).display(at: loc)
+      [#chapter.body #h(1fr) #nr \\ ]
+    }
+  }
+
+  = Introduction
+  #lorem(10)
+  #pagebreak()
+
+  == Sub-Heading
+  #lorem(8)
+
+  = Discussion
+  #lorem(18)
+`}
+  image="/typst_docs_assets/images/cj74EwwqSfx_ifaRLBpjNQ.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/Zj18B1vKeczFLS0es6pFhQ.png" alt="" width="480" height="360" />
+
+Чтобы получить номера страниц, мы сначала получаем местоположение элементов, возвращённых `query`, с помощью [`location`](/docs/typst/reference/foundations/content#definitions-location). Затем мы также извлекаем [нумерацию страниц](/docs/typst/reference/introspection/location#definitions-page-numbering) и [счётчик страниц](/docs/typst/reference/introspection/counter#page-counter) в этом местоположении и применяем нумерацию к счётчику.
+
+## Предостережение [#caution]
+
+Чтобы разрешить все ваши запросы, Typst несколько раз вычисляет и размещает части документа. Однако нет гарантии, что ваши запросы действительно могут быть полностью разрешены. Если вы не будете осторожны, запрос может повлиять сам на себя — что приведёт к результату, который никогда не стабилизируется.
+
+В примере ниже мы запрашиваем все заголовки в документе. Затем мы генерируем столько же заголовков. В начале есть только один заголовок с названием `Real`. Таким образом, `count` равен `1`, и генерируется один заголовок `Fake`. Typst видит, что результат запроса изменился, и обрабатывает его снова. На этот раз `count` равен `2`, и генерируются два заголовка `Fake`. Это продолжается и продолжается. Как мы видим, на выходе получается конечное количество заголовков. Это потому, что Typst просто сдаётся после нескольких попыток.
+
+В целом, вам следует стараться не писать запросы, которые влияют сами на себя. Те же предостережения также применимы к другим функциям интроспекции, таким как [счётчики](/docs/typst/reference/introspection/counter) и [состояние](/docs/typst/reference/introspection/state).
+
+<TypstRender
+  code={`
+  = Real
+  #context {
+    let elems = query(heading)
+    let count = elems.len()
+    count * [= Fake]
+  }
+`}
+  image="/typst_docs_assets/images/rr4BnATXqLlmo9UgNkBSbQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Запросы из командной строки [#command-line-queries]
+
+Вы также можете выполнять запросы из командной строки с помощью команды `typst eval`. Эта команда вычисляет код Typst, возможно, в контексте документа, и выводит результирующее значение в сериализованном виде. Она принимает код для вычисления в качестве первого аргумента и (необязательно) путь к документу через `--in`.
+
+Рассмотрим следующий файл `example.typ`, который содержит некоторые невидимые [метаданные](/docs/typst/reference/introspection/metadata):
+
+```typst
+#metadata("This is a note") <note>
+```
+
+Вы можете выполнить запрос к нему следующим образом, используя CLI Typst.
+
+```sh
+$ typst eval 'query(<note>)' --in example.typ
+[
+{
+"func": "metadata",
+    "value": "This is a note",
+    "label": "<note>"
+  }
+]
+```
+
+Эта команда указывает Typst скомпилировать `example.typ`, а затем выполнить код `query(<note>)` с доступом к результирующему документу.
+
+**Примечание:** Код заключён в кавычки, чтобы специальные символы не интерпретировались оболочкой. Способ заключения строк в кавычки зависит от вашей платформы/оболочки.
+
+### Получение конкретного поля [#retrieving-a-specific-field]
+
+Часто вас интересует только одно конкретное поле результирующих элементов. В случае элемента `metadata` интересующим полем является `value`. Вы можете извлечь только это поле, скорректировав код.
+
+```sh
+$ typst eval 'query(<note>).map(it => it.value)' --in example.typ
+["This is a note"]
+```
+
+Если вас интересует только один элемент, вы также можете использовать метод [`first()`](/docs/typst/reference/foundations/array#definitions-first), чтобы извлечь только его.
+
+```sh
+$ typst eval 'query(<note>).first().value' --in example.typ
+"This is a note"
+```
+
+### Запрос для конкретной цели экспорта [#querying-for-a-specific-export-target]
+
+Если вам нужно выполнить запрос к документу при экспорте для конкретной цели, вы можете использовать аргумент `--target`. Допустимые значения — `paged` и `html` (если включена функция [`html`](/docs/typst/reference/format/html)).
+
+## Параметры [#parameters]
+
+```typst
+query(label | selector | location | function) -> array
+```
+
+### `target` [#parameters-target]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Может быть
+
+- функцией элемента, такой как `heading` или `figure`,
+- `<label>`,
+- более сложным селектором, таким как `heading.where(level: 1)`,
+- или `selector(heading).before(here())`.
+
+Поддерживаются только [локализуемые](/docs/typst/reference/introspection/location#locatable) функции элементов.

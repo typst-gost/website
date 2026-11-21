@@ -1,0 +1,91 @@
+---
+title: "Интервалы (H)"
+description: "Документация для функции `h`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Начиная с: forever*
+
+Вставляет горизонтальный интервал в абзац.
+
+Интервал может быть абсолютным, относительным или дробным. В последнем случае оставшееся пространство в строке распределяется между всеми дробными интервалами в соответствии с их относительными долями.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  First #h(1cm) Second \\
+  First #h(30%) Second
+`}
+  image="/typst_docs_assets/images/nfHE_iqFYfT480ygzu2ajw.png"
+  alt=""
+  editable={true}
+/>
+
+## Дробные интервалы [#fractional-spacing]
+
+С помощью дробных интервалов вы можете выравнивать элементы внутри строки, не вызывая разрыв абзаца (как это сделал бы [`align`](/docs/typst/reference/layout/align)). Каждый элемент с дробным размером получает пространство, исходя из отношения его доли к сумме всех долей.
+
+<TypstRender
+  code={`
+  First #h(1fr) Second \\
+  First #h(1fr) Second #h(1fr) Third \\
+  First #h(2fr) Second #h(1fr) Third
+`}
+  image="/typst_docs_assets/images/pjBi-IiaH9z9CWGfz-E_eg.png"
+  alt=""
+  editable={true}
+/>
+
+## Математические интервалы [#math-spacing]
+
+В [математических формулах](/docs/typst/reference/math) вы дополнительно можете использовать следующие константы для добавления интервалов между элементами: `thin` (1/6 em), `med` (2/9 em), `thick` (5/18 em), `quad` (1 em), `wide` (2 em).
+
+## Параметры [#parameters]
+
+```typst
+h(
+  relative | fraction,
+  weak: bool,
+) -> content
+```
+
+### `amount` [#parameters-amount]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Обязательный, Позиционный
+
+Сколько места вставить.
+
+### `weak` [#parameters-weak]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Настраиваемый · **По умолчанию:** `false`
+
+Если `true`, интервал схлопывается в начале или конце абзаца. Кроме того, из нескольких соседних слабых интервалов схлопываются все, кроме наибольшего.
+
+Слабый интервал в разметке также приводит к удалению всех соседних пробелов разметки, независимо от величины вставленного интервала. Чтобы принудительно поставить пробел рядом со слабым интервалом, можно явно написать `#" "` (для обычного пробела) или `~` (для неразрывного пробела). Последнее может быть полезно для создания конструкции, которая всегда присоединяется к предыдущему слову через один неразрывный пробел, независимо от того, был ли перед ней пробел в разметке или нет.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #h(1cm, weak: true)
+  We identified a group of _weak_
+  specimens that fail to manifest
+  in most cases. However, when
+  #h(8pt, weak: true) supported
+  #h(8pt, weak: true) on both sides,
+  they do show up.
+
+  Further #h(0pt, weak: true) more,
+  even the smallest of them swallow
+  adjacent markup spaces.
+`}
+  image="/typst_docs_assets/images/juZIvSjNJhsNMTQMvxPn1g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

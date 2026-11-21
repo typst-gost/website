@@ -1,0 +1,639 @@
+---
+title: "Неформатированный текст / код"
+description: "Документация для функции `raw`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Позиционируемый* · *Доступно с: всегда*
+
+Неформатированный текст с необязательной подсветкой синтаксиса.
+
+Отображает текст дословно и моноширинным шрифтом. Обычно используется для встраивания компьютерного кода в документ.
+
+Текст, переданный этому элементу, игнорирует синтаксис разметки, такой как `*strong*` или `_emphasis_`, и отображается дословно. Если вы хотите отобразить содержимое моноширинным шрифтом, сохранив при этом возможность использования синтаксиса разметки, вместо [`raw`](/docs/typst/reference/text/raw) можно явно задать моноширинный шрифт для текста с помощью параметра [`text.font`](/docs/typst/reference/text/text#parameters-font).
+
+Элементы raw в основном создаются с помощью их [специального синтаксиса](#syntax) путём заключения текста в один или три и более символов обратной кавычки (`` ` ``) с обеих сторон. При использовании трёх и более обратных кавычек текст, непосредственно следующий за начальными обратными кавычками, рассматривается как [языковой тег](#parameters-lang), используемый для подсветки синтаксиса, а сам неформатированный текст начинается после первого пробельного символа.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Adding \`rbx\` to \`rcx\` gives
+  the desired result.
+
+  What is \`\`\`rust fn main()\`\`\` in Rust
+  would be \`\`\`c int main()\`\`\` in C.
+
+  \`\`\`rust
+  fn main() {
+      println!("Hello World!");
+  }
+  \`\`\`
+
+  This has \`\`\` \`backticks\` \`\`\` in it
+  (but the spaces are trimmed). And
+  \`\`\` here\`\`\` the leading space is
+  also trimmed.
+`}
+  image="/typst_docs_assets/images/75_Vel6zTKyd1b5NTb1PKg.png"
+  alt=""
+  editable={true}
+/>
+
+Вы также можете создать элемент [`raw`](/docs/typst/reference/text/raw) программно из строки (и указать языковой тег через необязательный параметр [`lang`](#parameters-lang)).
+
+<TypstRender
+  code={`
+  #raw("fn " + "main() {}", lang: "rust")
+`}
+  image="/typst_docs_assets/images/SjeHRi8UynhvXGN4GIzjiQ.png"
+  alt=""
+  editable={true}
+/>
+
+Если для указанного вами языкового тега по умолчанию недоступна подсветка синтаксиса (или если вы хотите переопределить встроенное определение), вы можете передать в параметр [`syntaxes`](#parameters-syntaxes) файл пользовательской спецификации синтаксиса.
+
+## Стилизация [#styling]
+
+По умолчанию элемент `raw` использует шрифт `DejaVu Sans Mono` (входящий в состав Typst) с уменьшенным размером шрифта `0.8em` (то есть 80% от глобального размера шрифта). Это связано с тем, что моноширинные шрифты, как правило, визуально крупнее немоноширинных.
+
+Вы можете настроить эти свойства с помощью правил show-set:
+
+<TypstRender
+  code={`
+  // Switch to Cascadia Code for both
+  // inline and block raw.
+  #show raw: set text(font: "Cascadia Code")
+
+  // Reset raw blocks to the same size as normal text,
+  // but keep inline raw at the reduced size.
+  #show raw.where(block: true): set text(1em / 0.8)
+
+  Now using the \`Cascadia Code\` font for raw text.
+  Here's some Python code. It looks larger now:
+
+  \`\`\`py
+  def python():
+    return 5 + 5
+  \`\`\`
+`}
+  image="/typst_docs_assets/images/p48sRQvzVxCEAwAeSEdmUA.png"
+  alt=""
+  editable={true}
+/>
+
+Кроме того, вы можете настроить цвета подсветки синтаксиса, задав пользовательскую тему через параметр [`theme`](#parameters-theme).
+
+Для полной настройки внешнего вида блока raw может оказаться полезным правило show для [`raw.line`](#definitions-line), например, для добавления номеров строк.
+
+Обратите внимание, что в неформатированном тексте такие функции вёрстки, как [перенос слов](/docs/typst/reference/text/text#parameters-hyphenate), [свисание знаков](/docs/typst/reference/text/text#parameters-overhang), [интервалы между CJK и латиницей](/docs/typst/reference/text/text#parameters-cjk-latin-spacing) и (для блоков raw) [выравнивание по ширине](/docs/typst/reference/model/par#parameters-justify), по умолчанию отключены.
+
+## Синтаксис [#syntax]
+
+Эта функция имеет специальный синтаксис, который создаёт элемент raw как в режиме разметки, так и в режиме кода. Вы можете заключить текст в один или три и более символов обратной кавычки (`` ` ``) с обеих сторон, чтобы сделать его неформатированным. Количество обратных кавычек должно быть одинаковым с обеих сторон, а заключённый текст не может содержать группу из такого же количества обратных кавычек подряд. Запись всего двух обратных кавычек (``` `` ```) создаёт пустой неформатированный текст.
+
+К заметным отличиям от Markdown относится то, что одиночные обратные кавычки могут заключать текст, занимающий несколько строк, без удаления отступов, а синтаксис с тремя и более обратными кавычками по-прежнему интерпретирует языковые теги при использовании в строке.
+
+Неформатированный текст, заключённый в _одиночные_ обратные кавычки, не имеет способа указать языковой тег и всегда рассматривается как строчный для использования внутри абзаца, то есть параметр [`block`](#parameters-block) равен `false`.
+
+Синтаксис raw с использованием _трёх и более_ обратных кавычек обладает следующими свойствами:
+
+- **После начальных обратных кавычек блок raw завершается только последовательностью из такого же количества обратных кавычек**
+
+  Чтобы включить текст, содержащий последовательность обратных кавычек, начальные и конечные обратные кавычки должны содержать как минимум на одну обратную кавычку больше, чем эта последовательность.
+- **Если неформатированный текст содержит разрыв строки, он будет блочным, иначе — строчным**
+
+  Это соответственно устанавливает параметр [`block`](#parameters-block) в `true` или `false`.
+- **Текст, непосредственно следующий за начальными обратными кавычками, вплоть до первого пробельного символа, рассматривается как _языковой тег_, используемый для подсветки синтаксиса**
+
+  Конкретные правила относительно того, какой текст может рассматриваться как языковой тег, планируется изменить, и они [подробно объяснены ниже.](#language-tag-changes)
+- **Начальная и конечная строки имеют особое поведение при обрезке**
+
+  Для начальной строки, если все символы после начальных обратных кавычек или языкового тега являются пробельными, вся строка будет обрезана. Однако если в этой строке есть непробельные символы, будет обрезан только один пробел, непосредственно следующий за начальными обратными кавычками или языковым тегом, если он присутствует.
+
+  Если конечная строка состоит целиком из пробельных символов вплоть до закрывающих обратных кавычек, она будет обрезана. В противном случае, если последний непробельный символ конечной строки является обратной кавычкой, то один пробельный символ будет обрезан с конца строки, если он присутствует.
+- **Общий отступ в начале строк обрезается**
+
+  Typst удалит начальные пробельные символы в начале строк неформатированного текста, которые являются общими для всех строк, то есть общий отступ. При этом текст в строке с начальными обратными кавычками исключается.
+
+  Сначала Typst находит строку с наименьшим количеством начальных пробельных символов, содержащую какие-либо непробельные символы, включая строку с закрывающими обратными кавычками. Затем Typst обрезает в каждой строке количество символов, равное количеству начальных пробельных символов в этой строке. В строках, состоящих только из пробельных символов, будет удалено такое же количество символов до тех пор, пока они не станут пустыми, но любые дополнительные конечные пробельные символы сохранятся.
+
+  Обратите внимание, что эта проверка для простоты рассматривает табуляции и пробелы как эквивалентные символы и работает с количеством [кодовых точек Unicode](https://www.unicode.org/glossary/#code_point), то есть символов, а не с длиной в байтах.
+
+Эти свойства синтаксиса с тремя и более обратными кавычками позволяют использовать некоторые неочевидные сценарии:
+
+- Чтобы написать текст, содержащий последовательность обратных кавычек, заключите его в на одну или более обратных кавычек больше, чем эта последовательность: ````` ```` enclosed```backticks```` `````
+- Чтобы написать текст, начинающийся или заканчивающийся обратной кавычкой, добавьте пробел внутри открывающих и закрывающих обратных кавычек: ```` ``` `backticks` ``` ````
+- Чтобы написать строчный текст с подсветкой по языковому тегу, добавьте пробел между языковым тегом и текстом ```` ```rust fn main() {}```{:rust} ````
+- Чтобы написать строчный текст без какого-либо языкового тега, добавьте пробел после начальных обратных кавычек: ```` ``` text``` ```` или используйте синтаксис с одиночными обратными кавычками: `` `text` ``
+
+### Встраивание строк с помощью синтаксиса raw [#embedding-strings]
+
+Распространённый сценарий использования синтаксиса raw — встраивание данных в виде строк с форматированием путём доступа к полю `.text` неформатированного содержимого для получения лежащей в основе строки. Это также можно сочетать с конструктором [`bytes`](/docs/typst/reference/foundations/bytes) для преобразования строки в байты.
+
+<TypstRender
+  code={`
+  An inline YAML dictionary via \`.text\`
+  #yaml(bytes(
+    \`\`\`yaml
+   Magic:
+     limited-by: Mana
+   Pokémon:
+     limited-by: Energy
+   Yu-Gi-Oh:
+     limited-by: false
+   \`\`\`.text
+    //  ^^^^ used as a string
+  ))
+`}
+  image="/typst_docs_assets/images/cFVKWCNNHuoJ2f0TfOWCVA.png"
+  alt=""
+  editable={true}
+/>
+
+### Изменения языковых тегов [#language-tag-changes]
+
+При использовании синтаксиса raw с тремя и более обратными кавычками текст, непосредственно следующий за начальными обратными кавычками (вплоть до первого пробельного символа), рассматривается как [языковой тег](#parameters-lang). Однако в текущей версии Typst только текст, который был бы допустимым идентификатором Typst, рассматривается как языковой тег. Первый символ, недопустимый для идентификатора, будет интерпретироваться как начало неформатированного текста.
+
+Например, в текущей версии Typst, если блок raw начинается с `C++`, идентификатор `C` будет языковым тегом, а неформатированный текст начнётся с `++`. Если блок raw начинается с `++C`, у него не будет языкового тега, а неформатированный текст начнётся с `++C`.
+
+Чтобы использовать языковые теги, недопустимые в качестве идентификаторов в текущей версии Typst, необходимо использовать параметр [`lang`](#parameters-lang), либо вызвав конструктор со строкой: `#raw("text", lang: "...")`, либо написав правило set: `#set raw(lang: "...")`.
+
+В следующей версии Typst _весь текст_ вплоть до первого пробельного символа или обратной кавычки будет рассматриваться как языковой тег, что позволит использовать более широкий набор символов для языковых тегов. Теги, содержащие пробелы или обратные кавычки, по-прежнему потребуется задавать вручную через параметр [`lang`](#parameters-lang).
+
+Typst предупредит вас, если ваши блоки raw будут интерпретироваться иначе в следующей версии Typst, выдав предупреждение.
+
+## Параметры [#parameters]
+
+```typst
+raw(
+  str,
+  block: bool,
+  lang: none | str,
+  align: alignment,
+  syntaxes: str | path | bytes | array,
+  theme: none | auto | str | path | bytes,
+  tab-size: int,
+) -> content
+```
+
+### `text` [#parameters-text]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Неформатированный текст.
+
+Вы также можете творчески использовать блоки raw для создания пользовательских синтаксисов для ваших автоматизаций.
+
+<details>
+<summary>Посмотреть пример: реализация DSL с помощью raw и правил show</summary>
+
+<TypstRender
+  code={`
+  // Parse numbers in raw blocks with the
+  // \`mydsl\` tag and sum them up.
+  #show raw.where(lang: "mydsl"): it => {
+    let sum = 0
+  for part in it.text.split("+") {
+      sum += int(part.trim())
+    }
+    sum
+  }
+
+  \`\`\`mydsl
+  1 + 2 + 3 + 4 + 5
+  \`\`\`
+`}
+  image="/typst_docs_assets/images/jf7NT3qzY7nEA_zXNfK9nA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `block` [#parameters-block]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `false`
+
+Отображается ли неформатированный текст как отдельный блок.
+
+В режиме разметки использование записи с одной обратной кавычкой делает этот параметр равным `false`. Использование записи с тремя обратными кавычками делает его равным `true`, если заключённое содержимое содержит хотя бы один разрыв строки.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  // Display inline code in a small box
+  // that retains the correct baseline.
+  #show raw.where(block: false): box.with(
+    fill: luma(240),
+    inset: (x: 3pt, y: 0pt),
+    outset: (y: 3pt),
+    radius: 2pt,
+  )
+
+  // Display block code in a larger block
+  // with more padding.
+  #show raw.where(block: true): block.with(
+    fill: luma(240),
+    inset: 10pt,
+    radius: 4pt,
+  )
+
+  With \`rg\`, you can search through your files quickly.
+  This example searches the current directory recursively
+  for the text \`Hello World\`:
+
+  \`\`\`bash
+  rg "Hello World"
+  \`\`\`
+`}
+  image="/typst_docs_assets/images/pGzHnlkI91nmoFv70g5jXg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `lang` [#parameters-lang]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `none`
+
+Язык, как который следует интерпретировать неформатированный текст для подсветки синтаксиса.
+
+При [экспорте в HTML](/docs/typst/reference/format/html) это устанавливает атрибут `data-lang` у сгенерированного элемента [`html.code`](/docs/typst/reference/format/html/typed#functions-code).
+
+Помимо типичных языковых тегов, известных из Markdown, поддерживаются теги `"typ"`, `"typc"` и `"typm"` для [разметки Typst](/docs/typst/reference/syntax#markup), [кода Typst](/docs/typst/reference/syntax#code) и [математики Typst](/docs/typst/reference/syntax#math) соответственно.
+
+<details>
+<summary>Доступные синтаксисы</summary>
+
+| **Название** | **Теги** |
+| --- | --- |
+| Typst | `typ`, ​`typst` |
+| Typst (code) | `typc` |
+| Typst (math) | `typm` |
+| ActionScript | `as` |
+| Ada | `adb`, ​`ads`, ​`gpr` |
+| Apache Conf | `envvars`, ​`htaccess`, ​`HTACCESS`, ​`htgroups`, ​`HTGROUPS`, ​`htpasswd`, ​`HTPASSWD`, ​`.htaccess`, ​`.HTACCESS`, ​`.htgroups`, ​`.HTGROUPS`, ​`.htpasswd`, ​`.HTPASSWD` |
+| AppleScript | `applescript`, ​`script editor` |
+| AsciiDoc (Asciidoctor) | `adoc`, ​`ad`, ​`asciidoc` |
+| ASP | `asa` |
+| Assembly (x86\_64) | `yasm`, ​`nasm`, ​`asm`, ​`inc`, ​`mac` |
+| Authorized Keys | `authorized_keys`, ​`pub`, ​`authorized_keys2` |
+| AWK | `awk` |
+| Batch File | `bat`, ​`cmd` |
+| BibTeX | `bib` |
+| Bourne Again Shell (bash) | `sh`, ​`bash`, ​`zsh`, ​`ash`, ​`.bash_aliases`, ​`.bash_completions`, ​`.bash_functions`, ​`.bash_login`, ​`.bash_logout`, ​`.bash_profile`, ​`.bash_variables`, ​`.bashrc`, ​`.profile`, ​`.textmate_init`, ​`.zlogin`, ​`.zlogout`, ​`.zprofile`, ​`.zshenv`, ​`.zshrc`, ​`PKGBUILD`, ​`ebuild`, ​`eclass` |
+| C | `c`, ​`h` |
+| C# | `cs`, ​`csx` |
+| C++ | `cpp`, ​`cc`, ​`cp`, ​`cxx`, ​`c++`, ​`C`, ​`h`, ​`hh`, ​`hpp`, ​`hxx`, ​`h++`, ​`inl`, ​`ipp` |
+| Cabal | `cabal` |
+| CFML | `cfml`, ​`cfm`, ​`cfc` |
+| Clojure | `clj`, ​`cljc`, ​`cljs`, ​`edn` |
+| CMake | `CMakeLists.txt`, ​`cmake` |
+| CMake C Header | `h.in` |
+| CMake C++ Header | `hh.in`, ​`hpp.in`, ​`hxx.in`, ​`h++.in` |
+| CMakeCache | `CMakeCache.txt` |
+| CoffeeScript | `coffee`, ​`Cakefile`, ​`coffee.erb`, ​`cson` |
+| Comma Separated Values | `csv`, ​`tsv` |
+| CpuInfo | `cpuinfo` |
+| Crontab | `tab`, ​`crontab`, ​`cron.d` |
+| Crystal | `cr` |
+| CSS | `css`, ​`css.erb`, ​`css.liquid` |
+| D | `d`, ​`di` |
+| Dart | `dart` |
+| Diff | `diff`, ​`patch` |
+| Dockerfile | `Dockerfile`, ​`dockerfile`, ​`.Dockerfile` |
+| DotENV | `.env`, ​`.env.dist`, ​`.env.local`, ​`.env.sample`, ​`.env.example`, ​`.env.template`, ​`.env.test`, ​`.env.test.local`, ​`.env.testing`, ​`.env.dev`, ​`.env.development`, ​`.env.development.local`, ​`.env.prod`, ​`.env.production`, ​`.env.production.local`, ​`.env.dusk.local`, ​`.env.staging`, ​`.env.default`, ​`.env.defaults`, ​`.envrc`, ​`.flaskenv`, ​`env`, ​`env.example`, ​`env.sample`, ​`env.template` |
+| Elixir | `ex`, ​`exs` |
+| Elm | `elm` |
+| Email | `eml`, ​`msg`, ​`mbx`, ​`mboxz` |
+| Erlang | `erl`, ​`hrl`, ​`Emakefile`, ​`emakefile`, ​`escript` |
+| F# | `fs`, ​`fsi`, ​`fsx` |
+| Fish | `fish` |
+| Fortran (Fixed Form) | `f`, ​`F`, ​`f77`, ​`F77`, ​`for`, ​`FOR`, ​`fpp`, ​`FPP` |
+| Fortran (Modern) | `f90`, ​`F90`, ​`f95`, ​`F95`, ​`f03`, ​`F03`, ​`f08`, ​`F08` |
+| Fortran Namelist | `namelist` |
+| fstab | `fstab`, ​`crypttab`, ​`mtab` |
+| Git Attributes | `attributes`, ​`gitattributes`, ​`.gitattributes` |
+| Git Commit | `COMMIT_EDITMSG`, ​`MERGE_MSG`, ​`TAG_EDITMSG` |
+| Git Config | `gitconfig`, ​`.gitconfig`, ​`.gitmodules` |
+| Git Ignore | `exclude`, ​`gitignore`, ​`.gitignore` |
+| Git Link | `.git` |
+| Git Log | `gitlog` |
+| Git Mailmap | `.mailmap`, ​`mailmap` |
+| Git Rebase Todo | `git-rebase-todo` |
+| GLSL | `vs`, ​`fs`, ​`gs`, ​`vsh`, ​`fsh`, ​`gsh`, ​`vshader`, ​`fshader`, ​`gshader`, ​`vert`, ​`frag`, ​`geom`, ​`tesc`, ​`tese`, ​`comp`, ​`glsl`, ​`mesh`, ​`task`, ​`rgen`, ​`rint`, ​`rahit`, ​`rchit`, ​`rmiss`, ​`rcall` |
+| gnuplot | `gp`, ​`gpl`, ​`gnuplot`, ​`gnu`, ​`plot`, ​`plt` |
+| Go | `go` |
+| GraphQL | `graphql`, ​`graphqls`, ​`gql` |
+| Graphviz (DOT) | `dot`, ​`DOT`, ​`gv` |
+| Groff/troff | `groff`, ​`troff`, ​`1`, ​`2`, ​`3`, ​`4`, ​`5`, ​`6`, ​`7`, ​`8`, ​`9` |
+| Groovy | `groovy`, ​`gvy`, ​`gradle`, ​`Jenkinsfile` |
+| group | `group` |
+| Haskell | `hs` |
+| Highlight non-printables | `show-nonprintable` |
+| hosts | `hosts` |
+| HTML | `html`, ​`htm`, ​`shtml`, ​`xhtml` |
+| HTML (ASP) | `asp` |
+| HTML (EEx) | `html.eex`, ​`html.leex` |
+| HTML (Erlang) | `yaws` |
+| HTML (Jinja2) | `htm.j2`, ​`html.j2`, ​`xhtml.j2`, ​`xml.j2` |
+| HTML (Rails) | `rails`, ​`rhtml`, ​`erb`, ​`html.erb` |
+| HTML (Tcl) | `adp` |
+| HTML (Twig) | `twig`, ​`html.twig` |
+| HTTP Request and Response | `http` |
+| INI | `ini`, ​`INI`, ​`inf`, ​`INF`, ​`reg`, ​`REG`, ​`lng`, ​`cfg`, ​`CFG`, ​`desktop`, ​`url`, ​`URL`, ​`.editorconfig`, ​`.coveragerc`, ​`.pylintrc`, ​`.gitlint`, ​`.hgrc`, ​`hgrc` |
+| Java | `java`, ​`bsh` |
+| Java Properties | `properties` |
+| Java Server Page (JSP) | `jsp` |
+| JavaScript | `js`, ​`htc` |
+| JavaScript (Rails) | `js.erb` |
+| Jinja2 | `j2`, ​`jinja2`, ​`jinja` |
+| JQ | `jq` |
+| JSON | `json`, ​`sublime-settings`, ​`sublime-menu`, ​`sublime-keymap`, ​`sublime-mousemap`, ​`sublime-theme`, ​`sublime-build`, ​`sublime-project`, ​`sublime-completions`, ​`sublime-commands`, ​`sublime-macro`, ​`sublime-color-scheme`, ​`ipynb`, ​`Pipfile.lock` |
+| JSON (Terraform) | `tfstate` |
+| jsonnet | `jsonnet`, ​`libsonnet`, ​`libjsonnet` |
+| Julia | `jl` |
+| Known Hosts | `known_hosts`, ​`known_hosts.old` |
+| Kotlin | `kt`, ​`kts` |
+| LaTeX | `tex`, ​`ltx` |
+| Lean | `lean` |
+| Less | `less`, ​`css.less` |
+| Lisp | `lisp`, ​`cl`, ​`clisp`, ​`l`, ​`mud`, ​`el`, ​`scm`, ​`ss`, ​`lsp`, ​`fasl`, ​`sld` |
+| Literate Haskell | `lhs` |
+| LLVM | `ll` |
+| log | `log` |
+| Lua | `lua` |
+| Makefile | `make`, ​`GNUmakefile`, ​`makefile`, ​`Makefile`, ​`makefile.am`, ​`Makefile.am`, ​`makefile.in`, ​`Makefile.in`, ​`OCamlMakefile`, ​`mak`, ​`mk` |
+| Manpage | `man` |
+| Markdown | `md`, ​`mdown`, ​`markdown`, ​`markdn` |
+| MATLAB | `matlab` |
+| MediaWiki | `mediawiki`, ​`wikipedia`, ​`wiki` |
+| MemInfo | `meminfo` |
+| NAnt Build File | `build` |
+| nginx | `conf.erb`, ​`conf`, ​`nginx.conf`, ​`mime.types`, ​`fastcgi_params`, ​`scgi_params`, ​`uwsgi_params` |
+| Nim | `nim`, ​`nims`, ​`nimble` |
+| Ninja | `ninja` |
+| Nix | `nix` |
+| NSIS | `nsi`, ​`nsh`, ​`bnsi`, ​`bnsh`, ​`nsdinc` |
+| Objective-C | `m`, ​`h` |
+| Objective-C++ | `mm`, ​`M`, ​`h` |
+| OCaml | `ml`, ​`mli` |
+| OCamllex | `mll` |
+| OCamlyacc | `mly` |
+| orgmode | `org` |
+| Pascal | `pas`, ​`p`, ​`dpr` |
+| passwd | `passwd` |
+| Perl | `pl`, ​`pc`, ​`pm`, ​`pmc`, ​`pod`, ​`t` |
+| PHP | `php`, ​`php3`, ​`php4`, ​`php5`, ​`php7`, ​`phps`, ​`phpt`, ​`phtml` |
+| Plain Text | `txt` |
+| Protocol Buffer | `proto`, ​`protobuf`, ​`protodevel` |
+| Protocol Buffer (TEXT) | `pb.txt`, ​`proto.text`, ​`textpb`, ​`pbtxt`, ​`prototxt`, ​`textproto` |
+| Puppet | `pp`, ​`epp` |
+| PureScript | `purs` |
+| Python | `py`, ​`py3`, ​`pyw`, ​`pyi`, ​`pyx`, ​`pyx.in`, ​`pxd`, ​`pxd.in`, ​`pxi`, ​`pxi.in`, ​`rpy`, ​`cpy`, ​`SConstruct`, ​`Sconstruct`, ​`sconstruct`, ​`SConscript`, ​`gyp`, ​`gypi`, ​`Snakefile`, ​`vpy`, ​`wscript`, ​`bazel`, ​`bzl` |
+| QML | `qml`, ​`qmlproject` |
+| R | `R`, ​`r`, ​`Rprofile` |
+| Racket | `rkt` |
+| Rd (R Documentation) | `rd` |
+| Rego | `rego` |
+| Regular Expression | `re` |
+| Requirements.txt | `requirements.txt`, ​`requirements.in`, ​`pip` |
+| resolv | `resolv.conf` |
+| reStructuredText | `rst`, ​`rest` |
+| Robot Framework | `robot`, ​`resource` |
+| Ruby | `rb`, ​`Appfile`, ​`Appraisals`, ​`Berksfile`, ​`Brewfile`, ​`capfile`, ​`cgi`, ​`Cheffile`, ​`config.ru`, ​`Deliverfile`, ​`Fastfile`, ​`fcgi`, ​`Gemfile`, ​`gemspec`, ​`Guardfile`, ​`irbrc`, ​`jbuilder`, ​`Podfile`, ​`podspec`, ​`prawn`, ​`rabl`, ​`rake`, ​`Rakefile`, ​`Rantfile`, ​`rbx`, ​`rjs`, ​`ruby.rail`, ​`Scanfile`, ​`simplecov`, ​`Snapfile`, ​`thor`, ​`Thorfile`, ​`Vagrantfile` |
+| Ruby Haml | `haml`, ​`sass` |
+| Ruby on Rails | `rxml`, ​`builder` |
+| Ruby Slim | `slim`, ​`skim` |
+| Rust | `rs` |
+| Scala | `scala`, ​`sbt`, ​`sc` |
+| SCSS | `scss` |
+| SML | `sml`, ​`cm`, ​`sig` |
+| Solidity | `sol` |
+| SQL | `sql`, ​`ddl`, ​`dml` |
+| SQL (Rails) | `erbsql`, ​`sql.erb` |
+| SSH Config | `ssh_config` |
+| SSHD Config | `sshd_config` |
+| Strace | `strace` |
+| Stylus | `styl`, ​`stylus` |
+| Svelte | `svlt`, ​`svelte` |
+| Swift | `swift` |
+| syslog | `syslog` |
+| SystemVerilog | `sv`, ​`v`, ​`svh`, ​`vh` |
+| Tcl | `tcl` |
+| Terraform | `tf`, ​`tfvars`, ​`hcl` |
+| TeX | `sty`, ​`cls` |
+| Textile | `textile` |
+| Todo.txt | `todo.txt`, ​`done.txt` |
+| TOML | `toml`, ​`tml`, ​`Cargo.lock`, ​`Gopkg.lock`, ​`Pipfile`, ​`pdm.lock`, ​`poetry.lock`, ​`uv.lock` |
+| TypeScript | `ts`, ​`mts`, ​`cts` |
+| TypeScriptReact | `tsx` |
+| varlink | `varlink` |
+| Verilog | `v`, ​`V` |
+| VimL | `vim`, ​`vimrc`, ​`gvimrc`, ​`.vimrc`, ​`.gvimrc`, ​`_vimrc`, ​`_gvimrc` |
+| Vue Component | `vue` |
+| Vyper | `vy` |
+| WGSL | `wgsl` |
+| XML | `xml`, ​`xsd`, ​`xslt`, ​`tld`, ​`dtml`, ​`rng`, ​`rss`, ​`opml`, ​`svg`, ​`xaml` |
+| YAML | `yaml`, ​`yml`, ​`sublime-syntax` |
+| Zig | `zig` |
+
+</details>
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  \`\`\`typ
+  This is *Typst!*
+  \`\`\`
+
+  This is \`\`\`typ also *Typst*\`\`\`, but inline!
+`}
+  image="/typst_docs_assets/images/rBTYrVbGyPtNsizepDIrQw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `align` [#parameters-align]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `start`
+
+Горизонтальное выравнивание, которое должна иметь каждая строка в блоке raw. Этот параметр игнорируется, если это не блок raw (если указано `block: false` или в режиме разметки использовались одиночные обратные кавычки).
+
+По умолчанию он установлен в `start`, что означает, что неформатированный текст по умолчанию выравнивается по началу направления текста внутри блока, независимо от выравнивания текущего контекста (что позволяет вам, например, центрировать сам блок raw, не центрируя текст внутри него).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set raw(align: center)
+
+  \`\`\`typc
+  let f(x) = x
+  code = "centered"
+  \`\`\`
+`}
+  image="/typst_docs_assets/images/7SLxsv72zoO6u6tYbD871A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `syntaxes` [#parameters-syntaxes]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `()`
+
+Дополнительные определения синтаксиса для загрузки. Определения синтаксиса должны быть в [формате файла `sublime-syntax`](https://www.sublimetext.com/docs/syntax.html).
+
+Вы можете передать любое из следующих значений:
+
+- Строку пути или [`path`](/docs/typst/reference/foundations/path) для загрузки файла синтаксиса.
+- Необработанные байты, из которых следует декодировать синтаксис.
+- Массив, каждый элемент которого является одним из вышеперечисленного.
+
+Список встроенных синтаксисов см. в документации [параметра `lang`](#parameters-lang).
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set raw(syntaxes: "SExpressions.sublime-syntax")
+
+  \`\`\`sexp
+  (defun factorial (x)
+    (if (zerop x)
+      ; with a comment
+      1
+      (* x (factorial (- x 1)))))
+  \`\`\`
+`}
+  image="/typst_docs_assets/images/jG0kSINeKO8YOnoEUi-R-g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `theme` [#parameters-theme]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `auto`
+
+Тема, используемая для подсветки синтаксиса. Темы должны быть в [формате файла `tmTheme`](https://www.sublimetext.com/docs/color_schemes_tmtheme.html).
+
+Вы можете передать любое из следующих значений:
+
+- `none`: Отключает подсветку синтаксиса.
+- `auto`: Подсветка с использованием темы Typst по умолчанию.
+- Строку пути или [`path`](/docs/typst/reference/foundations/path) для загрузки файла темы.
+- Необработанные байты, из которых следует декодировать тему.
+
+Применение темы влияет только на цвет специально подсвеченного текста. Оно не учитывает свойства переднего плана и фона темы, так что вы сохраняете контроль над цветом неформатированного текста. Вы можете применить цвет переднего плана самостоятельно с помощью функции [`text`](/docs/typst/reference/text/text), а фон — с помощью [заполненного блока](/docs/typst/reference/layout/block#parameters-fill). Вы также можете использовать функцию [`xml`](/docs/typst/reference/data-loading/xml) для извлечения этих свойств из темы.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set raw(theme: "halcyon.tmTheme")
+  #show raw: it => block(
+    fill: rgb("#1d2433"),
+    inset: 8pt,
+    radius: 5pt,
+    text(fill: rgb("#a2aabc"), it)
+  )
+
+  \`\`\`typ
+  = Chapter 1
+  #let hi = "Hello World"
+  \`\`\`
+`}
+  image="/typst_docs_assets/images/MdF8QgdN9iUw5TLBx0ww1Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `tab-size` [#parameters-tab-size]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Устанавливаемый · **По умолчанию:** `2`
+
+Размер позиции табуляции в пробелах. Табуляция заменяется достаточным количеством пробелов для выравнивания по следующему кратному размеру.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set raw(tab-size: 8)
+  \`\`\`tsv
+  Year  Month Day
+  2000  2 3
+  2001  2 1
+  2002  3 10
+  \`\`\`
+`}
+  image="/typst_docs_assets/images/TZ2DNtTlCrMRrlzOGWlAVQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+## Функции [#functions]
+
+### `line` [#definitions-line]
+
+*Элемент* · *Доступно с: 0.9.0*
+
+Подсвеченная строка неформатированного текста.
+
+Это вспомогательный элемент, который синтезируется элементами [`raw`](/docs/typst/reference/text/raw).
+
+Он позволяет вам получать доступ к различным свойствам строки, таким как номер строки, неформатированный неподсвеченный текст, подсвеченный текст и является ли она первой или последней строкой блока raw.
+
+```typst
+raw.line(
+  int,
+  int,
+  str,
+  content,
+)
+```
+
+#### `number` [#definitions-line-number]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Номер строки raw внутри блока raw, начинается с 1.
+
+#### `count` [#definitions-line-count]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Общее количество строк в блоке raw.
+
+#### `text` [#definitions-line-text]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Строка неформатированного текста.
+
+#### `body` [#definitions-line-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Подсвеченный неформатированный текст.

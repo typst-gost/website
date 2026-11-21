@@ -1,0 +1,73 @@
+---
+title: "Asset"
+description: "Документация для функции `asset`."
+---
+
+<span id="summary" />
+
+*Element* · *Locatable* · *Since: 0.15.0* · *Feature toggleRequires thebundlefeature*
+
+Добавляет пользовательский файл в пакет.
+
+Эта функция создаёт отдельный файл в [пакете](/docs/typst/reference/format/bundle) из [необработанных байтовых данных](/docs/typst/reference/foundations/bytes). В отличие от [документов](/docs/typst/reference/model/document), ресурсы выводятся как есть, без компиляции.
+
+Функцию `asset` можно комбинировать с [`read`](/docs/typst/reference/data-loading/read), чтобы скопировать файл из проекта в выходной пакет. Первый аргумент `asset` задаёт выходной путь для ресурса в пакете, а путь, переданный в `read`, определяет, откуда в проекте считывать данные.
+
+```typst
+// Copy the file `styles.css` into the bundle.
+#asset("styles.css", read("styles.css"))
+```
+
+При этом `asset` не привязана к `read`. Вы также можете генерировать байты напрямую или использовать функцию вроде [`json.encode`](/docs/typst/reference/data-loading/json#definitions-encode) для вывода сериализованных данных.
+
+```typst
+// Emits a JSON file with the number
+// of headings in the document.
+#context {
+  let headings = query(heading)
+  let meta = (
+    count: headings.len(),
+  )
+  asset("meta.json", json.encode(meta))
+}
+
+#document("doc.pdf")[
+  = Introduction
+= Conclusion
+]
+```
+
+В результате в итоговый пакет будет добавлен файл `meta.json` со следующим содержимым:
+
+```json
+{
+  "count": 2
+}
+```
+
+Эта функция определена на элементе [`format.bundle`](/docs/typst/reference/format/bundle), но также доступна напрямую в глобальной области видимости. Её можно использовать только в цели [bundle](/docs/typst/reference/format/bundle).
+
+## Параметры [#parameters]
+
+```typst
+asset(
+  str,
+  str | bytes,
+) -> content
+```
+
+### `path` [#parameters-path]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Обязательный, Позиционный
+
+Путь в пакете, по которому будет размещён ресурс.
+
+Может содержать внутренние слэши, в этом случае промежуточные каталоги будут созданы автоматически.
+
+### `data` [#parameters-data]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Необработанные данные, которые будут записаны в файл по указанному пути.
+
+Если передана строка, она будет закодирована в UTF-8.

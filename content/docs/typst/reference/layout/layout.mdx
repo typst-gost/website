@@ -1,0 +1,84 @@
+---
+title: "Макет"
+description: "Документация для функции `layout`."
+---
+
+
+<span id="summary" />
+
+*С версии: 0.2.0*
+
+Предоставляет доступ к размерам (ширине и высоте) текущего внешнего контейнера (или страницы, если контейнера нет).
+
+Принимает функцию, которая получает единственный параметр — словарь с ключами `width` и `height`, оба типа [`length`](/docs/typst/reference/layout/length). Функция выполняется в [контексте](/docs/typst/reference/context), поэтому её не нужно использовать вместе с ключевым словом `context`. Именно поэтому в примере ниже можно вызвать [`measure`](/docs/typst/reference/layout/measure).
+
+<TypstRender
+  code={`
+  #let text = lorem(30)
+  #layout(size => [
+    #let (height,) = measure(
+      width: size.width,
+      text,
+    )
+    This text is #height high with
+    the current page width: \\
+  #text
+  ])
+`}
+  image="/typst_docs_assets/images/C-JN6DeQfgdgof7_rs_jwQ.png"
+  alt=""
+  editable={true}
+/>
+
+Обратите внимание, что функция `layout` помещает своё содержимое в контейнер уровня [блока](/docs/typst/reference/layout/block), поэтому внутри него невозможно позиционирование относительно страницы или разрывы страниц.
+
+Если вызов `layout` размещён внутри блока шириной `800pt` и высотой `400pt`, то указанной функции будет передан аргумент `(width: 800pt, height: 400pt)`. Если же он размещён непосредственно на странице, то получает размеры страницы за вычетом её полей. Это в основном полезно в сочетании с [измерением](/docs/typst/reference/layout/measure).
+
+Чтобы получить _оставшуюся_ высоту страницы, а не её полный размер, можно обернуть вызов `layout` в `block(height: 1fr)`. Это работает, потому что блок автоматически растягивается, заполняя оставшееся пространство (подробнее см. документацию по [долям](/docs/typst/reference/layout/fraction)).
+
+<TypstRender
+  code={`
+  #set page(height: 150pt)
+
+  #lorem(20)
+
+  #block(height: 1fr, layout(size => [
+    Remaining height: #size.height
+  ]))
+`}
+  image="/typst_docs_assets/images/LTmkyo061pd1unog4IRvrw.png"
+  alt=""
+  editable={true}
+/>
+
+Эту функцию также можно использовать для преобразования [`ratio`](/docs/typst/reference/layout/ratio) в фиксированную длину. Это может пригодиться, если вы создаёте собственные абстракции макета.
+
+<TypstRender
+  code={`
+  #layout(size => {
+    let half = 50% * size.width
+    [Half a page is #half wide.]
+  })
+`}
+  image="/typst_docs_assets/images/8lfeAuGA4wFdVz5ekNwkqQ.png"
+  alt=""
+  editable={true}
+/>
+
+Обратите внимание, что ширина или высота, предоставляемые `layout`, будут бесконечными, если соответствующий размер страницы установлен в `auto`.
+
+## Параметры [#parameters]
+
+```typst
+layout(function) -> content
+```
+
+### `func` [#parameters-func]
+
+**Тип:** [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Обязательный, Позиционный
+
+Функция, вызываемая с размером внешнего контейнера. Её возвращаемое значение отображается в документе.
+
+Размер контейнера передаётся в виде [словаря](/docs/typst/reference/foundations/dictionary) с ключами `width` и `height`, оба типа [`length`](/docs/typst/reference/layout/length).
+
+Эта функция вызывается один раз для каждого появления содержимого, возвращённого `layout`, в документе. Это позволяет генерировать содержимое, зависящее от размеров его контейнера.

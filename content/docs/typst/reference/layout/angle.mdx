@@ -1,0 +1,49 @@
+---
+title: "Угол"
+description: "Документация для типа `angle`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Угол, описывающий поворот.
+
+Typst поддерживает следующие угловые единицы:
+
+- Градусы: `180deg`
+- Радианы: `3.14rad`
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #rotate(10deg)[Hello there!]
+`}
+  image="/typst_docs_assets/images/lrqvaX18QAZh_9AtUNlS3g.png"
+  alt=""
+  editable={true}
+/>
+
+## Функции [#functions]
+
+### `rad` [#definitions-rad]
+
+*Since: 0.7.0*
+
+Преобразует этот угол в радианы.
+
+```typst
+self.rad() -> float
+```
+
+### `deg` [#definitions-deg]
+
+*Since: 0.7.0*
+
+Преобразует этот угол в градусы.
+
+```typst
+self.deg() -> float
+```

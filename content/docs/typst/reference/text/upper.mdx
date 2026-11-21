@@ -1,0 +1,36 @@
+---
+title: "Верхний регистр"
+description: "Документация для функции `upper`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Преобразует строку или содержимое в верхний регистр.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #upper("abc") \\
+  #upper[*my text*] \\
+  #upper[ALREADY HIGH]
+`}
+  image="/typst_docs_assets/images/mBc51wKYOqovDoZTihM0QQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+upper(str | content)
+```
+
+### `text` [#parameters-text]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** обязательный, позиционный
+
+Текст, который нужно преобразовать в верхний регистр.

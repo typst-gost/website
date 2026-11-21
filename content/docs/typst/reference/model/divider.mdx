@@ -1,0 +1,65 @@
+---
+title: "Divider"
+description: "Документация для функции `divider`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Доступно с: 0.15.0*
+
+Тематический разрыв, разделяющий части содержимого.
+
+По умолчанию отображается как горизонтальная линия, но его можно настроить с помощью правил show.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  She left without a word.
+  #divider()
+  Three days later, she returned.
+`}
+  image="/typst_docs_assets/images/ozYczBwm9oq2FCLckKul0w.png"
+  alt=""
+  editable={true}
+/>
+
+## Стилизация [#styling]
+
+Разделитель можно стилизовать с помощью правил show.
+
+Поскольку по умолчанию разделитель отображается как линия, вы можете использовать правило set, чтобы настроить обводку линии:
+
+<TypstRender
+  code={`
+  #show divider: set line(stroke: 2pt + red)
+  First part
+  #divider()
+  Second part
+`}
+  image="/typst_docs_assets/images/YdP-P10T6mR9icUYv1LYiw.png"
+  alt=""
+  editable={true}
+/>
+
+Вы также можете полностью заменить разделитель пользовательским содержимым, например цветочным орнаментом или звёздочками, но тогда его следует обернуть в блок, чтобы сохранить отступы:
+
+<TypstRender
+  code={`
+  #show divider: set align(center)
+  #show divider: block[∗ ∗ ∗]
+  Chapter 1
+  #divider()
+  Chapter 2
+`}
+  image="/typst_docs_assets/images/B8rXUFwtMyo6fZTIQMpy-w.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+divider() -> content
+```

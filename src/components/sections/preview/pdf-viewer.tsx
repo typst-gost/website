@@ -38,6 +38,7 @@ export default function PdfViewer({
   const [isPreviewLoaded, setIsPreviewLoaded] = useState(false);
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
+  const [targetPage, setTargetPage] = useState(1);
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,18 +82,19 @@ export default function PdfViewer({
   }, []);
 
   const activateViewer = useCallback(
-    (targetPage: number = 1) => {
+    (target: number = 1) => {
       if (isActive) return;
-      targetPageRef.current = targetPage;
+      targetPageRef.current = target;
+      setTargetPage(target);
       setIsActive(true);
-      setPageNumber(targetPage);
+      setPageNumber(target);
     },
     [isActive],
   );
 
   const onDocumentLoadSuccess = useCallback(
-    ({ numPages }: { numPages: number }) => {
-      setNumPages(numPages);
+    ({ numPages: loadedPages }: { numPages: number }) => {
+      setNumPages(loadedPages);
     },
     [],
   );
@@ -100,8 +102,8 @@ export default function PdfViewer({
   const onPageRenderSuccess = useCallback(() => {
     if (isPdfReady) return;
 
-    const targetPage = targetPageRef.current;
-    const element = pageRefs.current.get(targetPage);
+    const target = targetPageRef.current;
+    const element = pageRefs.current.get(target);
 
     if (element && containerRef.current) {
       isProgrammaticScroll.current = true;
@@ -114,7 +116,7 @@ export default function PdfViewer({
       const relativeTop = elementRect.top - containerRect.top;
       const targetScrollTop = currentScrollTop + relativeTop - 16;
 
-      if (targetPage > 1) {
+      if (target > 1) {
         container.scrollTop = targetScrollTop;
       }
 
@@ -185,20 +187,22 @@ export default function PdfViewer({
     }
   };
 
-  const scrollToPage = (targetPage: number) => {
+  const scrollToPage = (target: number) => {
     if (!isActive) {
-      activateViewer(targetPage);
+      activateViewer(target);
       return;
     }
 
-    const element = pageRefs.current.get(targetPage);
+    const element = pageRefs.current.get(target);
     const container = containerRef.current;
 
     if (element && container) {
       isProgrammaticScroll.current = true;
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
 
-      setPageNumber(targetPage);
+      targetPageRef.current = target;
+      setTargetPage(target);
+      setPageNumber(target);
 
       const containerRect = container.getBoundingClientRect();
       const elementRect = element.getBoundingClientRect();
@@ -215,7 +219,9 @@ export default function PdfViewer({
         isProgrammaticScroll.current = false;
       }, 800);
     } else {
-      setPageNumber(targetPage);
+      targetPageRef.current = target;
+      setTargetPage(target);
+      setPageNumber(target);
     }
   };
 
@@ -232,7 +238,7 @@ export default function PdfViewer({
   const shouldRenderPage = (index: number) => {
     const pageIndex = index + 1;
     if (!isPdfReady) {
-      return pageIndex === targetPageRef.current || pageIndex === 1;
+      return pageIndex === targetPage || pageIndex === 1;
     }
     return (
       pageIndex >= pageNumber - PAGE_BUFFER &&
@@ -302,7 +308,7 @@ export default function PdfViewer({
             className={`flex flex-col items-center gap-4 py-4 relative z-0 ${isPdfReady ? "opacity-100" : "opacity-0"}`}
           >
             {numPages &&
-              Array.from(new Array(numPages), (_, index) => {
+              Array.from({ length: numPages }, (_, index) => {
                 const pageIndex = index + 1;
                 const isRendered = shouldRenderPage(index);
 
@@ -329,7 +335,7 @@ export default function PdfViewer({
                         pageNumber={pageIndex}
                         width={containerWidth || undefined}
                         onRenderSuccess={
-                          pageIndex === targetPageRef.current
+                          pageIndex === targetPage
                             ? onPageRenderSuccess
                             : undefined
                         }

@@ -1,0 +1,316 @@
+---
+title: "0.14.0"
+description: "Изменения в Typst 0.14.0"
+---
+
+## Основные изменения [#highlights]
+
+- Typst теперь по умолчанию создаёт [_доступные_ PDF-файлы](/docs/typst/guides/accessibility), с опциональной поддержкой более строгих проверок и соответствия PDF/UA-1
+- Typst теперь поддерживает все [стандарты PDF/A](/docs/typst/reference/format/pdf#pdf-a)
+- PDF-файлы теперь можно использовать как [изображения](/docs/typst/reference/visualize/image#parameters-format) (спасибо [@LaurenzV](https://github.com/LaurenzV))
+- Добавлена поддержка [выключки на уровне символов](/docs/typst/reference/model/par#parameters-justification-limits) (может значительно улучшить внешний вид выключенного текста)
+- Добавлена поддержка множества новых встроенных элементов при экспорте в HTML
+- Добавлен типизированный HTML API (например, [`html.div`](/docs/typst/reference/format/html/typed#functions-div)) с индивидуально типизированными атрибутами
+- Добавлена поддержка нескольких [заголовков](/docs/typst/reference/model/table#definitions-header) и подзаголовков в таблицах
+- Добавлен элемент [`title`](/docs/typst/reference/model/title) для отображения названия документа
+- Добавлено свойство [`frac.style`](/docs/typst/reference/math/frac#parameters-style) для создания скошенных и строчных дробей
+
+## Экспорт в PDF [#pdf-export]
+
+Экспорт в PDF был полностью переписан с использованием новой библиотеки [`krilla`](https://github.com/LaurenzV/krilla), что исправило различные ошибки и позволило внести множество улучшений. Известные исправления перечислены ниже, но, вероятно, будут и другие изменения в поведении вывода. Если вы обнаружите какие-либо регрессии, пожалуйста, [сообщите о них на GitHub](https://github.com/typst/typst/issues). _(Спасибо [@LaurenzV](https://github.com/LaurenzV) за создание krilla!)_ [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+
+- Typst теперь по умолчанию создаёт _доступные_ PDF-файлы. Такие документы подходят для использования в широком спектре обстоятельств. Это касается не только людей с постоянной или временной инвалидностью, но и тех, кто использует другие устройства или имеет иные предпочтения.
+  - PDF-файлы Typst теперь по умолчанию _размечены тегами_. _Теги_ — это богатые метаданные, которые программы просмотра PDF могут использовать, чтобы сделать документ доступным не только визуально (например, через программу экранного доступа).
+  - Кроме того, Typst теперь может создавать документы, соответствующие стандарту PDF/UA-1. (PDF/UA-2 пока не поддерживается, но это запланировано.)
+  - Существует всё больше действующего и готовящегося законодательства, требующего доступности документов, например, Европейский акт о доступности и Закон об американцах с инвалидностью.
+  - Для получения более подробной информации обо всём этом прочитайте новое [руководство по доступности](/docs/typst/guides/accessibility).
+- Typst теперь поддерживает все стандарты PDF/A: PDF/A-1b, PDF/A-1a, PDF/A-2b, PDF/A-2u, PDF/A-2a, PDF/A-3b, PDF/A-3u, PDF/A-3a, PDF/A-4, PDF/A-4f и PDF/A-4e. См. [расширенную документацию по PDF/A](/docs/typst/reference/format/pdf#pdf-a) для получения рекомендаций о том, как выбрать подходящий стандарт. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7038)
+- Typst теперь поддерживает версии PDF 1.4, 1.5, 1.6 и 2.0 в дополнение к PDF 1.7. Подробности см. в [соответствующем разделе документации по PDF](/docs/typst/reference/format/pdf#pdf-versions). [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+- Добавлена функция [`pdf.artifact`](/docs/typst/reference/format/pdf/artifact) для пометки содержимого как не имеющего семантического значения [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6619)
+- Добавлены экспериментальные функции [`pdf.header-cell`](/docs/typst/reference/format/pdf/header-cell), [`pdf.data-cell`](/docs/typst/reference/format/pdf/data-cell) и [`pdf.table-summary`](/docs/typst/reference/format/pdf/table-summary) для повышения доступности документов со сложными таблицами. Эти функции защищены возможностью `a11y-extras`. Они не имеют окончательного интерфейса и будут удалены в будущем — либо путём интеграции в функции таблиц, либо путём полного удаления. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6619)
+- Закладки заголовков PDF теперь содержат нумерацию заголовка [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6622)
+- [Вложения](/docs/typst/reference/format/pdf/attach)
+  - `pdf.embed` переименована в [`pdf.attach`](/docs/typst/reference/format/pdf/attach) (старое имя останется как устаревший псевдоним до Typst 0.15) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6705)
+  - Свойство [`mime`](/docs/typst/reference/format/pdf/attach#parameters-mime-type) функции `pdf.attach` теперь проверяется на синтаксическую корректность **(Незначительное ломающее изменение)**
+  - Исправлен разбор аргумента [`data`](/docs/typst/reference/format/pdf/attach#parameters-data) функции `pdf.attach` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6435)
+  - Вложения теперь разумно определяют, следует ли их сжимать [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6256)
+- Извлечение текста (т. е. копирование и вставка)
+  - Теперь работает корректно, даже когда несколько разных символов дают один и тот же глиф [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+  - Пробелы между словами, в которых произошёл естественный перенос строки, теперь корректно сохраняются при извлечении текста [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6866)
+  - Исправлено сопоставление артефактов переноса с текстом Unicode [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6799)
+- Изображения
+  - Изображения CMYK теперь корректно работают при экспорте в PDF [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+  - Улучшен экспорт текста в SVG-изображениях с фильтром [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+  - Улучшена совместимость SVG-изображений с движком рендеринга Quartz (движок, используемый в Apple Preview) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+  - Улучшена обработка SVG-изображений с большой глубиной вложенности групп [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+- Исправлена ошибка с текстом в узорах [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+- Исправлены градиенты с прозрачностью [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5420)
+
+## Экспорт в HTML [#html-export]
+
+- Добавлена поддержка множества новых встроенных элементов (категория [_Model_](/docs/typst/reference/model) теперь полностью покрыта)
+  - Элемент [`image`](/docs/typst/reference/visualize/image) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6578)
+  - Элементы [`footnote`](/docs/typst/reference/model/footnote) и [`footnote.entry`](/docs/typst/reference/model/footnote#definitions-entry) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6917)
+  - Элементы [`outline`](/docs/typst/reference/model/outline) и [`outline.entry`](/docs/typst/reference/model/outline#definitions-entry) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6606)
+  - Элемент [`bibliography`](/docs/typst/reference/model/bibliography) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6952)
+  - Элемент [`smartquote`](/docs/typst/reference/text/smartquote) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6710)
+  - Элементы [`sub`](/docs/typst/reference/text/sub) и [`super`](/docs/typst/reference/text/super) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6422)
+  - Элементы [`underline`](/docs/typst/reference/text/underline), [`overline`](/docs/typst/reference/text/overline), [`strike`](/docs/typst/reference/text/strike) и [`highlight`](/docs/typst/reference/text/highlight) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6510)
+  - Элемент [`smallcaps`](/docs/typst/reference/text/smallcaps) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6600)
+  - Функции [`lower`](/docs/typst/reference/text/lower) и [`upper`](/docs/typst/reference/text/upper) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6585)
+- Добавлен типизированный HTML API (например, [`html.div`](/docs/typst/reference/format/html/typed#functions-div)) с индивидуально типизированными атрибутами [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6476)
+  - Например, чтобы сгенерировать элемент `video`, теперь можно написать `#html.video(width: 400, src: "sunrise.mp4")` вместо `#html.elem("video", attrs: (width: "400", src: "sunrise.mp4"))`. Обратите внимание, что атрибут `width` принимает целое число вместо строки.
+- Добавлена поддержка внутридокументных целей [`link`](/docs/typst/reference/model/link) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6602)
+- Элемент [`raw`](/docs/typst/reference/text/raw)
+  - Добавлена поддержка подсветки синтаксиса [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6691)
+  - Блочные элементы `raw` теперь генерируют как тег `<code>`, так и тег `<pre>` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6701)
+  - [Тег языка](/docs/typst/reference/text/raw#parameters-lang) элементов `raw` теперь сохраняется как атрибут `data-lang` в теге `<code>` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6702)
+- Свойства [`authors`](/docs/typst/reference/model/document#parameters-author) и [`keywords`](/docs/typst/reference/model/document#parameters-keywords) функции `document` теперь создают соответствующие HTML-теги `<meta>` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6134)
+- Функция [`html.elem`](/docs/typst/reference/format/html/elem) теперь поддерживает пользовательские имена HTML-элементов [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6676)
+- Улучшено кодирование [`html.frame`](/docs/typst/reference/format/html/frame) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6605)
+- Пустые атрибуты теперь кодируются с помощью сокращённого синтаксиса (например, `<div hidden></div>{:html}`) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6479)
+- Горизонтальный слабый отступ нулевого размера (`h(0pt, weak: true)`) больше не вызывает предупреждение «was ignored during HTML export», поэтому его можно использовать для уничтожения окружающих пробелов без создания какого-либо вывода, как при постраничном экспорте [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6917)
+- Исправлено кодирование элементов `<pre>` и `<textarea>`, начинающихся с перевода строки [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6487) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6497)
+- Исправлено кодирование [элементов необработанного текста](https://html.spec.whatwg.org/#raw-text-elements) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6487) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6720)
+- Исправлен размер [`html.frame`](/docs/typst/reference/format/html/frame) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6505)
+- Исправлена функция [`measure`](/docs/typst/reference/layout/measure) при экспорте в HTML [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7186)
+- Исправлены вложенные [`html.frame`](/docs/typst/reference/format/html/frame) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6509)
+- Исправлено игнорирование [`box`](/docs/typst/reference/layout/box) без тела при экспорте в HTML [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6709)
+- Исправлено кодирование пробельных символов в HTML [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6750)
+
+## Экспорт в SVG [#svg-export]
+
+- Добавлена поддержка цветных глифов в формате COLR [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6693)
+- Сокращено количество генерируемых группирующих элементов `<g>` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6247)
+
+## Экспорт в PNG [#png-export]
+
+- Исправлено аварийное завершение при отрицательном [размере текста](/docs/typst/reference/text/text#parameters-size) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7004)
+
+## Визуализация [#visualize]
+
+- Добавлена поддержка использования PDF-файлов в качестве [изображений](/docs/typst/reference/visualize/image) с помощью новой библиотеки [`hayro`](https://github.com/LaurenzV/hayro). PDF-файлы будут встраиваться напрямую при экспорте в PDF, растрироваться при экспорте в PNG и преобразовываться в SVG при экспорте в SVG и HTML. _(Спасибо [@LaurenzV](https://github.com/LaurenzV) за создание hayro!)_ [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6623)
+- Добавлена поддержка изображений WebP [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6311)
+- Различные незначительные улучшения для SVG-изображений (см. [списки изменений resvg 0.44 и 0.45](https://github.com/linebender/resvg/blob/v0.45.1/CHANGELOG.md#0450---2025-02-26))
+- SVG-изображения теперь могут ссылаться на внешние файлы изображений [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6794)
+- Контуры отсечения теперь корректно сглаживаются [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6570)
+- Исправлены градиенты на кривых, где последний сегмент — [`curve.line`](/docs/typst/reference/visualize/curve#definitions-line) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6647)
+- Исправлена обработка концов обводки фигур с частичными обводками [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5688)
+- Исправлена обработка радиуса скругления углов фигур с частичными обводками [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6976)
+- Исправлено аварийное завершение при выборке между двумя совпадающими точками градиента [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6166)
+
+## Вёрстка [#layout]
+
+- Добавлена опциональная поддержка выключки на уровне символов в дополнение к выключке на уровне слов, настраиваемая через новое свойство [`par.justification-limits`](/docs/typst/reference/model/par#parameters-justification-limits). Это значимая микротипографическая техника, которая может существенно улучшить внешний вид выключенного текста. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6161)
+- Исправлены неверные возможности переноса строк, связанные с символами замены объектов [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6251)
+- Исправлена проблема, при которой разрывный блок всё равно создавал пустой сегмент, даже если в первый сегмент ничего не помещалось, что приводило к различным нежелательным эффектам в сочетании с заливками, обводками и [прилипанием](/docs/typst/reference/layout/block#parameters-sticky) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6335)
+- Исправлено аварийное завершение при применении правила set для column или rowspan на ячейке сетки [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6401)
+- Исправлен [интервал CJK-Latin](/docs/typst/reference/text/text#parameters-cjk-latin-spacing) при ручных переносах строк [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6700) и на границах нижних и верхних индексов [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7175)
+
+## Математика [#math]
+
+- Добавлено свойство [`frac.style`](/docs/typst/reference/math/frac#parameters-style) с новыми опциями для скошенных и строчных дробей [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6672)
+- Добавлено свойство [`math.equation.alt`](/docs/typst/reference/math/equation#parameters-alt) для задания альтернативного описания формулы [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6619)
+- Обработка текста
+  - Одна формула теперь может использовать несколько шрифтов [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6365)
+  - Раскладка глифов в математике теперь использует правильное формирование текста, что приводит к лучшей обработке более сложных возможностей Unicode [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6336)
+  - Сгенерированные символы в формуле (например, `√`, создаваемый `sqrt`) теперь могут быть целью правил show для текста [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6365)
+  - Добавлена функция [`scr`](/docs/typst/reference/math/variants#functions-scr) для рукописного шрифтового стиля [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6309)
+  - Добавлен параметр `dotless` в [`accent`](/docs/typst/reference/math/accent) (обычно для отображения i или j с диакритическим знаком без точки) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5939)
+  - Глифы рукописного стиля теперь предпочтительны при уменьшенных размерах математики [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6320)
+  - Исправлен [`text.stroke`](/docs/typst/reference/text/text#parameters-stroke) в математике [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6243)
+  - Сломанные сборки глифов теперь предотвращаются даже при некорректных данных шрифта [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6688)
+- Вёрстка
+  - Исправлена ошибка с позиционированием вертикальных диакритических знаков [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5941)
+  - Исправлено позиционирование нижних диакритических знаков [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6187)
+  - Исправлена ошибка с вёрсткой корней [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6021)
+  - Улучшена вёрстка [`vec`](/docs/typst/reference/math/vec) и [`cases`](/docs/typst/reference/math/cases), приведена в соответствие с [`mat`](/docs/typst/reference/math/mat) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5934)
+  - Удалена возможность переноса строки перед закрывающей скобкой во встроенной математике [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6216)
+- Линия [`augment`](/docs/typst/reference/math/mat#parameters-augment) теперь может существовать в начале и в конце матрицы, а не только между столбцами и строками [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5806)
+- Сокращения и многосимвольные числа больше не связываются сильнее, чем дроби, в случаях вроде `$x>=(y)/z$` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5925) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5996) **(Незначительное ломающее изменение)**
+- Именованные аргументы, переданные символам, используемым как функция, теперь вызывают ошибку вместо того, чтобы молча игнорироваться [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6192) **(Незначительное ломающее изменение)**
+- Элемент [`mid`](/docs/typst/reference/math/lr#functions-mid) больше не навязывает своим содержимым [математический класс `"large"`](/docs/typst/reference/math/class), а вместо этого по умолчанию использует `"relation"` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5980)
+- Исправлена ошибка в разборе математики, когда за `..` ничего не следует [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7105)
+- Исправлен математический класс по умолчанию для ⅋, ⎰, ⟅, ⎱, ⟆, ⟇ и ، [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5949) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6537)
+
+_Спасибо [@mkorje](https://github.com/mkorje) за его работу над математикой!_
+
+## Модель [#model]
+
+- Таблицы
+  - Добавлена поддержка нескольких [заголовков](/docs/typst/reference/model/table#definitions-header) и подзаголовков в таблицах [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6168)
+  - Заголовки таблиц теперь принудительно вызывают разрыв строки, т. е. незавершённая строка перед заголовком не будет заполнена ячейками после заголовка [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6687)
+  - Исправлена ошибка, при которой [заголовки](/docs/typst/reference/model/table#definitions-header) и нижние колонтитулы могли случайно расширяться, включая ячейки, не являющиеся заголовками [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5919)
+- Добавлен элемент [`title`](/docs/typst/reference/model/title) для отображения названия документа [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5618)
+- Добавлено свойство [`figure.alt`](/docs/typst/reference/model/figure#parameters-alt) для задания альтернативного описания иллюстрации [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6619)
+- Области попадания [ссылок](/docs/typst/reference/model/link) для текста теперь немного больше по вертикали, чтобы избежать проблем с автоматическим обнаружением ссылок в программах просмотра PDF [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6252)
+- Функция [`link`](/docs/typst/reference/model/link) теперь будет выдавать ошибку при передаче пустой строки в качестве URL [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7049) **(Незначительное ломающее изменение)**
+- Значение аргумента [`number`](/docs/typst/reference/model/enum#definitions-item-number) функции `enum.item` теперь принимает `auto` вместо `none` для автоматической нумерации [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6609) **(Незначительное ломающее изменение)**
+- Улучшены интервалы вложенных плотных списков [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6242)
+- Исправлено игнорирование `quotes: false` для [встроенных цитат](/docs/typst/reference/model/quote#parameters-block) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5991)
+- Исправлен [висячий отступ](/docs/typst/reference/model/heading#parameters-hanging-indent) для центрированных нумерованных заголовков [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6839)
+- Исправлено нарушение ссылок от сноски к записи правилами show для [`footnote.entry`](/docs/typst/reference/model/footnote#definitions-entry) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6912)
+- Еврейская нумерация больше не добавляет гереш и гершаим [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6122)
+
+## Библиография [#bibliography]
+
+- Встроенные стили
+  - Стили обновлены до последних версий CSL из вышестоящего источника [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/350)
+  - `"chicago-fullnotes"` переименован в `"chicago-notes"` (старое имя остаётся как устаревший псевдоним) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6920)
+  - `"modern-humanities-research-association"` переименован в `"modern-humanities-research-association-notes"` (старое имя остаётся как устаревший псевдоним) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6994)
+  - Добавлена поддержка локатора/дополнения в буквенно-цифровом стиле [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/307)
+- Формат Hayagriva
+  - Добавлено [поле `chapter`](https://github.com/typst/hayagriva/blob/v0.9.1/docs/file-format.md#chapter), соответствующее CSL `chapter-number` и BibLaTeX `chapter` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/383)
+- Формат BibLaTeX
+  - Исправлен разбор буквенно-цифровых диапазонов страниц [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/biblatex/pull/86)
+  - Добавлена поддержка синтаксиса комментариев `%` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/biblatex/pull/80)
+  - Исправлен разбор разделённых пробелами однобуквенных команд [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/biblatex/pull/71)
+  - Добавлен псевдоним «primaryclass» для поля «eprintclass» [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/biblatex/pull/75)
+  - Добавлена поддержка поля `language` BibLaTeX [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/317)
+  - Улучшено преобразование полей BibLaTeX в `genre` и `serial-number` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/296) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/369)
+- Обработка CSL
+  - Отрисовка библиографии теперь использует [`strong`](/docs/typst/reference/model/strong), [`emph`](/docs/typst/reference/model/emph) и [`smallcaps`](/docs/typst/reference/text/smallcaps) для выражения стилей шрифта CSL вместо прямого изменения стиля [`text`](/docs/typst/reference/text/text), что упрощает стилизацию [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6984)
+  - Добавлена поддержка времён года для дат, которые отображаются при отсутствии месяца [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/391)
+  - Термины для «AD» и «BC» теперь корректно используются из выбранной локали [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/364)
+  - Исправлено преобразование последующих цитирований с различающимися дополнениями в позиции CSL `ibid` и `ibid-with-locator` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6171)
+  - Исправлена обработка позиций `ibid` и `ibid-with-locator` в стилях [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/301)
+  - Исправлено условие `location` в стилях CSL для цитирований без локатора [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/399)
+  - Исправлены обращения к суффиксу года, приводившие к неверной отрисовке CSL [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/400)
+  - Исправлена регрессия, из-за которой переменные страниц больше не поддерживались в элементах `<number>` стилей [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/289)
+  - Исправлена сортировка и форматирование частей имени [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/287) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/313)
+  - Исправлено свёртывание суффикса года [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/367)
+  - Исправлены разделители в форматировании дат с учётом локали [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/385)
+  - Исправлена отрисовка порядковых числительных дат [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/366)
+  - Исправлена отрисовка и сортировка дат с годами до н. э. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/334) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/368)
+  - Исправлена сортировка для пустых значений сортировки [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/hayagriva/pull/390)
+
+## Текст [#text]
+
+- Функции [`sub`](/docs/typst/reference/text/sub) и [`super`](/docs/typst/reference/text/super) теперь используют возможности шрифта OpenType `subs` и `sups` вместо специальных символов Unicode для типографских индексов, что исправляет проблемы семантики, размера и позиционирования [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5777)
+- Элемент [`raw`](/docs/typst/reference/text/raw)
+  - Скорректирована цветовая схема подсветки синтаксиса по умолчанию для текста [`raw`](/docs/typst/reference/text/raw), чтобы сделать цвета более доступными [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6754)
+  - Ключи и строковые значения JSON теперь используют разные цвета в подсветке синтаксиса `raw` по умолчанию [темы](/docs/typst/reference/text/raw#parameters-theme) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6873)
+  - Исправлено аварийное завершение, когда [синтаксис](/docs/typst/reference/text/raw#parameters-syntaxes) `raw` содержит неэкранированную обратную косую черту в конце [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6883)
+  - Исправлен отступ табуляции в тексте [`raw`](/docs/typst/reference/text/raw) с окончаниями строк CRLF [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6961)
+- Переводы
+  - Добавлены переводы терминов (термин — это «Раздел» в «Раздел 1») для многих новых языков путём импорта существующих переводов из пакетов LaTeX [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6852)
+  - Добавлены переводы терминов для индонезийского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6108), латышского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6348), хорватского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6413), литовского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6587), французского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7010), французского (Канада) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7098), галисийского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7019), нидерландского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7026), датского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7031), словенского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7032), итальянского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7050), китайского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7044), испанского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7051) и ирландского (гэльского) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7024)
+  - Улучшены переводы терминов для чешского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6101), шведского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6519), галисийского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7019), нидерландского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7026), китайского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7044), испанского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7051), ирландского (гэльского) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7024) и немецкого [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7082)
+  - Улучшены типографские кавычки для французского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5976), украинского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6372), русского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6331) и арабского [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6626)
+- Пустой список шрифтов больше не допускается в [`text.font`](/docs/typst/reference/text/text#parameters-font) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6049) **(Незначительное ломающее изменение)**
+- Добавлено предупреждение при использовании вариативного шрифта, так как они в настоящее время не поддерживаются [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6425)
+- Исправлено использование одного и того же шрифта с разными настройками [покрытия](/docs/typst/reference/text/text#parameters-font) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6604)
+- Исправлено отсутствие дефисов при переносе в определённых позициях (где существуют невидимые метаданные) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6807)
+- Исправлена стилизация повторяющихся дефисов в языках с повтором дефиса [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6798)
+- Резервный шрифт последней инстанции больше не учитывает игнорируемые по умолчанию символы при выборе шрифта [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6805)
+- Шрифты New Computer Modern обновлены до версии 7.0.4 [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6376)
+- Данные и шейпер обновлены до Unicode 16.0.0 [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5407)
+
+## Скрипты [#scripting]
+
+- Оператор `in` теперь можно использовать для проверки наличия определения в модуле [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6498)
+- Добавлен параметр `default` в методы [`array.first`](/docs/typst/reference/foundations/array#definitions-first), [`array.last`](/docs/typst/reference/foundations/array#definitions-last) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5970), [`array.join`](/docs/typst/reference/foundations/array#definitions-join) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6932), [`str.first`](/docs/typst/reference/foundations/str#definitions-first) и [`str.last`](/docs/typst/reference/foundations/str#definitions-last) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6554)
+- Добавлен параметр `by` в [`array.sorted`](/docs/typst/reference/foundations/array#definitions-sorted) для сортировки с помощью функции сравнения [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5627)
+- Добавлена функция [`str.normalize`](/docs/typst/reference/foundations/str#definitions-normalize) для нормализации Unicode [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5631)
+- Добавлены методы [`from`](/docs/typst/reference/layout/direction#definitions-from), [`to`](/docs/typst/reference/layout/direction#definitions-to) и [`sign`](/docs/typst/reference/layout/direction#definitions-sign) в тип `direction` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5893)
+- [Метки](/docs/typst/reference/foundations/label) больше не могут быть пустыми [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6332) **(Незначительное ломающее изменение)**
+- Среда выполнения WebAssembly, используемая системой [`plugin`](/docs/typst/reference/foundations/plugin), была обновлена и теперь поддерживает SIMD [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6997)
+- Нумерации и счётчики теперь используют 64-битные числа вместо чисел, зависящих от платформы, для согласованности между платформами [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6026)
+- Улучшена согласованность обработки больших чисел в функциях загрузки данных [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6836)
+- Функция [`toml`](/docs/typst/reference/data-loading/toml) теперь гарантированно возвращает [словарь](/docs/typst/reference/foundations/dictionary), а [`toml.encode`](/docs/typst/reference/data-loading/toml#definitions-encode) должна принимать словарь (ранее она уже выдавала ошибку при передаче чего-то другого, но новая сигнатура функции делает ошибку более понятной) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6743)
+- Сериализация [`bytes`](/docs/typst/reference/foundations/bytes) в удобочитаемых форматах теперь использует [`repr`](/docs/typst/reference/foundations/repr) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6743)
+- Исправлена нарезка последних N элементов массива с использованием параметра [`count`](/docs/typst/reference/foundations/array#definitions-slice-count) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6838)
+- Исправлено аварийное завершение, когда выражение, обёрнутое в выражение `context`, является анонимной функцией [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6975)
+- Исправлена проверка равенства между элементами [`raw.line`](/docs/typst/reference/text/raw#definitions-line) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6560)
+- Исправлено потенциально синтаксически некорректное представление [`repr`](/docs/typst/reference/foundations/repr) для [меток](/docs/typst/reference/foundations/label) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6456)
+- Исправлено [`repr`](/docs/typst/reference/foundations/repr) функций, изменённых с помощью [`with`](/docs/typst/reference/foundations/function#definitions-with) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6773)
+
+## Интроспекция [#introspection]
+
+- Следующие элементы теперь можно локализовать (т. е. их можно обнаружить с помощью [`query`](/docs/typst/reference/introspection/query), [`locate`](/docs/typst/reference/introspection/locate) и т. д. без метки): `par`, `table`, `enum`, `list`, `terms`, `title`, `figure.caption`, `footnote.entry`, `outline.entry`, `image`, `emph`, `strong`, `link`, `cite`, `raw`, `underline`, `overline`, `strike` и `highlight` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6619)
+- Исправлены проблемы с логическим порядком в двунаправленном тексте [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5887) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6796)
+- Исправлен логический порядок ячеек в [`grid`](/docs/typst/reference/layout/grid) с письмом справа налево [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6232)
+- Исправлен логический порядок элементов в ячейках [`grid`](/docs/typst/reference/layout/grid), занимающих несколько страниц [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7198)
+- Исправлен логический порядок метаданных в начале и конце абзацев [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6881) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6909)
+- Исправлены [позиции](/docs/typst/reference/introspection/location#definitions-position) интроспекции встроенных элементов в самом начале абзаца (ранее позиция Y элемента в самом начале отличалась от позиции элемента в середине первой строки) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6881)
+
+## Стилизация [#styling]
+
+- Исправлен редкий бесконечный цикл при применении правил show [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6259)
+
+## Производительность [#performance]
+
+- Оптимизирована инкрементальная компиляция с помощью нового алгоритма, который, в частности, устраняет случаи очень медленной компиляции при интенсивном использовании контекста [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6683)
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Добавлена подкоманда `typst info` для вывода информации о сборке и окружении [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6761)
+- Добавлена подкоманда `typst completions` для получения автодополнений оболочки [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6568)
+- Добавлена переменная окружения `TYPST_IGNORE_SYSTEM_FONTS` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6092)
+- Добавлен флаг `--ignore-embedded-fonts` и переменная окружения `TYPST_IGNORE_EMBEDDED_FONTS` для отключения использования шрифтов, встроенных в бинарный файл Typst [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7037)
+- Добавлен флаг `--no-pdf-tags` для отключения автоматической генерации тегов доступности. Они создаются, когда не выбран какой-либо конкретный стандарт, например PDF/UA-1, для обеспечения базового уровня доступности. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6619)
+- Добавлен параметр `--target` в `typst query` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6405)
+- Добавлены параметры `--deps` и `--deps-format` для вывода списка файлов, от которых зависит компиляция. Поддерживаются три формата: `json`, `zero` и `make`. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7022)
+- Флаг `--make-deps` объявлен устаревшим в пользу `--deps` с `--deps-format make` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7022)
+- В Linux поиск шрифтов теперь будет переходить к известным каталогам шрифтов, если ни один не был загружен через Fontconfig. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/RazrFalcon/fontdb/pull/71)
+- CLI теперь будет выдавать предупреждение при попытке отслеживать стандартный ввод [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6381)
+- Исправлено состояние гонки, когда два отдельных процесса Typst CLI одновременно пытаются установить пакет [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5979)
+- Исправлено, что инкрементальный экспорт в SVG не записывал выходные SVG-файлы при изменениях, затрагивающих только страницу (например, при изменении `page.fill`) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6810)
+- Исправлено редкое потенциальное аварийное завершение, когда пространство стека не могло быть увеличено, как ожидалось [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6969)
+
+## Инструменты и диагностика [#tooling-and-diagnostics]
+
+- Ошибки во многих видах внешних текстовых файлов (например, библиографиях, файлах JSON и т. д.) теперь аннотируются внутри этих файлов, а не в позициях, где файлы загружаются из файла Typst [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6308)
+- Предупреждения, возникающие внутри [`eval`](/docs/typst/reference/foundations/eval), теперь корректно выводятся [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6100)
+- Диагностические сообщения и подсказки
+  - Улучшены сообщения об ошибках, связанных с разбором чисел [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5969)
+  - Сообщение об ошибке для неподходящего стиля CSL теперь упоминает имя стиля [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6306)
+  - Добавлены подсказки к различным устаревшим элементам с указанием сроков удаления [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6617)
+  - Добавлена подсказка к сообщению об ошибке, когда ожидается пара X/Y [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6476)
+  - Добавлена подсказка для метки, которая появляется как в документе, так и в библиографии [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6457)
+  - Добавлена дополнительная подсказка для ошибки глубины рекурсии правил show [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5856)
+  - Исправлено несогласованное форматирование кодовых точек и строк в сообщениях об ошибках [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6487)
+- Автодополнение
+  - Метки теперь будут дедуплицироваться в автодополнениях [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6516)
+  - Автодополнения математических шрифтов теперь основаны на наличии таблицы OpenType MATH, а не на слове «Math» в названии [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6316)
+  - Автодополнение сразу после запятой в списке параметров теперь поддерживается для явно вызванных автодополнений (например, через Ctrl/Cmd+Space) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6550)
+  - Псевдонимы стилей цитирования теперь отображаются как автодополнения [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6696)
+  - Исправлены ложные срабатывания автодополнения при курсоре после списка параметров [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6475)
+  - Исправлено автодополнение после частичного идентификатора в математике [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6415)
+  - Исправлено, какие определения предлагаются в математике [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6415)
+  - Исправлено перечисление неприменимых автодополнений методов [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/5824)
+- Всплывающие подсказки
+  - Исправлена всплывающая подсказка для функций с областью видимости (например, `calc.round`) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6234)
+  - Исправлена всплывающая подсказка и сведения для ссылок на иллюстрации [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6580)
+  - Всплывающие подсказки выражений теперь используют `×` вместо `x` для обозначения повторяющегося значения [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6163)
+- Исправлен переход по клику (переход к панели исходного кода по клику в предпросмотре) при наличии преобразований и отсечения [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6037)
+
+## Символы [#symbols]
+
+- Добавлено множество новых символов и вариантов; гораздо больше, чем можно перечислить здесь. Полный список см. в [отдельном списке изменений](https://github.com/typst/codex/blob/v0.2.0/CHANGELOG.md#version-020-october-7-2025).
+- Кодовые точки, имеющие представление в виде символа и в виде эмодзи, теперь имеют правильный селектор вариантов в зависимости от того, появляются ли они в `sym` или `emoji`. Тем не менее, они по-прежнему отображаются непоследовательно в Typst из-за того, как работает резервный шрифт. [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/codex/pull/114)
+- Функцию [`symbol`](/docs/typst/reference/foundations/symbol) теперь можно использовать для создания символов, состоящих не из одного символа, а из одного полного кластера графем [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6489)
+
+## Устаревания [#deprecations]
+
+- Имя `pdf.embed` в пользу нового имени [`pdf.attach`](/docs/typst/reference/format/pdf/attach) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6705)
+- Стиль библиографии `"chicago-fullnotes"` в пользу `"chicago-notes"` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6920)
+- Стиль библиографии `"modern-humanities-research-association"` в пользу `"modern-humanities-research-association-notes"` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6994)
+- Флаг CLI `--make-deps` в пользу `--deps` с `--deps-format make` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7022)
+- Различные символы, полный список см. в [разделе об устареваниях в отдельном списке изменений](https://github.com/typst/codex/blob/v0.2.0/CHANGELOG.md#deprecated)
+
+## Удаления [#removals]
+
+- Удалено поведение совместимости сравнений type/str (например, `int == "integer"`), которое было временно введено в Typst 0.8 и объявлено устаревшим в Typst 0.13 **(Ломающее изменение)**
+
+## Разработка [#development]
+
+- Реализацию `Default` для `Library` пришлось удалить по причинам разделения крейтов и согласованности трейтов, но вы можете получить замену один к одному через `use typst::LibraryExt` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6576)
+- Структура `PdfOptions` имеет новое поле `tagged`, которое по умолчанию равно `true` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6619) [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7046)
+- Исправлена потенциальная паника в реализациях `World::font`. Нижестоящим реализациям `World` может потребоваться применить [то же исправление](https://github.com/typst/typst/pull/6117). [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6117)
+- Минимальная поддерживаемая версия Rust увеличена до 1.88 [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/6637)
+- В контейнере Docker теперь есть необязательный пользователь без прав root `typst` [<img src="/typst_docs_assets/icons/16-link.svg" alt="Link" width="16" height="16" />](https://github.com/typst/typst/pull/7058)
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

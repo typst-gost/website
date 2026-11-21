@@ -6,7 +6,7 @@ import {
   DocsPage,
   DocsTitle,
 } from 'fumadocs-ui/page';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
@@ -18,6 +18,10 @@ type DocsPageProps = { params: Promise<{ slug?: string[] }>; searchParams?: Prom
 
 export default async function Page(props: DocsPageProps) {
   const params = await props.params;
+  if (!params.slug || params.slug.length === 0) {
+    redirect('/docs/typst-gost');
+  }
+
   const page = source.getPage(params.slug);
   if (!page) notFound();
 
@@ -60,6 +64,13 @@ export async function generateMetadata(
   props: DocsPageProps,
 ): Promise<Metadata> {
   const params = await props.params;
+  
+  if (!params.slug || params.slug.length === 0) {
+    return {
+      title: 'Документация Typst Gost',
+    };
+  }
+
   const page = source.getPage(params.slug);
   if (!page) notFound();
 

@@ -1,0 +1,27 @@
+{
+  "title": "Модель",
+  "description": "Документация по определениям, связанным со структурой и семантикой документа.",
+  "pages": [
+    "bibliography",
+    "list",
+    "cite",
+    "divider",
+    "document",
+    "emph",
+    "figure",
+    "footnote",
+    "heading",
+    "link",
+    "enum",
+    "numbering",
+    "outline",
+    "par",
+    "parbreak",
+    "quote",
+    "ref",
+    "strong",
+    "table",
+    "terms",
+    "title"
+  ]
+}

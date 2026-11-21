@@ -1,0 +1,9 @@
+{
+  "title": "HTML",
+  "description": "Документация для функции `html`.",
+  "pages": [
+    "elem",
+    "frame",
+    "typed"
+  ]
+}

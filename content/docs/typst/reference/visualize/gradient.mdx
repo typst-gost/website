@@ -1,0 +1,691 @@
+---
+title: "Gradient"
+description: "Документация для типа `gradient`."
+---
+
+
+<span id="summary" />
+
+*С версии: 0.9.0*
+
+Цветовой градиент.
+
+Typst поддерживает линейные градиенты через [функцию `gradient.linear`](#definitions-linear), радиальные градиенты через [функцию `gradient.radial`](#definitions-radial) и конические градиенты через [функцию `gradient.conic`](#definitions-conic).
+
+Градиент можно использовать для следующих целей:
+
+- В качестве заливки для окрашивания внутренней области фигуры: `rect(fill: gradient.linear(..))`
+- В качестве обводки для окрашивания контура фигуры: `rect(stroke: 1pt + gradient.linear(..))`
+- В качестве заливки текста: `set text(fill: gradient.linear(..))`
+- В качестве цветовой карты, из которой можно [выбирать значения](#definitions-sample): `gradient.linear(..).sample(50%)`
+
+## Примеры [#examples]
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 1fr,
+    square(fill: gradient.linear(..color.map.rainbow)),
+    square(fill: gradient.radial(..color.map.rainbow)),
+    square(fill: gradient.conic(..color.map.rainbow)),
+  )
+`}
+  image="/typst_docs_assets/images/QmMZ9J2IWBGu18CQR-pCOA.png"
+  alt=""
+  editable={true}
+/>
+
+Градиенты также поддерживаются для текста, но только если для параметра [относительности](#definitions-relative) задано значение `auto` (значение по умолчанию) или `"parent"`. Чтобы создать градиент по словам или по глифам, можно вручную обернуть слова или символы текста в [блоки](/docs/typst/reference/layout/box) или сделать это с помощью [правила show](/docs/typst/reference/styling#show-rules).
+
+<TypstRender
+  code={`
+  #set text(fill: gradient.linear(red, blue))
+  #let rainbow(content) = {
+    set text(fill: gradient.linear(..color.map.rainbow))
+    box(content)
+  }
+
+  This is a gradient on text, but with a #rainbow[twist]!
+`}
+  image="/typst_docs_assets/images/TLoq4kh3pp9pu3jzAkrCyQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Точки останова [#stops]
+
+Градиент состоит из последовательности точек останова. Каждая такая точка имеет цвет и смещение. Смещение — это [отношение](/docs/typst/reference/layout/ratio) между `0%` и `100%` или угол между `0deg` и `360deg`. Смещение — это относительная позиция, которая определяет, насколько далеко вдоль градиента расположена точка останова. Цвет точки останова определяет цвет, который градиент должен иметь в этой позиции.
+
+Каждая точка останова передаётся как позиционный аргумент и может принимать одну из двух форм:
+
+- Просто цвет, например `red`, чтобы Typst разместил точку останова автоматически.
+- Массив из цвета и его смещения, например `(red, 30%)`, чтобы задать положение точки останова самостоятельно.
+
+При определении градиента можно опустить смещения. В этом случае Typst равномерно распределит все точки останова. В противном случае смещения должны быть указаны для _каждой_ точки останова. Они не должны убывать от одной точки к следующей, первое должно быть `0%`, а последнее — `100%`.
+
+<TypstRender
+  code={`
+  #rect(
+    width: 100%,
+    fill: gradient.linear(
+      (green, 0%),
+      (red, 30%),
+      (blue, 100%),
+    ),
+  )
+`}
+  image="/typst_docs_assets/images/mvyZmnRKUItkQ6BdrP3BWA.png"
+  alt=""
+  editable={true}
+/>
+
+Если задать двум точкам останова одинаковое смещение, вместо плавного перехода создаётся резкая граница:
+
+<TypstRender
+  code={`
+  #rect(
+    width: 100%,
+    fill: gradient.linear(
+      (orange, 0%),
+      (orange, 50%),
+      (blue, 50%),
+      (blue, 100%),
+    ),
+  )
+`}
+  image="/typst_docs_assets/images/h8fRyYCOpo-OIMgE4S9YMQ.png"
+  alt=""
+  editable={true}
+/>
+
+Typst предоставляет для градиентов метод [`sharp`](#definitions-sharp), который автоматически превращает плавный градиент в градиент с резкими границами. Приведённый выше пример можно эквивалентно записать так:
+
+<TypstRender
+  code={`
+  #rect(
+    width: 100%,
+    fill: gradient.linear(orange, blue)
+      .sharp(2),
+  )
+`}
+  image="/typst_docs_assets/images/h8fRyYCOpo-OIMgE4S9YMQ.png"
+  alt=""
+  editable={true}
+/>
+
+Typst предопределяет цветовые карты, которые можно использовать в качестве точек останова в [`color.map`](/docs/typst/reference/visualize/color#definitions-map).
+
+## Относительность [#relativeness]
+
+Расположение точек останова `0%` и `100%` зависит от размеров контейнера. Этим контейнером может быть либо фигура, на которую наносится заливка, либо ближайший окружающий контейнер. Это управляется аргументом `relative` конструктора градиента. По умолчанию градиенты относительны к фигуре, на которую они наносятся, за исключением случаев, когда градиент применяется к тексту — тогда он относителен к ближайшему контейнеру-предку.
+
+Typst определяет контейнер-предок следующим образом:
+
+- Для фигур, размещённых на корневом/верхнем уровне документа, ближайшим предком является сама страница.
+- Для других фигур предком является самый внутренний [`block`](/docs/typst/reference/layout/block) или [`box`](/docs/typst/reference/layout/box), содержащий фигуру.
+
+## Цветовые пространства и интерполяция [#color-spaces-and-interpolation]
+
+Градиенты можно интерполировать в любом цветовом пространстве. По умолчанию градиенты интерполируются в цветовом пространстве [Oklab](/docs/typst/reference/visualize/color#definitions-oklab), которое является [перцептивно равномерным](https://programmingdesignsystems.com/color/perceptually-uniform-color-spaces/index.html) цветовым пространством. Это означает, что градиент будет восприниматься как плавная последовательность цветов. Это особенно полезно для визуализации данных.
+
+Однако вы можете выбрать интерполяцию градиента в любом поддерживаемом цветовом пространстве, но учтите, что некоторые цветовые пространства не подходят для перцептивной интерполяции между цветами. При выборе пространства интерполяции руководствуйтесь таблицей ниже.
+
+| **Цветовое пространство** | **Перцептивно равномерное?** |
+| --- | --- |
+| [Oklab](/docs/typst/reference/visualize/color#definitions-oklab) | _Да_ |
+| [Oklch](/docs/typst/reference/visualize/color#definitions-oklch) | _Да_ |
+| [sRGB](/docs/typst/reference/visualize/color#definitions-rgb) | _Нет_ |
+| [linear-RGB](/docs/typst/reference/visualize/color#definitions-linear-rgb) | _Да_ |
+| [CMYK](/docs/typst/reference/visualize/color#definitions-cmyk) | _Нет_ |
+| [Grayscale](/docs/typst/reference/visualize/color#definitions-luma) | _Да_ |
+| [HSL](/docs/typst/reference/visualize/color#definitions-hsl) | _Нет_ |
+| [HSV](/docs/typst/reference/visualize/color#definitions-hsv) | _Нет_ |
+
+<img src="/typst_docs_assets/images/EXMjq28ZsGza-r7V1sKHaw.png" alt="" width="480" height="277" />
+
+## Направление [#direction]
+
+Некоторые градиенты чувствительны к направлению. Например, линейный градиент имеет угол, определяющий его направление. Typst использует угол по часовой стрелке, где 0° — слева направо, 90° — сверху вниз, 180° — справа налево, а 270° — снизу вверх.
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 1fr,
+    square(fill: gradient.linear(red, blue, angle: 0deg)),
+    square(fill: gradient.linear(red, blue, angle: 90deg)),
+    square(fill: gradient.linear(red, blue, angle: 180deg)),
+    square(fill: gradient.linear(red, blue, angle: 270deg)),
+  )
+`}
+  image="/typst_docs_assets/images/mHDTlWfH71VyunQ2I2BQBw.png"
+  alt=""
+  editable={true}
+/>
+
+## Замечание о размерах файлов [#note-on-file-sizes]
+
+Градиенты могут быть довольно большими, особенно если у них много точек останова. Это связано с тем, что градиенты хранятся в виде списка цветов и смещений, который может занимать много места. При экспорте в SVG градиенты хранятся в виде списка цветов [`color.rgb`](/docs/typst/reference/visualize/color#definitions-rgb), воспроизводящих исходное цветовое пространство с оптимизированным числом дополнительных точек останова между ними. При экспорте в PDF то же самое относится к градиентам в цветовых пространствах [`color.oklab`](/docs/typst/reference/visualize/color#definitions-oklab), [`color.oklch`](/docs/typst/reference/visualize/color#definitions-oklch), [`color.hsv`](/docs/typst/reference/visualize/color#definitions-hsv), [`color.hsl`](/docs/typst/reference/visualize/color#definitions-hsl) и [`color.linear-rgb`](/docs/typst/reference/visualize/color#definitions-linear-rgb). Это избавляет от необходимости кодировать эти цветовые пространства в вашем PDF-файле, но добавляет дополнительные точки останова в градиент, что может увеличить размер файла.
+
+## Функции [#functions]
+
+### `linear` [#definitions-linear]
+
+*С версии: 0.9.0*
+
+Создаёт новый линейный градиент, в котором цвета переходят вдоль прямой линии.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #rect(
+    width: 100%,
+    height: 20pt,
+    fill: gradient.linear(
+      ..color.map.viridis,
+    ),
+  )
+`}
+  image="/typst_docs_assets/images/nI7-g0qhR3m1M6Ayr_vbPw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+gradient.linear(
+  ..color | array,
+  space: auto | spot | function,
+  relative: auto | str,
+  direction,
+  angle,
+) -> gradient
+```
+
+#### `stops` [#definitions-linear-stops]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Цветовые [точки останова](#stops) градиента.
+
+Каждая точка останова задаётся отдельным позиционным аргументом. Это может быть либо цвет, например `red`, либо массив из цвета и его смещения, например `(red, 30%)`. Если смещения заданы, они должны быть указаны для всех точек останова, не убывать от одной точки к следующей, начинаться с `0%` и заканчиваться на `100%`.
+
+При использовании предопределённой цветовой карты из модуля `color.map` [оператор распространения](/docs/typst/reference/foundations/arguments#spreading) `..` используется для передачи каждой точки останова в качестве отдельного аргумента.
+
+#### `space` [#definitions-linear-space]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [spot](/docs/typst/reference/visualize/color#definitions-spot) или [function](/docs/typst/reference/foundations/function) · **По умолчанию:** `auto`
+
+Цветовое пространство, в котором интерполируется градиент.
+
+По умолчанию используется перцептивно равномерное цветовое пространство под названием [Oklab](/docs/typst/reference/visualize/color#definitions-oklab).
+
+#### `relative` [#definitions-linear-relative]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `auto`
+
+[Относительное размещение](#relativeness) градиента.
+
+Родителем элемента является самый внутренний [`box`](/docs/typst/reference/layout/box) или [`block`](/docs/typst/reference/layout/block), содержащий элемент, или, если такового нет, сама страница.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"self"` | Относительно самого себя (собственной ограничивающей рамки). |
+| `"parent"` | Относительно родителя (ограничивающей рамки родителя). |
+
+#### `dir` [#definitions-linear-dir]
+
+**Тип:** [direction](/docs/typst/reference/layout/direction) · **Модификаторы:** Позиционный · **По умолчанию:** `ltr`
+
+Направление градиента.
+
+#### `angle` [#definitions-linear-angle]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **Модификаторы:** Обязательный, Позиционный
+
+Угол градиента.
+
+### `radial` [#definitions-radial]
+
+*С версии: 0.9.0*
+
+Создаёт новый радиальный градиент, в котором цвета расходятся от начала.
+
+Градиент определяется двумя окружностями: фокальной окружностью и конечной окружностью. Фокальная окружность — это окружность с центром `focal-center` и радиусом `focal-radius`, которая определяет точки, в которых градиент начинается и имеет цвет первой точки останова. Конечная окружность — это окружность с центром `center` и радиусом `radius`, которая определяет точки, в которых градиент заканчивается и имеет цвет последней точки останова. Затем градиент интерполируется между этими двумя окружностями.
+
+Используя эти четыре значения, также называемые фокальной точкой для начальной окружности и центром и радиусом для конечной окружности, можно определить градиент с более интересными свойствами, чем у базового радиального градиента.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 1fr,
+    circle(fill: gradient.radial(
+      ..color.map.viridis,
+    )),
+    circle(fill: gradient.radial(
+      ..color.map.viridis,
+      focal-center: (10%, 40%),
+      focal-radius: 5%,
+    )),
+  )
+`}
+  image="/typst_docs_assets/images/Tfo2-t7SUsZEeRosU-9Owg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+gradient.radial(
+  ..color | array,
+  space: auto | spot | function,
+  relative: auto | str,
+  center: array,
+  radius: ratio,
+  focal-center: auto | array,
+  focal-radius: ratio,
+) -> gradient
+```
+
+#### `stops` [#definitions-radial-stops]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Цветовые [точки останова](#stops) градиента.
+
+Дополнительные сведения см. также в [документации линейного градиента](#definitions-linear-stops).
+
+#### `space` [#definitions-radial-space]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [spot](/docs/typst/reference/visualize/color#definitions-spot) или [function](/docs/typst/reference/foundations/function) · **По умолчанию:** `auto`
+
+Цветовое пространство, в котором интерполируется градиент.
+
+По умолчанию используется перцептивно равномерное цветовое пространство под названием [Oklab](/docs/typst/reference/visualize/color#definitions-oklab).
+
+#### `relative` [#definitions-radial-relative]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `auto`
+
+[Относительное размещение](#relativeness) градиента.
+
+Родителем элемента является самый внутренний [`box`](/docs/typst/reference/layout/box) или [`block`](/docs/typst/reference/layout/block), содержащий элемент, или, если такового нет, сама страница.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"self"` | Относительно самого себя (собственной ограничивающей рамки). |
+| `"parent"` | Относительно родителя (ограничивающей рамки родителя). |
+
+#### `center` [#definitions-radial-center]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `(50%, 50%)`
+
+Центр конечной окружности градиента.
+
+Значение `(50%, 50%)` означает, что конечная окружность центрирована внутри своего контейнера.
+
+#### `radius` [#definitions-radial-radius]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **По умолчанию:** `50%`
+
+Радиус конечной окружности градиента.
+
+По умолчанию установлен в `50%`. Конечный радиус должен быть больше фокального радиуса.
+
+#### `focal-center` [#definitions-radial-focal-center]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `auto`
+
+Центр фокальной окружности градиента.
+
+Фокальный центр должен находиться внутри конечной окружности.
+
+Значение `(50%, 50%)` означает, что фокальная окружность центрирована внутри своего контейнера.
+
+По умолчанию устанавливается таким же, как центр последней окружности.
+
+#### `focal-radius` [#definitions-radial-focal-radius]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **По умолчанию:** `0%`
+
+Радиус фокальной окружности градиента.
+
+Фокальный центр должен находиться внутри конечной окружности.
+
+По умолчанию установлен в `0%`. Фокальный радиус должен быть меньше конечного радиуса.
+
+### `conic` [#definitions-conic]
+
+*С версии: 0.9.0*
+
+Создаёт новый конический градиент, в котором цвета изменяются радиально вокруг центральной точки.
+
+Центральной точкой градиента можно управлять с помощью аргумента `center`. По умолчанию центральной точкой является центр фигуры.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #stack(
+    dir: ltr,
+    spacing: 1fr,
+    circle(fill: gradient.conic(
+      ..color.map.viridis,
+    )),
+    circle(fill: gradient.conic(
+      ..color.map.viridis,
+      center: (20%, 30%),
+    )),
+  )
+`}
+  image="/typst_docs_assets/images/0LJvhOGqIExOEEgqPk9AwA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+gradient.conic(
+  ..color | array,
+  angle: angle,
+  space: auto | spot | function,
+  relative: auto | str,
+  center: array,
+) -> gradient
+```
+
+#### `stops` [#definitions-conic-stops]
+
+**Тип:** [color](/docs/typst/reference/visualize/color) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Цветовые [точки останова](#stops) градиента.
+
+Дополнительные сведения см. также в [документации линейного градиента](#definitions-linear-stops).
+
+#### `angle` [#definitions-conic-angle]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) · **По умолчанию:** `0deg`
+
+Угол градиента.
+
+#### `space` [#definitions-conic-space]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [spot](/docs/typst/reference/visualize/color#definitions-spot) или [function](/docs/typst/reference/foundations/function) · **По умолчанию:** `auto`
+
+Цветовое пространство, в котором интерполируется градиент.
+
+По умолчанию используется перцептивно равномерное цветовое пространство под названием [Oklab](/docs/typst/reference/visualize/color#definitions-oklab).
+
+#### `relative` [#definitions-conic-relative]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `auto`
+
+[Относительное размещение](#relativeness) градиента.
+
+Родителем элемента является самый внутренний [`box`](/docs/typst/reference/layout/box) или [`block`](/docs/typst/reference/layout/block), содержащий элемент, или, если такового нет, сама страница.
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"self"` | Относительно самого себя (собственной ограничивающей рамки). |
+| `"parent"` | Относительно родителя (ограничивающей рамки родителя). |
+
+#### `center` [#definitions-conic-center]
+
+**Тип:** [array](/docs/typst/reference/foundations/array) · **По умолчанию:** `(50%, 50%)`
+
+Центр окружности градиента.
+
+Значение `(50%, 50%)` означает, что окружность центрирована внутри своего контейнера.
+
+### `sharp` [#definitions-sharp]
+
+*С версии: 0.9.0*
+
+Создаёт резкую версию этого градиента.
+
+Резкие градиенты имеют дискретные переходы между цветами вместо плавного перехода. Они особенно полезны для создания цветовых списков для предустановленного градиента.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set rect(width: 100%, height: 20pt)
+  #let grad = gradient.linear(..color.map.rainbow)
+  #rect(fill: grad)
+  #rect(fill: grad.sharp(5))
+  #rect(fill: grad.sharp(5, smoothness: 20%))
+`}
+  image="/typst_docs_assets/images/SolGRpVzetT3ydZHwAgt-A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.sharp(
+  int,
+  smoothness: ratio,
+) -> gradient
+```
+
+#### `steps` [#definitions-sharp-steps]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Количество точек останова в градиенте.
+
+#### `smoothness` [#definitions-sharp-smoothness]
+
+**Тип:** [ratio](/docs/typst/reference/layout/ratio) · **По умолчанию:** `0%`
+
+Насколько сглаживать градиент.
+
+### `repeat` [#definitions-repeat]
+
+*С версии: 0.9.0*
+
+Повторяет этот градиент заданное число раз, при необходимости зеркально отражая его при каждом втором повторении.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #circle(
+    radius: 40pt,
+    fill: gradient
+      .radial(aqua, white)
+      .repeat(4),
+  )
+`}
+  image="/typst_docs_assets/images/OLuiSWXQ53_H0xb_i4rM1w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.repeat(
+  int,
+  mirror: bool,
+) -> gradient
+```
+
+#### `repetitions` [#definitions-repeat-repetitions]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Обязательный, Позиционный
+
+Количество повторений градиента.
+
+#### `mirror` [#definitions-repeat-mirror]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **По умолчанию:** `false`
+
+Следует ли зеркально отражать градиент при каждом втором повторении, то есть первый экземпляр (и все нечётные) остаётся без изменений.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #circle(
+    radius: 40pt,
+    fill: gradient
+      .conic(green, black)
+      .repeat(2, mirror: true)
+  )
+`}
+  image="/typst_docs_assets/images/d3TQn5xBNu-44JH1AwLr8Q.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `kind` [#definitions-kind]
+
+*С версии: 0.9.0*
+
+Возвращает вид этого градиента.
+
+```typst
+self.kind() -> function
+```
+
+### `stops` [#definitions-stops]
+
+*С версии: 0.9.0*
+
+Возвращает точки останова этого градиента.
+
+```typst
+self.stops() -> array
+```
+
+### `space` [#definitions-space]
+
+*С версии: 0.9.0*
+
+Возвращает пространство смешивания этого градиента.
+
+```typst
+self.space() -> spot | function
+```
+
+### `relative` [#definitions-relative]
+
+*С версии: 0.9.0*
+
+Возвращает относительное размещение этого градиента.
+
+```typst
+self.relative() -> auto | str
+```
+
+### `angle` [#definitions-angle]
+
+*С версии: 0.9.0*
+
+Возвращает угол этого градиента.
+
+Возвращает `none`, если градиент не является ни линейным, ни коническим.
+
+```typst
+self.angle() -> none | angle
+```
+
+### `center` [#definitions-center]
+
+*С версии: 0.13.0*
+
+Возвращает центр этого градиента.
+
+Возвращает `none`, если градиент не является ни радиальным, ни коническим.
+
+```typst
+self.center() -> none | array
+```
+
+### `radius` [#definitions-radius]
+
+*С версии: 0.13.0*
+
+Возвращает радиус этого градиента.
+
+Возвращает `none`, если градиент не является радиальным.
+
+```typst
+self.radius() -> none | ratio
+```
+
+### `focal-center` [#definitions-focal-center]
+
+*С версии: 0.13.0*
+
+Возвращает фокальный центр этого градиента.
+
+Возвращает `none`, если градиент не является радиальным.
+
+```typst
+self.focal-center() -> none | array
+```
+
+### `focal-radius` [#definitions-focal-radius]
+
+*С версии: 0.13.0*
+
+Возвращает фокальный радиус этого градиента.
+
+Возвращает `none`, если градиент не является радиальным.
+
+```typst
+self.focal-radius() -> none | ratio
+```
+
+### `sample` [#definitions-sample]
+
+*С версии: 0.9.0*
+
+Выбирает значение градиента в заданной позиции.
+
+Позиция — это либо позиция вдоль градиента ([отношение](/docs/typst/reference/layout/ratio) между `0%` и `100%`), либо [угол](/docs/typst/reference/layout/angle). Любое значение за пределами этого диапазона будет ограничено.
+
+```typst
+self.sample(angle | ratio) -> color
+```
+
+#### `t` [#definitions-sample-t]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный
+
+Позиция, в которой нужно выбрать значение градиента.
+
+### `samples` [#definitions-samples]
+
+*С версии: 0.9.0*
+
+Выбирает значения градиента в нескольких позициях одновременно и возвращает результаты в виде массива.
+
+```typst
+self.samples(..angle | ratio) -> array
+```
+
+#### `ts` [#definitions-samples-ts]
+
+**Тип:** [angle](/docs/typst/reference/layout/angle) или [ratio](/docs/typst/reference/layout/ratio) · **Модификаторы:** Обязательный, Позиционный, Вариативный
+
+Позиции, в которых нужно выбрать значения градиента.

@@ -1,0 +1,89 @@
+---
+title: "Стили"
+description: "Документация для функций, позволяющих переключаться на альтернативные начертания букв в математике."
+---
+
+
+Альтернативные начертания букв в формулах.
+
+Эти функции отличаются от функции [`text`](/docs/typst/reference/text/text), поскольку математические шрифты содержат несколько вариантов каждой буквы.
+
+## Функции [#functions]
+
+### `upright` [#functions-upright]
+
+*Since: forever*
+
+Прямое (не курсивное) начертание шрифта в математике.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ upright(A) != A $
+`}
+  image="/typst_docs_assets/images/iN4fRU5TruDGM-9BAia5hQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.upright(content)
+```
+
+#### `body` [#functions-upright-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `italic` [#functions-italic]
+
+*Since: forever*
+
+Курсивное начертание шрифта в математике.
+
+Для латинских букв и строчных греческих букв это уже используется по умолчанию.
+
+```typst
+math.italic(content)
+```
+
+#### `body` [#functions-italic-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.
+
+### `bold` [#functions-bold]
+
+*Since: forever*
+
+Полужирное начертание шрифта в математике.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ bold(A) := B^+ $
+`}
+  image="/typst_docs_assets/images/e-HHpO151zL65_kwz9wJwg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.bold(content)
+```
+
+#### `body` [#functions-bold-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, к которому применяется стиль.

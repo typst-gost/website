@@ -1,0 +1,64 @@
+---
+title: "Move"
+description: "Документация для функции `move`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Появился: всегда*
+
+Перемещает содержимое, не влияя на макет.
+
+Функция `move` позволяет перемещать содержимое, при этом макет по-прежнему «видит» его на исходных позициях. Контейнеры будут иметь размеры так, как если бы содержимое не было перемещено.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #rect(inset: 0pt, fill: gray, move(
+    dx: 4pt, dy: 6pt,
+    rect(
+      inset: 8pt,
+      fill: white,
+      stroke: black,
+      [Abra cadabra]
+    )
+  ))
+`}
+  image="/typst_docs_assets/images/zFHHbU7jIalISbccy9FmZw.png"
+  alt=""
+  editable={true}
+/>
+
+## Доступность [#accessibility]
+
+Перемещение прозрачно для вспомогательных технологий (AT). Ваше содержимое будет прочитано в том порядке, в котором оно появляется в исходнике, независимо от визуального перемещения. Если вам нужно полностью скрыть содержимое от AT при экспорте в PDF, рассмотрите использование [`pdf.artifact`](/docs/typst/reference/format/pdf/artifact).
+
+## Параметры [#parameters]
+
+```typst
+move(
+  dx: relative,
+  dy: relative,
+  content,
+)
+```
+
+### `dx` [#parameters-dx]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Горизонтальное смещение содержимого.
+
+### `dy` [#parameters-dy]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `0% + 0pt`
+
+Вертикальное смещение содержимого.
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое для перемещения.

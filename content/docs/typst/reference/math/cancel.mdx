@@ -1,0 +1,186 @@
+---
+title: "Cancel"
+description: "Документация для функции `cancel`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *С версии: 0.3.0*
+
+Отображает диагональную линию поверх части уравнения.
+
+Обычно используется для показа сокращения (уничтожения) члена.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Here, we can simplify:
+  $ (a dot b dot cancel(x)) /
+  cancel(x) $
+`}
+  image="/typst_docs_assets/images/fZMQ-BjHoSNbkATIB-RUbA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+math.cancel(
+  content,
+  length: relative,
+  inverted: bool,
+  cross: bool,
+  angle: auto | angle | function,
+  stroke: length | color | gradient | stroke | tiling | dictionary,
+  background: bool,
+)
+```
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое, поверх которого должна быть размещена линия.
+
+### `length` [#parameters-length]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Настраиваемый · **По умолчанию:** `100% + 0.3em`
+
+Длина линии относительно длины диагонали, охватывающей весь элемент, который «сокращается». При значении `100%` линия будет проходить точно по диагонали элемента.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ a + cancel(x, length: #200%)
+      - cancel(x, length: #200%) $
+`}
+  image="/typst_docs_assets/images/yorEwOjwWXpUoUnleeTrtQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `inverted` [#parameters-inverted]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Настраиваемый · **По умолчанию:** `false`
+
+Следует ли инвертировать линию сокращения (отразить по оси y). При настройке угла по умолчанию инверсия означает, что линия сокращения направлена в верхний левый угол, а не в верхний правый.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ (a cancel((b + c), inverted: #true)) /
+  cancel(b + c, inverted: #true) $
+`}
+  image="/typst_docs_assets/images/MRhIrfWYXlqvnx8MXmTEcA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `cross` [#parameters-cross]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Настраиваемый · **По умолчанию:** `false`
+
+Следует ли рисовать две противоположные линии сокращения, образуя крест поверх элемента. Переопределяет `inverted`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ cancel(Pi, cross: #true) $
+`}
+  image="/typst_docs_assets/images/DysvtV_o6LjFA9-6rMqzAg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `angle` [#parameters-angle]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [angle](/docs/typst/reference/layout/angle) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Настраиваемый · **По умолчанию:** `auto`
+
+Насколько повернуть линию сокращения.
+
+- Если задан угол, линия поворачивается на этот угол по часовой стрелке относительно оси y.
+- Если задано `auto`, линия принимает угол по умолчанию, то есть проходит вдоль восходящей диагонали блока содержимого.
+- Если задана функция `angle => angle`, линия поворачивается относительно оси y на угол, возвращаемый этой функцией. Функция получает угол по умолчанию в качестве входного значения.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ cancel(Pi)
+    cancel(Pi, angle: #0deg)
+    cancel(Pi, angle: #45deg)
+    cancel(Pi, angle: #90deg)
+    cancel(1/(1+x), angle: #(a => a + 45deg))
+    cancel(1/(1+x), angle: #(a => a + 90deg)) $
+`}
+  image="/typst_docs_assets/images/a8nt4mdloTfqqH1zvMwtVQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Настраиваемый · **По умолчанию:** `0.05em`
+
+Как [обводить](/docs/typst/reference/visualize/stroke) линию сокращения.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  $ cancel(
+    sum x,
+    stroke: #(
+      paint: red,
+      thickness: 1.5pt,
+      dash: "dashed",
+    ),
+  ) $
+`}
+  image="/typst_docs_assets/images/9LMfNEG8A7QVmsWkswy5iw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `background` [#parameters-background]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Настраиваемый · **По умолчанию:** `false`
+
+Следует ли размещать линию позади содержимого.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set math.cancel(stroke: red + 2pt)
+  $ cancel("behind", background: #true) \\
+  cancel("in front", background: #false) $
+`}
+  image="/typst_docs_assets/images/Vb7BCd5yG9FoVbIU21uShg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

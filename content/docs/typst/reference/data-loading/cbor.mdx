@@ -1,0 +1,70 @@
+---
+title: "CBOR"
+description: "Документация для функции `cbor`."
+---
+
+<span id="summary" />
+
+*Добавлено в версии: 0.8.0*
+
+Считывает структурированные данные из файла CBOR.
+
+Файл должен содержать корректную CBOR-сериализацию. Значения CBOR будут преобразованы в соответствующие значения Typst, как указано в [таблице ниже](#conversion).
+
+Функция возвращает словарь, массив или, в зависимости от файла CBOR, другой тип данных CBOR.
+
+## Детали преобразования [#conversion]
+
+| **Значение CBOR** | **Преобразуется в Typst** |
+| --- | --- |
+| integer | [`int`](/docs/typst/reference/foundations/int) (или [`float`](/docs/typst/reference/foundations/float)) |
+| bytes | [`bytes`](/docs/typst/reference/foundations/bytes) |
+| float | [`float`](/docs/typst/reference/foundations/float) |
+| text | [`str`](/docs/typst/reference/foundations/str) |
+| bool | [`bool`](/docs/typst/reference/foundations/bool) |
+| null | `none` |
+| array | [`array`](/docs/typst/reference/foundations/array) |
+| map | [`dictionary`](/docs/typst/reference/foundations/dictionary) |
+
+| **Значение Typst** | **Преобразуется в CBOR** |
+| --- | --- |
+| типы, которые могут быть преобразованы из CBOR | соответствующее значение CBOR |
+| [`symbol`](/docs/typst/reference/foundations/symbol) | text |
+| [`content`](/docs/typst/reference/foundations/content) | словарь, описывающий содержимое |
+| другие типы ([`length`](/docs/typst/reference/layout/length) и т. д.) | text через [`repr`](/docs/typst/reference/foundations/repr) |
+
+### Примечания [#notes]
+
+- Учтите, что целые числа CBOR больше $2^{63} - 1$ или меньше $- 2^{63}$ будут преобразованы в числа с плавающей точкой, что может привести к приблизительному значению.
+- Теги CBOR не поддерживаются, при их наличии будет выдана ошибка.
+- Функция `repr` [предназначена только для отладки](/docs/typst/reference/foundations/repr#debugging-only), и её вывод не гарантируется стабильным между версиями Typst.
+
+## Параметры [#parameters]
+
+```typst
+cbor(str | path | bytes) -> any
+```
+
+### `source` [#parameters-source]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Обязательный, Позиционный
+
+Путь к файлу CBOR или необработанные байты CBOR.
+
+## Функции [#functions]
+
+### `encode` [#definitions-encode]
+
+*Добавлено в версии: 0.8.0*
+
+Кодирует структурированные данные в байты CBOR.
+
+```typst
+cbor.encode(any) -> bytes
+```
+
+#### `value` [#definitions-encode-value]
+
+**Тип:** `any` · **Модификаторы:** Обязательный, Позиционный
+
+Значение для кодирования.

@@ -1,0 +1,135 @@
+---
+title: "Length"
+description: "Документация для типа `length`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Размер или расстояние, возможно выраженное в контекстных единицах.
+
+Typst поддерживает следующие единицы длины:
+
+- Пункты: `72pt`
+- Миллиметры: `254mm`
+- Сантиметры: `2.54cm`
+- Дюймы: `1in`
+- Относительно размера шрифта: `2.5em`
+
+Длины можно умножать на целые числа и числа с плавающей точкой и делить на них.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #rect(width: 20pt)
+  #rect(width: 2em)
+  #rect(width: 1in)
+
+  #(3em + 5pt).em \\
+  #(20pt).em \\
+  #(40em + 2pt).abs \\
+  #(5em).abs
+`}
+  image="/typst_docs_assets/images/00kd879HsMrzXv5LMkm8jw.png"
+  alt=""
+  editable={true}
+/>
+
+## Поля [#fields]
+
+- `abs`: Длина, содержащая только абсолютную компоненту текущей длины (то есть без компоненты `em`).
+- `em`: Количество единиц `em` в этой длине, в виде [float](/docs/typst/reference/foundations/float).
+
+## Функции [#functions]
+
+### `pt` [#definitions-pt]
+
+*Since: 0.7.0*
+
+Преобразует эту длину в пункты.
+
+Завершается ошибкой, если эта длина имеет ненулевые единицы `em` (например, `5em + 2pt` вместо просто `2pt`).
+
+Чтобы получить длину с нулевой компонентой `em` из длины с ненулевой компонентой `em`, можно:
+
+- Использовать поле `abs` (например, как в `(5em + 2pt).abs.pt()`), чтобы игнорировать компоненту `em` длины (таким образом преобразуя только её абсолютную компоненту)
+- Использовать контекстный метод [`to-absolute`](#definitions-to-absolute) (например, `(5em + 2pt).to-absolute().pt()`), чтобы сначала преобразовать компоненту `em` в абсолютное значение
+
+```typst
+self.pt() -> float
+```
+
+### `mm` [#definitions-mm]
+
+*Since: 0.7.0*
+
+Преобразует эту длину в миллиметры.
+
+Завершается ошибкой, если эта длина имеет ненулевые единицы `em`. Подробнее см. метод [`pt`](#definitions-pt).
+
+```typst
+self.mm() -> float
+```
+
+### `cm` [#definitions-cm]
+
+*Since: 0.7.0*
+
+Преобразует эту длину в сантиметры.
+
+Завершается ошибкой, если эта длина имеет ненулевые единицы `em`. Подробнее см. метод [`pt`](#definitions-pt).
+
+```typst
+self.cm() -> float
+```
+
+### `inches` [#definitions-inches]
+
+*Since: 0.7.0*
+
+Преобразует эту длину в дюймы.
+
+Завершается ошибкой, если эта длина имеет ненулевые единицы `em`. Подробнее см. метод [`pt`](#definitions-pt).
+
+```typst
+self.inches() -> float
+```
+
+### `to-absolute` [#definitions-to-absolute]
+
+*Since: 0.11.0*
+
+Приводит эту длину к абсолютной длине.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set text(size: 12pt)
+  #context [
+    #(6pt).to-absolute() \\
+    #(6pt + 10em).to-absolute() \\
+    #(10em).to-absolute()
+  ]
+
+  #set text(size: 6pt)
+  #context [
+    #(6pt).to-absolute() \\
+    #(6pt + 10em).to-absolute() \\
+    #(10em).to-absolute()
+  ]
+`}
+  image="/typst_docs_assets/images/N333fDapMFod4F7rhTNXgw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.to-absolute() -> length
+```

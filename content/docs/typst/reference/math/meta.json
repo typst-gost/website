@@ -1,0 +1,26 @@
+{
+  "title": "Математика",
+  "description": "Документация по математическому режиму и модулю `math`, которые вместе обеспечивают качественную вёрстку математических формул.",
+  "pages": [
+    "accent",
+    "attach",
+    "binom",
+    "cancel",
+    "cases",
+    "class",
+    "equation",
+    "frac",
+    "lr",
+    "mat",
+    "primes",
+    "roots",
+    "sizes",
+    "spaces",
+    "stretch",
+    "styles",
+    "op",
+    "underover",
+    "variants",
+    "vec"
+  ]
+}

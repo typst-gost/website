@@ -1,0 +1,587 @@
+---
+title: "String"
+description: "Документация для типа `str`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Последовательность кодовых точек Unicode.
+
+Вы можете перебирать графемные кластеры строки с помощью [цикла for](/docs/typst/reference/scripting#loops). Графемные кластеры — это по сути символы, но они сохраняют вместе то, что должно быть вместе, например, несколько кодовых точек, образующих эмодзи-флаг. Строки можно складывать с помощью оператора `+`, [соединять вместе](/docs/typst/reference/scripting#blocks) и умножать на целые числа.
+
+Typst предоставляет служебные методы для работы со строками. Многие из этих методов (например, [`split`](#definitions-split), [`trim`](#definitions-trim) и [`replace`](#definitions-replace)) работают с _шаблонами:_ шаблон может быть либо строкой, либо [регулярным выражением](/docs/typst/reference/foundations/regex). Это делает методы довольно универсальными.
+
+Все длины и индексы выражаются в терминах байтов UTF-8. Индексы начинаются с нуля, а отрицательные индексы отсчитываются от конца строки.
+
+Вы можете преобразовать значение в строку с помощью конструктора `str`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #"hello world!" \\
+  #"\\"hello\\n  world\\"!" \\
+  #"1 2 3".split() \\
+  #"1,2;3".split(regex("[,;]")) \\
+  #(regex("\\\\d+") in "ten euros") \\
+  #(regex("\\\\d+") in "10 euros")
+`}
+  image="/typst_docs_assets/images/4oTZ8iYzqWXvQ0ekiUuwMw.png"
+  alt=""
+  editable={true}
+/>
+
+## Экранирующие последовательности [#escapes]
+
+Как и в разметке, в строках можно экранировать несколько символов:
+
+- `\\` для обратной косой черты
+- `\"` для кавычки
+- `\n` для перевода строки
+- `\r` для возврата каретки
+- `\t` для табуляции
+- `\u{1f600}` для шестнадцатеричной экранирующей последовательности Unicode
+
+## Конструктор [#constructor]
+
+Преобразует значение в строку.
+
+- Целые числа форматируются в системе счисления по основанию 10. Это можно переопределить с помощью необязательного параметра `base`.
+- Числа с плавающей точкой форматируются в системе счисления по основанию 10 и никогда в экспоненциальной записи.
+- Отрицательные целые числа и числа с плавающей точкой форматируются со знаком минус Unicode («−» U+2212) вместо знака минус ASCII («-» U+002D).
+- Из меток извлекается имя.
+- Байты декодируются как UTF-8.
+
+Если вы хотите выполнять преобразование в кодовые точки Unicode и обратно, см. функции [`to-unicode`](#definitions-to-unicode) и [`from-unicode`](#definitions-from-unicode).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #str(10) \\
+  #str(4000, base: 16) \\
+  #str(2.7) \\
+  #str(1e8) \\
+  #str(<intro>)
+`}
+  image="/typst_docs_assets/images/3CoX6GOL8TLUfe3OmuNNNw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+str(
+  int | float | decimal | str | label | bytes | version | type,
+  base: int,
+)
+```
+
+### `value` [#constructor-value]
+
+**Type:** [int](/docs/typst/reference/foundations/int) or [float](/docs/typst/reference/foundations/float) or [decimal](/docs/typst/reference/foundations/decimal) or [str](/docs/typst/reference/foundations/str) or [label](/docs/typst/reference/foundations/label) or [bytes](/docs/typst/reference/foundations/bytes) or [version](/docs/typst/reference/foundations/version) or [type](/docs/typst/reference/foundations/type) · **Modifiers:** Required, Positional
+
+Значение, которое должно быть преобразовано в строку.
+
+### `base` [#constructor-base]
+
+**Type:** [int](/docs/typst/reference/foundations/int) · **Default:** `10`
+
+Основание системы счисления (radix) для отображения целых чисел, от 2 до 36.
+
+## Функции [#functions]
+
+### `len` [#definitions-len]
+
+*Since: forever*
+
+Длина строки в байтах в кодировке UTF-8.
+
+```typst
+self.len() -> int
+```
+
+### `first` [#definitions-first]
+
+*Since: forever*
+
+Извлекает первый графемный кластер строки.
+
+Возвращает предоставленное значение по умолчанию, если строка пуста, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.first(default: str)
+```
+
+#### `default` [#definitions-first-default]
+
+**Type:** [str](/docs/typst/reference/foundations/str)
+
+Значение по умолчанию, возвращаемое, если строка пуста.
+
+### `last` [#definitions-last]
+
+*Since: forever*
+
+Извлекает последний графемный кластер строки.
+
+Возвращает предоставленное значение по умолчанию, если строка пуста, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.last(default: str)
+```
+
+#### `default` [#definitions-last-default]
+
+**Type:** [str](/docs/typst/reference/foundations/str)
+
+Значение по умолчанию, возвращаемое, если строка пуста.
+
+### `at` [#definitions-at]
+
+*Since: forever*
+
+Извлекает первый графемный кластер после указанного индекса. Возвращает значение по умолчанию, если индекс выходит за границы, или завершается с ошибкой, если значение по умолчанию не указано.
+
+```typst
+self.at(
+  int,
+  default: any,
+)
+```
+
+#### `index` [#definitions-at-index]
+
+**Type:** [int](/docs/typst/reference/foundations/int) · **Modifiers:** Required, Positional
+
+Байтовый индекс. Если отрицательный, отсчитывается с конца.
+
+#### `default` [#definitions-at-default]
+
+**Type:** `any`
+
+Значение по умолчанию, возвращаемое, если индекс выходит за границы.
+
+### `slice` [#definitions-slice]
+
+*Since: forever*
+
+Извлекает подстроку строки. Завершается с ошибкой, если начальный или конечный индекс выходит за границы.
+
+```typst
+self.slice(
+  int,
+  none | int,
+  count: int,
+) -> str
+```
+
+#### `start` [#definitions-slice-start]
+
+**Type:** [int](/docs/typst/reference/foundations/int) · **Modifiers:** Required, Positional
+
+Начальный байтовый индекс (включительно). Если отрицательный, отсчитывается с конца.
+
+#### `end` [#definitions-slice-end]
+
+**Type:** [none](/docs/typst/reference/foundations/none) or [int](/docs/typst/reference/foundations/int) · **Modifiers:** Positional · **Default:** `none`
+
+Конечный байтовый индекс (исключительно). Если опущен, извлекается весь фрагмент до конца строки. Если отрицательный, отсчитывается с конца.
+
+#### `count` [#definitions-slice-count]
+
+**Type:** [int](/docs/typst/reference/foundations/int)
+
+Количество байтов для извлечения. Это эквивалентно передаче `start + count` в качестве позиции `end`. Взаимоисключающе с `end`.
+
+### `clusters` [#definitions-clusters]
+
+*Since: forever*
+
+Возвращает графемные кластеры строки в виде массива подстрок.
+
+```typst
+self.clusters() -> array
+```
+
+### `codepoints` [#definitions-codepoints]
+
+*Since: forever*
+
+Возвращает кодовые точки Unicode строки в виде массива подстрок.
+
+```typst
+self.codepoints() -> array
+```
+
+### `to-unicode` [#definitions-to-unicode]
+
+*Since: 0.5.0*
+
+Преобразует символ в соответствующую ему кодовую точку.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #"a".to-unicode() \\
+  #("a\\u{0300}"
+     .codepoints()
+     .map(str.to-unicode))
+`}
+  image="/typst_docs_assets/images/k5_5o00Nk9wBUTsO0AEDYg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+str.to-unicode(str) -> int
+```
+
+#### `character` [#definitions-to-unicode-character]
+
+**Type:** [str](/docs/typst/reference/foundations/str) · **Modifiers:** Required, Positional
+
+Символ, который должен быть преобразован.
+
+### `from-unicode` [#definitions-from-unicode]
+
+*Since: 0.5.0*
+
+Преобразует кодовую точку Unicode в соответствующую ей строку.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #str.from-unicode(97)
+`}
+  image="/typst_docs_assets/images/cilFpdlj88sFAUajQiAidw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+str.from-unicode(int) -> str
+```
+
+#### `value` [#definitions-from-unicode-value]
+
+**Type:** [int](/docs/typst/reference/foundations/int) · **Modifiers:** Required, Positional
+
+Кодовая точка, которая должна быть преобразована.
+
+### `normalize` [#definitions-normalize]
+
+*Since: 0.14.0*
+
+Нормализует строку к заданной нормальной форме Unicode.
+
+Это полезно при работе со строками, содержащими комбинирующие символы Unicode.
+
+```typst
+#assert.eq("é".normalize(form: "nfd"), "e\u{0301}")
+#assert.eq("ſ́".normalize(form: "nfkc"), "ś")
+```
+
+```typst
+self.normalize(form: str)
+```
+
+#### `form` [#definitions-normalize-form]
+
+**Type:** [str](/docs/typst/reference/foundations/str) · **Default:** `"nfc"`
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"nfc"` | Каноническая композиция, при которой, например, буквы с диакритикой превращаются в одну кодовую точку Unicode. |
+| `"nfd"` | Каноническая декомпозиция, при которой, например, буквы с диакритикой разделяются на отдельную базовую букву и диакритический знак. |
+| `"nfkc"` | Как NFC, но с использованием декомпозиций совместимости Unicode. |
+| `"nfkd"` | Как NFD, но с использованием декомпозиций совместимости Unicode. |
+
+### `contains` [#definitions-contains]
+
+*Since: forever*
+
+Содержит ли строка указанный шаблон.
+
+Этот метод также имеет специальный синтаксис: вы можете написать `"bc" in "abcd"` вместо `"abcd".contains("bc")`.
+
+```typst
+self.contains(str | regex) -> bool
+```
+
+#### `pattern` [#definitions-contains-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон для поиска.
+
+### `starts-with` [#definitions-starts-with]
+
+*Since: forever*
+
+Начинается ли строка с указанного шаблона.
+
+```typst
+self.starts-with(str | regex) -> bool
+```
+
+#### `pattern` [#definitions-starts-with-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон, с которого может начинаться строка.
+
+### `ends-with` [#definitions-ends-with]
+
+*Since: forever*
+
+Заканчивается ли строка указанным шаблоном.
+
+```typst
+self.ends-with(str | regex) -> bool
+```
+
+#### `pattern` [#definitions-ends-with-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон, которым может заканчиваться строка.
+
+### `find` [#definitions-find]
+
+*Since: forever*
+
+Ищет указанный шаблон в строке и возвращает первое совпадение в виде строки или `none`, если совпадений нет.
+
+```typst
+self.find(str | regex) -> none
+```
+
+#### `pattern` [#definitions-find-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон для поиска.
+
+### `position` [#definitions-position]
+
+*Since: forever*
+
+Ищет указанный шаблон в строке и возвращает индекс первого совпадения в виде целого числа или `none`, если совпадений нет.
+
+```typst
+self.position(str | regex) -> none | int
+```
+
+#### `pattern` [#definitions-position-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон для поиска.
+
+### `match` [#definitions-match]
+
+*Since: forever*
+
+Ищет указанный шаблон в строке и возвращает словарь с подробностями о первом совпадении или `none`, если совпадений нет.
+
+Возвращаемый словарь имеет следующие ключи:
+
+- `start`: Начальное смещение совпадения
+- `end`: Конечное смещение совпадения
+- `text`: Текст, который совпал.
+- `captures`: Массив, содержащий строку для каждой совпавшей захватывающей группы. Первый элемент массива содержит первое совпавшее захватывающее значение, а не всё совпадение! Это пусто, если `pattern` не был регулярным выражением с захватывающими группами.
+
+<details>
+<summary>Посмотреть пример: структура возвращаемого словаря</summary>
+
+<TypstRender
+  code={`
+  #let pat = regex("not (a|an) (apple|cat)")
+  #"I'm a doctor, not an apple.".match(pat) \\
+  #"I am not a cat!".match(pat)
+`}
+  image="/typst_docs_assets/images/eaCaCginbAM3Pk3SQhPrFQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Посмотреть пример: различные виды шаблонов</summary>
+
+<TypstRender
+  code={`
+  #assert.eq("Is there a".match("for this?"), none)
+  #"The time of my life.".match(regex("[mit]+e"))
+`}
+  image="/typst_docs_assets/images/wpUhDv8Zyel64Li1cXE3gA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.match(str | regex) -> none | dictionary
+```
+
+#### `pattern` [#definitions-match-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон для поиска.
+
+### `matches` [#definitions-matches]
+
+*Since: forever*
+
+Ищет указанный шаблон в строке и возвращает массив словарей с подробностями обо всех совпадениях. Подробности о возвращаемых словарях см. [выше](#definitions-match).
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #"Day by Day.".matches("Day")
+`}
+  image="/typst_docs_assets/images/x-Kk2F8vHA9OK1HUxdPweA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.matches(str | regex) -> array
+```
+
+#### `pattern` [#definitions-matches-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон для поиска.
+
+### `replace` [#definitions-replace]
+
+*Since: forever*
+
+Заменяет не более `count` вхождений заданного шаблона строкой замены или функцией (начиная с начала). Если количество не указано, заменяются все вхождения.
+
+```typst
+self.replace(
+  str | regex,
+  str | function,
+  count: int,
+)
+```
+
+#### `pattern` [#definitions-replace-pattern]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Required, Positional
+
+Шаблон для поиска.
+
+#### `replacement` [#definitions-replace-replacement]
+
+**Type:** [str](/docs/typst/reference/foundations/str) or [function](/docs/typst/reference/foundations/function) · **Modifiers:** Required, Positional
+
+Строка, которой заменяются совпадения, или функция, которая получает словарь для каждого совпадения и может возвращать отдельные строки замены.
+
+Словарь, передаваемый функции, имеет ту же структуру, что и словарь, возвращаемый [`match`](#definitions-match).
+
+#### `count` [#definitions-replace-count]
+
+**Type:** [int](/docs/typst/reference/foundations/int)
+
+Если указано, заменяются только первые `count` совпадений шаблона.
+
+### `trim` [#definitions-trim]
+
+*Since: forever*
+
+Удаляет совпадения шаблона с одной или обеих сторон строки, один раз или многократно, и возвращает результирующую строку.
+
+```typst
+self.trim(
+  none | str | regex,
+  at: alignment,
+  repeat: bool,
+)
+```
+
+#### `pattern` [#definitions-trim-pattern]
+
+**Type:** [none](/docs/typst/reference/foundations/none) or [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Positional · **Default:** `none`
+
+Шаблон для поиска. Если `none`, удаляются пробельные символы.
+
+#### `at` [#definitions-trim-at]
+
+**Type:** [alignment](/docs/typst/reference/layout/alignment)
+
+Может быть `start` или `end`, чтобы обрезать только начало или конец строки. Если опущено, обрезаются обе стороны.
+
+#### `repeat` [#definitions-trim-repeat]
+
+**Type:** [bool](/docs/typst/reference/foundations/bool) · **Default:** `true`
+
+Удалять ли совпадения шаблона многократно или только один раз. По умолчанию `true`.
+
+### `split` [#definitions-split]
+
+*Since: forever*
+
+Разделяет строку по совпадениям указанного шаблона и возвращает массив получившихся частей.
+
+Когда в качестве разделителя используется пустая строка, она разделяет каждый символ (т. е. кодовую точку Unicode) в строке, а также начало и конец строки. На практике это означает, что результирующий список частей будет содержать пустую строку в начале и в конце списка.
+
+```typst
+self.split(none | str | regex) -> array
+```
+
+#### `pattern` [#definitions-split-pattern]
+
+**Type:** [none](/docs/typst/reference/foundations/none) or [str](/docs/typst/reference/foundations/str) or [regex](/docs/typst/reference/foundations/regex) · **Modifiers:** Positional · **Default:** `none`
+
+Шаблон для разделения. По умолчанию — пробельные символы.
+
+### `rev` [#definitions-rev]
+
+*Since: 0.8.0*
+
+Обращает строку.
+
+Более конкретно, возвращает строку с теми же графемными кластерами в обратном порядке.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #"Pirate flag: 🏴‍☠️".rev()
+`}
+  image="/typst_docs_assets/images/SJVjJvDPyuHyPtRunpWpCg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+self.rev() -> str
+```

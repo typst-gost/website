@@ -1,0 +1,671 @@
+---
+title: "Page"
+description: "Документация для функции `page`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Размещает своё содержимое на одной или нескольких страницах.
+
+Хотя эта функция в первую очередь используется в правилах set для настройки свойств страницы, её также можно применять для явного размещения аргумента на собственном наборе страниц.
+
+Для ширины или высоты страниц можно задать значение `auto`. В этом случае страницы будут увеличиваться, чтобы вместить своё содержимое по соответствующей оси.
+
+В [руководстве по настройке страницы](/docs/typst/guides/page-setup) объясняется, как использовать эту и связанные с ней функции для настройки документа, с множеством примеров.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set page("us-letter")
+
+  There you go, US friends!
+`}
+  image="/typst_docs_assets/images/02_0mYCpLK7LjHnRr0kxhw.png"
+  alt=""
+  editable={true}
+/>
+
+## Доступность [#accessibility]
+
+Содержимое верхнего колонтитула, нижнего колонтитула, переднего и заднего планов страницы невидимо для вспомогательных технологий (AT), таких как программы чтения с экрана. Вспомогательные технологии читают только основное содержимое страницы. Не размещайте в этих областях важную информацию, которая не встречается в других местах документа.
+
+## Стилизация [#styling]
+
+Обратите внимание, что на элемент [`page`](/docs/typst/reference/layout/page) нельзя нацеливать правила show; запись `show page: ..` не даёт эффекта. Чтобы повторять содержимое на каждой странице, вместо этого можно настроить свойства [`header`](#parameters-header), [`footer`](#parameters-footer), [`background`](#parameters-background) и [`foreground`](#parameters-foreground) с помощью правила set.
+
+## Параметры [#parameters]
+
+```typst
+page(
+  paper: str,
+  width: auto | length,
+  height: auto | length,
+  flipped: bool,
+  margin: auto | relative | dictionary,
+  bleed: relative | dictionary,
+  binding: auto | alignment,
+  columns: int,
+  fill: none | auto | color | gradient | tiling,
+  numbering: none | str | function,
+  supplement: none | auto | content,
+  number-align: alignment,
+  header: none | auto | content,
+  header-ascent: relative,
+  footer: none | auto | content,
+  footer-descent: relative,
+  background: none | content,
+  foreground: none | content,
+  content,
+)
+```
+
+### `paper` [#parameters-paper]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) · **По умолчанию:** `"a4"`
+
+Стандартный размер бумаги для задания ширины и высоты.
+
+Это всего лишь сокращение для задания `width` и `height`, и поэтому его нельзя получить в контекстном выражении.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"a0"` | Бумага размером 841.0 × 1189.0 миллиметров. |
+| `"a1"` | Бумага размером 594.0 × 841.0 миллиметров. |
+| `"a2"` | Бумага размером 420.0 × 594.0 миллиметров. |
+| `"a3"` | Бумага размером 297.0 × 420.0 миллиметров. |
+| `"a4"` | Бумага размером 210.0 × 297.0 миллиметров. |
+| `"a5"` | Бумага размером 148.0 × 210.0 миллиметров. |
+| `"a6"` | Бумага размером 105.0 × 148.0 миллиметров. |
+| `"a7"` | Бумага размером 74.0 × 105.0 миллиметров. |
+| `"a8"` | Бумага размером 52.0 × 74.0 миллиметров. |
+| `"a9"` | Бумага размером 37.0 × 52.0 миллиметров. |
+| `"a10"` | Бумага размером 26.0 × 37.0 миллиметров. |
+| `"a11"` | Бумага размером 18.0 × 26.0 миллиметров. |
+| `"iso-b1"` | Бумага размером 707.0 × 1000.0 миллиметров. |
+| `"iso-b2"` | Бумага размером 500.0 × 707.0 миллиметров. |
+| `"iso-b3"` | Бумага размером 353.0 × 500.0 миллиметров. |
+| `"iso-b4"` | Бумага размером 250.0 × 353.0 миллиметров. |
+| `"iso-b5"` | Бумага размером 176.0 × 250.0 миллиметров. |
+| `"iso-b6"` | Бумага размером 125.0 × 176.0 миллиметров. |
+| `"iso-b7"` | Бумага размером 88.0 × 125.0 миллиметров. |
+| `"iso-b8"` | Бумага размером 62.0 × 88.0 миллиметров. |
+| `"iso-c3"` | Бумага размером 324.0 × 458.0 миллиметров. |
+| `"iso-c4"` | Бумага размером 229.0 × 324.0 миллиметров. |
+| `"iso-c5"` | Бумага размером 162.0 × 229.0 миллиметров. |
+| `"iso-c6"` | Бумага размером 114.0 × 162.0 миллиметров. |
+| `"iso-c7"` | Бумага размером 81.0 × 114.0 миллиметров. |
+| `"iso-c8"` | Бумага размером 57.0 × 81.0 миллиметров. |
+| `"din-d3"` | Бумага размером 272.0 × 385.0 миллиметров. |
+| `"din-d4"` | Бумага размером 192.0 × 272.0 миллиметров. |
+| `"din-d5"` | Бумага размером 136.0 × 192.0 миллиметров. |
+| `"din-d6"` | Бумага размером 96.0 × 136.0 миллиметров. |
+| `"din-d7"` | Бумага размером 68.0 × 96.0 миллиметров. |
+| `"din-d8"` | Бумага размером 48.0 × 68.0 миллиметров. |
+| `"sis-g5"` | Бумага размером 169.0 × 239.0 миллиметров. |
+| `"sis-e5"` | Бумага размером 115.0 × 220.0 миллиметров. |
+| `"ansi-a"` | Бумага размером 216.0 × 279.0 миллиметров. |
+| `"ansi-b"` | Бумага размером 279.0 × 432.0 миллиметров. |
+| `"ansi-c"` | Бумага размером 432.0 × 559.0 миллиметров. |
+| `"ansi-d"` | Бумага размером 559.0 × 864.0 миллиметров. |
+| `"ansi-e"` | Бумага размером 864.0 × 1118.0 миллиметров. |
+| `"arch-a"` | Бумага размером 229.0 × 305.0 миллиметров. |
+| `"arch-b"` | Бумага размером 305.0 × 457.0 миллиметров. |
+| `"arch-c"` | Бумага размером 457.0 × 610.0 миллиметров. |
+| `"arch-d"` | Бумага размером 610.0 × 914.0 миллиметров. |
+| `"arch-e1"` | Бумага размером 762.0 × 1067.0 миллиметров. |
+| `"arch-e"` | Бумага размером 914.0 × 1219.0 миллиметров. |
+| `"jis-b0"` | Бумага размером 1030.0 × 1456.0 миллиметров. |
+| `"jis-b1"` | Бумага размером 728.0 × 1030.0 миллиметров. |
+| `"jis-b2"` | Бумага размером 515.0 × 728.0 миллиметров. |
+| `"jis-b3"` | Бумага размером 364.0 × 515.0 миллиметров. |
+| `"jis-b4"` | Бумага размером 257.0 × 364.0 миллиметров. |
+| `"jis-b5"` | Бумага размером 182.0 × 257.0 миллиметров. |
+| `"jis-b6"` | Бумага размером 128.0 × 182.0 миллиметров. |
+| `"jis-b7"` | Бумага размером 91.0 × 128.0 миллиметров. |
+| `"jis-b8"` | Бумага размером 64.0 × 91.0 миллиметров. |
+| `"jis-b9"` | Бумага размером 45.0 × 64.0 миллиметров. |
+| `"jis-b10"` | Бумага размером 32.0 × 45.0 миллиметров. |
+| `"jis-b11"` | Бумага размером 22.0 × 32.0 миллиметров. |
+| `"sac-d0"` | Бумага размером 764.0 × 1064.0 миллиметров. |
+| `"sac-d1"` | Бумага размером 532.0 × 760.0 миллиметров. |
+| `"sac-d2"` | Бумага размером 380.0 × 528.0 миллиметров. |
+| `"sac-d3"` | Бумага размером 264.0 × 376.0 миллиметров. |
+| `"sac-d4"` | Бумага размером 188.0 × 260.0 миллиметров. |
+| `"sac-d5"` | Бумага размером 130.0 × 184.0 миллиметров. |
+| `"sac-d6"` | Бумага размером 92.0 × 126.0 миллиметров. |
+| `"iso-id-1"` | Бумага размером 85.6 × 53.98 миллиметров. |
+| `"iso-id-2"` | Бумага размером 74.0 × 105.0 миллиметров. |
+| `"iso-id-3"` | Бумага размером 88.0 × 125.0 миллиметров. |
+| `"asia-f4"` | Бумага размером 210.0 × 330.0 миллиметров. |
+| `"jp-shiroku-ban-4"` | Бумага размером 264.0 × 379.0 миллиметров. |
+| `"jp-shiroku-ban-5"` | Бумага размером 189.0 × 262.0 миллиметров. |
+| `"jp-shiroku-ban-6"` | Бумага размером 127.0 × 188.0 миллиметров. |
+| `"jp-kiku-4"` | Бумага размером 227.0 × 306.0 миллиметров. |
+| `"jp-kiku-5"` | Бумага размером 151.0 × 227.0 миллиметров. |
+| `"jp-business-card"` | Бумага размером 91.0 × 55.0 миллиметров. |
+| `"cn-business-card"` | Бумага размером 90.0 × 54.0 миллиметров. |
+| `"eu-business-card"` | Бумага размером 85.0 × 55.0 миллиметров. |
+| `"fr-tellière"` | Бумага размером 340.0 × 440.0 миллиметров. |
+| `"fr-couronne-écriture"` | Бумага размером 360.0 × 460.0 миллиметров. |
+| `"fr-couronne-édition"` | Бумага размером 370.0 × 470.0 миллиметров. |
+| `"fr-raisin"` | Бумага размером 500.0 × 650.0 миллиметров. |
+| `"fr-carré"` | Бумага размером 450.0 × 560.0 миллиметров. |
+| `"fr-jésus"` | Бумага размером 560.0 × 760.0 миллиметров. |
+| `"uk-brief"` | Бумага размером 406.4 × 342.9 миллиметров. |
+| `"uk-draft"` | Бумага размером 254.0 × 406.4 миллиметров. |
+| `"uk-foolscap"` | Бумага размером 203.2 × 330.2 миллиметров. |
+| `"uk-quarto"` | Бумага размером 203.2 × 254.0 миллиметров. |
+| `"uk-crown"` | Бумага размером 508.0 × 381.0 миллиметров. |
+| `"uk-book-a"` | Бумага размером 111.0 × 178.0 миллиметров. |
+| `"uk-book-b"` | Бумага размером 129.0 × 198.0 миллиметров. |
+| `"us-letter"` | Бумага размером 215.9 × 279.4 миллиметров. |
+| `"us-legal"` | Бумага размером 215.9 × 355.6 миллиметров. |
+| `"us-tabloid"` | Бумага размером 279.4 × 431.8 миллиметров. |
+| `"us-executive"` | Бумага размером 184.15 × 266.7 миллиметров. |
+| `"us-foolscap-folio"` | Бумага размером 215.9 × 342.9 миллиметров. |
+| `"us-statement"` | Бумага размером 139.7 × 215.9 миллиметров. |
+| `"us-ledger"` | Бумага размером 431.8 × 279.4 миллиметров. |
+| `"us-oficio"` | Бумага размером 215.9 × 340.36 миллиметров. |
+| `"us-gov-letter"` | Бумага размером 203.2 × 266.7 миллиметров. |
+| `"us-gov-legal"` | Бумага размером 215.9 × 330.2 миллиметров. |
+| `"us-business-card"` | Бумага размером 88.9 × 50.8 миллиметров. |
+| `"us-digest"` | Бумага размером 139.7 × 215.9 миллиметров. |
+| `"us-trade"` | Бумага размером 152.4 × 228.6 миллиметров. |
+| `"newspaper-compact"` | Бумага размером 280.0 × 430.0 миллиметров. |
+| `"newspaper-berliner"` | Бумага размером 315.0 × 470.0 миллиметров. |
+| `"newspaper-broadsheet"` | Бумага размером 381.0 × 578.0 миллиметров. |
+| `"presentation-16-9"` | Бумага размером 297.0 × 167.0625 миллиметров. |
+| `"presentation-4-3"` | Бумага размером 280.0 × 210.0 миллиметров. |
+
+</details>
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `595.28pt`
+
+Ширина итоговой страницы после применения всех обрезок.
+
+В профессиональных типографских настройках это значение может быть меньше размера листа, подаваемого в принтер.
+
+Подробнее о том, как задать область обрезки или вылета, см. параметр [`bleed`](#parameters-bleed).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(
+    width: 3cm,
+    margin: (x: 0cm),
+  )
+
+  #for i in range(3) {
+    box(square(width: 1cm))
+  }
+`}
+  image="/typst_docs_assets/images/zm8GKf43LS9iVPKN6rLzzA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `841.89pt`
+
+Высота итоговой области страницы после применения всех обрезок.
+
+Если задано значение `auto`, разрывы страниц можно вызывать только вручную, вставляя [разрыв страницы](/docs/typst/reference/layout/pagebreak) или добавляя другое непустое правило set для страницы. В большинстве примеров в этой документации для высоты страницы используется `auto`, чтобы она динамически увеличивалась и уменьшалась в соответствии с содержимым.
+
+### `flipped` [#parameters-flipped]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Переворачивается ли страница в альбомную ориентацию.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(
+    "us-business-card",
+    flipped: true,
+    fill: rgb("f2e5dd"),
+  )
+
+  #set align(bottom + end)
+  #text(14pt)[*Sam H. Richards*] \\
+  _Procurement Manager_
+  #set text(10pt)
+  23 W 23rd Street \\
+  New York, NY 10010 \\
+  +1 (212) 555-0155
+`}
+  image="/typst_docs_assets/images/OP76fdz7fRfF9VaZg2W5mQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `margin` [#parameters-margin]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Поля страницы.
+
+- `auto`: Поля автоматически устанавливаются равными 2.5/21 от меньшего размера страницы. Для страницы A4 это даёт поля в 2.5 см.
+- Одно значение длины: одинаковое поле со всех сторон.
+- Словарь: с помощью словаря поля можно задать по отдельности. Словарь может содержать следующие ключи в порядке приоритета:
+  - `top`: верхнее поле.
+  - `right`: правое поле.
+  - `bottom`: нижнее поле.
+  - `left`: левое поле.
+  - `inside`: поле с внутренней стороны страницы (там, где находится [переплёт](#parameters-binding)).
+  - `outside`: поле с внешней стороны страницы (напротив [переплёта](#parameters-binding)).
+  - `x`: горизонтальные поля.
+  - `y`: вертикальные поля.
+  - `rest`: поля со всех сторон, кроме тех, для которых словарь явно задаёт размер.
+
+Все ключи необязательны; для пропущенных ключей используется ранее заданное значение или значение поля по умолчанию, если оно никогда не задавалось. Кроме того, значения `left` и `right` взаимоисключающи со значениями `inside` и `outside`. Значения должны быть относительными длинами или `auto`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(
+   width: 3cm,
+   height: 4cm,
+   margin: (x: 8pt, y: 4pt),
+  )
+
+  #rect(
+    width: 100%,
+    height: 100%,
+    fill: aqua,
+  )
+`}
+  image="/typst_docs_assets/images/6Mp5ziwHNdwAEMZ8IUdsXw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `bleed` [#parameters-bleed]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Поле вылета страницы.
+
+Вылет — это область содержимого, выходящая за пределы итогового обрезанного размера страницы. Он гарантирует, что в готовом изделии не появятся неотпечатанные края, даже если при обрезке возникнут небольшие смещения.
+
+Допустимые значения:
+
+- Одно значение длины: одинаковый вылет со всех сторон.
+- Словарь: с помощью словаря поля вылета можно задать по отдельности. Словарь может содержать следующие ключи в порядке приоритета:
+  - `top`: верхнее поле вылета.
+  - `right`: правое поле вылета.
+  - `bottom`: нижнее поле вылета.
+  - `left`: левое поле вылета.
+  - `inside`: поле вылета с внутренней стороны страницы (там, где находится [переплёт](#parameters-binding)).
+  - `outside`: поле вылета с внешней стороны страницы (напротив [переплёта](#parameters-binding)).
+  - `x`: горизонтальные поля вылета.
+  - `y`: вертикальные поля вылета.
+  - `rest`: поля вылета со всех сторон, кроме тех, для которых словарь явно задаёт размер.
+
+Все ключи необязательны; для пропущенных ключей используется ранее заданное значение или `0pt`, если оно никогда не задавалось. Кроме того, значения `left` и `right` взаимоисключающи со значениями `inside` и `outside`. Значения должны быть относительными длинами.
+
+При экспорте в PDF, если вылет не равен нулю, для страницы определяется `TrimBox`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(
+    width: 8cm,
+    height: 5cm,
+    margin: 1cm,
+    // The bleed is not visible in the preview;
+  // it exceeds beyond the page.
+    bleed: 0.5cm,
+    // Fills the entire bleed area, so there will
+  // be no white strips after printing and trimming.
+    background: rect(width: 100%, height: 100%, fill: aqua),
+  )
+
+  #rect(width: 100%, height: 100%, fill: white)
+`}
+  image="/typst_docs_assets/images/P0RWEI1Mg-yMEMYciLLiGQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `binding` [#parameters-binding]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+С какой стороны будут переплетены страницы.
+
+- `auto`: эквивалентно `left`, если [направление текста](/docs/typst/reference/text/text#parameters-dir) — слева направо, и `right`, если справа налево.
+- `left`: переплёт с левой стороны.
+- `right`: переплёт с правой стороны.
+
+Это влияет на смысл параметров `inside` и `outside` для полей.
+
+### `columns` [#parameters-columns]
+
+**Тип:** [int](/docs/typst/reference/foundations/int) · **Модификаторы:** Settable · **По умолчанию:** `1`
+
+Сколько столбцов на странице.
+
+Если вам нужно вставить столбцы на страницу или в другой контейнер, вы также можете использовать [функцию `columns`](/docs/typst/reference/layout/columns).
+
+<TypstRender
+  code={`
+  #set page(columns: 2, height: 4.8cm)
+  Climate change is one of the most
+  pressing issues of our time, with
+  the potential to devastate
+  communities, ecosystems, and
+  economies around the world. It's
+  clear that we need to take urgent
+  action to reduce our carbon
+  emissions and mitigate the impacts
+  of a rapidly changing climate.
+`}
+  image="/typst_docs_assets/images/X85xQUsk0ejlyhmQOcaz0A.png"
+  alt=""
+  editable={true}
+/>
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Заливка фона страницы.
+
+Установка нетранспарентного значения указывает принтеру окрашивать страницу целиком. Если вы рассматриваете крупносерийное производство, может оказаться более экологичным и экономически выгодным использовать предварительно окрашенную бумагу и не задавать это свойство.
+
+При значении `none` фон становится прозрачным. Обратите внимание, что страницы PDF всё равно будут отображаться в просмотрщиках с (обычно белым) фоном, но на самом деле они прозрачны. (При печати для фона не используется цвет.)
+
+Значение по умолчанию `auto` даёт `none` для вывода в PDF и `white` для PNG и SVG.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(fill: rgb("444352"))
+  #set text(fill: rgb("fdfdfd"))
+  *Dark mode enabled.*
+`}
+  image="/typst_docs_assets/images/Ki3VvENPAXJB_-7BiBFhkQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `numbering` [#parameters-numbering]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как нумеровать страницы. О настройке номеров страниц см. в руководстве по настройке страницы, раздел [настройка номеров страниц](/docs/typst/guides/page-setup#page-numbers).
+
+Принимает [шаблон нумерации или функцию](/docs/typst/reference/model/numbering), принимающую одно или два числа:
+
+1. Первое число — текущий номер страницы.
+2. Второе число — общее количество страниц. В шаблоне нумерации второе число можно опустить. Если передаётся функция, она получит один аргумент в контексте ссылок или перекрёстных ссылок и два аргумента при формировании видимых номеров страниц.
+
+Это логические номера, управляемые счётчиком страниц, и поэтому они могут не совпадать с физическими номерами. В частности, это [текущее](/docs/typst/reference/introspection/counter#definitions-get) и [итоговое](/docs/typst/reference/introspection/counter#definitions-final) значения `counter(page)`. Подробнее см. документацию по [`counter`](/docs/typst/reference/introspection/counter#page-counter).
+
+Если задан явный [`footer`](#parameters-footer) (или [`header`](#parameters-header) для нумерации [с выравниванием по верху](#parameters-number-align)), нумерация игнорируется.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(
+    height: 100pt,
+    margin: (top: 16pt, bottom: 24pt),
+    numbering: "1 / 1",
+  )
+
+  #lorem(48)
+`}
+  image="/typst_docs_assets/images/4oq3mGh4urg0oDd61KlPzA.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/rvSllDn6_HWzCwyQQKdOtw.png" alt="" width="480" height="200" />
+
+</details>
+
+### `supplement` [#parameters-supplement]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Дополнение для страниц.
+
+Для ссылок на страницы оно добавляется перед номером страницы.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(numbering: "1.", supplement: [p.])
+
+  = Introduction <intro>
+  We are on #ref(<intro>, form: "page")!
+`}
+  image="/typst_docs_assets/images/jKn-S7DwX0TxgkEPGHWDNw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `number-align` [#parameters-number-align]
+
+**Тип:** [alignment](/docs/typst/reference/layout/alignment) · **Модификаторы:** Settable · **По умолчанию:** `center + bottom`
+
+Выравнивание нумерации страниц.
+
+Если вертикальная составляющая — `top`, нумерация размещается в верхнем колонтитуле, а если `bottom` — в нижнем. Горизонтальное выравнивание запрещено. Если задан явный соответствующий `header` или `footer`, нумерация игнорируется.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(
+    margin: (top: 16pt, bottom: 24pt),
+    numbering: "1",
+    number-align: right,
+  )
+
+  #lorem(30)
+`}
+  image="/typst_docs_assets/images/4m9oESWcsPjkgp0ffQ2vfg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `header` [#parameters-header]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Верхний колонтитул страницы. Заполняет верхнее поле каждой страницы.
+
+- Содержимое: отображает содержимое как верхний колонтитул.
+- `auto`: отображает номер страницы, если задан [`numbering`](#parameters-numbering) и [`number-align`](#parameters-number-align) равен `top`.
+- `none`: подавляет верхний колонтитул.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set par(justify: true)
+  #set page(
+    margin: (top: 32pt, bottom: 20pt),
+    header: [
+      #set text(8pt)
+      #smallcaps[Typst Academy]
+      #h(1fr) _Exercise Sheet 3_
+    ],
+  )
+
+  #lorem(19)
+`}
+  image="/typst_docs_assets/images/LMntZjPa_y_i2L8NF4Avvg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `header-ascent` [#parameters-header-ascent]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `30% + 0pt`
+
+Величина, на которую верхний колонтитул поднимается в верхнее поле. Доли относительны высоты верхнего поля.
+
+### `footer` [#parameters-footer]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Нижний колонтитул страницы. Заполняет нижнее поле каждой страницы.
+
+- Содержимое: отображает содержимое как нижний колонтитул.
+- `auto`: отображает номер страницы, если задан [`numbering`](#parameters-numbering) и [`number-align`](#parameters-number-align) равен `bottom`.
+- `none`: подавляет нижний колонтитул.
+
+Если нужен только номер страницы, обычно достаточно свойства `numbering`. Если вы хотите создать собственный нижний колонтитул, но всё же отображать номер страницы, можно напрямую обратиться к [счётчику страниц](/docs/typst/reference/introspection/counter).
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set par(justify: true)
+  #set page(
+    height: 100pt,
+    margin: 20pt,
+    footer: context [
+      #set align(right)
+      #set text(8pt)
+      #counter(page).display(
+        "1 of I",
+        both: true,
+      )
+    ]
+  )
+
+  #lorem(48)
+`}
+  image="/typst_docs_assets/images/oTapNKgujb0JArVBulXy7g.png"
+  alt=""
+  editable={true}
+/>
+
+<img src="/typst_docs_assets/images/rrQNNcPTe0iGG4CsVw0xjQ.png" alt="" width="480" height="200" />
+
+</details>
+
+### `footer-descent` [#parameters-footer-descent]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `30% + 0pt`
+
+Величина, на которую нижний колонтитул опускается в нижнее поле. Доли относительны высоты нижнего поля.
+
+<img src="/typst_docs_assets/images/ie4Z_BW8RoHrTaX00tBjlQ.png" alt="" width="480" height="252" />
+
+### `background` [#parameters-background]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Содержимое на заднем плане страницы.
+
+Это содержимое размещается за основным содержимым страницы. Его можно использовать для размещения фонового изображения или водяного знака.
+
+Для удобства содержимое заднего плана позиционируется относительно страницы, расширенной её [вылетом](#parameters-bleed). Например, выравнивание `top + left` размещает содержимое в верхнем левом углу области вылета, а не страницы.
+
+Аналогично, [относительные длины](/docs/typst/reference/layout/relative) при использовании в содержимом заднего плана вычисляются относительно размера страницы плюс вылет. Например, на странице шириной `100mm` с дополнительным вылетом `5mm` с каждой стороны ширина `100%` вычисляется как `5mm + 100mm + 5mm`.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(background: rotate(24deg,
+    text(18pt, fill: rgb("FFCBC4"))[
+      *CONFIDENTIAL*
+    ]
+  ))
+
+  = Typst's secret plans
+  In the year 2023, we plan to take
+  over the world (of typesetting).
+`}
+  image="/typst_docs_assets/images/aYEMGQphCRLP-SsVAqX3Jw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `foreground` [#parameters-foreground]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Содержимое на переднем плане страницы.
+
+Это содержимое накладывается поверх основного содержимого страницы.
+
+Следуя поведению [`background`](#parameters-background), содержимое переднего плана позиционируется относительно страницы, расширенной её [вылетом](#parameters-bleed), а относительные длины вычисляются относительно размера страницы плюс вылет.
+
+<details>
+<summary>Показать пример</summary>
+
+<TypstRender
+  code={`
+  #set page(foreground: text(24pt)[🤓])
+
+  Reviewer 2 has marked our paper
+  "Weak Reject" because they did
+  not understand our approach...
+`}
+  image="/typst_docs_assets/images/lblRS1b8Hh03Qjwq4B6Wng.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Содержимое страницы (страниц).
+
+Если содержимое не помещается на одну страницу, будет создано несколько страниц. После набора основного содержимого будет создана новая страница со свойствами страницы, действовавшими до вызова функции.

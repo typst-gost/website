@@ -1,0 +1,258 @@
+---
+title: "Сноска"
+description: "Документация для функции `footnote`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *С версии: 0.4.0*
+
+Сноска.
+
+Добавляет дополнительные замечания и ссылки на той же странице с помощью сносок. Сноска вставляет надстрочный номер, который ссылается на примечание внизу страницы. Примечания нумеруются последовательно по всему документу и могут разрываться между несколькими страницами.
+
+Чтобы настроить внешний вид записи в списке сносок, см. [`footnote.entry`](#definitions-entry). Сама сноска реализуется как обычный надстрочный текст, поэтому вы можете использовать правило set для функции [`super`](/docs/typst/reference/text/super), чтобы настроить её. Вы также можете применить правило show, чтобы настроить только маркер сноски (надстрочный номер) в основном тексте.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  Check the docs for more details.
+  #footnote[https://typst.app/docs]
+`}
+  image="/typst_docs_assets/images/sBS9nCL_-THMZlq_QLtDYA.png"
+  alt=""
+  editable={true}
+/>
+
+Сноска автоматически прикрепляется к предшествующему слову, даже если перед ним в разметке есть пробел. Чтобы принудительно вставить пробел, можно использовать строку `#" "` или явный [горизонтальный отступ](/docs/typst/reference/layout/h).
+
+Присвоив сноске метку, вы можете ссылаться на неё несколько раз.
+
+<TypstRender
+  code={`
+  You can edit Typst documents online.
+  #footnote[https://typst.app/app] <fn>
+  Checkout Typst's website. @fn
+  And the online app. #footnote(<fn>)
+`}
+  image="/typst_docs_assets/images/JzGHgoxE01fdBx7nOs98Lw.png"
+  alt=""
+  editable={true}
+/>
+
+_Примечание:_ Правила set и show в области видимости, где вызывается `footnote`, могут не применяться к содержимому сноски. Дополнительную информацию см. [здесь](https://github.com/typst/typst/issues/1467#issuecomment-1588799440).
+
+## Доступность [#accessibility]
+
+Сноски будут прочитаны вспомогательными технологиями (AT) сразу после того места в тексте, где на них ссылаются, — так же, как они отображаются в разметке.
+
+## Параметры [#parameters]
+
+```typst
+footnote(
+  numbering: str | function,
+  label | content,
+)
+```
+
+### `numbering` [#parameters-numbering]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `"1"`
+
+Как нумеровать сноски. Принимает [шаблон нумерации или функцию](/docs/typst/reference/model/numbering), принимающую одно число.
+
+По умолчанию нумерация сносок продолжается по всему документу. Если вы предпочитаете нумерацию сносок на каждой странице отдельно, вы можете сбросить [счётчик](/docs/typst/reference/introspection/counter) сносок в [заголовке](/docs/typst/reference/layout/page#parameters-header) страницы. В будущем, возможно, появится более простой способ добиться этого.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set footnote(numbering: "*")
+
+  Footnotes:
+  #footnote[Star],
+  #footnote[Dagger]
+`}
+  image="/typst_docs_assets/images/dQ9I770i01hPSEFHIoQT5w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `body` [#parameters-body]
+
+**Тип:** [label](/docs/typst/reference/foundations/label) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое, помещаемое в сноску. Также может быть меткой другой сноски, на которую должна указывать эта.
+
+## Функции [#functions]
+
+### `entry` [#definitions-entry]
+
+*Элемент* · *Locatable* · *С версии: 0.4.0*
+
+Запись в списке сносок.
+
+Эта функция не предназначена для прямого вызова. Вместо этого она используется в правилах set и show для настройки списков сносок.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #show footnote.entry: set text(red)
+
+  My footnote listing
+  #footnote[It's down here]
+  has red text!
+`}
+  image="/typst_docs_assets/images/9GAsmcWwMU7KRCEZB7h-RA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+_Примечание:_ Свойства записи сноски должны быть одинаковыми в пределах каждого прогона страниц (прогон страниц — это последовательность страниц без явного разрыва страницы между ними). По этой причине правила set и show для записей сносок следует определять до любого содержимого страницы, как правило, в самом начале документа.
+
+```typst
+footnote.entry(
+  content,
+  separator: content,
+  clearance: length,
+  gap: length,
+  indent: length,
+)
+```
+
+#### `note` [#definitions-entry-note]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Сноска для этой записи. Её местоположение можно использовать для определения состояния счётчика сносок.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #show footnote.entry: it => {
+    let loc = it.note.location()
+    counter(footnote).display(at: loc, "1: ")
+    it.note.body
+  }
+
+  Customized #footnote[Hello]
+  listing #footnote[World! 🌏]
+`}
+  image="/typst_docs_assets/images/RB3AqKqq1MjSafuOZAiMxg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `separator` [#definitions-entry-separator]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `line(length: 30% + 0pt, stroke: 0.05em)`
+
+Разделитель между основным текстом документа и списком сносок.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set footnote.entry(
+    separator: repeat[.]
+  )
+
+  Testing a different separator.
+  #footnote[
+    Unconventional, but maybe
+    not that bad?
+  ]
+`}
+  image="/typst_docs_assets/images/yKeeujsa9uK9zsD39DxW_w.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `clearance` [#definitions-entry-clearance]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `1em`
+
+Величина отступа между основным текстом документа и разделителем.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set footnote.entry(clearance: 3em)
+
+  Footnotes also need ...
+  #footnote[
+    ... some space to breathe.
+  ]
+`}
+  image="/typst_docs_assets/images/0qcmNT573AerjvTmptHhUQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `gap` [#definitions-entry-gap]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `0.5em`
+
+Промежуток между записями сносок.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set footnote.entry(gap: 0.8em)
+
+  Footnotes:
+  #footnote[Spaced],
+  #footnote[Apart]
+`}
+  image="/typst_docs_assets/images/Ag-Gc89qD_HXNxk5h6-qqg.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+#### `indent` [#definitions-entry-indent]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **Модификаторы:** Settable · **По умолчанию:** `1em`
+
+Отступ каждой записи сноски.
+
+<details>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  #set footnote.entry(indent: 0em)
+
+  Footnotes:
+  #footnote[No],
+  #footnote[Indent]
+`}
+  image="/typst_docs_assets/images/PkrgbXqWGSZCPx1zv7GZYA.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

@@ -1,0 +1,208 @@
+---
+title: "0.11.0"
+description: "Изменения в Typst 0.11.0"
+---
+
+## Таблицы [#tables]
+
+- Таблицы стали _гораздо_ более гибкими; чтобы начать работу, прочитайте новое [руководство по таблицам](/docs/typst/guides/tables)
+- Добавлен элемент [`table.cell`](/docs/typst/reference/model/table#definitions-cell) для настройки отдельных ячеек
+- Ячейки теперь могут занимать несколько [столбцов](/docs/typst/reference/model/table#definitions-cell-colspan) или [строк](/docs/typst/reference/model/table#definitions-cell-rowspan)
+- Теперь можно настраивать [обводку](/docs/typst/reference/model/table#definitions-cell-stroke) отдельных ячеек
+- Аргументы [`align`](/docs/typst/reference/model/table#parameters-align) и [`inset`](/docs/typst/reference/model/table#parameters-inset) функции table теперь также принимают функции `(x, y) => ..`
+- Добавлены [`table.hline`](/docs/typst/reference/model/table#definitions-hline) и [`table.vline`](/docs/typst/reference/model/table#definitions-vline) для удобной настройки линий
+- Добавлен элемент [`table.header`](/docs/typst/reference/model/table#definitions-header) для заголовков таблиц, повторяющихся на каждой странице
+- Добавлен элемент [`table.footer`](/docs/typst/reference/model/table#definitions-footer) для нижних колонтитулов таблиц, повторяющихся на каждой странице
+- Вся новая функциональность таблиц также доступна для [сеток](/docs/typst/reference/layout/grid)
+- Исправлены ошибки, связанные с промежутками (gutter)
+
+_Спасибо [@PgBiel](https://github.com/PgBiel) за его работу над таблицами!_
+
+## Шаблоны [#templates]
+
+- Теперь вы можете использовать пакеты шаблонов для начала работы над новыми проектами. Нажмите _Начать с шаблона_ на панели управления веб-приложения и выберите предпочитаемый шаблон или выполните команду `typst init <template>` в CLI. Вы можете [просмотреть доступные шаблоны здесь](https://typst.app/universe/search/?kind=templates).
+- Переключение шаблонов после начала работы стало проще. Вы можете просто импортировать функцию стилизации из другого пакета шаблонов.
+- Авторы пакетов теперь могут отправлять свои собственные шаблоны в [репозиторий пакетов](https://github.com/typst/packages). Поделитесь шаблоном для статьи, вашего учебного заведения или оригинальной работы, чтобы помочь сообществу быстрее приступить к своим проектам.
+- Шаблоны и пакеты теперь организованы по категориям и дисциплинам. Фильтруйте пакеты по любой из таксономий в мастере _Начать с шаблона_. Если вы автор пакета, ознакомьтесь с новой документацией по [категориям](https://github.com/typst/packages/blob/main/docs/CATEGORIES.md) и [дисциплинам](https://github.com/typst/packages/blob/main/docs/DISCIPLINES.md).
+
+## Контекст [#context]
+
+- Добавлены _контекстные выражения:_ чтобы начать работу, прочитайте главу о [контексте](/docs/typst/reference/context)
+- С помощью контекста вы можете получать доступ к настраиваемым свойствам, например `context text.lang` для доступа к языку, заданному через `set text(lang: "..")`
+- Следующие существующие функции стали контекстными: [`query`](/docs/typst/reference/introspection/query), [`locate`](/docs/typst/reference/introspection/locate), [`measure`](/docs/typst/reference/layout/measure), [`counter.display`](/docs/typst/reference/introspection/counter#definitions-display), [`counter.at`](/docs/typst/reference/introspection/counter#definitions-at), [`counter.final`](/docs/typst/reference/introspection/counter#definitions-final), [`state.at`](/docs/typst/reference/introspection/state#definitions-at) и [`state.final`](/docs/typst/reference/introspection/state#definitions-final)
+- Добавлены контекстные методы [`counter.get`](/docs/typst/reference/introspection/counter#definitions-get) и [`state.get`](/docs/typst/reference/introspection/state#definitions-get) для получения значения счётчика или состояния в текущем контексте
+- Добавлена контекстная функция [`here`](/docs/typst/reference/introspection/here) для получения [расположения](/docs/typst/reference/introspection/location) текущего контекста
+- Функция [`locate`](/docs/typst/reference/introspection/locate) теперь возвращает расположение уникального совпадения селектора. Её прежнее поведение заменено контекстными выражениями и временно доступно только для совместимости.
+- Методы [`counter.at`](/docs/typst/reference/introspection/counter#definitions-at) и [`state.at`](/docs/typst/reference/introspection/state#definitions-at) теперь более гибкие: они напрямую принимают любой вид [locatable](/docs/typst/reference/introspection/location#locatable)-селектора с уникальным совпадением (например, метку), а не только расположения
+- Когда контекст доступен, [`counter.display`](/docs/typst/reference/introspection/counter#definitions-display) теперь напрямую возвращает результат применения нумерации вместо непрозрачного содержимого. Его больше не следует использовать без контекста. (Планируется устаревание)
+- Функцию `state.display` больше не следует использовать, вместо неё используйте [`state.get`](/docs/typst/reference/introspection/state#definitions-get) (Планируется устаревание)
+- Аргумент `location` функций [`query`](/docs/typst/reference/introspection/query), [`counter.final`](/docs/typst/reference/introspection/counter#definitions-final) и [`state.final`](/docs/typst/reference/introspection/state#definitions-final) больше не следует использовать (Планируется устаревание)
+- Аргумент `styles` функции `measure` больше не следует использовать (Планируется устаревание)
+- Функцию `style` больше не следует использовать, вместо неё используйте контекст (Планируется устаревание)
+- Правильный контекст теперь также предоставляется в различных других местах, где он доступен, например в правилах show, обратных вызовах компоновки и функциях нумерации в оглавлении
+
+## Стилизация [#styling]
+
+- Исправлен приоритет нескольких [правил show-set](/docs/typst/reference/styling#show-rules): теперь они применяются в том же порядке, что и обычные правила set
+- Правила show-set для одного и того же элемента (например, `show heading.where(level: 1): set heading(numbering: "1.")`) теперь работают правильно
+- Установка свойств элемента внутри трансформационного правила show (например, `show heading: it => { set heading(..); it }`) больше **не** поддерживается (ранее она тоже работала лишь иногда); вместо этого используйте правила show-set **(Обратно несовместимое изменение)**
+- Текстовые правила show, которые совпадают со своим собственным выводом, теперь работают правильно (например, `` show "cmd": `cmd` ``)
+- Элементы, передаваемые в правила show и возвращаемые запросами, теперь содержат все поля соответствующих функций элементов, а не только отдельные
+- Все настраиваемые свойства теперь можно использовать в селекторах [where](/docs/typst/reference/foundations/function#definitions-where)
+- Селекторы [and](/docs/typst/reference/foundations/selector#definitions-and) и [or](/docs/typst/reference/foundations/selector#definitions-or) теперь можно использовать с правилами show
+- Ошибки в правилах show и контекстных выражениях теперь игнорируются во всех итерациях интроспекции, кроме последней, в соответствии с поведением старой функции [`locate`](/docs/typst/reference/introspection/locate)
+- Исправлена ошибка, из-за которой правила set документа допускались после содержимого
+
+## Компоновка [#layout]
+
+- Добавлен аргумент `reflow` в [`rotate`](/docs/typst/reference/layout/rotate) и [`scale`](/docs/typst/reference/layout/scale), позволяющий им влиять на компоновку
+- Исправлена ошибка, из-за которой [плавающее размещение](/docs/typst/reference/layout/place#parameters-float) или [плавающие рисунки](/docs/typst/reference/model/figure#parameters-placement) могли оказаться в неправильном порядке
+- Исправлено перекрытие текста и рисунка для плавающих рисунков на всю страницу
+- Исправлены различные случаи, когда функция [`hide`](/docs/typst/reference/layout/hide) не скрывала своё содержимое должным образом
+- Исправлено использование [`h`](/docs/typst/reference/layout/h) и [`v`](/docs/typst/reference/layout/v) в [стеках](/docs/typst/reference/layout/stack)
+- Невидимое содержимое, такое как обновление счётчика, больше не будет принудительно создавать видимый блок только для себя
+- Исправлена ошибка с горизонтальным промежутком, за которым непосредственно в начале абзаца следует невидимое содержимое (например, обновление счётчика)
+
+## Текст [#text]
+
+- Добавлено свойство [`stroke`](/docs/typst/reference/text/text#parameters-stroke) для текста
+- Добавлена базовая поддержка интернационализации для сербского и каталанского языков
+- Добавлена поддержка современного японского метода [нумерации](/docs/typst/reference/model/numbering)
+- Добавлены исправления для различных неверных метаданных в отдельных шрифтах
+- [Направление текста](/docs/typst/reference/text/text#parameters-dir) теперь можно переопределять внутри абзаца
+- Исправлены датские [умные кавычки](/docs/typst/reference/text/smartquote)
+- Исправлен резервный шрифт рядом с переносом строки
+- Исправлена корректировка ширины японской пунктуации в стиле JIS
+- Исправлен финский перевод «Listing»
+- Исправлен порядок Z-индексов для нескольких текстовых украшений (подчёркиваний и т. д.)
+- Исправлена ошибка, из-за которой [возможности](/docs/typst/reference/text/text#parameters-features) текста нельзя было переопределить в последовательных правилах set
+
+## Модель [#model]
+
+- Добавлены аргументы [`depth`](/docs/typst/reference/model/heading#parameters-depth) и [`offset`](/docs/typst/reference/model/heading#parameters-offset) в heading для увеличения или уменьшения уровня заголовка для группы содержимого; синтаксис заголовков теперь задаёт `depth`, а не `level` **(Обратно несовместимое изменение)**
+- [Маркеры](/docs/typst/reference/model/list#parameters-marker) списков теперь по умолчанию чередуются
+- Функция [`quote`](/docs/typst/reference/model/quote) теперь более надёжно выбирает правильные кавычки в зависимости от языка и вложенности
+- Исправлены ошибки отступов, связанные с правилом show по умолчанию для [терминов](/docs/typst/reference/model/terms)
+
+## Математика [#math]
+
+- Встроенные формулы теперь автоматически переносятся в подходящих местах
+- Добавлен аргумент [`number-align`](/docs/typst/reference/math/equation#parameters-number-align) для формул
+- Добавлена поддержка настройки [`size`](/docs/typst/reference/math/accent#parameters-size) акцентов относительно их основания
+- Улучшено позиционирование акцентов
+- [Штрихи](/docs/typst/reference/math/primes) теперь по умолчанию всегда присоединяются как [скрипты](/docs/typst/reference/math/attach#functions-scripts)
+- Представлен элемент [`math.primes`](/docs/typst/reference/math/primes), лежащий в основе синтаксиса `$f$' в математике
+- На математический режим больше не влияют [`strong`](/docs/typst/reference/model/strong) и [`emph`](/docs/typst/reference/model/emph)
+- Исправлен [`attach`](/docs/typst/reference/math/attach#functions-attach) под [дробями](/docs/typst/reference/math/frac)
+- Исправлено, что [`math.class`](/docs/typst/reference/math/class) не влиял на умное размещение пределов
+- Исправлен слабый промежуток в группах [`lr`](/docs/typst/reference/math/lr#functions-lr)
+- Исправлена компоновка крупных операторов для шрифта Cambria Math
+- Исправлена математическая стилизация кодовых точек еврейских символов
+
+## Символы [#symbols]
+
+- Добавлен `gradient` как псевдоним для `nabla`
+- Добавлен `partial` как псевдоним для `diff`; `diff` в будущем будет устаревшим
+- Добавлены `colon.double`, `gt.approx`, `gt.napprox`, `lt.approx` и `lt.napprox`
+- Добавлены `arrow.r.tilde` и `arrow.l.tilde`
+- Добавлен `tilde.dot`
+- Добавлены `forces` и `forces.not`
+- Добавлен `space.nobreak.narrow`
+- Добавлены `lrm` (Left-to-Right Mark) и `rlm` (Right-to-Left Mark)
+- Исправлен символ `star.stroked` (ранее у него была неверная кодовая точка)
+
+## Скрипты [#scripting]
+
+- Массивы теперь можно сравнивать лексикографически
+- Добавлен контекстный метод [`to-absolute`](/docs/typst/reference/layout/length#definitions-to-absolute) для длин
+- Добавлен [`calc.root`](/docs/typst/reference/foundations/calc#functions-root)
+- Добавлены методы [`int.signum`](/docs/typst/reference/foundations/int#definitions-signum) и [`float.signum`](/docs/typst/reference/foundations/float#definitions-signum)
+- Добавлены методы [`float.is-nan`](/docs/typst/reference/foundations/float#definitions-is-nan) и [`float.is-infinite`](/docs/typst/reference/foundations/float#definitions-is-infinite)
+- Добавлены методы [`int.bit-not`](/docs/typst/reference/foundations/int#definitions-bit-not), [`int.bit-and`](/docs/typst/reference/foundations/int#definitions-bit-and), [`int.bit-or`](/docs/typst/reference/foundations/int#definitions-bit-or), [`int.bit-xor`](/docs/typst/reference/foundations/int#definitions-bit-xor), [`int.bit-lshift`](/docs/typst/reference/foundations/int#definitions-bit-lshift) и [`int.bit-rshift`](/docs/typst/reference/foundations/int#definitions-bit-rshift)
+- Добавлен метод [`array.chunks`](/docs/typst/reference/foundations/array#definitions-chunks)
+- Модуль теперь можно преобразовать в словарь с помощью [конструктора словаря](/docs/typst/reference/foundations/dictionary#constructor) для динамического доступа к его содержимому
+- Добавлен аргумент [`row-type`](/docs/typst/reference/data-loading/csv#parameters-row-type) в функцию `csv` для настройки представления строк
+- [Разбор XML](/docs/typst/reference/data-loading/xml) теперь допускает DTD (определения типов документов)
+- Улучшено форматирование отрицательных чисел с помощью [`str`](/docs/typst/reference/foundations/str) и [`repr`](/docs/typst/reference/foundations/repr)
+- Циклы for теперь могут перебирать [байты](/docs/typst/reference/foundations/bytes)
+- Исправлена ошибка с сопоставлением с образцом в циклах for
+- Исправлена ошибка, из-за которой метки не были частью словарей [`.fields()`](/docs/typst/reference/foundations/content#definitions-fields)
+- Исправлена ошибка, из-за которой безымянные приёмники аргументов не захватывали лишние аргументы
+- Исправлена опечатка в выводе `repr` для обводок
+
+## Синтаксис [#syntax]
+
+- Добавлена поддержка вложенных [шаблонов деструктуризации](/docs/typst/reference/scripting#bindings)
+- Специальные пробелы (например, тонкие или неразрывные) теперь разбираются буквально, а не сворачиваются в обычные пробелы **(Обратно несовместимое изменение)**
+- Корейский текст теперь может использовать синтаксис выделения без добавления пробелов **(Обратно несовместимое изменение)**
+- Токен [`context`](/docs/typst/reference/context) теперь является ключевым словом и больше не может использоваться как идентификатор **(Обратно несовместимое изменение)**
+- Вложенные строчные комментарии больше не допускаются в блочных комментариях **(Обратно несовместимое изменение)**
+- Исправлена ошибка, из-за которой `x.)` трактовалось как доступ к полю
+- Текстовые элементы теперь могут охватывать фигурные скобки в разметке
+- Исправлен молча неверный разбор, когда имя функции заключено в скобки
+- Исправлены различные ошибки при разборе шаблонов деструктуризации, массивов и словарей
+
+## Инструменты и диагностика [#tooling-diagnostics]
+
+- Переход по щелчку теперь правильно работает внутри текста [`raw`](/docs/typst/reference/text/raw)
+- Добавлена подсказка для доступа к полю, если метод не существует
+- Улучшена подсказка для вызова функции, хранящейся в словаре
+- Улучшены сообщения об ошибках для изменяемых функций-аксессоров массивов и словарей
+- Исправлено сообщение об ошибке при вызове конструктора типа, у которого его нет
+- Исправлено запутанное сообщение об ошибке с вложенными словарями для обводок с разных сторон
+- Исправлено автодополнение для нескольких пакетов с одинаковым именем из разных пространств имён
+
+## Визуализация [#visualization]
+
+- Функция [`image`](/docs/typst/reference/visualize/image) больше не увеличивает изображения сверх их естественного размера
+- Функция [`image`](/docs/typst/reference/visualize/image) теперь учитывает поворот, хранящийся в метаданных EXIF
+- Добавлена поддержка фильтров SVG
+- Добавлен альфа-компонент в цвета [`luma`](/docs/typst/reference/visualize/color#definitions-luma)
+- Добавлены методы [`color.transparentize`](/docs/typst/reference/visualize/color#definitions-transparentize) и [`color.opacify`](/docs/typst/reference/visualize/color#definitions-opacify)
+- Улучшена функция [`color.negate`](/docs/typst/reference/visualize/color#definitions-negate)
+- Добавлены аргументы [`stroke`](/docs/typst/reference/text/highlight#parameters-stroke) и [`radius`](/docs/typst/reference/text/highlight#parameters-radius) в функцию `highlight`
+- Цвет [`highlight`](/docs/typst/reference/text/highlight) по умолчанию изменён на прозрачный
+- Преобразование CMYK в RGB теперь управляется цветовыми профилями
+- Исправлено падение при использовании градиентов в цветовом пространстве Oklch
+- Исправлено смешивание цветов для пространств на основе оттенка
+- Исправлены ошибки преобразования цветов
+- Размеры SVG больше не округляются, что предотвращает слегка неверные соотношения сторон
+- Исправлено несколько других ошибок, связанных с SVG
+- [`color.components`](/docs/typst/reference/visualize/color#definitions-components) больше ничего не округляет
+
+## Экспорт [#export]
+
+- PDF-файлы теперь содержат именованные назначения для заголовков, производные от их меток
+- Внутренняя структура PDF была изменена, чтобы внешним инструментам было проще извлекать или изменять отдельные страницы, что позволяет избежать ошибки с PDF-файлами Typst в Apple Preview
+- PDF-файлы, созданные Typst, теперь должны быть воспроизводимы байт в байт при установке `set document(date: none)`
+- Добавлен отсутствующий флаг в аннотацию PDF
+- Исправлено несколько ошибок с градиентами при экспорте в PDF
+- Исправлена ошибка с узорами при экспорте в PDF
+- Исправлена ошибка со встраиванием полутоновых изображений при экспорте в PDF
+- Исправлена ошибка с сопоставлением To-Unicode для шрифтов CFF при экспорте в PDF
+- Исправлена ошибка при генерации оглавления PDF
+- Исправлена ошибка сортировки при экспорте в PDF, приводившая к невоспроизводимому выводу
+- Исправлена ошибка с прозрачным текстом при экспорте в PNG
+- Экспортированные файлы SVG теперь включают единицы измерения в своих атрибутах `width` и `height` верхнего уровня
+
+## Интерфейс командной строки [#command-line-interface]
+
+- Добавлена поддержка передачи [входных данных](/docs/typst/reference/foundations/sys) через флаг CLI
+- При передаче имени файла `-` Typst теперь будет читать ввод из stdin
+- Теперь используется системная реализация TLS для сетевых запросов, что в целом должно быть более надёжным
+- Режим наблюдения теперь правильно обнаруживает создание ранее отсутствовавшего файла
+- Добавлен флаг `--color` для настройки того, печатать ли цветной вывод
+- Исправлен user agent, с которым загружаются пакеты
+- Встроенные шрифты обновлены до новейших версий
+
+## Разработка [#development]
+
+- Добавлен флаг `--vendor-openssl` в CLI для настройки того, следует ли связывать OpenSSL статически вместо динамически (не применимо к Windows и платформам Apple)
+- Удалён старый флаг трассировки (и её подробности) из CLI
+- Добавлен новый флаг `--timings`, который заменяет старое профилирование в виде flamegraph в CLI
+- Добавлен минимальный CLI в крейт `typst-docs` для извлечения документации языка и стандартной библиотеки в формате JSON
+- Аргумент `ident` функции `typst_pdf::export` изменён с `Option` на `Smart`. Его следует устанавливать в `Smart::Custom`, только если вы можете предоставить стабильный идентификатор (как это может делать веб-приложение). CLI устанавливает `Smart::Auto`.
+
+## Участники [#contributors]
+
+Спасибо всем, кто внёс вклад в этот выпуск!

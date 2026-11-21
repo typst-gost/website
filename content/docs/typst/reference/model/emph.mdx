@@ -1,0 +1,48 @@
+---
+title: "Выделение курсивом"
+description: "Документация для функции `emph`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Выделяет содержимое, переключая курсив.
+
+- Если текущий [стиль текста](/docs/typst/reference/text/text#parameters-style) — `"normal"`, он превращается в `"italic"`.
+- Если он уже `"italic"` или `"oblique"`, он возвращается к `"normal"`.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  This is _emphasized._ \\
+  This is #emph[too.]
+
+  #show emph: it => {
+    text(blue, it.body)
+  }
+
+  This is _emphasized_ differently.
+`}
+  image="/typst_docs_assets/images/zcWB5mEWVdu33qbD-T8sXA.png"
+  alt=""
+  editable={true}
+/>
+
+## Синтаксис [#syntax]
+
+У этой функции также есть специальный синтаксис: чтобы выделить содержимое, просто заключите его в символы подчёркивания (`_`). Обратите внимание, что это работает только на границах слов. Чтобы выделить часть слова, необходимо использовать функцию.
+
+## Параметры [#parameters]
+
+```typst
+emph(content)
+```
+
+### `body` [#parameters-body]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Required, Positional
+
+Содержимое для выделения.

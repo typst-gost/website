@@ -1,0 +1,97 @@
+---
+title: "Circle"
+description: "Документация для функции `circle`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Окружность с необязательным содержимым.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  // Without content.
+  #circle(radius: 25pt)
+
+  // With content.
+  #circle[
+    #set align(center + horizon)
+    Automatically \\
+    sized to fit.
+  ]
+`}
+  image="/typst_docs_assets/images/HvTzqDMVhLWtAtYNNWChWA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+circle(
+  radius: length,
+  width: auto | relative,
+  height: auto | relative | fraction,
+  fill: none | color | gradient | tiling,
+  stroke: none | auto | length | color | gradient | stroke | tiling | dictionary,
+  inset: relative | dictionary,
+  outset: relative | dictionary,
+  none | content,
+)
+```
+
+### `radius` [#parameters-radius]
+
+**Тип:** [length](/docs/typst/reference/layout/length) · **По умолчанию:** `0pt`
+
+Радиус окружности. Взаимоисключающий с `width` и `height`.
+
+### `width` [#parameters-width]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Ширина окружности. Взаимоисключающая с `radius` и `height`.
+
+В отличие от `radius`, может быть относительной к ширине родительского контейнера.
+
+### `height` [#parameters-height]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [relative](/docs/typst/reference/layout/relative) или [fraction](/docs/typst/reference/layout/fraction) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Высота окружности. Взаимоисключающая с `radius` и `width`.
+
+В отличие от `radius`, может быть относительной к высоте родительского контейнера.
+
+### `fill` [#parameters-fill]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [tiling](/docs/typst/reference/visualize/tiling) · **Модификаторы:** Settable · **По умолчанию:** `none`
+
+Как заливать окружность. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-fill).
+
+### `stroke` [#parameters-stroke]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [length](/docs/typst/reference/layout/length) или [color](/docs/typst/reference/visualize/color) или [gradient](/docs/typst/reference/visualize/gradient) или [stroke](/docs/typst/reference/visualize/stroke) или [tiling](/docs/typst/reference/visualize/tiling) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Как обводить окружность. Подробнее см. в [документации прямоугольника](/docs/typst/reference/visualize/rect#parameters-stroke).
+
+### `inset` [#parameters-inset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `0% + 5pt`
+
+Насколько отступать от краёв окружности для содержимого. Подробнее см. в [документации блока](/docs/typst/reference/layout/box#parameters-inset).
+
+### `outset` [#parameters-outset]
+
+**Тип:** [relative](/docs/typst/reference/layout/relative) или [dictionary](/docs/typst/reference/foundations/dictionary) · **Модификаторы:** Settable · **По умолчанию:** `(:)`
+
+Насколько увеличить размер окружности, не влияя на макет. Подробнее см. в [документации блока](/docs/typst/reference/layout/box#parameters-outset).
+
+### `body` [#parameters-body]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Positional, Settable · **По умолчанию:** `none`
+
+Содержимое, размещаемое внутри окружности. Окружность расширяется, чтобы вместить это содержимое, сохраняя соотношение сторон 1:1.

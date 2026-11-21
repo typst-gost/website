@@ -1,0 +1,49 @@
+---
+title: "Разрыв столбца"
+description: "Документация для функции `colbreak`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно: всегда*
+
+Принудительно вставляет разрыв столбца.
+
+Функция ведёт себя как [разрыв страницы](/docs/typst/reference/layout/pagebreak), если используется в одностолбцовой вёрстке или в последнем столбце страницы. В противном случае содержимое после разрыва столбца будет размещено в следующем столбце.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #set page(columns: 2)
+  Preliminary findings from our
+  ongoing research project have
+  revealed a hitherto unknown
+  phenomenon of extraordinary
+  significance.
+
+  #colbreak()
+  Through rigorous experimentation
+  and analysis, we have discovered
+  a hitherto uncharacterized process
+  that defies our current
+  understanding of the fundamental
+  laws of nature.
+`}
+  image="/typst_docs_assets/images/VBV5Zm3kI5J-oZ7nt6fXQA.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+colbreak(weak: bool) -> content
+```
+
+### `weak` [#parameters-weak]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Если `true`, разрыв столбца пропускается, если текущий столбец уже пуст.

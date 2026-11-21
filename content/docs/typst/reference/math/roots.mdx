@@ -1,0 +1,90 @@
+---
+title: "Корни"
+description: "Документация по функциям, которые верстают математические корни."
+---
+
+
+Квадратные и неквадратные корни.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ sqrt(3 - 2 sqrt(2)) = sqrt(2) - 1 $
+  $ root(3, x) $
+`}
+  image="/typst_docs_assets/images/716mEeUwGS5ztaYbymTB0A.png"
+  alt=""
+  editable={true}
+/>
+
+## Функции [#functions]
+
+### `root` [#functions-root]
+
+*Элемент* · *С версии: всегда*
+
+Корень общего вида.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ root(3, x) $
+`}
+  image="/typst_docs_assets/images/QVZT4LcpjrJc1VwZbrHnDw.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.root(
+  none | content,
+  content,
+)
+```
+
+#### `index` [#functions-root-index]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Позиционный, Устанавливаемый · **По умолчанию:** `none`
+
+Какой корень из подкоренного выражения нужно извлечь.
+
+#### `radicand` [#functions-root-radicand]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Выражение, из которого извлекается корень.
+
+### `sqrt` [#functions-sqrt]
+
+*С версии: всегда*
+
+Квадратный корень.
+
+<details open>
+<summary>Посмотреть пример</summary>
+
+<TypstRender
+  code={`
+  $ sqrt(3 - 2 sqrt(2)) = sqrt(2) - 1 $
+`}
+  image="/typst_docs_assets/images/KxPjdF8phBxv33LN22ih0A.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+```typst
+math.sqrt(content)
+```
+
+#### `radicand` [#functions-sqrt-radicand]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Обязательный, Позиционный
+
+Выражение, из которого извлекается квадратный корень.

@@ -1,0 +1,44 @@
+---
+title: "Биномиальный коэффициент"
+description: "Документация для функции `binom`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Доступно с: всегда*
+
+Биномиальное выражение.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  $ binom(n, k) $
+  $ binom(n, k_1, k_2, k_3, ..., k_m) $
+`}
+  image="/typst_docs_assets/images/DLKlPXSlI0l0wE9Xv4iTWQ.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+math.binom(
+  content,
+  ..content,
+)
+```
+
+### `upper` [#parameters-upper]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** обязательный, позиционный
+
+Верхний индекс биномиального коэффициента.
+
+### `lower` [#parameters-lower]
+
+**Тип:** [content](/docs/typst/reference/foundations/content) · **Модификаторы:** обязательный, позиционный, вариативный
+
+Нижний индекс биномиального коэффициента.

@@ -1,0 +1,36 @@
+---
+title: "Нижний регистр"
+description: "Документация для функции `lower`."
+---
+
+
+<span id="summary" />
+
+*Since: forever*
+
+Преобразует строку или содержимое в нижний регистр.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  #lower("ABC") \\
+  #lower[*My Text*] \\
+  #lower[already low]
+`}
+  image="/typst_docs_assets/images/Gt6Me26wxcPmuoKhbdSPNg.png"
+  alt=""
+  editable={true}
+/>
+
+## Параметры [#parameters]
+
+```typst
+lower(str | content)
+```
+
+### `text` [#parameters-text]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** обязательный, позиционный
+
+Текст, который нужно преобразовать в нижний регистр.

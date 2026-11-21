@@ -1,0 +1,359 @@
+---
+title: "Библиография"
+description: "Документация для функции `bibliography`."
+---
+
+
+<span id="summary" />
+
+*Элемент* · *Locatable* · *Since: forever*
+
+Список библиографии / литературы.
+
+Вы можете создать новую библиографию, вызвав эту функцию с путём к файлу библиографии в одном из двух форматов:
+
+- Файл Hayagriva `.yaml`/`.yml`. Hayagriva — это новый формат файлов библиографии, разработанный для использования с Typst. Посетите его [документацию](https://github.com/typst/hayagriva/blob/main/docs/file-format.md), чтобы узнать больше.
+- Файл BibLaTeX `.bib`.
+
+Как только вы добавите библиографию где-либо в документе, вы сможете начать цитировать источники с помощью синтаксиса ссылок (`@key`) или явных вызовов функции [citation](/docs/typst/reference/model/cite) (`#cite(<key>)`). В библиографии будут отображаться только записи для работ, на которые были ссылки в документе.
+
+## Пример [#example]
+
+<TypstRender
+  code={`
+  This was already noted by
+  pirates long ago. @arrgh
+
+  Multiple sources say ...
+  @arrgh @netwok.
+
+  #bibliography("works.bib")
+`}
+  image="/typst_docs_assets/images/mAf1zTP8P-WIIQfOhSmlNA.png"
+  alt=""
+  editable={true}
+/>
+
+## Стили [#styles]
+
+Typst предлагает широкий выбор встроенных [стилей цитирования и библиографии](#parameters-style). Помимо них, вы можете добавлять и использовать собственные файлы [CSL](https://citationstyles.org/) (Citation Style Language). Не знаете, какой стиль использовать? Вот несколько хороших вариантов по умолчанию в зависимости от дисциплины, в которой вы работаете:
+
+| **Области** | **Типичные стили** |
+| --- | --- |
+| Инженерия, IT | `"ieee"` |
+| Психология, науки о жизни | `"apa"` |
+| Социальные науки | `"chicago-author-date"` |
+| Гуманитарные науки | `"mla"`, `"chicago-notes"`, `"harvard-cite-them-right"` |
+| Экономика | `"harvard-cite-them-right"` |
+| Физика | `"american-physics-society"` |
+
+## Несколько библиографий [#multiple-bibliographies]
+
+Когда документ Typst содержит несколько библиографий, каждая ссылка привязывается к одной из них. По умолчанию Typst автоматически выбирает подходящую библиографию (как правило, ближайшую следующую, которая содержит ключ цитируемого источника). Это покрывает распространённые случаи, такие как библиографии по главам или тематические библиографии. Для более тонкого контроля ссылки можно явно адресовать библиографии через селектор [`target`](#parameters-target).
+
+## Оформление [#styling]
+
+Некоторые стили библиографии оформляют записи с висячим отступом. По умолчанию такие стили применяют отступ `1.5em` через встроенное правило show-set для [`par.hanging-indent`](/docs/typst/reference/model/par#parameters-hanging-indent). Чтобы переопределить это значение по умолчанию, вы можете написать собственное правило show-set<sup>[1](#loc-2)</sup>, нацеленное на библиографию:
+
+<TypstRender
+  code={`
+  #show bibliography: set par(
+    hanging-indent: 3em
+  )
+
+  The Net Wok is ... @netwok
+  #bibliography(
+    "works.bib",
+    style: "apa",
+  )
+`}
+  image="/typst_docs_assets/images/zAO8eWmdGBM2Yl1JutUytg.png"
+  alt=""
+  editable={true}
+/>
+
+1. <sup>[1](#loc-1)</sup> Простое правило `set par(hanging-indent: ..)` не окажет влияния на библиографию, поскольку правила show-set (включая встроенные) имеют приоритет над обычными правилами set.
+
+## Параметры [#parameters]
+
+```typst
+bibliography(
+  str | path | bytes | array,
+  title: none | auto | content,
+  full: bool,
+  style: str | path | bytes,
+  target: auto | label | selector | location | function,
+  group: none | auto | str,
+)
+```
+
+### `sources` [#parameters-sources]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) или [array](/docs/typst/reference/foundations/array) · **Модификаторы:** Обязательный, Позиционный
+
+Один или несколько путей к файлам Hayagriva `.yaml` и/или BibLaTeX `.bib` либо их необработанные байты.
+
+Это может быть:
+
+- Строка пути или [`path`](/docs/typst/reference/foundations/path) для загрузки файла библиографии.
+- Необработанные байты, из которых должна быть декодирована библиография.
+- Массив, каждый элемент которого является одним из вышеперечисленного.
+
+### `title` [#parameters-title]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [content](/docs/typst/reference/foundations/content) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Заголовок библиографии.
+
+- Если задано `auto`, будет использоваться подходящий заголовок для [языка текста](/docs/typst/reference/text/text#parameters-lang). Это значение по умолчанию.
+- Если задано `none`, у библиографии не будет заголовка.
+- Пользовательский заголовок можно задать, передав содержимое.
+
+Заголовок библиографии по умолчанию не будет нумероваться, но вы можете принудительно включить нумерацию с помощью правила show-set: `show bibliography: set heading(numbering: "1.")`
+
+### `full` [#parameters-full]
+
+**Тип:** [bool](/docs/typst/reference/foundations/bool) · **Модификаторы:** Settable · **По умолчанию:** `false`
+
+Включать ли все работы из заданных файлов библиографии, даже те, на которые не было ссылок в документе.
+
+Чтобы выборочно добавить отдельные цитируемые работы без их отображения, вы также можете использовать функцию `cite` с параметром [`form`](/docs/typst/reference/model/cite#parameters-form), установленным в `none`.
+
+### `style` [#parameters-style]
+
+**Тип:** [str](/docs/typst/reference/foundations/str) или [path](/docs/typst/reference/foundations/path) или [bytes](/docs/typst/reference/foundations/bytes) · **Модификаторы:** Settable · **По умолчанию:** `"ieee"`
+
+Стиль библиографии.
+
+Это может быть:
+
+- Строка с именем одного из встроенных стилей (см. ниже). Некоторые из перечисленных ниже стилей встречаются дважды: один раз под полным именем и один раз под коротким псевдонимом.
+- Строка пути или [`path`](/docs/typst/reference/foundations/path) к [файлу CSL](https://citationstyles.org/).
+- Необработанные байты, из которых должен быть декодирован стиль CSL.
+
+<details>
+<summary>Показать варианты</summary>
+
+| **Вариант** | **Описание** |
+| --- | --- |
+| `"alphanumeric"` | Alphanumeric |
+| `"american-anthropological-association"` | American Anthropological Association |
+| `"american-chemical-society"` | ACS Guide 2022 revision |
+| `"american-geophysical-union"` | American Geophysical Union |
+| `"american-institute-of-aeronautics-and-astronautics"` | American Institute of Aeronautics and Astronautics |
+| `"american-institute-of-physics"` | AIP Style Manual 4th edition |
+| `"american-medical-association"` | AMA Manual of Style 11th edition |
+| `"american-meteorological-society"` | American Meteorological Society |
+| `"american-physics-society"` | American Physical Society |
+| `"american-physiological-society"` | American Physiological Society |
+| `"american-political-science-association"` | APSA Style Manual revised 2018 edition |
+| `"american-psychological-association"` | APA Style 7th edition |
+| `"apa"` | Короткий псевдоним `american-psychological-association` |
+| `"american-society-for-microbiology"` | American Society for Microbiology |
+| `"american-society-of-civil-engineers"` | American Society of Civil Engineers |
+| `"american-society-of-mechanical-engineers"` | American Society of Mechanical Engineers |
+| `"american-sociological-association"` | ASA Style Guide 6th/7th edition |
+| `"angewandte-chemie"` | Angewandte Chemie International Edition |
+| `"annual-reviews"` | Annual Reviews (сортировка по порядку появления) |
+| `"annual-reviews-author-date"` | Annual Reviews (author-date) |
+| `"associacao-brasileira-de-normas-tecnicas"` | Associação Brasileira de Normas Técnicas (Português - Brasil) |
+| `"association-for-computing-machinery"` | Association for Computing Machinery |
+| `"biomed-central"` | BioMed Central |
+| `"bristol-university-press"` | Bristol University Press |
+| `"british-medical-journal"` | BMJ |
+| `"bmj"` | Короткий псевдоним `british-medical-journal` |
+| `"cell"` | Cell |
+| `"chicago-author-date"` | Chicago Manual of Style 18th edition (author-date) |
+| `"chicago-notes"` | Chicago Manual of Style 18th edition (notes and bibliography) |
+| `"chicago-fullnotes"` | Короткий псевдоним `chicago-notes` |
+| `"chicago-shortened-notes"` | Chicago Manual of Style 18th edition (shortened notes and bibliography) |
+| `"copernicus"` | Copernicus Publications |
+| `"cse-citation-sequence-brackets-8th-edition"` | CSE Manual: Scientific Style and Format 8th edition (citation-sequence, brackets) |
+| `"council-of-science-editors"` | Короткий псевдоним `cse-citation-sequence-brackets-8th-edition` |
+| `"cse-name-year"` | CSE Manual: Scientific Style and Format 9th edition (name-year) |
+| `"council-of-science-editors-author-date"` | Короткий псевдоним `cse-name-year` |
+| `"current-opinion"` | Current Opinion journals |
+| `"deutsche-gesellschaft-für-psychologie"` | Deutsche Gesellschaft für Psychologie 5. Auflage (Deutsch) |
+| `"deutsche-sprache"` | Deutsche Sprache (Deutsch) |
+| `"elsevier-harvard"` | Elsevier (author-date/Harvard, with titles) |
+| `"elsevier-vancouver"` | Elsevier - NLM/Vancouver (citation-sequence) |
+| `"elsevier-with-titles"` | Elsevier (numeric, with titles) |
+| `"frontiers"` | Frontiers journals |
+| `"future-medicine"` | Future Medicine journals |
+| `"future-science"` | Future Science Group |
+| `"gb-7714-2005-numeric"` | China National Standard GB/T 7714-2005 (numeric, 中文) |
+| `"gb-7714-2015-author-date"` | China National Standard GB/T 7714-2015 (author-date, 中文) |
+| `"gb-7714-2015-note"` | China National Standard GB/T 7714-2015 (note, 中文) |
+| `"gb-7714-2015-numeric"` | China National Standard GB/T 7714-2015 (numeric, 中文) |
+| `"gost-r-705-2008-numeric"` | Russian GOST R 7.0.5-2008 (numeric) |
+| `"harvard-cite-them-right"` | Cite Them Right 12th edition (author-date/Harvard) |
+| `"institute-of-electrical-and-electronics-engineers"` | IEEE Reference Guide version 11.29.2023 |
+| `"ieee"` | Короткий псевдоним `institute-of-electrical-and-electronics-engineers` |
+| `"institute-of-physics-numeric"` | Institute of Physics (numeric) |
+| `"iso-690-author-date"` | ISO-690 (author-date, English) |
+| `"iso-690-numeric"` | ISO-690 (numeric, English) |
+| `"karger"` | Karger journals |
+| `"mary-ann-liebert-vancouver"` | Mary Ann Liebert - NLM/Vancouver |
+| `"modern-humanities-research-association-notes"` | MHRA Style Guide 4th edition (notes) |
+| `"modern-humanities-research-association"` | Короткий псевдоним `modern-humanities-research-association-notes` |
+| `"modern-language-association"` | MLA Handbook 9th edition (in-text citations) |
+| `"mla"` | Короткий псевдоним `modern-language-association` |
+| `"modern-language-association-8"` | Короткий псевдоним `modern-language-association` |
+| `"mla-8"` | Короткий псевдоним `modern-language-association` |
+| `"multidisciplinary-digital-publishing-institute"` | Multidisciplinary Digital Publishing Institute |
+| `"nature"` | Nature |
+| `"nlm-citation-sequence"` | NLM/Vancouver: Citing Medicine 2nd edition (citation-sequence) |
+| `"vancouver"` | Короткий псевдоним `nlm-citation-sequence` |
+| `"nlm-citation-sequence-superscript"` | NLM/Vancouver: Citing Medicine 2nd edition (citation-sequence, superscript) |
+| `"vancouver-superscript"` | Короткий псевдоним `nlm-citation-sequence-superscript` |
+| `"pensoft"` | Pensoft Journals |
+| `"public-library-of-science"` | Public Library of Science |
+| `"plos"` | Короткий псевдоним `public-library-of-science` |
+| `"royal-society-of-chemistry"` | Royal Society of Chemistry |
+| `"sage-vancouver"` | SAGE - NLM/Vancouver |
+| `"sist02"` | SIST02 (日本語) |
+| `"spie"` | SPIE journals |
+| `"springer-basic"` | Springer - Basic (numeric, brackets) |
+| `"springer-basic-author-date"` | Springer - Basic (author-date) |
+| `"springer-fachzeitschriften-medizin-psychologie"` | Springer - Fachzeitschriften Medizin Psychologie (Deutsch) |
+| `"springer-humanities-author-date"` | Springer - Humanities (author-date) |
+| `"springer-lecture-notes-in-computer-science"` | Springer - Lecture Notes in Computer Science |
+| `"springer-mathphys"` | Springer - MathPhys (numeric, brackets) |
+| `"springer-socpsych-author-date"` | Springer - SocPsych (author-date) |
+| `"springer-vancouver"` | Springer - NLM/Vancouver (citation-sequence, brackets) |
+| `"taylor-and-francis-chicago-author-date"` | Taylor & Francis Journals Standard Reference Style Guide: Chicago author-date version 2.0 |
+| `"taylor-and-francis-national-library-of-medicine"` | Taylor & Francis - NLM/Vancouver (citation-sequence, brackets) |
+| `"the-institution-of-engineering-and-technology"` | The Institution of Engineering and Technology |
+| `"the-lancet"` | The Lancet |
+| `"thieme"` | Thieme-German (Deutsch) |
+| `"trends"` | Trends journals |
+| `"turabian-author-date"` | Chicago Manual of Style 17th edition (author-date) |
+| `"turabian-fullnote-8"` | Chicago Manual of Style 17th edition (notes and bibliography, subsequent author-title) |
+
+</details>
+
+### `target` [#parameters-target]
+
+**Тип:** [auto](/docs/typst/reference/foundations/auto) или [label](/docs/typst/reference/foundations/label) или [selector](/docs/typst/reference/foundations/selector) или [location](/docs/typst/reference/introspection/location) или [function](/docs/typst/reference/foundations/function) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Определяет, какие ссылки включать в библиографию.
+
+Typst автоматически привязывает каждую ссылку в документе к библиографии. Конкретно, ссылка привязывается (в порядке приоритета) к
+
+1. первой библиографии, которая включает её в свой селектор `target`; или, если такой библиографии нет,
+2. ближайшей _следующей_ библиографии с `target: auto`, которая содержит её ключ; или, если такой библиографии не следует,
+3. ближайшей _предшествующей_ библиографии с `target: auto`, которая содержит её ключ.
+
+<details>
+<summary>Показать пример: локальная библиография</summary>
+
+<TypstRender
+  code={`
+  #let info(body) = block(
+    stroke: (left: 1.5pt + blue),
+    fill: aqua.lighten(50%),
+    inset: 1em,
+    context {
+      body
+      show divider: set block(spacing: 1.2em)
+      divider()
+      bibliography(
+        "works.bib",
+        title: none,
+        target: selector(cite).within(here()),
+        style: "mla",
+      )
+    }
+  )
+
+  = On the matter of dumplings
+  In recent years, we can observe an uptick in
+  dumpling consumption across the board. @netwok
+  #info[
+    Dumplings are particularly enjoyed
+    among pirates. @arrgh
+  ]
+
+  #bibliography("works.bib")
+`}
+  image="/typst_docs_assets/images/2vWUNelwPcTov4_Zifbz9g.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+### `group` [#parameters-group]
+
+**Тип:** [none](/docs/typst/reference/foundations/none) или [auto](/docs/typst/reference/foundations/auto) или [str](/docs/typst/reference/foundations/str) · **Модификаторы:** Settable · **По умолчанию:** `auto`
+
+Концептуально объединяет эту библиографию с другими библиографиями для целей нумерации. Библиографии в одной группе будут присваивать последовательные номера ссылок.
+
+Это может быть:
+
+- `none`: библиография будет нумероваться изолированно.
+- `auto`: библиография будет нумероваться последовательно со всеми другими библиографиями в группе `auto`.
+- [Строка](/docs/typst/reference/foundations/str): библиография будет нумероваться последовательно со всеми другими библиографиями с тем же значением `group`.
+
+Группа `auto` работает так же, как любая строковая группа, но является канонической группой по умолчанию.
+
+<details>
+<summary>Показать пример: последовательные номера ссылок</summary>
+
+<TypstRender
+  code={`
+  #show bibliography: set heading(
+    offset: 1,
+  )
+
+  = First part
+  Starts at one: @netwok @arrgh
+  #bibliography(
+    "works.bib",
+    style: "ieee",
+  )
+
+  = Second part
+  Continues with three: @distress
+  #bibliography(
+    "works.bib",
+    style: "nlm-citation-sequence",
+  )
+`}
+  image="/typst_docs_assets/images/5z7FFdgMYjxYPaXofgMWew.png"
+  alt=""
+  editable={true}
+/>
+
+</details>
+
+<details>
+<summary>Показать пример: отдельные номера ссылок</summary>
+
+<TypstRender
+  code={`
+  #show bibliography: set heading(
+    offset: 1,
+  )
+  #set bibliography(group: none)
+
+  = First part
+  Starts at one: @netwok @arrgh
+  #bibliography(
+    "works.bib",
+    style: "ieee",
+  )
+
+  = Second part
+  Resets to one: @distress
+  #bibliography(
+    "works.bib",
+    style: "nlm-citation-sequence",
+  )
+`}
+  image="/typst_docs_assets/images/xbhXuvbfnPY_XZEMcmvltQ.png"
+  alt=""
+  editable={true}
+/>
+
+</details>

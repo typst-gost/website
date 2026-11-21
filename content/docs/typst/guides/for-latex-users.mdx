@@ -1,0 +1,496 @@
+---
+title: "Руководство для пользователей LaTeX"
+description: "Вы пользователь LaTeX? Это руководство объясняет различия и сходства между Typst и LaTeX, чтобы вы могли быстро начать работу."
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+Эта страница — хорошая отправная точка, если вы раньше работали с LaTeX и хотите попробовать Typst. Мы рассмотрим основные различия между этими двумя системами с точки зрения пользователя. Хотя Typst не построен на основе LaTeX и имеет другой синтаксис, вы узнаете, как использовать свои навыки работы с LaTeX, чтобы получить преимущество на старте.
+
+Как и LaTeX, Typst — это система вёрстки на основе разметки: вы составляете документ в текстовом файле и размечаете его командами и другим синтаксисом. Затем вы используете компилятор, чтобы сверстать исходный файл в PDF. Однако Typst также отличается от LaTeX в нескольких аспектах: во-первых, Typst использует более специализированный синтаксис (как вы можете знать из Markdown) для типовых задач. Команды Typst также более последовательны: все они работают одинаково, поэтому, в отличие от LaTeX, вам нужно понять лишь несколько общих концепций, а не изучать разные соглашения для каждого пакета. Более того, Typst компилируется быстрее, чем LaTeX: компиляция обычно занимает миллисекунды, а не секунды, поэтому и веб-приложение, и компилятор могут обеспечивать мгновенный предпросмотр.
+
+Далее мы рассмотрим некоторые из наиболее частых вопросов, которые возникают у пользователя, переходящего с LaTeX, при составлении документа в Typst. Если вы предпочитаете пошаговое введение в Typst, ознакомьтесь с нашим [руководством](/docs/typst/tutorial).
+
+## Установка [#installation]
+
+У вас есть два способа использовать Typst: в [нашем веб-приложении](https://typst.app/signup/) или [установив компилятор](https://github.com/typst/typst/releases) на свой компьютер. Когда вы используете веб-приложение, мы предоставляем полностью укомплектованный совместный редактор и запускаем Typst в вашем браузере — установка не требуется.
+
+Если вы предпочитаете использовать Typst на своём компьютере, вы можете скачать компилятор в виде одного небольшого бинарного файла, который может запустить любой пользователь, без прав root. В отличие от популярных дистрибутивов LaTeX, таких как TeX Live, пакеты скачиваются при первом использовании и затем кэшируются локально, что делает вашу установку Typst компактной. Вы можете использовать собственный редактор и решать, где хранить файлы, с помощью локального компилятора.
+
+## Как создать новый пустой документ? [#getting-started]
+
+Это просто. Вы просто создаёте новый пустой текстовый файл (расширение файла — `.typ`). Для начала не нужен никакой шаблонный код. Просто начните писать текст. Он будет свёрстан на пустой странице формата A4. Если вы используете веб-приложение, нажмите «+ Empty document», чтобы создать новый проект с файлом и войти в редактор. [Разрывы абзацев](/docs/typst/reference/model/parbreak) работают так же, как в LaTeX, — просто используйте пустую строку.
+
+<TypstRender
+  code={`
+  Hey there!
+
+  Here are two paragraphs. The
+  output is shown to the right.
+`}
+  image="/typst_docs_assets/images/OaNCm-z9z0-9Ysi_9-3sog.png"
+  alt=""
+  editable={true}
+/>
+
+Если вместо этого вы хотите начать с уже существующего документа LaTeX, вы можете использовать [Pandoc](https://pandoc.org), чтобы преобразовать исходный код в разметку Typst. Это преобразование также встроено в наше веб-приложение, поэтому вы можете загрузить свой файл `.tex`, чтобы начать проект в Typst.
+
+## Как создать заголовки разделов, выделение, …? [#elements]
+
+LaTeX использует команду `\section` для создания заголовка раздела. Вложенные заголовки обозначаются с помощью `\subsection`, `\subsubsection` и т.д. В зависимости от класса документа также доступны `\part` или `\chapter`.
+
+В Typst [заголовки](/docs/typst/reference/model/heading) менее многословны: вы предваряете строку с заголовком знаком равенства и пробелом, чтобы получить заголовок первого уровня: `= Introduction`. Если вам нужен заголовок второго уровня, используйте два знака равенства: `== In this paper`. Вы можете вкладывать заголовки на любую глубину, добавляя больше знаков равенства.
+
+Выделение (обычно отображается курсивом) выражается заключением текста в `_underscores_`, а сильное выделение (обычно отображается полужирным) — с помощью `*stars*`.
+
+Ниже приведён список распространённых команд разметки, используемых в LaTeX, и их эквивалентов в Typst. Вы также можете ознакомиться с [полной шпаргалкой по синтаксису](/docs/typst/reference/syntax).
+
+| **Элемент** | **LaTeX** | **Typst** | **См.** |
+| --- | --- | --- | --- |
+| Сильное выделение | `\textbf{strong}` | `*strong*` | [`strong`](/docs/typst/reference/model/strong) |
+| Выделение | `\emph{emphasis}` | `_emphasis_` | [`emph`](/docs/typst/reference/model/emph) |
+| Ссылка | `\url{https://typst.app}` | `https://typst.app/` | [`link`](/docs/typst/reference/model/link) |
+| Метка | `\label{intro}` | `<intro>` | [`label`](/docs/typst/reference/foundations/label) |
+| Перекрёстная ссылка | `\ref{intro}` | `@intro` | [`ref`](/docs/typst/reference/model/ref) |
+| Цитирование | `\cite{humphrey97}` | `@humphrey97` | [`cite`](/docs/typst/reference/model/cite) |
+| Моноширинный (пишущая машинка) | `\texttt{mono}` | функции `text` или `mono` | [`text`](/docs/typst/reference/text/text), [`mono`](/docs/typst/reference/math/variants#functions-mono) |
+| Код | окружение `lstlisting` | `` `print(f"{x}")` `` | [`raw`](/docs/typst/reference/text/raw) |
+| Дословный текст | окружение `verbatim` | `` `#typst-code()` `` | [`raw`](/docs/typst/reference/text/raw) |
+| Маркированный список | окружение `itemize` | `- List` | [`list`](/docs/typst/reference/model/list) |
+| Нумерованный список | окружение `enumerate` | `+ List` | [`enum`](/docs/typst/reference/model/enum) |
+| Список терминов | окружение `description` | `/ Term: List` | [`terms`](/docs/typst/reference/model/terms) |
+| Иллюстрация | окружение `figure` | функция `figure` | [`figure`](/docs/typst/reference/model/figure) |
+| Таблица | окружение `table` | функция `table` | [`table`](/docs/typst/reference/model/table) |
+| Формула | `$x$`, окружения `align` / `equation` | `$x$`, `$ x = y $` | [`equation`](/docs/typst/reference/math/equation) |
+
+[Списки](/docs/typst/reference/model/list) в Typst не полагаются на окружения. Вместо этого они имеют облегчённый синтаксис, как у заголовков. Чтобы создать неупорядоченный список (`itemize`), предварьте каждую строку элемента дефисом:
+
+<TypstRender
+  code={`
+  To write this list in Typst...
+  \`\`\`latex
+  \\begin{itemize}
+    \\item Fast
+    \\item Flexible
+    \\item Intuitive
+  \\end{itemize}
+  \`\`\`
+  ...just type this:
+
+  - Fast
+  - Flexible
+  - Intuitive
+`}
+  image="/typst_docs_assets/images/80irUdGGKqfXLgir3364Gg.png"
+  alt=""
+  editable={true}
+/>
+
+Вложенность списков работает просто за счёт правильных отступов. Добавление пустой строки между элементами приводит к более [широко](/docs/typst/reference/model/list#parameters-tight) расставленному списку.
+
+Чтобы вместо этого получить [нумерованный список](/docs/typst/reference/model/enum) (`enumerate`), используйте `+` вместо дефиса. Для [списка терминов](/docs/typst/reference/model/terms) (`description`) напишите `/ Term: Description`.
+
+Обратите внимание, что [функция `raw`](/docs/typst/reference/text/raw) и синтаксис (например, `` `raw` ``) работают только для дословного (неформатированного) текста. Если вам требуется форматирование, вы можете вместо этого использовать [функцию `text`](/docs/typst/reference/text/text) с моноширинным шрифтом, как в примере ниже:
+
+<TypstRender
+  code={`
+  #text(
+    font: "DejaVu Sans Mono",
+    size: 0.8em,
+  )[monospace *bold*]
+`}
+  image="/typst_docs_assets/images/TLNEZO6NFoi0TiBKEM9e8w.png"
+  alt=""
+  editable={true}
+/>
+
+## Как использовать команду? [#commands]
+
+LaTeX в значительной степени полагается на команды (с префиксом в виде обратной косой черты). Он использует эти _макросы_ для влияния на процесс вёрстки, а также для вставки и манипулирования содержимым. Некоторые команды принимают аргументы, которые чаще всего заключаются в фигурные скобки: `\cite{rasmus}`.
+
+Typst различает [режим разметки и режим кода](/docs/typst/reference/scripting#blocks). По умолчанию используется режим разметки, в котором вы составляете текст и применяете синтаксические конструкции, такие как `*stars for bold text*`. Режим кода, напротив, аналогичен языкам программирования, таким как Python, и предоставляет возможность вводить и выполнять фрагменты кода.
+
+В разметке Typst вы можете переключиться в режим кода для одной команды (или, точнее, _выражения_) с помощью решётки (`#`). Так вы вызываете функции, например, чтобы разделить проект на разные [файлы](/docs/typst/reference/scripting#modules) или отобразить текст на основе некоторого [условия](/docs/typst/reference/scripting#conditionals). В режиме кода можно включать обычную разметку [_содержимого_](/docs/typst/reference/foundations/content) с помощью квадратных скобок. В режиме кода это содержимое рассматривается как любое другое обычное значение переменной.
+
+<TypstRender
+  code={`
+  First, a rectangle:
+  #rect()
+
+  Let me show how to do
+  #underline([_underlined_ text])
+
+  We can also do some maths:
+  #calc.max(3, 2 * 4)
+
+  And finally a little loop:
+  #for x in range(3) [
+    Hi #x.
+  ]
+`}
+  image="/typst_docs_assets/images/MDXmmRJ2-dan1oNXNIr5ZA.png"
+  alt=""
+  editable={true}
+/>
+
+Вызов функции всегда включает имя функции ([`rect`](/docs/typst/reference/visualize/rect), [`underline`](/docs/typst/reference/text/underline), [`calc.max`](/docs/typst/reference/foundations/calc#functions-max), [`range`](/docs/typst/reference/foundations/array#definitions-range)), за которым следуют круглые скобки (в отличие от LaTeX, где квадратные скобки и фигурные скобки необязательны, если макрос не требует аргументов). Ожидаемый список аргументов, передаваемых в этих скобках, зависит от конкретной функции и указан в [справочнике](/docs/typst/reference).
+
+### Аргументы [#arguments]
+
+Функция может иметь несколько аргументов. Некоторые аргументы являются позиционными, то есть вы просто передаёте значение: функция `#lower("SCREAM")` возвращает свой аргумент в нижнем регистре. Многие функции вместо позиционных аргументов используют именованные аргументы для повышения читаемости. Например, размеры и обводка прямоугольника задаются именованными аргументами:
+
+<TypstRender
+  code={`
+  #rect(
+    width: 2cm,
+    height: 1cm,
+    stroke: red,
+  )
+`}
+  image="/typst_docs_assets/images/2ZnVnt0X7Tu-rDFQrC539w.png"
+  alt=""
+  editable={true}
+/>
+
+Вы задаёте именованный аргумент, сначала вводя его имя (выше это `width`, `height` и `stroke`), затем двоеточие, за которым следует значение (`2cm`, `1cm`, `red`). Доступные именованные аргументы можно найти на [странице справочника](/docs/typst/reference) для каждой функции или в панели автодополнения при вводе. Именованные аргументы похожи на то, как настраиваются некоторые окружения LaTeX: например, вы вводите `\begin{enumerate}[label={\alph*)}]`, чтобы начать список с метками `a)`, `b)` и так далее.
+
+Часто вы хотите передать функции некоторое [содержимое](/docs/typst/reference/foundations/content). Например, команда LaTeX `\underline{Alternative A}` в Typst будет выглядеть как `#underline([Alternative A])`. Квадратные скобки указывают, что значение является [содержимым](/docs/typst/reference/foundations/content). Внутри этих скобок вы можете использовать обычную разметку. Однако для довольно простой конструкции это слишком много скобок. Поэтому вы также можете переместить завершающие аргументы содержимого после круглых скобок (и опустить круглые скобки, если они оказались бы пустыми).
+
+<TypstRender
+  code={`
+  Typst is an #underline[alternative]
+  to LaTeX.
+
+  #rect(fill: aqua)[Get started here!]
+`}
+  image="/typst_docs_assets/images/P8n8dzNuVoMTYC1Y31k9kA.png"
+  alt=""
+  editable={true}
+/>
+
+### Типы данных [#data-types]
+
+Вы, вероятно, уже заметили, что аргументы имеют различные типы данных. Typst поддерживает множество [типов данных](/docs/typst/reference/foundations/type). Ниже приведена таблица с некоторыми из наиболее важных из них и способами их записи. Чтобы указать значения любого из этих типов, вы должны находиться в режиме кода!
+
+| **Тип данных** | **Пример** |
+| --- | --- |
+| [Содержимое](/docs/typst/reference/foundations/content) | `[*fast* typesetting]` |
+| [Строка](/docs/typst/reference/foundations/str) | `"Pietro S. Author"` |
+| [Целое число](/docs/typst/reference/foundations/int) | `23` |
+| [Число с плавающей точкой](/docs/typst/reference/foundations/float) | `1.459` |
+| [Абсолютная длина](/docs/typst/reference/layout/length) | `12pt`, `5in`, `0.3cm`, … |
+| [Относительная длина](/docs/typst/reference/layout/ratio) | `65%` |
+
+Разница между содержимым и строкой заключается в том, что содержимое может содержать разметку, включая вызовы функций, тогда как строка — это действительно просто последовательность символов.
+
+Typst предоставляет [конструкции управления потоком](/docs/typst/reference/scripting#conditionals) и [операторы](/docs/typst/reference/scripting#operators), такие как `+` для сложения или `==` для проверки равенства двух переменных.
+
+Вы также можете хранить значения, включая функции, в собственных [переменных](/docs/typst/reference/scripting#bindings). Это может быть полезно для выполнения над ними вычислений, создания переиспользуемых автоматизаций или многократного обращения к значению. Привязка переменной осуществляется с помощью ключевого слова let, которое работает аналогично `\newcommand`:
+
+<TypstRender
+  code={`
+  // Store the integer \`5\`.
+  #let five = 5
+  // Define a function that
+  // increments a value.
+  #let inc(i) = i + 1
+  // Reference the variables.
+  I have #five fingers.
+
+  If I had one more, I'd have
+  #inc(five) fingers. Whoa!
+`}
+  image="/typst_docs_assets/images/vBJP3HlTdqGvf1hxNFuyHg.png"
+  alt=""
+  editable={true}
+/>
+
+### Команды, влияющие на оставшуюся часть документа [#rules]
+
+В LaTeX некоторые команды, такие как `\textbf{bold text}`, принимают аргумент в фигурных скобках и влияют только на этот аргумент. Другие команды, такие как `\bfseries bold text`, действуют как переключатели (LaTeX называет это объявлением), изменяя внешний вид всего последующего содержимого в документе или текущей области видимости.
+
+В Typst одну и ту же функцию можно использовать как для влияния на внешний вид до конца документа, блока (или области видимости), так и только на её аргументы. Например, `#text(weight: "bold")[bold text]` сделает полужирным только свой аргумент, тогда как `#set text(weight: "bold")` сделает полужирным любой текст до конца текущего блока или до конца документа, если блока нет. Эффекты функции сразу очевидны в зависимости от того, используется ли она в вызове или в [правиле set.](/docs/typst/reference/styling#set-rules)
+
+<TypstRender
+  code={`
+  I am starting out with small text.
+
+  #set text(14pt)
+
+  This is a bit #text(18pt)[larger,]
+  don't you think?
+`}
+  image="/typst_docs_assets/images/5Vkc_t_x8XUNQaoh9RH1Bg.png"
+  alt=""
+  editable={true}
+/>
+
+Правила set могут появляться в любом месте документа. Их можно рассматривать как значения аргументов по умолчанию для соответствующей функции:
+
+<TypstRender
+  code={`
+  #set enum(numbering: "I.")
+
+  Good results can only be obtained by
+  + following best practices
+  + being aware of current results
+    of other researchers
+  + checking the data for biases
+`}
+  image="/typst_docs_assets/images/ZRk32Uvv3DxusISVH5vjFA.png"
+  alt=""
+  editable={true}
+/>
+
+`+` — это синтаксический сахар (считайте его сокращением) для вызова функции [`enum`](/docs/typst/reference/model/enum), к которой мы применили правило set выше. [Большая часть синтаксиса связана с функцией именно таким образом.](/docs/typst/reference/syntax) Если вам нужно оформить элемент сверх того, что позволяют его аргументы, вы можете полностью переопределить его внешний вид с помощью [правила show](/docs/typst/reference/styling#show-rules) (несколько сравнимо с `\renewcommand`).
+
+Вы можете добиться эффектов команд LaTeX, таких как `\textbf`, `\textsf`, `\rmfamily`, `\mdseries` и `\itshape`, с помощью аргументов [`font`](/docs/typst/reference/text/text#parameters-font), [`style`](/docs/typst/reference/text/text#parameters-style) и [`weight`](/docs/typst/reference/text/text#parameters-weight) функции `text`. Функцию text можно использовать в правиле set (стиль объявления) или с аргументом содержимого. Чтобы заменить `\textsc`, вы можете использовать функцию [`smallcaps`](/docs/typst/reference/text/smallcaps), которая отображает свой аргумент содержимого как капитель. Если вы хотите использовать её в стиле объявления (как `\scshape`), вы можете использовать [правило show для _всего_](/docs/typst/reference/styling#show-rules), которое применяет функцию к остальной части области видимости:
+
+<TypstRender
+  code={`
+  #show: smallcaps
+
+  Boisterous Accusations
+`}
+  image="/typst_docs_assets/images/IsOTRlQzlOqpnqQ1RqBSgA.png"
+  alt=""
+  editable={true}
+/>
+
+## Как загрузить класс документа? [#templates]
+
+В LaTeX вы начинаете свой основной файл `.tex` с команды `\documentclass{article}`, чтобы определить, как должен выглядеть ваш документ. В этой команде вы могли заменить `article` на другое значение, например `report` и `amsart`, чтобы выбрать другой внешний вид.
+
+При использовании Typst вы оформляете свои документы с помощью [функций](/docs/typst/reference/foundations/function). Обычно вы используете шаблон, который предоставляет функцию, оформляющую весь ваш документ. Сначала вы импортируете функцию из файла шаблона. Затем вы применяете её ко всему документу. Это достигается с помощью [правила show](/docs/typst/reference/styling#show-rules), которое оборачивает следующий документ в заданную функцию. Следующий пример иллюстрирует, как это работает:
+
+<TypstRender
+  code={`
+  #import "conf.typ": conf
+  #show: conf.with(
+    title: [
+      Towards Improved Modelling
+    ],
+    authors: (
+      (
+        name: "Theresa Tungsten",
+        affiliation: "Artos Institute",
+        email: "tung@artos.edu",
+      ),
+      (
+        name: "Eugene Deklan",
+        affiliation: "Honduras State",
+        email: "e.deklan@hstate.hn",
+      ),
+    ),
+    abstract: lorem(80),
+  )
+
+  Let's get started writing this
+  article by putting insightful
+  paragraphs right here!
+`}
+  image="/typst_docs_assets/images/dV4n59gtYJAQ7H3TnmPUNg.png"
+  alt=""
+  editable={true}
+/>
+
+Инструкция [`import`](/docs/typst/reference/scripting#modules) делает доступными [функции](/docs/typst/reference/foundations/function) (и другие определения) из другого файла. В этом примере она импортирует функцию `conf` из файла `conf.typ`. Эта функция форматирует документ как статью для конференции. Мы используем правило show, чтобы применить её к документу, а также настроить некоторые метаданные статьи. После применения правила show мы можем сразу начать писать нашу статью!
+
+Вы также можете использовать шаблоны из Typst Universe (это эквивалент CTAN в Typst) с помощью инструкции import, например: `#import "@preview/elsearticle:0.2.1": elsearticle`. Обратитесь к документации конкретного шаблона, чтобы узнать имя его функции шаблона. Шаблоны и пакеты из Typst Universe автоматически скачиваются при первом использовании.
+
+В веб-приложении вы можете создать проект из шаблона в Typst Universe или даже создать собственный с помощью мастера шаблонов. Локально вы можете использовать CLI-команду `typst init`, чтобы создать новый проект из шаблона. Ознакомьтесь со [списком шаблонов](https://typst.app/universe/search/?kind=templates), опубликованных в Typst Universe. Вы также можете взглянуть на [репозиторий `awesome-typst`](https://github.com/qjcg/awesome-typst), чтобы найти шаблоны сообщества, недоступные через Universe.
+
+Вы также можете [создавать собственные шаблоны.](/docs/typst/tutorial/making-a-template) Они короче и читабельнее соответствующих файлов `.sty` LaTeX на порядки, так что попробуйте!
+
+<Callout>
+Функции — это «команды» Typst, и они могут преобразовывать свои аргументы в выходное значение, включая _содержимое_ документа. Функции «чистые», что означает, что они не могут иметь никаких эффектов, кроме создания выходного значения / выходного содержимого. Это резко контрастирует с макросами LaTeX, которые могут оказывать произвольное влияние на ваш документ.
+
+Чтобы функция оформила весь ваш документ, правило show обрабатывает всё, что идёт после него, и вызывает функцию, указанную после двоеточия, с результатом в качестве аргумента. Часть `.with` — это _метод_, который берёт функцию `conf` и предварительно настраивает некоторые её аргументы, прежде чем передать её правилу show.
+</Callout>
+
+## Как загрузить пакеты? [#packages]
+
+Typst — это «всё включено», поэтому эквивалент многих популярных пакетов LaTeX встроен прямо в него. Ниже мы составили таблицу с часто загружаемыми пакетами и соответствующими им функциями Typst.
+
+| **Пакет LaTeX** | **Альтернатива в Typst** |
+| --- | --- |
+| graphicx, svg | функция [`image`](/docs/typst/reference/visualize/image) |
+| tabularx, tabularray | функции [`table`](/docs/typst/reference/model/table), [`grid`](/docs/typst/reference/layout/grid) |
+| fontenc, inputenc, unicode-math | Просто начните писать! |
+| babel, polyglossia | функция [`text`](/docs/typst/reference/text/text#parameters-lang): `#set text(lang: "zh")` |
+| amsmath | [Режим математики](/docs/typst/reference/math) |
+| amsfonts, amssymb | модуль [`sym`](/docs/typst/reference/symbols) и [синтаксис](/docs/typst/reference/syntax#math) |
+| geometry, fancyhdr | функция [`page`](/docs/typst/reference/layout/page) |
+| xcolor | функция [`text`](/docs/typst/reference/text/text#parameters-fill): `#set text(fill: rgb("#0178A4"))` |
+| hyperref | функция [`link`](/docs/typst/reference/model/link) |
+| bibtex, biblatex, natbib | функции [`cite`](/docs/typst/reference/model/cite), [`bibliography`](/docs/typst/reference/model/bibliography) |
+| lstlisting, minted | функция [`raw`](/docs/typst/reference/text/raw) и синтаксис |
+| parskip | функции [`block`](/docs/typst/reference/layout/block#parameters-spacing) и [`par`](/docs/typst/reference/model/par#parameters-first-line-indent) |
+| csquotes | Задайте язык [`text`](/docs/typst/reference/text/text#parameters-lang) и введите `"` или `'` |
+| caption | функция [`figure`](/docs/typst/reference/model/figure) |
+| enumitem | функции [`list`](/docs/typst/reference/model/list), [`enum`](/docs/typst/reference/model/enum), [`terms`](/docs/typst/reference/model/terms) |
+| nicefrac | свойство [`frac.style`](/docs/typst/reference/math/frac#parameters-style) |
+
+Хотя _многое_ встроено, не всё может быть таковым. Именно поэтому у Typst есть собственная [экосистема пакетов](https://typst.app/universe), где сообщество делится своими творениями и автоматизациями. Возьмём, например, пакет _CeTZ_: этот пакет позволяет создавать сложные рисунки и графики. Чтобы использовать CeTZ в своём документе, вы можете просто написать:
+
+```typst
+#import "@preview/cetz:0.4.1"
+```
+
+(`@preview` — это _пространство имён_, используемое, пока менеджер пакетов всё ещё находится в ранней и экспериментальной стадии. В будущем оно будет заменено.)
+
+Помимо официального хаба пакетов, вы также можете взглянуть на [репозиторий awesome-typst](https://github.com/qjcg/awesome-typst), в котором собрана кураторская подборка ресурсов, созданных для Typst.
+
+Если вам нужно загрузить функции и переменные из другого файла в вашем проекте, например чтобы использовать шаблон, вы можете использовать ту же инструкцию [`import`](/docs/typst/reference/scripting#modules) с именем файла вместо спецификации пакета. Чтобы вместо этого включить текстовое содержимое другого файла, вы можете использовать инструкцию [`include`](/docs/typst/reference/scripting#modules). Она извлечёт содержимое указанного файла и поместит его в ваш документ.
+
+## Как вводить математику? [#maths]
+
+Чтобы войти в режим математики в Typst, просто заключите уравнение в знаки доллара. Вы можете войти в режим отображения, добавив пробелы или переводы строк между содержимым уравнения и окружающими его знаками доллара.
+
+<TypstRender
+  code={`
+  The sum of the numbers from
+  $1$ to $n$ is:
+
+  $ sum_(k=1)^n k = (n(n+1))/2 $
+`}
+  image="/typst_docs_assets/images/XVDwl9fMK5En-9O7biSEog.png"
+  alt=""
+  editable={true}
+/>
+
+[Режим математики](/docs/typst/reference/math) работает иначе, чем обычная разметка или режим кода. Числа и отдельные символы отображаются дословно, тогда как несколько последовательных (не числовых) символов будут интерпретироваться как переменные Typst.
+
+Typst предопределяет множество полезных переменных в режиме математики. Все греческие (`alpha`, `beta`, …) и некоторые еврейские буквы (`aleph`, `beth`, …) доступны по их имени. Некоторые символы дополнительно доступны через сокращения, такие как `<=`, `>=` и `->`.
+
+Обратитесь к [страницам символов](/docs/typst/reference/symbols) для полного списка символов. Если символ отсутствует, вы также можете получить к нему доступ через [escape-последовательность Unicode](/docs/typst/reference/syntax#escapes).
+
+Альтернативные и связанные формы символов часто можно выбрать, [добавив модификатор](/docs/typst/reference/foundations/symbol) после точки. Например, `arrow.l.squiggly` вставляет волнистую стрелку, указывающую влево. Если вместо этого вы хотите вставить в своё выражение текст из нескольких букв, заключите его в двойные кавычки:
+
+<TypstRender
+  code={`
+  $ delta "if" x <= 5 $
+`}
+  image="/typst_docs_assets/images/sb_jE7KeAcvqTi10oIUcww.png"
+  alt=""
+  editable={true}
+/>
+
+В Typst разделители автоматически масштабируются под свои выражения, как если бы в LaTeX неявно вставлялись команды `\left` и `\right`. Вы можете настроить поведение разделителей с помощью [функции `lr`](/docs/typst/reference/math/lr#functions-lr). Чтобы предотвратить масштабирование пары разделителей, вы можете экранировать их обратными косыми чертами.
+
+Typst автоматически оформляет термы вокруг косой черты `/` как дробь, соблюдая приоритет операторов. Все круглые скобки, не ставшие избыточными из-за дроби, появятся в выводе. Дроби верстаются вертикально, если не настроены с помощью [`frac.style`](/docs/typst/reference/math/frac#parameters-style). Вы также можете получить косую черту как есть, экранировав её обратной косой чертой (`\/`).
+
+<TypstRender
+  code={`
+  $ f(x) = (x + 1) / x $
+`}
+  image="/typst_docs_assets/images/WoVFKkIBhzfLFHJuBEwfSw.png"
+  alt=""
+  editable={true}
+/>
+
+[Нижние и верхние индексы](/docs/typst/reference/math/attach#functions-attach) работают в Typst и LaTeX похоже. `$x^2$` создаст верхний индекс, `$x_2$` даст нижний индекс. Если вы хотите включить в нижний или верхний индекс более одного значения, заключите их содержимое в круглые скобки: `$x_(a -> epsilon)$`.
+
+Поскольку переменные в режиме математики не нужно предварять `#` (или `\`, как в LaTeX), вы также можете вызывать функции без этих специальных символов:
+
+<TypstRender
+  code={`
+  $ f(x, y) := cases(
+    1 "if" (x dot y)/2 <= 0,
+    2 "if" x "is even",
+    3 "if" x in NN,
+    4 "else",
+  ) $
+`}
+  image="/typst_docs_assets/images/j0d52poyQmlD1JrF8kSfgg.png"
+  alt=""
+  editable={true}
+/>
+
+В приведённом выше примере используется [функция `cases`](/docs/typst/reference/math/cases) для описания f. Внутри функции cases аргументы разделяются запятыми, и аргументы также интерпретируются как математика. Если вместо этого вам нужно интерпретировать аргументы как значения Typst, предварите их `#`:
+
+<TypstRender
+  code={`
+  $ (a + b)^2
+    = a^2
+    + text(fill: #maroon, 2 a b)
+    + b^2 $
+`}
+  image="/typst_docs_assets/images/rOAzRjaXXJC5COZZBCejEQ.png"
+  alt=""
+  editable={true}
+/>
+
+Вы можете использовать все функции Typst в режиме математики и вставлять любое содержимое. Если вы хотите, чтобы они работали обычно, с режимом кода в списке аргументов, вы можете предварить их вызов `#`. Теперь никто не может помешать вам использовать прямоугольники или эмодзи в качестве переменных:
+
+<TypstRender
+  code={`
+  $ sum^10_(🤓=1)
+  #rect(width: 4mm, height: 2mm)/🤓
+    = 🧠 maltese $
+`}
+  image="/typst_docs_assets/images/XzNXcudafnCrDAmyDj_GIA.png"
+  alt=""
+  editable={true}
+/>
+
+Если вы хотите вводить математические символы напрямую как Unicode, это тоже возможно!
+
+Вызовы в математике могут иметь двумерные списки аргументов с использованием `;` в качестве разделителя. Наиболее частое применение этого — [функция `mat`](/docs/typst/reference/math/mat), создающая матрицы:
+
+<TypstRender
+  code={`
+  $ mat(
+    1, 2, ..., 10;
+    2, 2, ..., 10;
+    dots.v, dots.v, dots.down, dots.v;
+    10, 10, ..., 10;
+  ) $
+`}
+  image="/typst_docs_assets/images/VjIchxGulFS9YVYM0b4sJA.png"
+  alt=""
+  editable={true}
+/>
+
+## Как получить «вид LaTeX»? [#latex-look]
+
+Статьи, свёрстанные в LaTeX, имеют безошибочно узнаваемый вид. В основном это связано с их шрифтом Computer Modern, выравниванием по ширине, узким межстрочным интервалом и широкими полями.
+
+Пример ниже
+
+- задаёт широкие [поля](/docs/typst/reference/layout/page#parameters-margin)
+- включает [выравнивание по ширине](/docs/typst/reference/model/par#parameters-justify), [более плотные строки](/docs/typst/reference/model/par#parameters-leading) и [отступ первой строки](/docs/typst/reference/model/par#parameters-first-line-indent)
+- [задаёт шрифт](/docs/typst/reference/text/text#parameters-font) «New Computer Modern» — OpenType-производный от Computer Modern — как для текста, так и для [блоков кода](/docs/typst/reference/text/raw)
+- уменьшает [насыщенность шрифта](/docs/typst/reference/text/text#parameters-weight) в режиме математики
+- отключает [отступы](/docs/typst/reference/layout/block#parameters-spacing) между абзацами
+- увеличивает [отступы](/docs/typst/reference/layout/block#parameters-spacing) вокруг [заголовков](/docs/typst/reference/model/heading)
+
+```typst
+#set page(margin: 1.75in)
+#set par(leading: 0.55em, spacing: 0.55em, first-line-indent: 1.8em, justify: true)
+#set text(font: "New Computer Modern")
+#show raw: set text(font: "New Computer Modern Mono")
+#show math.equation: set text(weight: "regular")
+#show heading: set block(above: 1.4em, below: 1em)
+```
+
+Это должно быть хорошей отправной точкой! Если вы хотите пойти дальше, почему бы не создать переиспользуемый шаблон?
+
+## Библиографии [#bibliographies]
+
+Typst включает полнофункциональную систему библиографии, совместимую с файлами BibTeX. Вы можете продолжать использовать свои библиотеки литературы `.bib`, загружая их с помощью функции [`bibliography`](/docs/typst/reference/model/bibliography). Другая возможность — использовать [собственный формат Typst на основе YAML](https://github.com/typst/hayagriva/blob/main/docs/file-format.md).
+
+Typst использует Citation Style Language для определения и обработки стилей цитирования и библиографии. Вы можете сравнить файлы CSL с файлами `.bbx` BibLaTeX. Компилятор уже включает [более 80 стилей цитирования](/docs/typst/reference/model/bibliography#parameters-style), но вы можете использовать любой стиль, совместимый с CSL, из [репозитория CSL](https://github.com/citation-style-language/styles) или написать свой собственный.
+
+Вы можете цитировать запись в своей библиографии или ссылаться на метку в документе с помощью одного и того же синтаксиса: `@key` (это сослалось бы на запись с именем `key`). В качестве альтернативы вы можете использовать функцию [`cite`](/docs/typst/reference/model/cite).
+
+Альтернативные формы цитирования, такие как только год и цитаты для естественного использования в прозе (ср. `\citet` и `\textcite`), доступны с помощью [`#cite(<key>, form: "prose")`](/docs/typst/reference/model/cite#parameters-form).
+
+Дополнительную информацию можно найти на странице документации функции [`bibliography`](/docs/typst/reference/model/bibliography).
+
+## Какие ограничения у Typst по сравнению с LaTeX? [#limitations]
+
+Хотя сегодня Typst может быть заменой LaTeX для многих, есть функции, которые Typst (пока) не поддерживает. Ниже приведён их список, который, где применимо, содержит возможные обходные пути.
+
+- **Устоявшаяся экосистема построения графиков.** Пользователи LaTeX часто создают сложные диаграммы вместе со своими документами в PGF/TikZ. Экосистема Typst пока не предлагает такой же широты доступных возможностей, но экосистема вокруг [пакета `cetz`](https://typst.app/universe/package/cetz) быстро догоняет.
+- **Изменение полей страницы без разрыва страницы.** В LaTeX поля можно всегда настроить, даже без разрыва страницы. Чтобы изменить поля в Typst, вы используете [функцию `page`](/docs/typst/reference/layout/page), которая вызовет разрыв страницы. Если вы просто хотите, чтобы несколько абзацев выходили на поля, а затем возвращались к старым полям, вы можете использовать [функцию `pad`](/docs/typst/reference/layout/pad) с отрицательным отступом.

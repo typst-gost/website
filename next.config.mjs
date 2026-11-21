@@ -64,7 +64,7 @@ const config = {
         }
         return config;
     },
-    serverExternalPackages: ["pdfjs-dist"],
+    serverExternalPackages: ["pdfjs-dist", "@lancedb/lancedb"],
     reactStrictMode: true,
     async headers() {
         return[
@@ -75,6 +75,15 @@ const config = {
             {
                 source: '/pdfjs/:path*',
                 headers:[{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+            },
+        ];
+    },
+    async redirects() {
+        return [
+            {
+                source: '/docs',
+                destination: '/docs/typst-gost',
+                permanent: true,
             },
         ];
     },
