@@ -49,6 +49,7 @@ jobs:
               -p 3000:3000 \
               -e FEEDBACK_GITHUB_APP_ID="${{ secrets.FEEDBACK_GITHUB_APP_ID }}" \
               -e FEEDBACK_GITHUB_APP_PRIVATE_KEY="${{ secrets.FEEDBACK_GITHUB_APP_PRIVATE_KEY }}" \
+              -e POLZA_AI_API_KEY="${{ secrets.POLZA_AI_API_KEY }}" \
               f0rgenet/typst-gost:${{ github.sha }}
               
             # Второй контейнер (порт 3002)
@@ -58,4 +59,5 @@ jobs:
               -p 3002:3000 \
               -e FEEDBACK_GITHUB_APP_ID="${{ secrets.FEEDBACK_GITHUB_APP_ID }}" \
               -e FEEDBACK_GITHUB_APP_PRIVATE_KEY="${{ secrets.FEEDBACK_GITHUB_APP_PRIVATE_KEY }}" \
+              -e POLZA_AI_API_KEY="${{ secrets.POLZA_AI_API_KEY }}" \
               f0rgenet/typst-gost:${{ github.sha }}
