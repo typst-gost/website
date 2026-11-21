@@ -64,7 +64,7 @@ const config = {
         }
         return config;
     },
-    serverExternalPackages: ["pdfjs-dist"],
+    serverExternalPackages: ["pdfjs-dist", "@lancedb/lancedb"],
     reactStrictMode: true,
     async headers() {
         return[
