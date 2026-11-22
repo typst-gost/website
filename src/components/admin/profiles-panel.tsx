@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Check,
   Code2,
@@ -28,53 +28,40 @@ interface ProfilesPanelProps {
   onProfilesChange: () => Promise<void>;
 }
 
+interface PickerTarget {
+  mode: 'profile_llm' | 'profile_decision' | 'bulk_llm' | 'bulk_decision';
+  title: string;
+  category: ModelCategory;
+  current: string;
+}
+
 const PROMPT_VARIABLES = ['{context}', '{assets_section}', '{current_page_section}'];
 
-export function ProfilesPanel({
-  profiles,
-  onProfilesChange,
-}: ProfilesPanelProps) {
-  const [selectedId, setSelectedId] = useState<ChannelName>('website');
-  const [draft, setDraft] = useState<ProfileConfig | null>(null);
-  const [questionsJson, setQuestionsJson] = useState('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
+interface ProfileEditorProps {
+  profile: ProfileConfig;
+  onProfilesChange: () => Promise<void>;
+  onStatusChange: (banner: { type: 'success' | 'error'; text: string } | null) => void;
+  onOpenPicker: (target: PickerTarget) => void;
+  draftOverrideLlm?: string | null;
+  draftOverrideDecision?: string | null;
+}
 
+function ProfileEditor({
+  profile,
+  onProfilesChange,
+  onStatusChange,
+  onOpenPicker,
+}: ProfileEditorProps) {
+  const [draft, setDraft] = useState<ProfileConfig>(() => structuredClone(profile));
+  const [questionsJson, setQuestionsJson] = useState(() =>
+    JSON.stringify(profile.decision_questions, null, 2),
+  );
+  const [jsonError, setJsonError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
-  const [statusBanner, setStatusBanner] = useState<{
-    type: 'success' | 'error';
-    text: string;
-  } | null>(null);
-
-  const [pickerTarget, setPickerTarget] = useState<{
-    mode: 'profile_llm' | 'profile_decision' | 'bulk_llm' | 'bulk_decision';
-    title: string;
-    category: ModelCategory;
-    current: string;
-  } | null>(null);
-
-  const [bulkOpen, setBulkOpen] = useState(false);
-  const [bulkLlm, setBulkLlm] = useState('');
-  const [bulkDecision, setBulkDecision] = useState('');
-  const [bulkGuardEnabled, setBulkGuardEnabled] = useState<'keep' | 'true' | 'false'>('keep');
-  const [bulkOfftopic, setBulkOfftopic] = useState('');
-  const [bulkNoul, setBulkNoul] = useState('');
-  const [bulkTimeout, setBulkTimeout] = useState('');
-  const [bulkDebug, setBulkDebug] = useState<'keep' | 'true' | 'false'>('keep');
-  const [bulkSaving, setBulkSaving] = useState(false);
-
-  const activeProfile =
-    profiles.find((p) => p.profile_id === selectedId) ?? profiles[0] ?? null;
-
-  useEffect(() => {
-    if (!activeProfile) return;
-    setDraft(structuredClone(activeProfile));
-    setQuestionsJson(JSON.stringify(activeProfile.decision_questions, null, 2));
-    setJsonError(null);
-  }, [activeProfile]);
+  const [pickerField, setPickerField] = useState<'llm' | 'decision' | null>(null);
 
   const handleSaveProfile = async () => {
-    if (!draft) return;
     let parsedQuestions: Record<string, unknown>;
     try {
       parsedQuestions = JSON.parse(questionsJson) as Record<string, unknown>;
@@ -87,7 +74,7 @@ export function ProfilesPanel({
     }
 
     setSaving(true);
-    setStatusBanner(null);
+    onStatusChange(null);
 
     try {
       const payload = {
@@ -122,12 +109,12 @@ export function ProfilesPanel({
       if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
 
       await onProfilesChange();
-      setStatusBanner({
+      onStatusChange({
         type: 'success',
         text: `Профиль «${draft.display_name}» сохранён`,
       });
     } catch (err) {
-      setStatusBanner({
+      onStatusChange({
         type: 'error',
         text: err instanceof Error ? err.message : 'Не удалось сохранить профиль',
       });
@@ -137,21 +124,20 @@ export function ProfilesPanel({
   };
 
   const handleResetProfile = async () => {
-    if (!draft) return;
     setResetting(true);
-    setStatusBanner(null);
+    onStatusChange(null);
     try {
       const res = await fetch(`/api/admin/profiles/${draft.profile_id}/reset`, {
         method: 'POST',
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await onProfilesChange();
-      setStatusBanner({
+      onStatusChange({
         type: 'success',
         text: `Профиль «${draft.display_name}» сброшен к значениям по умолчанию`,
       });
     } catch (err) {
-      setStatusBanner({
+      onStatusChange({
         type: 'error',
         text: err instanceof Error ? err.message : 'Ошибка сброса профиля',
       });
@@ -160,295 +146,10 @@ export function ProfilesPanel({
     }
   };
 
-  const handleBulkTelegramUpdate = async () => {
-    const payload: Record<string, unknown> = {};
-    if (bulkLlm.trim()) payload.llm_model = bulkLlm.trim();
-    if (bulkDecision.trim()) payload.decision_model = bulkDecision.trim();
-    if (bulkGuardEnabled !== 'keep') payload.guard_enabled = bulkGuardEnabled === 'true';
-    if (bulkOfftopic !== '') payload.guard_offtopic_threshold = Number(bulkOfftopic);
-    if (bulkNoul !== '') payload.guard_noul_threshold = Number(bulkNoul);
-    if (bulkTimeout !== '') payload.guard_timeout_seconds = Number(bulkTimeout);
-    if (bulkDebug !== 'keep') payload.guard_debug = bulkDebug === 'true';
-
-    if (Object.keys(payload).length === 0) {
-      setStatusBanner({
-        type: 'error',
-        text: 'Укажите хотя бы один параметр для массового обновления Telegram',
-      });
-      return;
-    }
-
-    setBulkSaving(true);
-    setStatusBanner(null);
-    try {
-      const res = await fetch('/api/admin/profiles/telegram/bulk', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        updated?: number;
-        detail?: string;
-      };
-      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
-      await onProfilesChange();
-      setBulkOpen(false);
-      setStatusBanner({
-        type: 'success',
-        text: `Обновлены Telegram-профили (${data.updated ?? 3})`,
-      });
-    } catch (err) {
-      setStatusBanner({
-        type: 'error',
-        text: err instanceof Error ? err.message : 'Ошибка массового обновления',
-      });
-    } finally {
-      setBulkSaving(false);
-    }
-  };
-
-  if (!draft) {
-    return (
-      <div className="py-12 flex justify-center">
-        <LoadingSpinner size={32} />
-      </div>
-    );
-  }
+  void onOpenPicker;
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-2">
-          {profiles.map((p) => {
-            const meta = CHANNEL_META[p.profile_id] ?? CHANNEL_META.external;
-            const active = p.profile_id === draft.profile_id;
-            return (
-              <button
-                key={p.profile_id}
-                type="button"
-                onClick={() => {
-                  setSelectedId(p.profile_id);
-                  setStatusBanner(null);
-                }}
-                className={cn(
-                  'px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer',
-                  active
-                    ? 'bg-blue-500/20 border-blue-500/50 text-white shadow-sm'
-                    : 'bg-slate-900/50 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700',
-                )}
-              >
-                <span
-                  className={cn(
-                    'w-2 h-2 rounded-full',
-                    p.enabled ? 'bg-emerald-400' : 'bg-gray-600',
-                  )}
-                />
-                {meta.shortLabel}
-              </button>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setBulkOpen((v) => !v)}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-xs font-semibold text-sky-300 transition-colors cursor-pointer"
-        >
-          <Layers className="w-3.5 h-3.5" />
-          Массово для Telegram
-        </button>
-      </div>
-
-      {bulkOpen && (
-        <div className="rounded-2xl border border-sky-500/30 bg-slate-900/80 p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-white">
-                Массовое обновление Telegram-профилей
-              </h3>
-              <p className="text-xs text-gray-400">
-                Применится сразу к <code className="font-mono">telegram_private</code>,{' '}
-                <code className="font-mono">telegram_group</code> и{' '}
-                <code className="font-mono">telegram_fix</code>. Пустые поля не изменяются.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            <div>
-              <label className="block text-[11px] text-gray-400 mb-1">LLM-модель</label>
-              <div className="flex gap-1.5">
-                <input
-                  type="text"
-                  value={bulkLlm}
-                  onChange={(e) => setBulkLlm(e.target.value)}
-                  placeholder="Оставить без изменений"
-                  className="flex-1 h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPickerTarget({
-                      mode: 'bulk_llm',
-                      title: 'Выбор LLM-модели для всех Telegram-каналов',
-                      category: 'llm',
-                      current: bulkLlm,
-                    })
-                  }
-                  className="px-3 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 cursor-pointer"
-                >
-                  Выбрать
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[11px] text-gray-400 mb-1">
-                Decision-модель
-              </label>
-              <div className="flex gap-1.5">
-                <input
-                  type="text"
-                  value={bulkDecision}
-                  onChange={(e) => setBulkDecision(e.target.value)}
-                  placeholder="Оставить без изменений"
-                  className="flex-1 h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPickerTarget({
-                      mode: 'bulk_decision',
-                      title: 'Выбор Decision-модели для всех Telegram-каналов',
-                      category: 'decision',
-                      current: bulkDecision,
-                    })
-                  }
-                  className="px-3 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 cursor-pointer"
-                >
-                  Выбрать
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[11px] text-gray-400 mb-1">
-                Фильтр (Guard)
-              </label>
-              <select
-                value={bulkGuardEnabled}
-                onChange={(e) =>
-                  setBulkGuardEnabled(e.target.value as 'keep' | 'true' | 'false')
-                }
-                className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs text-white"
-              >
-                <option value="keep">Не изменять</option>
-                <option value="true">Включить для всех</option>
-                <option value="false">Отключить для всех</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[11px] text-gray-400 mb-1">
-                Порог offtopic (0–1)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="1"
-                value={bulkOfftopic}
-                onChange={(e) => setBulkOfftopic(e.target.value)}
-                placeholder="Например: 0.85"
-                className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] text-gray-400 mb-1">
-                Порог noul (0–1)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="1"
-                value={bulkNoul}
-                onChange={(e) => setBulkNoul(e.target.value)}
-                placeholder="Например: 0.80"
-                className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] text-gray-400 mb-1">
-                  Таймаут (сек)
-                </label>
-                <input
-                  type="number"
-                  step="0.5"
-                  min="0.5"
-                  max="30"
-                  value={bulkTimeout}
-                  onChange={(e) => setBulkTimeout(e.target.value)}
-                  placeholder="3.0"
-                  className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-gray-400 mb-1">Debug</label>
-                <select
-                  value={bulkDebug}
-                  onChange={(e) =>
-                    setBulkDebug(e.target.value as 'keep' | 'true' | 'false')
-                  }
-                  className="w-full h-9 px-2 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs text-white"
-                >
-                  <option value="keep">Не менять</option>
-                  <option value="true">Вкл</option>
-                  <option value="false">Выкл</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setBulkOpen(false)}
-              className="px-4 py-2 rounded-xl bg-gray-800 text-xs text-gray-300 cursor-pointer"
-            >
-              Отмена
-            </button>
-            <Button
-              type="button"
-              variant="primary"
-              size="sm"
-              disabled={bulkSaving}
-              onClick={() => void handleBulkTelegramUpdate()}
-              className="text-white"
-            >
-              {bulkSaving ? 'Применение...' : 'Применить ко всем TG'}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {statusBanner && (
-        <div
-          className={cn(
-            'rounded-xl border px-4 py-3 text-sm flex items-center gap-2',
-            statusBanner.type === 'success'
-              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-              : 'bg-red-500/10 border-red-500/30 text-red-300',
-          )}
-        >
-          {statusBanner.type === 'success' && <Check className="w-4 h-4 shrink-0" />}
-          <span>{statusBanner.text}</span>
-        </div>
-      )}
-
+    <>
       <div className="rounded-2xl border border-gray-700/50 bg-slate-900/50 backdrop-blur-md p-5 sm:p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-gray-800">
           <div>
@@ -504,14 +205,7 @@ export function ProfilesPanel({
               </span>
               <button
                 type="button"
-                onClick={() =>
-                  setPickerTarget({
-                    mode: 'profile_llm',
-                    title: `Выбор LLM-модели (${draft.profile_id})`,
-                    category: 'llm',
-                    current: draft.llm_model,
-                  })
-                }
+                onClick={() => setPickerField('llm')}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-xs font-medium text-blue-300 cursor-pointer"
               >
                 <Sparkles className="w-3 h-3" />
@@ -534,14 +228,7 @@ export function ProfilesPanel({
               </span>
               <button
                 type="button"
-                onClick={() =>
-                  setPickerTarget({
-                    mode: 'profile_decision',
-                    title: `Выбор Decision-модели (${draft.profile_id})`,
-                    category: 'decision',
-                    current: draft.decision_model,
-                  })
-                }
+                onClick={() => setPickerField('decision')}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-xs font-medium text-purple-300 cursor-pointer"
               >
                 <Sparkles className="w-3 h-3" />
@@ -551,7 +238,9 @@ export function ProfilesPanel({
             <input
               type="text"
               value={draft.decision_model}
-              onChange={(e) => setDraft({ ...draft, decision_model: e.target.value })}
+              onChange={(e) =>
+                setDraft({ ...draft, decision_model: e.target.value })
+              }
               className="w-full h-10 px-3 rounded-xl bg-gray-900 border border-gray-700/60 text-sm font-mono text-white focus:outline-none focus:border-blue-500/60"
             />
           </div>
@@ -746,7 +435,9 @@ export function ProfilesPanel({
             <textarea
               rows={4}
               value={draft.refusal_reply}
-              onChange={(e) => setDraft({ ...draft, refusal_reply: e.target.value })}
+              onChange={(e) =>
+                setDraft({ ...draft, refusal_reply: e.target.value })
+              }
               className="w-full rounded-2xl bg-gray-950/80 border border-gray-700/60 p-3 text-xs text-gray-200 focus:outline-none focus:border-blue-500/60"
             />
           </div>
@@ -757,7 +448,9 @@ export function ProfilesPanel({
             <textarea
               rows={4}
               value={draft.no_docs_reply}
-              onChange={(e) => setDraft({ ...draft, no_docs_reply: e.target.value })}
+              onChange={(e) =>
+                setDraft({ ...draft, no_docs_reply: e.target.value })
+              }
               className="w-full rounded-2xl bg-gray-950/80 border border-gray-700/60 p-3 text-xs text-gray-200 focus:outline-none focus:border-blue-500/60"
             />
           </div>
@@ -903,25 +596,366 @@ export function ProfilesPanel({
         </div>
       </div>
 
-      <ModelPickerModal
-        open={pickerTarget !== null}
-        onClose={() => setPickerTarget(null)}
-        title={pickerTarget?.title || 'Выбор модели'}
-        currentModel={pickerTarget?.current || ''}
-        defaultCategory={pickerTarget?.category || 'all'}
-        onSelect={(modelId) => {
-          if (!pickerTarget) return;
-          if (pickerTarget.mode === 'profile_llm' && draft) {
-            setDraft({ ...draft, llm_model: modelId });
-          } else if (pickerTarget.mode === 'profile_decision' && draft) {
-            setDraft({ ...draft, decision_model: modelId });
-          } else if (pickerTarget.mode === 'bulk_llm') {
-            setBulkLlm(modelId);
-          } else if (pickerTarget.mode === 'bulk_decision') {
-            setBulkDecision(modelId);
+      {pickerField !== null && (
+        <ModelPickerModal
+          key={`${draft.profile_id}-${pickerField}`}
+          open
+          onClose={() => setPickerField(null)}
+          title={
+            pickerField === 'llm'
+              ? `Выбор LLM-модели (${draft.profile_id})`
+              : `Выбор Decision-модели (${draft.profile_id})`
           }
-        }}
+          currentModel={
+            pickerField === 'llm' ? draft.llm_model : draft.decision_model
+          }
+          defaultCategory={pickerField === 'llm' ? 'llm' : 'decision'}
+          onSelect={(modelId) => {
+            if (pickerField === 'llm') {
+              setDraft({ ...draft, llm_model: modelId });
+            } else {
+              setDraft({ ...draft, decision_model: modelId });
+            }
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+export function ProfilesPanel({
+  profiles,
+  onProfilesChange,
+}: ProfilesPanelProps) {
+  const [selectedId, setSelectedId] = useState<ChannelName>('website');
+  const [statusBanner, setStatusBanner] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+
+  const [bulkPicker, setBulkPicker] = useState<'llm' | 'decision' | null>(null);
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkLlm, setBulkLlm] = useState('');
+  const [bulkDecision, setBulkDecision] = useState('');
+  const [bulkGuardEnabled, setBulkGuardEnabled] = useState<
+    'keep' | 'true' | 'false'
+  >('keep');
+  const [bulkOfftopic, setBulkOfftopic] = useState('');
+  const [bulkNoul, setBulkNoul] = useState('');
+  const [bulkTimeout, setBulkTimeout] = useState('');
+  const [bulkDebug, setBulkDebug] = useState<'keep' | 'true' | 'false'>('keep');
+  const [bulkSaving, setBulkSaving] = useState(false);
+
+  const activeProfile =
+    profiles.find((p) => p.profile_id === selectedId) ?? profiles[0] ?? null;
+
+  const handleBulkTelegramUpdate = async () => {
+    const payload: Record<string, unknown> = {};
+    if (bulkLlm.trim()) payload.llm_model = bulkLlm.trim();
+    if (bulkDecision.trim()) payload.decision_model = bulkDecision.trim();
+    if (bulkGuardEnabled !== 'keep') {
+      payload.guard_enabled = bulkGuardEnabled === 'true';
+    }
+    if (bulkOfftopic !== '') {
+      payload.guard_offtopic_threshold = Number(bulkOfftopic);
+    }
+    if (bulkNoul !== '') payload.guard_noul_threshold = Number(bulkNoul);
+    if (bulkTimeout !== '') {
+      payload.guard_timeout_seconds = Number(bulkTimeout);
+    }
+    if (bulkDebug !== 'keep') payload.guard_debug = bulkDebug === 'true';
+
+    if (Object.keys(payload).length === 0) {
+      setStatusBanner({
+        type: 'error',
+        text: 'Укажите хотя бы один параметр для массового обновления Telegram',
+      });
+      return;
+    }
+
+    setBulkSaving(true);
+    setStatusBanner(null);
+    try {
+      const res = await fetch('/api/admin/profiles/telegram/bulk', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        updated?: number;
+        detail?: string;
+      };
+      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+      await onProfilesChange();
+      setBulkOpen(false);
+      setStatusBanner({
+        type: 'success',
+        text: `Обновлены Telegram-профили (${data.updated ?? 3})`,
+      });
+    } catch (err) {
+      setStatusBanner({
+        type: 'error',
+        text: err instanceof Error ? err.message : 'Ошибка массового обновления',
+      });
+    } finally {
+      setBulkSaving(false);
+    }
+  };
+
+  if (!activeProfile) {
+    return (
+      <div className="py-12 flex justify-center">
+        <LoadingSpinner size={32} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          {profiles.map((p) => {
+            const meta = CHANNEL_META[p.profile_id] ?? CHANNEL_META.external;
+            const active = p.profile_id === activeProfile.profile_id;
+            return (
+              <button
+                key={p.profile_id}
+                type="button"
+                onClick={() => {
+                  setSelectedId(p.profile_id);
+                  setStatusBanner(null);
+                }}
+                className={cn(
+                  'px-3.5 py-2 rounded-xl border text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer',
+                  active
+                    ? 'bg-blue-500/20 border-blue-500/50 text-white shadow-sm'
+                    : 'bg-slate-900/50 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700',
+                )}
+              >
+                <span
+                  className={cn(
+                    'w-2 h-2 rounded-full',
+                    p.enabled ? 'bg-emerald-400' : 'bg-gray-600',
+                  )}
+                />
+                {meta.shortLabel}
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setBulkOpen((v) => !v)}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-xs font-semibold text-sky-300 transition-colors cursor-pointer"
+        >
+          <Layers className="w-3.5 h-3.5" />
+          Массово для Telegram
+        </button>
+      </div>
+
+      {bulkOpen && (
+        <div className="rounded-2xl border border-sky-500/30 bg-slate-900/80 p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-white">
+                Массовое обновление Telegram-профилей
+              </h3>
+              <p className="text-xs text-gray-400">
+                Применится сразу к <code className="font-mono">telegram_private</code>,{' '}
+                <code className="font-mono">telegram_group</code> и{' '}
+                <code className="font-mono">telegram_fix</code>. Пустые поля не изменяются.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1">LLM-модель</label>
+              <div className="flex gap-1.5">
+                <input
+                  type="text"
+                  value={bulkLlm}
+                  onChange={(e) => setBulkLlm(e.target.value)}
+                  placeholder="Оставить без изменений"
+                  className="flex-1 h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => setBulkPicker('llm')}
+                  className="px-3 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 cursor-pointer"
+                >
+                  Выбрать
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1">
+                Decision-модель
+              </label>
+              <div className="flex gap-1.5">
+                <input
+                  type="text"
+                  value={bulkDecision}
+                  onChange={(e) => setBulkDecision(e.target.value)}
+                  placeholder="Оставить без изменений"
+                  className="flex-1 h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => setBulkPicker('decision')}
+                  className="px-3 h-9 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 cursor-pointer"
+                >
+                  Выбрать
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1">
+                Фильтр (Guard)
+              </label>
+              <select
+                value={bulkGuardEnabled}
+                onChange={(e) =>
+                  setBulkGuardEnabled(e.target.value as 'keep' | 'true' | 'false')
+                }
+                className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs text-white"
+              >
+                <option value="keep">Не изменять</option>
+                <option value="true">Включить для всех</option>
+                <option value="false">Отключить для всех</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1">
+                Порог offtopic (0–1)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={bulkOfftopic}
+                onChange={(e) => setBulkOfftopic(e.target.value)}
+                placeholder="Например: 0.85"
+                className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] text-gray-400 mb-1">
+                Порог noul (0–1)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={bulkNoul}
+                onChange={(e) => setBulkNoul(e.target.value)}
+                placeholder="Например: 0.80"
+                className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-[11px] text-gray-400 mb-1">
+                  Таймаут (сек)
+                </label>
+                <input
+                  type="number"
+                  step="0.5"
+                  min="0.5"
+                  max="30"
+                  value={bulkTimeout}
+                  onChange={(e) => setBulkTimeout(e.target.value)}
+                  placeholder="3.0"
+                  className="w-full h-9 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs font-mono text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-gray-400 mb-1">Debug</label>
+                <select
+                  value={bulkDebug}
+                  onChange={(e) =>
+                    setBulkDebug(e.target.value as 'keep' | 'true' | 'false')
+                  }
+                  className="w-full h-9 px-2 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs text-white"
+                >
+                  <option value="keep">Не менять</option>
+                  <option value="true">Вкл</option>
+                  <option value="false">Выкл</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setBulkOpen(false)}
+              className="px-4 py-2 rounded-xl bg-gray-800 text-xs text-gray-300 cursor-pointer"
+            >
+              Отмена
+            </button>
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
+              disabled={bulkSaving}
+              onClick={() => void handleBulkTelegramUpdate()}
+              className="text-white"
+            >
+              {bulkSaving ? 'Применение...' : 'Применить ко всем TG'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {statusBanner && (
+        <div
+          className={cn(
+            'rounded-xl border px-4 py-3 text-sm flex items-center gap-2',
+            statusBanner.type === 'success'
+              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+              : 'bg-red-500/10 border-red-500/30 text-red-300',
+          )}
+        >
+          {statusBanner.type === 'success' && <Check className="w-4 h-4 shrink-0" />}
+          <span>{statusBanner.text}</span>
+        </div>
+      )}
+
+      <ProfileEditor
+        key={`${activeProfile.profile_id}-${activeProfile.updated_at}`}
+        profile={activeProfile}
+        onProfilesChange={onProfilesChange}
+        onStatusChange={setStatusBanner}
+        onOpenPicker={() => {}}
       />
+
+      {bulkPicker !== null && (
+        <ModelPickerModal
+          key={`bulk-${bulkPicker}`}
+          open
+          onClose={() => setBulkPicker(null)}
+          title={
+            bulkPicker === 'llm'
+              ? 'Выбор LLM-модели для всех Telegram-каналов'
+              : 'Выбор Decision-модели для всех Telegram-каналов'
+          }
+          currentModel={bulkPicker === 'llm' ? bulkLlm : bulkDecision}
+          defaultCategory={bulkPicker === 'llm' ? 'llm' : 'decision'}
+          onSelect={(modelId) => {
+            if (bulkPicker === 'llm') setBulkLlm(modelId);
+            else setBulkDecision(modelId);
+          }}
+        />
+      )}
     </div>
   );
 }

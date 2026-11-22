@@ -98,7 +98,6 @@ export const AdminMarkdownMessage = memo(function AdminMarkdownMessage({
                   <DynamicCodeBlock
                     lang={lang === 'mdx' ? 'md' : lang}
                     code={codeContent.trimEnd()}
-                    wordWrap
                   />
                 </div>
               );

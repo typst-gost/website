@@ -60,29 +60,34 @@ export default function CommunitySection() {
   const [isLoading, setIsLoading] = useState(true);
   const telegramLink = "https://t.me/typst_gost";
 
-  const fetchMembers = async () => {
-    try {
-      const res = await fetch("/api/telegram-members?chatId=@typst_gost");
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      if (typeof data.result === "number") {
-        setMembers((prev) => {
-          if (prev > 0 && data.result > prev) {
-            setIsCelebrating(true);
-            setTimeout(() => setIsCelebrating(false), 3000);
-          }
-          return data.result;
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchMembers();
+    let cancelled = false;
+    fetch("/api/telegram-members?chatId=@typst_gost")
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        if (!cancelled && typeof data.result === "number") {
+          setMembers((prev) => {
+            if (prev > 0 && data.result > prev) {
+              setIsCelebrating(true);
+              setTimeout(() => setIsCelebrating(false), 3000);
+            }
+            return data.result;
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (

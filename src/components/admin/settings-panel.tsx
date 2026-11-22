@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Check, Cpu, Globe, Save, Search, ShieldAlert, Sparkles } from 'lucide-react';
 import type { GatewaySettings } from '@/lib/admin/types';
 import { cn } from '@/lib/utils';
@@ -13,28 +13,20 @@ interface SettingsPanelProps {
   onSaved: () => Promise<void>;
 }
 
-export function SettingsPanel({ settings, onSaved }: SettingsPanelProps) {
-  const [draft, setDraft] = useState<GatewaySettings | null>(null);
+function SettingsEditor({
+  settings,
+  onSaved,
+}: {
+  settings: GatewaySettings;
+  onSaved: () => Promise<void>;
+}) {
+  const [draft, setDraft] = useState<GatewaySettings>(() => ({ ...settings }));
   const [saving, setSaving] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [banner, setBanner] = useState<{
     type: 'success' | 'error';
     text: string;
   } | null>(null);
-
-  useEffect(() => {
-    if (settings) {
-      setDraft({ ...settings });
-    }
-  }, [settings]);
-
-  if (!draft) {
-    return (
-      <div className="py-12 flex justify-center">
-        <LoadingSpinner size={32} />
-      </div>
-    );
-  }
 
   const handleSave = async () => {
     setSaving(true);
@@ -465,14 +457,35 @@ export function SettingsPanel({ settings, onSaved }: SettingsPanelProps) {
         </div>
       </div>
 
-      <ModelPickerModal
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        title="Выбор модели эмбеддингов"
-        currentModel={draft.embedding_model}
-        defaultCategory="embedding"
-        onSelect={(id) => setDraft({ ...draft, embedding_model: id })}
-      />
+      {pickerOpen && (
+        <ModelPickerModal
+          key="settings-embedding"
+          open
+          onClose={() => setPickerOpen(false)}
+          title="Выбор модели эмбеддингов"
+          currentModel={draft.embedding_model}
+          defaultCategory="embedding"
+          onSelect={(id) => setDraft({ ...draft, embedding_model: id })}
+        />
+      )}
     </div>
+  );
+}
+
+export function SettingsPanel({ settings, onSaved }: SettingsPanelProps) {
+  if (!settings) {
+    return (
+      <div className="py-12 flex justify-center">
+        <LoadingSpinner size={32} />
+      </div>
+    );
+  }
+
+  return (
+    <SettingsEditor
+      key={JSON.stringify(settings)}
+      settings={settings}
+      onSaved={onSaved}
+    />
   );
 }

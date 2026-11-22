@@ -331,14 +331,17 @@ export function GuardTesterPanel({ profiles }: GuardTesterPanelProps) {
         )}
       </div>
 
-      <ModelPickerModal
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        title="Выбор Decision-модели для теста"
-        currentModel={modelOverride || selectedProfile?.decision_model || ''}
-        defaultCategory="decision"
-        onSelect={(id) => setModelOverride(id)}
-      />
+      {pickerOpen && (
+        <ModelPickerModal
+          key={`guard-test-${profileId}`}
+          open
+          onClose={() => setPickerOpen(false)}
+          title="Выбор Decision-модели для теста"
+          currentModel={modelOverride || selectedProfile?.decision_model || ''}
+          defaultCategory="decision"
+          onSelect={(id) => setModelOverride(id)}
+        />
+      )}
     </div>
   );
 }

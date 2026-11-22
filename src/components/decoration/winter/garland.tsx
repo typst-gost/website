@@ -27,16 +27,26 @@ export function Garland() {
   const [width, setWidth] = useState(0)
 
   useEffect(() => {
-    if (typeof window !== "undefined") setWidth(window.innerWidth)
+    const rafId = requestAnimationFrame(() => {
+      if (typeof window !== "undefined") {
+        setWidth(containerRef.current?.offsetWidth || window.innerWidth)
+      }
+    })
 
-    if (!containerRef.current) return
+    if (!containerRef.current) {
+      return () => cancelAnimationFrame(rafId)
+    }
+
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         if (entry.contentRect.width > 0) setWidth(entry.contentRect.width)
       }
     })
     observer.observe(containerRef.current)
-    return () => observer.disconnect()
+    return () => {
+      cancelAnimationFrame(rafId)
+      observer.disconnect()
+    }
   }, [])
 
   const { path, bulbs, mountPoints } = useMemo(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Check,
   RefreshCw,
@@ -73,51 +73,54 @@ export function ModelPickerModal({
   const [onlyFz152, setOnlyFz152] = useState(false);
   const [onlyWithPrice, setOnlyWithPrice] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('default');
-  const [customId, setCustomId] = useState('');
+  const [customId, setCustomId] = useState(currentModel);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   const [models, setModels] = useState<PolzaModel[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadModels = useCallback(
-    async (cat: ModelCategory, forceRefresh = false) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const params = new URLSearchParams({
-          category: cat,
-          include_providers: 'true',
-          include_capabilities: 'true',
-        });
-        if (forceRefresh) {
-          params.set('refresh', 'true');
-        }
-        const res = await fetch(`/api/admin/polza/models?${params.toString()}`, {
-          cache: 'no-store',
-        });
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+
+    const params = new URLSearchParams({
+      category,
+      include_providers: 'true',
+      include_capabilities: 'true',
+    });
+    if (refreshTick > 0) {
+      params.set('refresh', 'true');
+    }
+
+    fetch(`/api/admin/polza/models?${params.toString()}`, {
+      cache: 'no-store',
+    })
+      .then(async (res) => {
         const data = (await res.json().catch(() => ({}))) as {
           models?: PolzaModel[];
           detail?: string;
         };
-        if (!res.ok) {
-          throw new Error(data.detail || `HTTP ${res.status}`);
-        }
+        if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+        return data;
+      })
+      .then((data) => {
+        if (cancelled) return;
         setModels(Array.isArray(data.models) ? data.models : []);
-      } catch (err) {
+        setError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
         setError(err instanceof Error ? err.message : 'Не удалось загрузить каталог');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [],
-  );
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-  useEffect(() => {
-    if (!open) return;
-    setCategory(defaultCategory);
-    setCustomId(currentModel);
-    void loadModels(defaultCategory, false);
-  }, [open, defaultCategory, currentModel, loadModels]);
+    return () => {
+      cancelled = true;
+    };
+  }, [open, category, refreshTick]);
 
   useEffect(() => {
     if (!open) return;
@@ -210,7 +213,10 @@ export function ModelPickerModal({
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => void loadModels(category, true)}
+              onClick={() => {
+                setLoading(true);
+                setRefreshTick((t) => t + 1);
+              }}
               disabled={loading}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-800/80 hover:bg-gray-800 border border-gray-700/60 text-xs text-gray-300 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
               title="Обновить список с сервера"
@@ -236,8 +242,10 @@ export function ModelPickerModal({
                 key={tab.value}
                 type="button"
                 onClick={() => {
-                  setCategory(tab.value);
-                  void loadModels(tab.value, false);
+                  if (tab.value !== category) {
+                    setLoading(true);
+                    setCategory(tab.value);
+                  }
                 }}
                 className={cn(
                   'px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors cursor-pointer',

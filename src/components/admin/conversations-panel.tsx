@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   Bot,
@@ -58,6 +58,7 @@ export function ConversationsPanel({
   const [userFilter, setUserFilter] = useState('');
   const [guardFilter, setGuardFilter] = useState<'' | 'true' | 'false'>('');
   const [offset, setOffset] = useState(0);
+  const [listReloadTick, setListReloadTick] = useState(0);
 
   const [items, setItems] = useState<ConversationSummary[]>([]);
   const [total, setTotal] = useState(0);
@@ -67,79 +68,89 @@ export function ConversationsPanel({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<ConversationDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [detailReloadTick, setDetailReloadTick] = useState(0);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  const fetchList = useCallback(async () => {
-    setListLoading(true);
-    setListError(null);
-    try {
-      const params = new URLSearchParams({
-        limit: String(PAGE_SIZE),
-        offset: String(offset),
-      });
-      if (channel) params.set('channel', channel);
-      if (searchQuery.trim()) params.set('search', searchQuery.trim());
-      if (userFilter.trim()) params.set('external_user_id', userFilter.trim());
-      if (guardFilter) params.set('guard_allowed', guardFilter);
-
-      const res = await fetch(`/api/admin/conversations?${params.toString()}`, {
-        cache: 'no-store',
-      });
-      const data = (await res.json().catch(() => ({}))) as {
-        conversations?: ConversationSummary[];
-        total?: number;
-        detail?: string;
-      };
-      if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
-
-      const loaded = Array.isArray(data.conversations) ? data.conversations : [];
-      setItems(loaded);
-      setTotal(typeof data.total === 'number' ? data.total : loaded.length);
-    } catch (err) {
-      setListError(err instanceof Error ? err.message : 'Ошибка загрузки диалогов');
-    } finally {
-      setListLoading(false);
-    }
-  }, [channel, searchQuery, userFilter, guardFilter, offset]);
-
-  const fetchDetail = useCallback(async (id: string) => {
-    setDetailLoading(true);
-    setConfirmDelete(false);
-    try {
-      const res = await fetch(
-        `/api/admin/conversations/${encodeURIComponent(id)}`,
-        { cache: 'no-store' },
-      );
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = (await res.json()) as ConversationDetail;
-      setDetail(data);
-    } catch {
-      setDetail(null);
-    } finally {
-      setDetailLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchList();
-  }, [fetchList]);
 
   useEffect(() => {
     const t = setTimeout(() => {
       setOffset(0);
+      setListLoading(true);
       setSearchQuery(searchInput);
     }, 300);
     return () => clearTimeout(t);
   }, [searchInput]);
 
   useEffect(() => {
-    if (selectedId) {
-      void fetchDetail(selectedId);
-    } else {
-      setDetail(null);
-    }
-  }, [selectedId, fetchDetail]);
+    let cancelled = false;
+    const params = new URLSearchParams({
+      limit: String(PAGE_SIZE),
+      offset: String(offset),
+    });
+    if (channel) params.set('channel', channel);
+    if (searchQuery.trim()) params.set('search', searchQuery.trim());
+    if (userFilter.trim()) params.set('external_user_id', userFilter.trim());
+    if (guardFilter) params.set('guard_allowed', guardFilter);
+
+    fetch(`/api/admin/conversations?${params.toString()}`, {
+      cache: 'no-store',
+    })
+      .then(async (res) => {
+        const data = (await res.json().catch(() => ({}))) as {
+          conversations?: ConversationSummary[];
+          total?: number;
+          detail?: string;
+        };
+        if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+        return data;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        const loaded = Array.isArray(data.conversations) ? data.conversations : [];
+        setItems(loaded);
+        setTotal(typeof data.total === 'number' ? data.total : loaded.length);
+        setListError(null);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setListError(
+          err instanceof Error ? err.message : 'Ошибка загрузки диалогов',
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setListLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [channel, searchQuery, userFilter, guardFilter, offset, listReloadTick]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    let cancelled = false;
+
+    fetch(`/api/admin/conversations/${encodeURIComponent(selectedId)}`, {
+      cache: 'no-store',
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return (await res.json()) as ConversationDetail;
+      })
+      .then((data) => {
+        if (!cancelled) setDetail(data);
+      })
+      .catch(() => {
+        if (!cancelled) setDetail(null);
+      })
+      .finally(() => {
+        if (!cancelled) setDetailLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedId, detailReloadTick]);
 
   const handleClearContext = async (id: string) => {
     try {
@@ -151,7 +162,8 @@ export function ConversationsPanel({
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setActionMessage('Контекстное окно диалога сброшено');
       setTimeout(() => setActionMessage(null), 3000);
-      await fetchDetail(id);
+      setDetailLoading(true);
+      setDetailReloadTick((t) => t + 1);
     } catch {
       setActionMessage('Не удалось сбросить контекст');
     }
@@ -167,13 +179,15 @@ export function ConversationsPanel({
       setSelectedId(null);
       setDetail(null);
       setConfirmDelete(false);
-      await fetchList();
+      setListLoading(true);
+      setListReloadTick((t) => t + 1);
       onDataMutated?.();
     } catch {
       setActionMessage('Не удалось удалить диалог');
     }
   };
 
+  const activeDetail = selectedId && detail?.id === selectedId ? detail : null;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const currentPage = Math.floor(offset / PAGE_SIZE) + 1;
 
@@ -197,6 +211,7 @@ export function ConversationsPanel({
             value={userFilter}
             onChange={(e) => {
               setOffset(0);
+              setListLoading(true);
               setUserFilter(e.target.value);
             }}
             placeholder="User ID / IP фильтр..."
@@ -207,6 +222,7 @@ export function ConversationsPanel({
             value={guardFilter}
             onChange={(e) => {
               setOffset(0);
+              setListLoading(true);
               setGuardFilter(e.target.value as '' | 'true' | 'false');
             }}
             className="h-10 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs text-gray-200 focus:outline-none focus:border-blue-500/60 cursor-pointer"
@@ -222,6 +238,7 @@ export function ConversationsPanel({
             type="button"
             onClick={() => {
               setOffset(0);
+              setListLoading(true);
               setChannel('');
             }}
             className={cn(
@@ -239,6 +256,7 @@ export function ConversationsPanel({
               type="button"
               onClick={() => {
                 setOffset(0);
+                setListLoading(true);
                 setChannel(ch);
               }}
               className={cn(
@@ -289,7 +307,13 @@ export function ConversationsPanel({
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setSelectedId(item.id)}
+                    onClick={() => {
+                      if (item.id !== selectedId) {
+                        setConfirmDelete(false);
+                        setDetailLoading(true);
+                        setSelectedId(item.id);
+                      }
+                    }}
                     className={cn(
                       'w-full text-left p-3.5 transition-colors cursor-pointer',
                       isSelected
@@ -334,7 +358,10 @@ export function ConversationsPanel({
             <button
               type="button"
               disabled={offset === 0}
-              onClick={() => setOffset((v) => Math.max(0, v - PAGE_SIZE))}
+              onClick={() => {
+                setListLoading(true);
+                setOffset((v) => Math.max(0, v - PAGE_SIZE));
+              }}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-xs text-gray-300 disabled:opacity-40 cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" /> Назад
@@ -342,7 +369,10 @@ export function ConversationsPanel({
             <button
               type="button"
               disabled={offset + PAGE_SIZE >= total}
-              onClick={() => setOffset((v) => v + PAGE_SIZE)}
+              onClick={() => {
+                setListLoading(true);
+                setOffset((v) => v + PAGE_SIZE);
+              }}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-xs text-gray-300 disabled:opacity-40 cursor-pointer"
             >
               Вперёд <ChevronRight className="w-3.5 h-3.5" />
@@ -369,7 +399,7 @@ export function ConversationsPanel({
             </div>
           )}
 
-          {selectedId && !detailLoading && detail && (
+          {selectedId && !detailLoading && activeDetail && (
             <>
               <div className="px-5 py-4 border-b border-gray-800 bg-slate-900/70 flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -377,41 +407,44 @@ export function ConversationsPanel({
                     <span
                       className={cn(
                         'px-2 py-0.5 rounded-md border text-[11px] font-semibold',
-                        (CHANNEL_META[detail.channel] ?? CHANNEL_META.external)
+                        (CHANNEL_META[activeDetail.channel] ?? CHANNEL_META.external)
                           .colorClass,
                       )}
                     >
-                      {(CHANNEL_META[detail.channel] ?? CHANNEL_META.external).label}
+                      {(CHANNEL_META[activeDetail.channel] ?? CHANNEL_META.external).label}
                     </span>
                     <span className="text-xs font-mono text-gray-500 truncate max-w-xs">
-                      {detail.id}
+                      {activeDetail.id}
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-white mt-1.5">
-                    {detail.title || 'Без названия'}
+                    {activeDetail.title || 'Без названия'}
                   </h3>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-[11px] text-gray-400 font-mono">
-                    {detail.external_user_id && (
-                      <span>User: {detail.external_user_id}</span>
+                    {activeDetail.external_user_id && (
+                      <span>User: {activeDetail.external_user_id}</span>
                     )}
-                    {detail.external_chat_id && (
-                      <span>Chat: {detail.external_chat_id}</span>
+                    {activeDetail.external_chat_id && (
+                      <span>Chat: {activeDetail.external_chat_id}</span>
                     )}
-                    <span>Создан: {formatDateTime(detail.created_at)}</span>
-                    {detail.context_reset_at && (
+                    <span>Создан: {formatDateTime(activeDetail.created_at)}</span>
+                    {activeDetail.context_reset_at && (
                       <span className="text-amber-300">
-                        Контекст сброшен: {formatDateTime(detail.context_reset_at)}
+                        Контекст сброшен: {formatDateTime(activeDetail.context_reset_at)}
                       </span>
                     )}
                   </div>
-                  {typeof detail.metadata?.page_location === 'string' && (
+                  {typeof activeDetail.metadata?.page_location === 'string' && (
                     <a
-                      href={detail.metadata.page_location}
+                      href={activeDetail.metadata.page_location}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-xs text-blue-400 hover:underline mt-1"
                     >
-                      {String(detail.metadata.page_title || detail.metadata.page_location)}
+                      {String(
+                        activeDetail.metadata.page_title ||
+                          activeDetail.metadata.page_location,
+                      )}
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   )}
@@ -420,7 +453,7 @@ export function ConversationsPanel({
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     type="button"
-                    onClick={() => void handleClearContext(detail.id)}
+                    onClick={() => void handleClearContext(activeDetail.id)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-800/80 hover:bg-gray-800 border border-gray-700/60 text-xs text-gray-300 hover:text-white transition-colors cursor-pointer"
                     title="Сбросить контекстное окно (история в БД сохранится)"
                   >
@@ -441,7 +474,7 @@ export function ConversationsPanel({
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
-                        onClick={() => void handleDeleteConversation(detail.id)}
+                        onClick={() => void handleDeleteConversation(activeDetail.id)}
                         className="px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-xs font-semibold text-white cursor-pointer"
                       >
                         Подтвердить
@@ -465,7 +498,7 @@ export function ConversationsPanel({
               )}
 
               <div className="flex-1 overflow-y-auto p-5 space-y-5">
-                {detail.messages.map((msg) => {
+                {activeDetail.messages.map((msg) => {
                   const isUser = msg.role === 'user';
                   return (
                     <div

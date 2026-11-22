@@ -320,6 +320,15 @@ export function ChannelBreakdownChart({ analytics }: { analytics: AnalyticsData 
   );
 }
 
+interface ArcSegment {
+  label: string;
+  count: number;
+  color: string;
+  dashArray: string;
+  dashOffset: number;
+  endOffset: number;
+}
+
 export function OutcomesDonutChart({ analytics }: { analytics: AnalyticsData | null }) {
   const stats = useMemo(() => {
     const total = analytics?.total_turns ?? 0;
@@ -339,18 +348,20 @@ export function OutcomesDonutChart({ analytics }: { analytics: AnalyticsData | n
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
 
-  const arcSegments = useMemo(() => {
-    let offset = 0;
-    return stats.segments.map((seg) => {
+  const arcSegments = useMemo<ArcSegment[]>(() => {
+    return stats.segments.reduce<ArcSegment[]>((acc, seg) => {
+      const prevOffset = acc.length > 0 ? acc[acc.length - 1].endOffset : 0;
       const length = stats.total > 0 ? (seg.count / stats.total) * circumference : 0;
-      const currentOffset = offset;
-      offset += length;
-      return {
-        ...seg,
-        dashArray: `${length} ${circumference}`,
-        dashOffset: -currentOffset,
-      };
-    });
+      return [
+        ...acc,
+        {
+          ...seg,
+          dashArray: `${length} ${circumference}`,
+          dashOffset: -prevOffset,
+          endOffset: prevOffset + length,
+        },
+      ];
+    }, []);
   }, [stats, circumference]);
 
   return (

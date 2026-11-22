@@ -2,8 +2,8 @@
 
 import {
   useEffect,
+  useEffectEvent,
   useRef,
-  useLayoutEffect,
   useState,
   useCallback,
 } from "react";
@@ -59,6 +59,14 @@ export function TypstEditor({
 
   const shikiCompartment = useRef(new Compartment());
 
+  const emitChange = useEffectEvent((value: string) => {
+    onChange(value);
+  });
+
+  const emitLoadingChange = useEffectEvent((loading: boolean) => {
+    onLoadingChange?.(loading);
+  });
+
   const handleReset = useCallback(() => {
     const view = viewRef.current;
     if (!view) return;
@@ -79,14 +87,9 @@ export function TypstEditor({
     });
 
     setAllowReset(false);
-    onChangeRef.current(initialText);
+    onChange(initialText);
 
     view.focus();
-  }, []);
-
-  const onChangeRef = useRef(onChange);
-  useLayoutEffect(() => {
-    onChangeRef.current = onChange;
   }, [onChange]);
 
   useEffect(() => {
@@ -96,8 +99,7 @@ export function TypstEditor({
     const init = async () => {
       if (!mounted) return;
 
-      setIsLoading(true);
-      onLoadingChange?.(true);
+      emitLoadingChange(true);
 
       try {
         const themeId = "github-dark";
@@ -116,7 +118,7 @@ export function TypstEditor({
               if (update.docChanged) {
                 const value = update.state.doc.toString();
                 setAllowReset(value !== initialCodeRef.current);
-                onChangeRef.current(value);
+                emitChange(value);
               }
             }),
             EditorView.darkTheme.of(true),
@@ -137,11 +139,11 @@ export function TypstEditor({
         }
 
         setIsLoading(false);
-        onLoadingChange?.(false);
+        emitLoadingChange(false);
       } catch (error) {
         console.error("Failed to initialize editor:", error);
         setIsLoading(false);
-        onLoadingChange?.(false);
+        emitLoadingChange(false);
       }
     };
 

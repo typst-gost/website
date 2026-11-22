@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface NavigationButtonProps {
@@ -10,18 +9,12 @@ interface NavigationButtonProps {
   attention?: boolean
 }
 
-export function NavigationButton({ 
-  direction, 
-  onClick, 
+export function NavigationButton({
+  direction,
+  onClick,
   disabled,
   attention = false,
 }: NavigationButtonProps) {
-  const [shouldPulse, setShouldPulse] = useState(attention)
-
-  useEffect(() => {
-    setShouldPulse(attention)
-  }, [attention])
-
   const handleClick = () => {
     if (!disabled) {
       onClick()
@@ -38,7 +31,7 @@ export function NavigationButton({
         disabled
           ? "bg-gray-800/20 text-gray-600/50 border-gray-600/50 cursor-not-allowed"
           : "border border-border border-gray-600/50 hover:border-blue-500/50 bg-gray-800/80 text-white hover:text-blue-500"
-      } ${shouldPulse ? "animate-pulse-subtle" : ""}`}
+      } ${attention ? "animate-pulse-subtle" : ""}`}
     >
       <Icon className="w-6 h-6" />
     </button>

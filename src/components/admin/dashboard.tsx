@@ -75,6 +75,7 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<SectionTab>('overview');
   const [periodDays, setPeriodDays] = useState<number>(30);
+  const [reloadTick, setReloadTick] = useState(0);
 
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [balance, setBalance] = useState<PolzaBalance | null>(null);
@@ -111,18 +112,26 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
     [handleUnauthorized],
   );
 
-  const loadAll = useCallback(
-    async (silent = false) => {
-      if (silent) setRefreshing(true);
-      else setLoading(true);
-      setError(null);
+  useEffect(() => {
+    let cancelled = false;
+    const analyticsUrl =
+      periodDays > 0
+        ? `/api/admin/analytics?days=${periodDays}`
+        : '/api/admin/analytics?days=3650';
 
-      try {
-        const analyticsUrl =
-          periodDays > 0
-            ? `/api/admin/analytics?days=${periodDays}`
-            : '/api/admin/analytics?days=3650';
-
+    Promise.allSettled([
+      fetchJson<AnalyticsData>(analyticsUrl),
+      fetchJson<PolzaBalance>('/api/admin/polza/balance'),
+      fetchJson<ReadyStatus>('/api/admin/ready'),
+      fetchJson<RagStatus>('/api/admin/rag/status'),
+      fetchJson<{ profiles: ProfileConfig[] }>('/api/admin/profiles'),
+      fetchJson<GatewaySettings>('/api/admin/settings'),
+      fetchJson<{ conversations: ConversationSummary[] }>(
+        '/api/admin/conversations?limit=200',
+      ),
+    ])
+      .then((results) => {
+        if (cancelled) return;
         const [
           analyticsRes,
           balanceRes,
@@ -131,17 +140,7 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
           profilesRes,
           settingsRes,
           convsRes,
-        ] = await Promise.allSettled([
-          fetchJson<AnalyticsData>(analyticsUrl),
-          fetchJson<PolzaBalance>('/api/admin/polza/balance'),
-          fetchJson<ReadyStatus>('/api/admin/ready'),
-          fetchJson<RagStatus>('/api/admin/rag/status'),
-          fetchJson<{ profiles: ProfileConfig[] }>('/api/admin/profiles'),
-          fetchJson<GatewaySettings>('/api/admin/settings'),
-          fetchJson<{ conversations: ConversationSummary[] }>(
-            '/api/admin/conversations?limit=200',
-          ),
-        ]);
+        ] = results;
 
         if (analyticsRes.status === 'fulfilled' && analyticsRes.value) {
           setAnalytics(analyticsRes.value);
@@ -165,37 +164,36 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
           setRecentConversations(convsRes.value.conversations || []);
         }
 
-        const rejected = [
-          analyticsRes,
-          balanceRes,
-          readyRes,
-          ragRes,
-          profilesRes,
-          settingsRes,
-          convsRes,
-        ].filter((r): r is PromiseRejectedResult => r.status === 'rejected');
-
-        if (rejected.length === 7) {
+        const rejected = results.filter(
+          (r): r is PromiseRejectedResult => r.status === 'rejected',
+        );
+        if (rejected.length === results.length) {
           const reason = rejected[0].reason;
           setError(
             reason instanceof Error
               ? reason.message
               : 'Сервер управления недоступен',
           );
+        } else {
+          setError(null);
         }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Ошибка загрузки данных');
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
-      }
-    },
-    [periodDays, fetchJson],
-  );
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Ошибка загрузки данных');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      });
 
-  useEffect(() => {
-    void loadAll(false);
-  }, [loadAll]);
+    return () => {
+      cancelled = true;
+    };
+  }, [periodDays, reloadTick, fetchJson]);
 
   useEffect(() => {
     if (!ragStatus?.reindex_running) return;
@@ -206,6 +204,11 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
     }, 2500);
     return () => clearInterval(interval);
   }, [ragStatus?.reindex_running, fetchJson]);
+
+  const triggerSilentRefresh = useCallback(() => {
+    setRefreshing(true);
+    setReloadTick((t) => t + 1);
+  }, []);
 
   const refreshProfiles = useCallback(async () => {
     const data = await fetchJson<{ profiles: ProfileConfig[] }>(
@@ -306,7 +309,7 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
 
               <button
                 type="button"
-                onClick={() => void loadAll(true)}
+                onClick={triggerSilentRefresh}
                 disabled={refreshing}
                 className="p-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-gray-700/60 text-gray-300 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
                 title="Обновить все данные"
@@ -400,7 +403,12 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
                         <button
                           key={opt.days}
                           type="button"
-                          onClick={() => setPeriodDays(opt.days)}
+                          onClick={() => {
+                            if (opt.days !== periodDays) {
+                              setRefreshing(true);
+                              setPeriodDays(opt.days);
+                            }
+                          }}
                           className={cn(
                             'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer',
                             periodDays === opt.days
@@ -641,7 +649,7 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
               {activeTab === 'conversations' && (
                 <ConversationsPanel
                   docsBaseUrl={settings?.docs_base_url || 'https://typst-gost.ru'}
-                  onDataMutated={() => void loadAll(true)}
+                  onDataMutated={triggerSilentRefresh}
                 />
               )}
 
