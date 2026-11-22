@@ -71,6 +71,17 @@ const NAV_TABS: {
   { id: 'settings', label: 'Настройки', icon: Settings },
 ];
 
+function parseBalanceValue(raw: unknown): number | null {
+  if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+  if (typeof raw === 'string') {
+    const cleaned = raw.trim().replace(/\s+/g, '').replace(',', '.');
+    if (!cleaned) return null;
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
 export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<SectionTab>('overview');
@@ -233,14 +244,30 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
     router.refresh();
   };
 
-  const formattedBalance = (() => {
-    const val = balance?.available ?? balance?.amount;
-    if (typeof val !== 'number') return '—';
-    return `${val.toLocaleString('ru-RU', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })} ${balance?.currency === 'RUB' ? '₽' : balance?.currency || '₽'}`;
-  })();
+  const currencySymbol = balance?.currency === 'RUB' ? '₽' : balance?.currency || '₽';
+  const availableNum = parseBalanceValue(
+    balance?.available ?? balance?.raw?.available,
+  );
+  const amountNum = parseBalanceValue(balance?.amount ?? balance?.raw?.amount);
+  const primaryBalance = availableNum ?? amountNum;
+
+  const formattedBalance =
+    primaryBalance !== null
+      ? `${primaryBalance.toLocaleString('ru-RU', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })} ${currencySymbol}`
+      : '—';
+
+  const balanceSubtitle =
+    availableNum !== null &&
+    amountNum !== null &&
+    Math.abs(amountNum - availableNum) >= 0.01
+      ? `Баланс орг.: ${amountNum.toLocaleString('ru-RU', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })} ${currencySymbol}`
+      : 'Доступный остаток';
 
   const chartDays = periodDays > 0 && periodDays <= 30 ? periodDays : 14;
 
@@ -432,7 +459,7 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
                         {formattedBalance}
                       </div>
                       <div className="text-[11px] text-gray-500 mt-1">
-                        Доступный остаток
+                        {balanceSubtitle}
                       </div>
                     </div>
 

@@ -73,13 +73,14 @@ export function ConversationsPanel({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
+    if (searchInput === searchQuery) return;
     const t = setTimeout(() => {
       setOffset(0);
       setListLoading(true);
       setSearchQuery(searchInput);
     }, 300);
     return () => clearTimeout(t);
-  }, [searchInput]);
+  }, [searchInput, searchQuery]);
 
   useEffect(() => {
     let cancelled = false;
@@ -210,9 +211,12 @@ export function ConversationsPanel({
             type="text"
             value={userFilter}
             onChange={(e) => {
-              setOffset(0);
-              setListLoading(true);
-              setUserFilter(e.target.value);
+              const nextVal = e.target.value;
+              if (nextVal !== userFilter) {
+                setOffset(0);
+                setListLoading(true);
+                setUserFilter(nextVal);
+              }
             }}
             placeholder="User ID / IP фильтр..."
             className="h-10 px-3.5 rounded-xl bg-gray-950/70 border border-gray-700/60 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500/60 font-mono"
@@ -221,9 +225,12 @@ export function ConversationsPanel({
           <select
             value={guardFilter}
             onChange={(e) => {
-              setOffset(0);
-              setListLoading(true);
-              setGuardFilter(e.target.value as '' | 'true' | 'false');
+              const nextVal = e.target.value as '' | 'true' | 'false';
+              if (nextVal !== guardFilter) {
+                setOffset(0);
+                setListLoading(true);
+                setGuardFilter(nextVal);
+              }
             }}
             className="h-10 px-3 rounded-xl bg-gray-950/70 border border-gray-700/60 text-xs text-gray-200 focus:outline-none focus:border-blue-500/60 cursor-pointer"
           >
@@ -237,9 +244,11 @@ export function ConversationsPanel({
           <button
             type="button"
             onClick={() => {
-              setOffset(0);
-              setListLoading(true);
-              setChannel('');
+              if (channel !== '') {
+                setOffset(0);
+                setListLoading(true);
+                setChannel('');
+              }
             }}
             className={cn(
               'px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors cursor-pointer',
@@ -255,9 +264,11 @@ export function ConversationsPanel({
               key={ch}
               type="button"
               onClick={() => {
-                setOffset(0);
-                setListLoading(true);
-                setChannel(ch);
+                if (channel !== ch) {
+                  setOffset(0);
+                  setListLoading(true);
+                  setChannel(ch);
+                }
               }}
               className={cn(
                 'px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors cursor-pointer',
@@ -359,8 +370,11 @@ export function ConversationsPanel({
               type="button"
               disabled={offset === 0}
               onClick={() => {
-                setListLoading(true);
-                setOffset((v) => Math.max(0, v - PAGE_SIZE));
+                const next = Math.max(0, offset - PAGE_SIZE);
+                if (next !== offset) {
+                  setListLoading(true);
+                  setOffset(next);
+                }
               }}
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-xs text-gray-300 disabled:opacity-40 cursor-pointer"
             >

@@ -19,8 +19,8 @@ export type ModelCategory =
   | 'stt';
 
 export interface PolzaBalance {
-  amount: number | null;
-  available: number | null;
+  amount: number | string | null;
+  available: number | string | null;
   currency: string;
   raw?: Record<string, unknown>;
 }
