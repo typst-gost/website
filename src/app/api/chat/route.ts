@@ -10,6 +10,7 @@ const AI_GATEWAY_URL = (process.env.AI_GATEWAY_URL || 'http://127.0.0.1:8080').r
   /\/+$/,
   '',
 );
+const VISITOR_COOKIE_NAME = 'ai_visitor_id';
 
 interface ClientContextData {
   title?: string;
@@ -51,6 +52,45 @@ interface GatewaySsePayload {
   detail?: string;
   blocked_by_guard?: boolean;
   no_docs_found?: boolean;
+}
+
+function isPrivateOrLocalIp(ip: string): boolean {
+  const clean = ip.replace(/^::ffff:/i, '');
+  return (
+    clean === '127.0.0.1' ||
+    clean === '::1' ||
+    clean.startsWith('10.') ||
+    clean.startsWith('192.168.') ||
+    /^172\.(1[6-9]|2\d|3[0-1])\./.test(clean) ||
+    clean.startsWith('fc') ||
+    clean.startsWith('fd') ||
+    clean.startsWith('fe80:')
+  );
+}
+
+function extractClientIp(req: NextRequest): string | undefined {
+  const cfIp = req.headers.get('cf-connecting-ip')?.trim();
+  if (cfIp && !isPrivateOrLocalIp(cfIp)) {
+    return cfIp;
+  }
+
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    const ips = forwardedFor
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const publicIp = ips.find((ip) => !isPrivateOrLocalIp(ip));
+    if (publicIp) return publicIp;
+    if (ips[0]) return ips[0];
+  }
+
+  const realIp = req.headers.get('x-real-ip')?.trim();
+  if (realIp && !isPrivateOrLocalIp(realIp)) {
+    return realIp;
+  }
+
+  return undefined;
 }
 
 function extractMessageText(message: IncomingMessage | undefined): string {
@@ -103,10 +143,10 @@ export async function POST(req: NextRequest) {
     return new NextResponse('Forbidden: Cross-origin requests blocked', { status: 403 });
   }
 
-  const clientIp =
-    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-    req.headers.get('x-real-ip')?.trim() ||
-    'anonymous';
+  const existingVisitorId = req.cookies.get(VISITOR_COOKIE_NAME)?.value?.trim();
+  const isNewVisitor = !existingVisitorId;
+  const visitorId = existingVisitorId || crypto.randomUUID();
+  const clientIp = extractClientIp(req);
 
   try {
     const body = (await req.json()) as { id?: string; messages?: IncomingMessage[] };
@@ -128,14 +168,22 @@ export async function POST(req: NextRequest) {
     }
 
     const clientData = extractClientData(lastRawUserMsg);
-    const conversationId =
-      typeof body.id === 'string' && body.id.trim() ? `website:${body.id.trim()}` : undefined;
+    const rawChatId =
+      typeof body.id === 'string' && body.id.trim() ? body.id.trim() : 'default';
+    const conversationId = rawChatId.startsWith(`${visitorId}:`)
+      ? `website:${rawChatId}`
+      : `website:${visitorId}:${rawChatId}`;
+
+    const gatewayHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (clientIp) {
+      gatewayHeaders['X-Forwarded-For'] = clientIp;
+    }
 
     const gatewayRes = await fetch(`${AI_GATEWAY_URL}/api/v1/assistant/chat`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: gatewayHeaders,
       signal: req.signal,
       body: JSON.stringify({
         channel: 'website',
@@ -147,9 +195,10 @@ export async function POST(req: NextRequest) {
               location: clientData.location ?? null,
             }
           : null,
-        external_user_id: clientIp,
+        external_user_id: `web:${visitorId}`,
         metadata: {
           user_agent: req.headers.get('user-agent') || undefined,
+          client_ip: clientIp,
         },
         stream: true,
         save_history: true,
@@ -298,7 +347,26 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return createUIMessageStreamResponse({ stream });
+    const response = createUIMessageStreamResponse({ stream });
+
+    if (isNewVisitor) {
+      const isHttps =
+        req.headers.get('x-forwarded-proto')?.split(',')[0].trim() === 'https' ||
+        req.nextUrl.protocol === 'https:';
+      const cookieParts = [
+        `${VISITOR_COOKIE_NAME}=${encodeURIComponent(visitorId)}`,
+        'Path=/',
+        'Max-Age=31536000',
+        'HttpOnly',
+        'SameSite=Lax',
+      ];
+      if (isHttps) {
+        cookieParts.push('Secure');
+      }
+      response.headers.append('Set-Cookie', cookieParts.join('; '));
+    }
+
+    return response;
   } catch (error: unknown) {
     console.error('Chat route error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
