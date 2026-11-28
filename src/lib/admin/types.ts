@@ -300,6 +300,149 @@ export interface GuardTestResult {
   evaluated_state: string;
 }
 
+export type EvalSearchMode = 'hybrid_scored' | 'hybrid_raw' | 'vector' | 'fts';
+
+export interface EvalQuestionInput {
+  id: string;
+  query: string;
+  relevant_chunk_ids: string[];
+  category: string;
+  query_type: string;
+  difficulty: string;
+}
+
+export interface EvalDatasetInfo {
+  exists: boolean;
+  path: string;
+  total_questions: number;
+  by_category?: Record<string, number>;
+  by_query_type?: Record<string, number>;
+  by_difficulty?: Record<string, number>;
+  docs_ready: boolean;
+  index_chunks_count: number;
+  missing_chunk_ids_total?: number;
+  questions_with_missing_chunks?: number;
+  sample_missing_chunk_ids?: string[];
+  questions?: EvalQuestionInput[];
+}
+
+export interface EvalMetricsBlock {
+  count: number;
+  mrr: number;
+  mrr_at_k: Record<string, number>;
+  recall_at_k: Record<string, number>;
+  hit_rate_at_k: Record<string, number>;
+  context_recall: number | null;
+  context_hit_rate: number | null;
+  no_docs_rate: number | null;
+  avg_selected_sources: number | null;
+  avg_latency_ms: number;
+}
+
+export interface EvalRunMetrics {
+  overall: EvalMetricsBlock;
+  by_category: Record<string, EvalMetricsBlock>;
+  by_query_type: Record<string, EvalMetricsBlock>;
+  by_difficulty: Record<string, EvalMetricsBlock>;
+  questions_with_missing_chunks?: number;
+  embeddings_cached_hits?: number;
+  embeddings_fetched?: number;
+}
+
+export interface EvalConfigSnapshot {
+  ks: number[];
+  search_mode: EvalSearchMode;
+  search_limit: number;
+  use_query_expansion: boolean;
+  include_context_metrics: boolean;
+  embedding_model: string;
+  min_score: number;
+  rel_ratio: number;
+  max_sources: number;
+  skip_missing_chunks: boolean;
+}
+
+export interface EvalQuestionRecord {
+  id: string;
+  query: string;
+  category: string;
+  query_type: string;
+  difficulty: string;
+  relevant_chunk_ids: string[];
+  retrieved_chunk_ids: string[];
+  first_relevant_rank: number | null;
+  reciprocal_rank: number;
+  mrr_at_k: Record<string, number>;
+  recall_at_k: Record<string, number>;
+  hit_at_k: Record<string, number>;
+  context_recall: number | null;
+  context_hit: number | null;
+  no_docs: boolean | null;
+  selected_sources_count: number | null;
+  top_score: number | null;
+  missing_chunk_ids: string[];
+  latency_ms: number;
+}
+
+export interface EvalRunSummary {
+  id: number;
+  status: 'running' | 'completed' | 'failed' | string;
+  trigger: string;
+  dataset_name: string;
+  total_questions: number;
+  evaluated_questions: number;
+  skipped_questions: number;
+  config: EvalConfigSnapshot;
+  metrics: EvalRunMetrics | null;
+  error: string | null;
+  started_at: string;
+  finished_at: string | null;
+}
+
+export interface EvalRunDetail extends EvalRunSummary {
+  details: EvalQuestionRecord[];
+}
+
+export interface EvalChunkPreview {
+  chunk_id: string;
+  title: string;
+  section: string;
+  heading_path: string;
+  category: string;
+  url: string;
+  text_preview: string;
+}
+
+export const EVAL_SEARCH_MODE_META: Record<
+  EvalSearchMode,
+  { label: string; shortLabel: string; description: string; badgeClass: string }
+> = {
+  hybrid_scored: {
+    label: 'Hybrid + Scoring (Prod)',
+    shortLabel: 'Hybrid Scored',
+    description: 'Вектор + FTS с RRF, косинусной калибровкой и доменными бустами',
+    badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+  },
+  hybrid_raw: {
+    label: 'Hybrid RRF (Raw)',
+    shortLabel: 'Hybrid Raw',
+    description: 'Сырой гибридный поиск LanceDB (RRF) без пост-скоринга',
+    badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+  },
+  vector: {
+    label: 'Vector Only',
+    shortLabel: 'Vector',
+    description: 'Только семантический поиск по эмбеддингам',
+    badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+  },
+  fts: {
+    label: 'FTS Only (BM25)',
+    shortLabel: 'FTS',
+    description: 'Только полнотекстовый поиск без вызова модели эмбеддингов',
+    badgeClass: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+  },
+};
+
 export const CHANNEL_META: Record<
   ChannelName,
   { label: string; shortLabel: string; colorClass: string; hex: string }

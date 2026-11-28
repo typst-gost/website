@@ -18,6 +18,7 @@ import {
   Settings,
   ShieldAlert,
   Sliders,
+  Target,
   Wallet,
 } from 'lucide-react';
 import {
@@ -42,6 +43,7 @@ import {
 import { ConversationsPanel } from './conversations-panel';
 import { ProfilesPanel } from './profiles-panel';
 import { RagPanel } from './rag-panel';
+import { EvalPanel } from './eval-panel';
 import { GuardTesterPanel } from './guard-tester-panel';
 import { SettingsPanel } from './settings-panel';
 
@@ -50,6 +52,7 @@ type SectionTab =
   | 'conversations'
   | 'profiles'
   | 'rag'
+  | 'eval'
   | 'guard-test'
   | 'settings';
 
@@ -67,6 +70,7 @@ const NAV_TABS: {
   { id: 'conversations', label: 'Диалоги', icon: MessageSquare },
   { id: 'profiles', label: 'Каналы и модели', icon: Sliders },
   { id: 'rag', label: 'База знаний', icon: Database },
+  { id: 'eval', label: 'Метрики RAG', icon: Target },
   { id: 'guard-test', label: 'Проверка правил', icon: FlaskConical },
   { id: 'settings', label: 'Настройки', icon: Settings },
 ];
@@ -689,6 +693,14 @@ export function AdminDashboard({ initialUser, loginPath }: AdminDashboardProps) 
 
               {activeTab === 'rag' && (
                 <RagPanel status={ragStatus} onRefresh={refreshRag} />
+              )}
+
+              {activeTab === 'eval' && (
+                <EvalPanel
+                  docsReady={ragStatus?.docs_ready ?? readyStatus?.docs_ready ?? false}
+                  gatewaySettings={settings}
+                  onUnauthorized={handleUnauthorized}
+                />
               )}
 
               {activeTab === 'guard-test' && (
